@@ -29,16 +29,6 @@
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="значок-без-вектора-любви-запрещенный-знак-сердца-нет-значка-на-белом-166120311" translatesAutoresizingMaskIntoConstraints="NO" id="dXX-2L-xkb">
-                                        <rect key="frame" x="234" y="0.0" width="127" height="93"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <color key="tintColor" systemColor="systemPinkColor"/>
-                                    </imageView>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Heart_corazón.svg-PhotoRoom.png-PhotoRoom" translatesAutoresizingMaskIntoConstraints="NO" id="5qw-hD-5GS">
-                                        <rect key="frame" x="8" y="14" width="106" height="79"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <color key="tintColor" systemColor="systemGreenColor"/>
-                                    </imageView>
                                 </subviews>
                                 <color key="backgroundColor" red="1" green="0.33426339290000001" blue="0.345359003" alpha="1" colorSpace="calibratedRGB"/>
                                 <gestureRecognizers/>
@@ -54,23 +44,23 @@
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="значок-без-вектора-любви-запрещенный-знак-сердца-нет-значка-на-белом-166120311" translatesAutoresizingMaskIntoConstraints="NO" id="X0Q-v2-GKA">
-                                        <rect key="frame" x="234" y="0.0" width="127" height="93"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <color key="tintColor" systemColor="systemPinkColor"/>
-                                    </imageView>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Heart_corazón.svg-PhotoRoom.png-PhotoRoom" translatesAutoresizingMaskIntoConstraints="NO" id="0g2-qQ-0cf">
-                                        <rect key="frame" x="8" y="14" width="106" height="79"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <color key="tintColor" systemColor="systemGreenColor"/>
-                                    </imageView>
                                 </subviews>
                                 <color key="backgroundColor" red="0.98431372640000003" green="0.90196073060000004" blue="0.48235297199999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <gestureRecognizers/>
                                 <connections>
-                                    <outletCollection property="gestureRecognizers" destination="nVL-eb-bzh" appends="YES" id="Qc7-dc-U9N"/>
+                                    <outletCollection property="gestureRecognizers" destination="nVL-eb-bzh" appends="YES" id="0dn-mm-dtK"/>
                                 </connections>
                             </view>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Heart_corazón.svg-PhotoRoom.png-PhotoRoom" translatesAutoresizingMaskIntoConstraints="NO" id="0g2-qQ-0cf">
+                                <rect key="frame" x="143" y="386" width="106" height="79"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="tintColor" systemColor="systemGreenColor"/>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="значок-без-вектора-любви-запрещенный-знак-сердца-нет-значка-на-белом-166120311" translatesAutoresizingMaskIntoConstraints="NO" id="X0Q-v2-GKA">
+                                <rect key="frame" x="133" y="379" width="127" height="93"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="tintColor" systemColor="systemPinkColor"/>
+                            </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -82,9 +72,9 @@
                     </tabBarItem>
                     <connections>
                         <outlet property="cardView" destination="eYn-sf-us1" id="73l-06-Fd2"/>
-                        <outlet property="dislikeHeartImage" destination="X0Q-v2-GKA" id="g6x-As-w3b"/>
-                        <outlet property="likeHeartImage" destination="0g2-qQ-0cf" id="ilR-Nc-bVq"/>
-                        <outlet property="namePeople" destination="xkK-hC-xDt" id="qeI-DT-bhN"/>
+                        <outlet property="dislikeHeartImage" destination="X0Q-v2-GKA" id="IbL-fZ-p9M"/>
+                        <outlet property="likeHeartImage" destination="0g2-qQ-0cf" id="sWb-pG-8Wt"/>
+                        <outlet property="namePeople" destination="4Te-mj-Qjk" id="mJQ-vB-gS4"/>
                         <outlet property="panGesture" destination="nVL-eb-bzh" id="nUO-xh-kgD"/>
                         <outlet property="twoCardView" destination="94j-4v-r7B" id="fjk-mo-mMT"/>
                     </connections>

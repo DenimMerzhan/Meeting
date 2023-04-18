@@ -18,7 +18,6 @@ class ViewController: UIViewController {
     @IBOutlet weak var namePeople: UILabel!
     
     @IBOutlet weak var twoCardView: UIView!
-    
     @IBOutlet var panGesture: UIPanGestureRecognizer!
     
     
@@ -44,8 +43,6 @@ class ViewController: UIViewController {
 
     @IBAction func cardsDrags(_ sender: UIPanGestureRecognizer) {
         
-        print(sender.accessibilityLabel)
-        print(sender.view?.restorationIdentifier)
         
         if let card = sender.view { /// Представление, к которому привязан распознаватель жестов.
             
@@ -70,21 +67,27 @@ class ViewController: UIViewController {
             
             card.center = CGPoint(x: view.center.x + point.x , y: view.center.y + point.y ) /// Перемящем View взависимости от движения пальца
             card.transform = CGAffineTransform(rotationAngle: abs(xFromCenter) * 0.002).scaledBy(x: scale, y: scale) /// Поворачиваем View, внутри  rotationAngle радианты а не градусы
+   
+         
             
-        
+//MARK:-  Когда пользователь отпустил палец
+            
+            
             if sender.state == UIGestureRecognizer.State.ended { ///  Когда пользователь отпустил палец
                 
                 if xFromCenter > 215 { /// Если карта ушла за пределы 215 пунктов то лайкаем пользователя
                     UIView.animate(withDuration: 0.3, delay: 0) {
                         card.center = CGPoint(x: card.center.x + 200 , y: card.center.y + 200 )
-                        panGesture.addTarget(<#T##target: Any##Any#>, action: <#T##Selector#>)
+                        card.alpha = 0
+                        self.loadNewPeople(currentCard: card)
                         
                     }
                     
                 }else if abs(xFromCenter) > 215 { /// Дизлайк пользователя
                     UIView.animate(withDuration: 0.3, delay: 0) {
                         card.center = CGPoint(x: card.center.x - 200 , y: card.center.y - 200 )
-                        self.loadNewPeople()
+                        card.alpha = 0
+                        self.loadNewPeople(currentCard: card)
                         
                     }
                 }else { /// Если не ушла то возвращаем в центр
@@ -103,8 +106,6 @@ class ViewController: UIViewController {
     }
     
     
-    
-    
 }
 
 
@@ -114,7 +115,14 @@ class ViewController: UIViewController {
 
 extension ViewController {
     
-    func loadNewPeople(){
+    func loadNewPeople(currentCard: UIView){
+        
+        likeHeartImage.isHidden = true /// Обнуляем сердца
+        dislikeHeartImage.isHidden = true
+        
+        currentCard.removeGestureRecognizer(self.panGesture) /// Удаляем из текущего View распознователь жестов
+        twoCardView.addGestureRecognizer(self.panGesture)
+        
         if i < nameArr.count {
             namePeople.text = nameArr[i]
             cardView.backgroundColor = colorArr[i]
