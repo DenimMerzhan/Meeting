@@ -17,6 +17,61 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" fixedFrame="YES" restorationIdentifier="TwoCard" translatesAutoresizingMaskIntoConstraints="NO" id="94j-4v-r7B" userLabel="TwoCard">
+                                <rect key="frame" x="16" y="146" width="361" height="559"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Катя" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Te-mj-Qjk">
+                                        <rect key="frame" x="169" y="269" width="63" height="36"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="значок-без-вектора-любви-запрещенный-знак-сердца-нет-значка-на-белом-166120311" translatesAutoresizingMaskIntoConstraints="NO" id="dXX-2L-xkb">
+                                        <rect key="frame" x="234" y="0.0" width="127" height="93"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="tintColor" systemColor="systemPinkColor"/>
+                                    </imageView>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Heart_corazón.svg-PhotoRoom.png-PhotoRoom" translatesAutoresizingMaskIntoConstraints="NO" id="5qw-hD-5GS">
+                                        <rect key="frame" x="8" y="14" width="106" height="79"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="tintColor" systemColor="systemGreenColor"/>
+                                    </imageView>
+                                </subviews>
+                                <color key="backgroundColor" red="1" green="0.33426339290000001" blue="0.345359003" alpha="1" colorSpace="calibratedRGB"/>
+                                <gestureRecognizers/>
+                            </view>
+                            <view contentMode="scaleToFill" fixedFrame="YES" restorationIdentifier="FirstCard" translatesAutoresizingMaskIntoConstraints="NO" id="eYn-sf-us1" userLabel="FirstCard">
+                                <rect key="frame" x="16" y="138" width="361" height="559"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Катя" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xkK-hC-xDt">
+                                        <rect key="frame" x="169" y="269" width="63" height="36"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="значок-без-вектора-любви-запрещенный-знак-сердца-нет-значка-на-белом-166120311" translatesAutoresizingMaskIntoConstraints="NO" id="X0Q-v2-GKA">
+                                        <rect key="frame" x="234" y="0.0" width="127" height="93"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="tintColor" systemColor="systemPinkColor"/>
+                                    </imageView>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Heart_corazón.svg-PhotoRoom.png-PhotoRoom" translatesAutoresizingMaskIntoConstraints="NO" id="0g2-qQ-0cf">
+                                        <rect key="frame" x="8" y="14" width="106" height="79"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="tintColor" systemColor="systemGreenColor"/>
+                                    </imageView>
+                                </subviews>
+                                <color key="backgroundColor" red="0.98431372640000003" green="0.90196073060000004" blue="0.48235297199999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <gestureRecognizers/>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="nVL-eb-bzh" appends="YES" id="Qc7-dc-U9N"/>
+                                </connections>
+                            </view>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </view>
@@ -25,10 +80,23 @@
                         <color key="badgeColor" systemColor="opaqueSeparatorColor"/>
                         <imageReference key="selectedImage" image="Fire" symbolScale="large"/>
                     </tabBarItem>
+                    <connections>
+                        <outlet property="cardView" destination="eYn-sf-us1" id="73l-06-Fd2"/>
+                        <outlet property="dislikeHeartImage" destination="X0Q-v2-GKA" id="g6x-As-w3b"/>
+                        <outlet property="likeHeartImage" destination="0g2-qQ-0cf" id="ilR-Nc-bVq"/>
+                        <outlet property="namePeople" destination="xkK-hC-xDt" id="qeI-DT-bhN"/>
+                        <outlet property="panGesture" destination="nVL-eb-bzh" id="nUO-xh-kgD"/>
+                        <outlet property="twoCardView" destination="94j-4v-r7B" id="fjk-mo-mMT"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <panGestureRecognizer minimumNumberOfTouches="1" id="nVL-eb-bzh">
+                    <connections>
+                        <action selector="cardsDrags:" destination="BYZ-38-t0r" id="u5O-es-nho"/>
+                    </connections>
+                </panGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="-439" y="-230"/>
+            <point key="canvasLocation" x="-440.45801526717554" y="-230.28169014084509"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="cMK-HR-3nX">
@@ -88,13 +156,21 @@
     </scenes>
     <resources>
         <image name="Fire" width="33.333332061767578" height="33.333332061767578"/>
+        <image name="Heart_corazón.svg-PhotoRoom.png-PhotoRoom" width="213.33332824707031" height="213.33332824707031"/>
         <image name="Message" width="32.333332061767578" height="33.333332061767578"/>
         <image name="Preferences" width="50" height="28.333333969116211"/>
+        <image name="значок-без-вектора-любви-запрещенный-знак-сердца-нет-значка-на-белом-166120311" width="266.66665649414062" height="266.66665649414062"/>
         <systemColor name="opaqueSeparatorColor">
             <color red="0.77647058823529413" green="0.77647058823529413" blue="0.78431372549019607" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemGreenColor">
+            <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemPinkColor">
+            <color red="1" green="0.17647058823529413" blue="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
