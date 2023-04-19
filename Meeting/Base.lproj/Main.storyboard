@@ -19,7 +19,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" fixedFrame="YES" restorationIdentifier="TwoCard" translatesAutoresizingMaskIntoConstraints="NO" id="94j-4v-r7B" userLabel="TwoCard">
-                                <rect key="frame" x="16" y="146" width="361" height="559"/>
+                                <rect key="frame" x="16" y="140" width="361" height="557"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Катя" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Te-mj-Qjk">
@@ -44,6 +44,16 @@
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Heart_corazón.svg-PhotoRoom.png-PhotoRoom" translatesAutoresizingMaskIntoConstraints="NO" id="0g2-qQ-0cf">
+                                        <rect key="frame" x="0.0" y="8" width="106" height="79"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="tintColor" systemColor="systemGreenColor"/>
+                                    </imageView>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="значок-без-вектора-любви-запрещенный-знак-сердца-нет-значка-на-белом-166120311" translatesAutoresizingMaskIntoConstraints="NO" id="X0Q-v2-GKA">
+                                        <rect key="frame" x="234" y="0.0" width="127" height="93"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="tintColor" systemColor="systemPinkColor"/>
+                                    </imageView>
                                 </subviews>
                                 <color key="backgroundColor" red="0.98431372640000003" green="0.90196073060000004" blue="0.48235297199999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <gestureRecognizers/>
@@ -51,16 +61,6 @@
                                     <outletCollection property="gestureRecognizers" destination="nVL-eb-bzh" appends="YES" id="0dn-mm-dtK"/>
                                 </connections>
                             </view>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Heart_corazón.svg-PhotoRoom.png-PhotoRoom" translatesAutoresizingMaskIntoConstraints="NO" id="0g2-qQ-0cf">
-                                <rect key="frame" x="143" y="386" width="106" height="79"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="tintColor" systemColor="systemGreenColor"/>
-                            </imageView>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="значок-без-вектора-любви-запрещенный-знак-сердца-нет-значка-на-белом-166120311" translatesAutoresizingMaskIntoConstraints="NO" id="X0Q-v2-GKA">
-                                <rect key="frame" x="133" y="379" width="127" height="93"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="tintColor" systemColor="systemPinkColor"/>
-                            </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
