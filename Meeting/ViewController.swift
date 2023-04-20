@@ -14,16 +14,18 @@ class ViewController: UIViewController {
 
 
     
-
+    @IBOutlet weak var oddImageView: UIImageView!
+    @IBOutlet weak var honestImageView: UIImageView!
+    
     @IBOutlet weak var oddDislikeImage: UIImageView!
     @IBOutlet weak var oddHeartImage: UIImageView!
     
     @IBOutlet weak var oddCardView: CardView!
-    @IBOutlet weak var honestCardView: UIView!
+    @IBOutlet weak var honestCardView: CardView!
     
-    @IBOutlet weak var honestNamePeople: UILabel!
+    
     @IBOutlet weak var oddNamePeople: UILabel!
-    
+    @IBOutlet weak var honestNamePeople: UILabel!
     
     @IBOutlet var panGesture: UIPanGestureRecognizer!
     
