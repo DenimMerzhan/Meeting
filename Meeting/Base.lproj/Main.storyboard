@@ -18,32 +18,42 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" fixedFrame="YES" restorationIdentifier="TwoCard" translatesAutoresizingMaskIntoConstraints="NO" id="94j-4v-r7B" userLabel="TwoCard">
-                                <rect key="frame" x="16" y="140" width="361" height="557"/>
+                            <view contentMode="scaleToFill" fixedFrame="YES" restorationIdentifier="FirstCard" translatesAutoresizingMaskIntoConstraints="NO" id="hiw-v3-qzK" userLabel="HonestCard" customClass="CardView" customModule="Meeting" customModuleProvider="target">
+                                <rect key="frame" x="16" y="124" width="361" height="603"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Катя" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Te-mj-Qjk">
-                                        <rect key="frame" x="169" y="269" width="63" height="36"/>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="1" translatesAutoresizingMaskIntoConstraints="NO" id="LuI-qn-l0P">
+                                        <rect key="frame" x="0.0" y="0.0" width="361" height="595"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="30"/>
-                                        <nil key="textColor"/>
+                                    </imageView>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Heart_corazón.svg-PhotoRoom.png-PhotoRoom" translatesAutoresizingMaskIntoConstraints="NO" id="Mnu-wR-LqY">
+                                        <rect key="frame" x="0.0" y="8" width="106" height="79"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="tintColor" systemColor="systemGreenColor"/>
+                                    </imageView>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="значок-без-вектора-любви-запрещенный-знак-сердца-нет-значка-на-белом-166120311" translatesAutoresizingMaskIntoConstraints="NO" id="He6-CD-R8y">
+                                        <rect key="frame" x="234" y="0.0" width="127" height="93"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="tintColor" systemColor="systemPinkColor"/>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Катя" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IHY-Gg-Ae1">
+                                        <rect key="frame" x="8" y="494" width="223" height="48"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="40"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                 </subviews>
-                                <color key="backgroundColor" red="1" green="0.33426339290000001" blue="0.345359003" alpha="1" colorSpace="calibratedRGB"/>
                                 <gestureRecognizers/>
                             </view>
-                            <view contentMode="scaleToFill" fixedFrame="YES" restorationIdentifier="FirstCard" translatesAutoresizingMaskIntoConstraints="NO" id="eYn-sf-us1" userLabel="FirstCard" customClass="CardView" customModule="Meeting" customModuleProvider="target">
-                                <rect key="frame" x="16" y="138" width="361" height="559"/>
+                            <view contentMode="scaleToFill" fixedFrame="YES" restorationIdentifier="FirstCard" translatesAutoresizingMaskIntoConstraints="NO" id="eYn-sf-us1" userLabel="OddCard" customClass="CardView" customModule="Meeting" customModuleProvider="target">
+                                <rect key="frame" x="16" y="118" width="361" height="603"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Катя" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xkK-hC-xDt">
-                                        <rect key="frame" x="169" y="269" width="63" height="36"/>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="1" translatesAutoresizingMaskIntoConstraints="NO" id="60A-OL-mZp">
+                                        <rect key="frame" x="0.0" y="0.0" width="361" height="595"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="30"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
+                                    </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Heart_corazón.svg-PhotoRoom.png-PhotoRoom" translatesAutoresizingMaskIntoConstraints="NO" id="0g2-qQ-0cf">
                                         <rect key="frame" x="0.0" y="8" width="106" height="79"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -54,8 +64,14 @@
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="tintColor" systemColor="systemPinkColor"/>
                                     </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Катя" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xkK-hC-xDt">
+                                        <rect key="frame" x="8" y="494" width="223" height="48"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="40"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
                                 </subviews>
-                                <color key="backgroundColor" red="0.98431372640000003" green="0.90196073060000004" blue="0.48235297199999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <gestureRecognizers/>
                                 <connections>
                                     <outletCollection property="gestureRecognizers" destination="nVL-eb-bzh" appends="YES" id="0dn-mm-dtK"/>
@@ -71,8 +87,6 @@
                         <imageReference key="selectedImage" image="Fire" symbolScale="large"/>
                     </tabBarItem>
                     <connections>
-                        <outlet property="honestCardView" destination="94j-4v-r7B" id="qe3-oO-8aU"/>
-                        <outlet property="honestNamePeople" destination="4Te-mj-Qjk" id="fH4-Z2-4Un"/>
                         <outlet property="oddCardView" destination="eYn-sf-us1" id="94N-DN-aqj"/>
                         <outlet property="oddDislikeImage" destination="X0Q-v2-GKA" id="fIR-xF-VGh"/>
                         <outlet property="oddHeartImage" destination="0g2-qQ-0cf" id="wae-lT-SQJ"/>
@@ -146,6 +160,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="1" width="1718" height="2160"/>
         <image name="Fire" width="33.333332061767578" height="33.333332061767578"/>
         <image name="Heart_corazón.svg-PhotoRoom.png-PhotoRoom" width="213.33332824707031" height="213.33332824707031"/>
         <image name="Message" width="32.333332061767578" height="33.333332061767578"/>
