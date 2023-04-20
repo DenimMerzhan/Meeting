@@ -36,17 +36,15 @@ class ViewController: UIViewController {
     let colorArr = [UIColor.red,UIColor.blue,UIColor.orange,UIColor.green,UIColor.yellow]
     var i = 0
     
-    var honest: Bool {
+    var honest: Bool = false {
+        
         didSet {
             
             if honest {
-            
-                honestHeartLikeImage.isHidden = true
-                honestDislikeImage.isHidden = true
+                
             }else {
               
-                oddHeartLikeImage.isHidden = true
-                oddDislikeImage.isHidden = true
+                
             }
             
         }
@@ -55,6 +53,8 @@ class ViewController: UIViewController {
     var scale = CGFloat(1)
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        resetHeart()
         
     }
     
@@ -73,17 +73,8 @@ class ViewController: UIViewController {
             let point = sender.translation(in: card) /// Отклонение от начального положения по x и y  в зависимости от того куда перетащил палец пользователь
             
             let xFromCenter = card.center.x - view.center.x
-            print("X - ", xFromCenter)
             
-            if xFromCenter > 0 { /// Если пользователь перетаскивает вправо то появляется зеленое сердечко
-                likeHeartImage.tintColor = UIColor.green.withAlphaComponent(xFromCenter * 0.005)
-                likeHeartImage.isHidden = false
-                dislikeHeartImage.isHidden = true
-            }else if xFromCenter < 0 { /// Если влево красное
-                dislikeHeartImage.tintColor = UIColor.red.withAlphaComponent(abs(xFromCenter)   * 0.005)
-                likeHeartImage.isHidden = true
-                dislikeHeartImage.isHidden = false
-            }
+            changeHeart(xFromCenter: xFromCenter)
             
             if abs(xFromCenter) > 50 { /// Уменьшаем параметр что бы уменьшить View
                 scale = scale - 0.003
@@ -103,7 +94,7 @@ class ViewController: UIViewController {
                     UIView.animate(withDuration: 0.3, delay: 0) {
                         card.center = CGPoint(x: card.center.x + 200 , y: card.center.y + 200 )
                         card.alpha = 0
-                        self.loadNewPeople(currentCard: card)
+                        
                         
                     }
                     
@@ -111,7 +102,7 @@ class ViewController: UIViewController {
                     UIView.animate(withDuration: 0.3, delay: 0) {
                         card.center = CGPoint(x: card.center.x - 200 , y: card.center.y - 200 )
                         card.alpha = 0
-                        self.loadNewPeople(currentCard: card)
+                        
                         
                     }
                 }else { /// Если не ушла то возвращаем в центр
@@ -121,8 +112,7 @@ class ViewController: UIViewController {
                         self.scale = 1
                         card.center = self.view.center
                         card.transform = CGAffineTransform(rotationAngle: 0)
-                        self.likeHeartImage.isHidden = true
-                        self.dislikeHeartImage.isHidden = true
+                        self.resetHeart()
                     }
                 }
             }
@@ -139,20 +129,20 @@ class ViewController: UIViewController {
 
 extension ViewController {
     
-    func loadNewPeople(currentCard: UIView){
-        
-        likeHeartImage.isHidden = true /// Обнуляем сердца
-        dislikeHeartImage.isHidden = true
-        
-        currentCard.removeGestureRecognizer(self.panGesture) /// Удаляем из текущего View распознователь жестов
-        twoCardView.addGestureRecognizer(self.panGesture)
-        
-        if i < nameArr.count {
-            namePeople.text = nameArr[i]
-            cardView.backgroundColor = colorArr[i]
-            i += 1
-        }
-    }
+//    func loadNewPeople(currentCard: UIView){
+//
+//        likeHeartImage.isHidden = true /// Обнуляем сердца
+//        dislikeHeartImage.isHidden = true
+//
+//        currentCard.removeGestureRecognizer(self.panGesture) /// Удаляем из текущего View распознователь жестов
+//        twoCardView.addGestureRecognizer(self.panGesture)
+//
+//        if i < nameArr.count {
+//            namePeople.text = nameArr[i]
+//            cardView.backgroundColor = colorArr[i]
+//            i += 1
+//        }
+//    }
     
     
     
@@ -182,6 +172,14 @@ extension ViewController {
         }
         
         
+    }
+    
+   func resetHeart(){
+       
+       honestHeartLikeImage.isHidden = true
+       honestDislikeImage.isHidden = true
+       oddHeartLikeImage.isHidden = true
+       oddDislikeImage.isHidden = true
     }
     
 }
