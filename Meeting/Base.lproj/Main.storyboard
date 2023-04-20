@@ -72,6 +72,12 @@
                     <view key="view" contentMode="scaleToFill" id="bn1-rL-0Qt">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="1" translatesAutoresizingMaskIntoConstraints="NO" id="9XV-th-bAz">
+                                <rect key="frame" x="16" y="92" width="361" height="606"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="LpF-I4-CWf"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
@@ -101,6 +107,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="1" width="1718" height="2160"/>
         <image name="Fire" width="33.333332061767578" height="33.333332061767578"/>
         <image name="Message" width="32.333332061767578" height="33.333332061767578"/>
         <image name="Preferences" width="50" height="28.333333969116211"/>
