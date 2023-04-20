@@ -13,12 +13,14 @@ class ViewController: UIViewController {
     
 
 
+    @IBOutlet weak var honestDislikeImage: UIImageView!
+    @IBOutlet weak var honestHeartLikeImage: UIImageView!
     
     @IBOutlet weak var oddImageView: UIImageView!
     @IBOutlet weak var honestImageView: UIImageView!
     
     @IBOutlet weak var oddDislikeImage: UIImageView!
-    @IBOutlet weak var oddHeartImage: UIImageView!
+    @IBOutlet weak var oddHeartLikeImage: UIImageView!
     
     @IBOutlet weak var oddCardView: CardView!
     @IBOutlet weak var honestCardView: CardView!
@@ -34,13 +36,26 @@ class ViewController: UIViewController {
     let colorArr = [UIColor.red,UIColor.blue,UIColor.orange,UIColor.green,UIColor.yellow]
     var i = 0
     
+    var honest: Bool {
+        didSet {
+            
+            if honest {
+            
+                honestHeartLikeImage.isHidden = true
+                honestDislikeImage.isHidden = true
+            }else {
+              
+                oddHeartLikeImage.isHidden = true
+                oddDislikeImage.isHidden = true
+            }
+            
+        }
+    }
+    
     var scale = CGFloat(1)
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        oddView.imageUser =
-        likeHeartImage.isHidden = true
-        dislikeHeartImage.isHidden = true
     }
     
     
@@ -137,6 +152,36 @@ extension ViewController {
             cardView.backgroundColor = colorArr[i]
             i += 1
         }
+    }
+    
+    
+    
+    func changeHeart(xFromCenter:CGFloat){ /// Функция обработки сердец
+        
+        if honest { /// Если четный View
+            
+            if xFromCenter > 0 { /// Если пользователь перетаскивает вправо то появляется зеленое сердечко
+                honestHeartLikeImage.tintColor = UIColor.green.withAlphaComponent(xFromCenter * 0.005)
+                honestHeartLikeImage.isHidden = false
+                honestDislikeImage.isHidden = true
+            }else if xFromCenter < 0 { /// Если влево красное
+                honestDislikeImage.tintColor = UIColor.red.withAlphaComponent(abs(xFromCenter)   * 0.005)
+                honestDislikeImage.isHidden = false
+                honestHeartLikeImage.isHidden = true
+            }
+        }else {
+            if xFromCenter > 0 {
+                oddHeartLikeImage.tintColor = UIColor.green.withAlphaComponent(xFromCenter * 0.005)
+                oddHeartLikeImage.isHidden = false
+                oddDislikeImage.isHidden = true
+            }else if xFromCenter < 0 { /// Если влево красное
+                oddDislikeImage.tintColor = UIColor.red.withAlphaComponent(abs(xFromCenter)   * 0.005)
+                oddDislikeImage.isHidden = false
+                oddHeartLikeImage.isHidden = true
+            }
+        }
+        
+        
     }
     
 }

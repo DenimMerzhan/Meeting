@@ -12,6 +12,7 @@ class CardView: UIView {
     
     var imageUser = UIImageView()
     var nameUser = UILabel()
-    var heartImage = UIImageView()
+    var heartLikeImage = UIImageView()
+    var heartDislikeImage = UIImageView()
     
 }

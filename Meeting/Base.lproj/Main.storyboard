@@ -22,7 +22,7 @@
                                 <rect key="frame" x="16" y="124" width="361" height="603"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="1" translatesAutoresizingMaskIntoConstraints="NO" id="LuI-qn-l0P">
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LuI-qn-l0P">
                                         <rect key="frame" x="0.0" y="0.0" width="361" height="595"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </imageView>
@@ -46,11 +46,11 @@
                                 </subviews>
                                 <gestureRecognizers/>
                             </view>
-                            <view contentMode="scaleToFill" fixedFrame="YES" restorationIdentifier="FirstCard" translatesAutoresizingMaskIntoConstraints="NO" id="eYn-sf-us1" userLabel="OddCard" customClass="CardView" customModule="Meeting" customModuleProvider="target">
+                            <view contentMode="scaleToFill" restorationIdentifier="FirstCard" translatesAutoresizingMaskIntoConstraints="NO" id="eYn-sf-us1" userLabel="OddCard" customClass="CardView" customModule="Meeting" customModuleProvider="target">
                                 <rect key="frame" x="16" y="118" width="361" height="603"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="1" translatesAutoresizingMaskIntoConstraints="NO" id="60A-OL-mZp">
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="60A-OL-mZp">
                                         <rect key="frame" x="0.0" y="0.0" width="361" height="595"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </imageView>
@@ -80,6 +80,11 @@
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <variation key="default">
+                            <mask key="subviews">
+                                <exclude reference="eYn-sf-us1"/>
+                            </mask>
+                        </variation>
                     </view>
                     <tabBarItem key="tabBarItem" title="" id="0j4-TS-TQA">
                         <imageReference key="image" image="Fire" symbolScale="large"/>
@@ -87,9 +92,15 @@
                         <imageReference key="selectedImage" image="Fire" symbolScale="large"/>
                     </tabBarItem>
                     <connections>
+                        <outlet property="honestCardView" destination="hiw-v3-qzK" id="MlI-Vx-wYu"/>
+                        <outlet property="honestDislikeImage" destination="He6-CD-R8y" id="gHp-ns-zyd"/>
+                        <outlet property="honestHeartLikeImage" destination="Mnu-wR-LqY" id="7cJ-zu-0OR"/>
+                        <outlet property="honestImageView" destination="LuI-qn-l0P" id="Wvj-je-xId"/>
+                        <outlet property="honestNamePeople" destination="IHY-Gg-Ae1" id="AT0-gQ-upM"/>
                         <outlet property="oddCardView" destination="eYn-sf-us1" id="94N-DN-aqj"/>
                         <outlet property="oddDislikeImage" destination="X0Q-v2-GKA" id="fIR-xF-VGh"/>
-                        <outlet property="oddHeartImage" destination="0g2-qQ-0cf" id="wae-lT-SQJ"/>
+                        <outlet property="oddHeartLikeImage" destination="0g2-qQ-0cf" id="6pv-1n-Ygf"/>
+                        <outlet property="oddImageView" destination="60A-OL-mZp" id="sl9-Fo-BgT"/>
                         <outlet property="oddNamePeople" destination="xkK-hC-xDt" id="GAI-8f-2tR"/>
                         <outlet property="panGesture" destination="nVL-eb-bzh" id="nUO-xh-kgD"/>
                     </connections>
@@ -160,7 +171,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="1" width="1718" height="2160"/>
         <image name="Fire" width="33.333332061767578" height="33.333332061767578"/>
         <image name="Heart_corazón.svg-PhotoRoom.png-PhotoRoom" width="213.33332824707031" height="213.33332824707031"/>
         <image name="Message" width="32.333332061767578" height="33.333332061767578"/>
