@@ -29,7 +29,9 @@ class ViewController: UIViewController {
     @IBOutlet weak var oddNamePeople: UILabel!
     @IBOutlet weak var honestNamePeople: UILabel!
     
+    
     @IBOutlet var panGesture: UIPanGestureRecognizer!
+    @IBOutlet var tapGesture: UITapGestureRecognizer!
     
     var usersArr = [User]()
     var indexUser = 1
@@ -57,6 +59,36 @@ class ViewController: UIViewController {
         
         resetHeart()
         
+    }
+    
+    
+    
+    
+    
+    @IBAction func cardTap(_ sender: UITapGestureRecognizer) {
+        
+        
+        var coordinates = CGFloat()
+        var currentImage = UIImageView()
+        let imageArr = usersArr[indexUser - 1].imageArr
+        
+        if honest {
+            coordinates = sender.location(in: honestCardView).x
+            currentImage = honestImageView
+        }else {
+            coordinates = sender.location(in: oddCardView).x
+            currentImage = oddImageView
+        }
+        
+        print(coordinates)
+        
+        if coordinates > 220 && indexCurrentImage < imageArr.count - 1 {
+            indexCurrentImage += 1
+            currentImage.image = imageArr[indexCurrentImage]
+        }else if  coordinates < 180 && indexCurrentImage > 0  {
+            indexCurrentImage -= 1
+            currentImage.image = imageArr[indexCurrentImage]
+        }
     }
     
     
@@ -94,7 +126,7 @@ class ViewController: UIViewController {
             
             if sender.state == UIGestureRecognizer.State.ended { ///  Когда пользователь отпустил палец
                 
-                if xFromCenter > 190 { /// Если карта ушла за пределы 215 пунктов то лайкаем пользователя
+                if xFromCenter > 170 { /// Если карта ушла за пределы 215 пунктов то лайкаем пользователя
                     UIView.animate(withDuration: 0.3, delay: 0) {
                         card.center = CGPoint(x: card.center.x + 200 , y: card.center.y + 200 )
                         card.alpha = 0
@@ -102,7 +134,7 @@ class ViewController: UIViewController {
                         
                     }
                     
-                }else if abs(xFromCenter) > 190 { /// Дизлайк пользователя
+                }else if abs(xFromCenter) > 170 { /// Дизлайк пользователя
                     UIView.animate(withDuration: 0.3, delay: 0) {
                         card.center = CGPoint(x: card.center.x - 200 , y: card.center.y - 200 )
                         card.alpha = 0
@@ -143,29 +175,28 @@ extension ViewController {
     
     func loadNewPeople(currentCard: UIView){
         
+        self.indexUser += 1
         var indexUser = self.indexUser
         
         
         currentCard.removeGestureRecognizer(panGesture)
+        currentCard.removeGestureRecognizer(tapGesture)
         view.sendSubviewToBack(currentCard)
         
         resetHeart()
         
         if honest {
             oddCardView.addGestureRecognizer(panGesture)
+            oddCardView.addGestureRecognizer(tapGesture)
             
         }else {
             honestCardView.addGestureRecognizer(panGesture)
+            honestCardView.addGestureRecognizer(tapGesture)
         }
         
-        if indexUser + 1 > usersArr.count - 1 {
+        if indexUser > usersArr.count - 1 {
             print("Ваши пары закончились(")
-            currentCard.isHidden = true
             return
-        }else{
-            indexUser += 1
-            self.indexUser += 1
-            
         }
 
         
@@ -186,7 +217,12 @@ extension ViewController {
             if currentCard.frame.origin != self.mostCoordinates{
                 currentCard.frame.origin = self.mostCoordinates
             }
+            self.indexCurrentImage = 0
             self.honest = !self.honest
+            
+            if indexUser > self.usersArr.count - 1 {
+                currentCard.isHidden = true
+            }
         }
         
     }

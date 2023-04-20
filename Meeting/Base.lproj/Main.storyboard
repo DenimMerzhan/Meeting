@@ -53,6 +53,7 @@
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="1" translatesAutoresizingMaskIntoConstraints="NO" id="60A-OL-mZp">
                                         <rect key="frame" x="0.0" y="0.0" width="361" height="595"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <gestureRecognizers/>
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Heart_corazón.svg-PhotoRoom.png-PhotoRoom" translatesAutoresizingMaskIntoConstraints="NO" id="0g2-qQ-0cf">
                                         <rect key="frame" x="0.0" y="8" width="106" height="79"/>
@@ -75,6 +76,7 @@
                                 <gestureRecognizers/>
                                 <connections>
                                     <outletCollection property="gestureRecognizers" destination="nVL-eb-bzh" appends="YES" id="0dn-mm-dtK"/>
+                                    <outletCollection property="gestureRecognizers" destination="2Ma-FL-cJ8" appends="YES" id="grb-zc-xhq"/>
                                 </connections>
                             </view>
                         </subviews>
@@ -97,7 +99,8 @@
                         <outlet property="oddHeartLikeImage" destination="0g2-qQ-0cf" id="6pv-1n-Ygf"/>
                         <outlet property="oddImageView" destination="60A-OL-mZp" id="sl9-Fo-BgT"/>
                         <outlet property="oddNamePeople" destination="xkK-hC-xDt" id="GAI-8f-2tR"/>
-                        <outlet property="panGesture" destination="nVL-eb-bzh" id="nUO-xh-kgD"/>
+                        <outlet property="panGesture" destination="nVL-eb-bzh" id="uUv-Je-A4n"/>
+                        <outlet property="tapGesture" destination="2Ma-FL-cJ8" id="wbh-Ig-Mxq"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -106,6 +109,11 @@
                         <action selector="cardsDrags:" destination="BYZ-38-t0r" id="u5O-es-nho"/>
                     </connections>
                 </panGestureRecognizer>
+                <tapGestureRecognizer id="2Ma-FL-cJ8">
+                    <connections>
+                        <action selector="cardTap:" destination="BYZ-38-t0r" id="04E-qf-an3"/>
+                    </connections>
+                </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="-440.45801526717554" y="-230.28169014084509"/>
         </scene>
