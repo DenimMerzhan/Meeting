@@ -35,24 +35,16 @@ class ViewController: UIViewController {
     var indexUser = 1
     var indexCurrentImage = 0
     
-    var honest: Bool = false {
-        
-        didSet {
-            
-            if honest {
-                
-            }else {
-              
-                
-            }
-            
-        }
-    }
+    var mostCoordinates = CGPoint()
+    
+    var honest = false
     
     var scale = CGFloat(1)
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        mostCoordinates = oddCardView.frame.origin /// Координаты нечетного View
+        honestCardView.frame.origin = mostCoordinates /// Делаем так что бы карто идеально ложились друг на друга
         
         usersArr.append(User(name: "Настя",imageArr: [UIImage(named: "1")!,UIImage(named: "2")!,UIImage(named: "3")!,UIImage(named: "4")!]))
         usersArr.append(User(name: "Света",imageArr: [UIImage(named: "S1")!,UIImage(named: "S2")!,UIImage(named: "S3")!,UIImage(named: "S4")!,UIImage(named: "S5")!]))
@@ -66,6 +58,7 @@ class ViewController: UIViewController {
         resetHeart()
         
     }
+    
     
     
     
@@ -93,8 +86,10 @@ class ViewController: UIViewController {
             card.transform = CGAffineTransform(rotationAngle: abs(xFromCenter) * 0.002) /// Поворачиваем View, внутри  rotationAngle радианты а не градусы
    
          
+    
             
-//MARK:-  Когда пользователь отпустил палец
+            
+//MARK: -   Когда пользователь отпустил палец
             
             
             if sender.state == UIGestureRecognizer.State.ended { ///  Когда пользователь отпустил палец
@@ -122,6 +117,10 @@ class ViewController: UIViewController {
                         card.center = self.view.center
                         card.transform = CGAffineTransform(rotationAngle: 0)
                         self.resetHeart()
+                        
+                        if card.frame.origin != self.mostCoordinates{ /// Если каты не иделаьно ложиться друг на друга, кладем их идеально
+                            card.frame.origin = self.mostCoordinates
+                        }
                     }
                 }
             }
@@ -135,6 +134,8 @@ class ViewController: UIViewController {
 
 
 
+
+
 //MARK: - Загрузка нового пользователя
 
 
@@ -143,6 +144,7 @@ extension ViewController {
     func loadNewPeople(currentCard: UIView){
         
         var indexUser = self.indexUser
+        
         
         currentCard.removeGestureRecognizer(panGesture)
         view.sendSubviewToBack(currentCard)
@@ -163,6 +165,7 @@ extension ViewController {
         }else{
             indexUser += 1
             self.indexUser += 1
+            
         }
 
         
@@ -179,6 +182,10 @@ extension ViewController {
                 self.oddNamePeople.text = self.usersArr[indexUser].name
             }
             currentCard.alpha = 1
+            
+            if currentCard.frame.origin != self.mostCoordinates{
+                currentCard.frame.origin = self.mostCoordinates
+            }
             self.honest = !self.honest
         }
         
