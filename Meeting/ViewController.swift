@@ -46,6 +46,14 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         mostCoordinates = oddCardView.frame.origin /// Координаты нечетного View
+        print(mostCoordinates)
+        print(oddCardView.frame.size)
+        print("Yeah")
+        
+        let newView = UIView(frame: CGRect(x: 16, y: 118, width: 361, height: 603))
+        newView.backgroundColor = .brown
+        self.view.addSubview(newView)
+        
         honestCardView.frame.origin = mostCoordinates /// Делаем так что бы карто идеально ложились друг на друга
         
         usersArr.append(User(name: "Настя",imageArr: [UIImage(named: "1")!,UIImage(named: "2")!,UIImage(named: "3")!,UIImage(named: "4")!]))
@@ -56,6 +64,7 @@ class ViewController: UIViewController {
         oddNamePeople.text = usersArr[0].name
         honestImageView.image = usersArr[1].imageArr[0]
         honestNamePeople.text = usersArr[1].name
+        
         
         resetHeart()
         
@@ -80,7 +89,7 @@ class ViewController: UIViewController {
             currentImage = oddImageView
         }
         
-        print(coordinates)
+        
         
         if coordinates > 220 && indexCurrentImage < imageArr.count - 1 {
             indexCurrentImage += 1
@@ -126,16 +135,16 @@ class ViewController: UIViewController {
             
             if sender.state == UIGestureRecognizer.State.ended { ///  Когда пользователь отпустил палец
                 
-                if xFromCenter > 170 { /// Если карта ушла за пределы 215 пунктов то лайкаем пользователя
-                    UIView.animate(withDuration: 0.3, delay: 0) {
+                if xFromCenter > 150 { /// Если карта ушла за пределы 215 пунктов то лайкаем пользователя
+                    UIView.animate(withDuration: 0.5, delay: 0) {
                         card.center = CGPoint(x: card.center.x + 200 , y: card.center.y + 200 )
                         card.alpha = 0
                         self.loadNewPeople(currentCard: card)
                         
                     }
                     
-                }else if abs(xFromCenter) > 170 { /// Дизлайк пользователя
-                    UIView.animate(withDuration: 0.3, delay: 0) {
+                }else if abs(xFromCenter) > 150 { /// Дизлайк пользователя
+                    UIView.animate(withDuration: 0.5, delay: 0) {
                         card.center = CGPoint(x: card.center.x - 200 , y: card.center.y - 200 )
                         card.alpha = 0
                         self.loadNewPeople(currentCard: card)
@@ -200,7 +209,7 @@ extension ViewController {
         }
 
         
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.3) {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5) {
             
             currentCard.center = self.view.center
             currentCard.transform = CGAffineTransform(rotationAngle: 0)
