@@ -31,10 +31,9 @@ class ViewController: UIViewController {
     
     @IBOutlet var panGesture: UIPanGestureRecognizer!
     
-    
-    let nameArr = ["Настя","Лиза","Женя","Света","Хуй моржовый"]
-    let colorArr = [UIColor.red,UIColor.blue,UIColor.orange,UIColor.green,UIColor.yellow]
-    var i = 0
+    var Users = [User]()
+    var indexUser = 0
+    var indexCurrentImage = 0
     
     var honest: Bool = false {
         
@@ -53,6 +52,13 @@ class ViewController: UIViewController {
     var scale = CGFloat(1)
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
+        Users.append(User(name: "Настя",imageArr: [UIImage(named: "1")!,UIImage(named: "2")!,UIImage(named: "3")!,UIImage(named: "4")!]))
+        Users.append(User(name: "Света",imageArr: [UIImage(named: "S1")!,UIImage(named: "S2")!,UIImage(named: "S3")!,UIImage(named: "S4")!,UIImage(named: "S5")!]))
+        Users.append(User(name: "Екатерина",imageArr: [UIImage(named: "1")!,UIImage(named: "2")!,UIImage(named: "3")!,UIImage(named: "4")!]))
+        
+        honestImageView.image = Users[1].imageArr[0]
         
         resetHeart()
         
@@ -81,7 +87,7 @@ class ViewController: UIViewController {
             }
             
             card.center = CGPoint(x: view.center.x + point.x , y: view.center.y + point.y ) /// Перемящем View взависимости от движения пальца
-            card.transform = CGAffineTransform(rotationAngle: abs(xFromCenter) * 0.002).scaledBy(x: scale, y: scale) /// Поворачиваем View, внутри  rotationAngle радианты а не градусы
+            card.transform = CGAffineTransform(rotationAngle: abs(xFromCenter) * 0.002) /// Поворачиваем View, внутри  rotationAngle радианты а не градусы
    
          
             
@@ -90,19 +96,19 @@ class ViewController: UIViewController {
             
             if sender.state == UIGestureRecognizer.State.ended { ///  Когда пользователь отпустил палец
                 
-                if xFromCenter > 215 { /// Если карта ушла за пределы 215 пунктов то лайкаем пользователя
+                if xFromCenter > 190 { /// Если карта ушла за пределы 215 пунктов то лайкаем пользователя
                     UIView.animate(withDuration: 0.3, delay: 0) {
                         card.center = CGPoint(x: card.center.x + 200 , y: card.center.y + 200 )
                         card.alpha = 0
-                        
+                        self.loadNewPeople(currentCard: card)
                         
                     }
                     
-                }else if abs(xFromCenter) > 215 { /// Дизлайк пользователя
+                }else if abs(xFromCenter) > 190 { /// Дизлайк пользователя
                     UIView.animate(withDuration: 0.3, delay: 0) {
                         card.center = CGPoint(x: card.center.x - 200 , y: card.center.y - 200 )
                         card.alpha = 0
-                        
+                        self.loadNewPeople(currentCard: card)
                         
                     }
                 }else { /// Если не ушла то возвращаем в центр
@@ -126,25 +132,54 @@ class ViewController: UIViewController {
 
 
 
+//MARK: - Загрузка нового пользователя
+
 
 extension ViewController {
     
-//    func loadNewPeople(currentCard: UIView){
-//
-//        likeHeartImage.isHidden = true /// Обнуляем сердца
-//        dislikeHeartImage.isHidden = true
-//
-//        currentCard.removeGestureRecognizer(self.panGesture) /// Удаляем из текущего View распознователь жестов
-//        twoCardView.addGestureRecognizer(self.panGesture)
-//
-//        if i < nameArr.count {
-//            namePeople.text = nameArr[i]
-//            cardView.backgroundColor = colorArr[i]
-//            i += 1
-//        }
-//    }
+    func loadNewPeople(currentCard: UIView){
+        
+        currentCard.removeGestureRecognizer(panGesture)
+        view.sendSubviewToBack(currentCard)
+        
+        resetHeart()
+        
+        if honest {
+            oddCardView.addGestureRecognizer(panGesture)
+            
+        }else {
+            honestCardView.addGestureRecognizer(panGesture)
+        }
+        
+        
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.3) {
+            
+            currentCard.center = self.view.center
+            currentCard.transform = CGAffineTransform(rotationAngle: 0)
+            
+            if self.honest {
+                self.honestCardView.alpha = 1
+            }else {
+                self.oddCardView.alpha = 1
+            }
+            
+            self.honest = !self.honest
+        }
+        
+    }
+    
+}
     
     
+
+
+
+    
+//MARK: - Логика сердец
+
+
+extension ViewController {
     
     func changeHeart(xFromCenter:CGFloat){ /// Функция обработки сердец
         
