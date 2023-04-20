@@ -12,12 +12,19 @@ class ViewController: UIViewController {
     
     
 
-    @IBOutlet weak var dislikeHeartImage: UIImageView!
-    @IBOutlet weak var likeHeartImage: UIImageView!
-    @IBOutlet weak var cardView: UIView!
-    @IBOutlet weak var namePeople: UILabel!
+
     
-    @IBOutlet weak var twoCardView: UIView!
+
+    @IBOutlet weak var oddDislikeImage: UIImageView!
+    @IBOutlet weak var oddHeartImage: UIImageView!
+    
+    @IBOutlet weak var oddCardView: CardView!
+    @IBOutlet weak var honestCardView: UIView!
+    
+    @IBOutlet weak var honestNamePeople: UILabel!
+    @IBOutlet weak var oddNamePeople: UILabel!
+    
+    
     @IBOutlet var panGesture: UIPanGestureRecognizer!
     
     
@@ -29,7 +36,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
+        oddView.imageUser =
         likeHeartImage.isHidden = true
         dislikeHeartImage.isHidden = true
     }

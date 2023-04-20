@@ -33,7 +33,7 @@
                                 <color key="backgroundColor" red="1" green="0.33426339290000001" blue="0.345359003" alpha="1" colorSpace="calibratedRGB"/>
                                 <gestureRecognizers/>
                             </view>
-                            <view contentMode="scaleToFill" fixedFrame="YES" restorationIdentifier="FirstCard" translatesAutoresizingMaskIntoConstraints="NO" id="eYn-sf-us1" userLabel="FirstCard">
+                            <view contentMode="scaleToFill" fixedFrame="YES" restorationIdentifier="FirstCard" translatesAutoresizingMaskIntoConstraints="NO" id="eYn-sf-us1" userLabel="FirstCard" customClass="CardView" customModule="Meeting" customModuleProvider="target">
                                 <rect key="frame" x="16" y="138" width="361" height="559"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
@@ -71,12 +71,13 @@
                         <imageReference key="selectedImage" image="Fire" symbolScale="large"/>
                     </tabBarItem>
                     <connections>
-                        <outlet property="cardView" destination="eYn-sf-us1" id="73l-06-Fd2"/>
-                        <outlet property="dislikeHeartImage" destination="X0Q-v2-GKA" id="IbL-fZ-p9M"/>
-                        <outlet property="likeHeartImage" destination="0g2-qQ-0cf" id="sWb-pG-8Wt"/>
-                        <outlet property="namePeople" destination="4Te-mj-Qjk" id="mJQ-vB-gS4"/>
+                        <outlet property="honestCardView" destination="94j-4v-r7B" id="qe3-oO-8aU"/>
+                        <outlet property="honestNamePeople" destination="4Te-mj-Qjk" id="fH4-Z2-4Un"/>
+                        <outlet property="oddCardView" destination="eYn-sf-us1" id="94N-DN-aqj"/>
+                        <outlet property="oddDislikeImage" destination="X0Q-v2-GKA" id="fIR-xF-VGh"/>
+                        <outlet property="oddHeartImage" destination="0g2-qQ-0cf" id="wae-lT-SQJ"/>
+                        <outlet property="oddNamePeople" destination="xkK-hC-xDt" id="GAI-8f-2tR"/>
                         <outlet property="panGesture" destination="nVL-eb-bzh" id="nUO-xh-kgD"/>
-                        <outlet property="twoCardView" destination="94j-4v-r7B" id="fjk-mo-mMT"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

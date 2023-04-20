@@ -10,4 +10,8 @@ import UIKit
 
 class CardView: UIView {
     
+    var imageUser = UIImageView()
+    var nameUser = UILabel()
+    var heartImage = UIImageView()
+    
 }
