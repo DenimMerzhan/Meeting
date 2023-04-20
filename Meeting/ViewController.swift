@@ -31,8 +31,8 @@ class ViewController: UIViewController {
     
     @IBOutlet var panGesture: UIPanGestureRecognizer!
     
-    var Users = [User]()
-    var indexUser = 0
+    var usersArr = [User]()
+    var indexUser = 1
     var indexCurrentImage = 0
     
     var honest: Bool = false {
@@ -54,11 +54,14 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         
-        Users.append(User(name: "Настя",imageArr: [UIImage(named: "1")!,UIImage(named: "2")!,UIImage(named: "3")!,UIImage(named: "4")!]))
-        Users.append(User(name: "Света",imageArr: [UIImage(named: "S1")!,UIImage(named: "S2")!,UIImage(named: "S3")!,UIImage(named: "S4")!,UIImage(named: "S5")!]))
-        Users.append(User(name: "Екатерина",imageArr: [UIImage(named: "1")!,UIImage(named: "2")!,UIImage(named: "3")!,UIImage(named: "4")!]))
+        usersArr.append(User(name: "Настя",imageArr: [UIImage(named: "1")!,UIImage(named: "2")!,UIImage(named: "3")!,UIImage(named: "4")!]))
+        usersArr.append(User(name: "Света",imageArr: [UIImage(named: "S1")!,UIImage(named: "S2")!,UIImage(named: "S3")!,UIImage(named: "S4")!,UIImage(named: "S5")!]))
+        usersArr.append(User(name: "Екатерина",imageArr: [UIImage(named: "K1")!,UIImage(named: "K2")!,UIImage(named: "K3")!]))
         
-        honestImageView.image = Users[1].imageArr[0]
+        oddImageView.image = usersArr[0].imageArr[0]
+        oddNamePeople.text = usersArr[0].name
+        honestImageView.image = usersArr[1].imageArr[0]
+        honestNamePeople.text = usersArr[1].name
         
         resetHeart()
         
@@ -139,6 +142,8 @@ extension ViewController {
     
     func loadNewPeople(currentCard: UIView){
         
+        var indexUser = self.indexUser
+        
         currentCard.removeGestureRecognizer(panGesture)
         view.sendSubviewToBack(currentCard)
         
@@ -151,7 +156,15 @@ extension ViewController {
             honestCardView.addGestureRecognizer(panGesture)
         }
         
-        
+        if indexUser + 1 > usersArr.count - 1 {
+            print("Ваши пары закончились(")
+            currentCard.isHidden = true
+            return
+        }else{
+            indexUser += 1
+            self.indexUser += 1
+        }
+
         
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.3) {
             
@@ -159,11 +172,13 @@ extension ViewController {
             currentCard.transform = CGAffineTransform(rotationAngle: 0)
             
             if self.honest {
-                self.honestCardView.alpha = 1
+                self.honestImageView.image = self.usersArr[indexUser].imageArr[0]
+                self.honestNamePeople.text  = self.usersArr[indexUser].name
             }else {
-                self.oddCardView.alpha = 1
+                self.oddImageView.image = self.usersArr[indexUser].imageArr[0]
+                self.oddNamePeople.text = self.usersArr[indexUser].name
             }
-            
+            currentCard.alpha = 1
             self.honest = !self.honest
         }
         
