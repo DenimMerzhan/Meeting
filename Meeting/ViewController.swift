@@ -17,6 +17,8 @@ class ViewController: UIViewController {
     
     @IBOutlet var panGesture: UIPanGestureRecognizer!
     @IBOutlet var tapGesture: UITapGestureRecognizer!
+    @IBOutlet weak var buttonStackView: UIStackView!
+    
     
     var usersArr = [User]()
     var indexUser = 0
@@ -32,20 +34,29 @@ class ViewController: UIViewController {
     
     var scale = CGFloat(1)
     override func viewDidLoad() {
+        
         super.viewDidLoad()
+        buttonStackView.backgroundColor = .clear
     
-        usersArr.append(User(name: "Настя",imageArr: [UIImage(named: "1")!,UIImage(named: "2")!,UIImage(named: "3")!,UIImage(named: "4")!]))
+        usersArr.append(User(name: "Карина",imageArr: [UIImage(named: "1")!,UIImage(named: "2")!,UIImage(named: "3")!,UIImage(named: "4")!]))
         usersArr.append(User(name: "Света",imageArr: [UIImage(named: "S1")!,UIImage(named: "S2")!,UIImage(named: "S3")!,UIImage(named: "S4")!,UIImage(named: "S5")!]))
         usersArr.append(User(name: "Екатерина",imageArr: [UIImage(named: "K1")!,UIImage(named: "K2")!,UIImage(named: "K3")!]))
+        usersArr.append(User(name: "Ольга",imageArr: [UIImage(named: "O1")!,UIImage(named: "O2")!]))
+        usersArr.append(User(name: "Викуся",imageArr: [UIImage(named: "V1")!,UIImage(named: "V2")!,UIImage(named: "V3")!]))
+        usersArr.append(User(name: "Таня",imageArr: [UIImage(named: "T1")!,UIImage(named: "T2")!,UIImage(named: "T3")!]))
         
 
-            self.oddCard = createCard()
-            self.honestCard = createCard()
-            
-            oddCard!.addGestureRecognizer(panGesture)
-            oddCard!.addGestureRecognizer(tapGesture)
-            self.view.addSubview(honestCard!)
-            self.view.addSubview(oddCard!)
+        self.oddCard = createCard()
+        self.honestCard = createCard()
+
+        oddCard!.addGestureRecognizer(panGesture)
+        oddCard!.addGestureRecognizer(tapGesture)
+        self.view.addSubview(honestCard!)
+        self.view.addSubview(oddCard!)
+        self.view.bringSubviewToFront(buttonStackView)
+        
+        
+        
             
 
         
@@ -57,27 +68,30 @@ class ViewController: UIViewController {
     
     
     
+//MARK: - Пользователь тапнул по фото
+    
     
     @IBAction func cardTap(_ sender: UITapGestureRecognizer) {
 
 
         var coordinates = CGFloat()
         var currentImage = UIImageView()
-        let imageArr = usersArr[indexUser].imageArr
+        var imageArr = [UIImage]()
 
-        if honest {
+        if sender.view == honestCard {
           
             coordinates = sender.location(in: honestCard!).x
-            currentImage = honestCard!.imageUser
+            currentImage = honestCard!.imageUser!
+            imageArr = honestCard!.imageArr!
         }else {
            
             coordinates = sender.location(in: oddCard!).x
-            currentImage = oddCard!.imageUser
+            currentImage = oddCard!.imageUser!
+            imageArr = oddCard!.imageArr!
         }
-        print(coordinates)
+        
 
         if coordinates > 220 && indexCurrentImage < imageArr.count - 1 {
-            print("Yeah")
             indexCurrentImage += 1
             currentImage.image = imageArr[indexCurrentImage]
         }else if  coordinates < 180 && indexCurrentImage > 0  {
@@ -122,8 +136,9 @@ class ViewController: UIViewController {
             if sender.state == UIGestureRecognizer.State.ended { ///  Когда пользователь отпустил палец
                 
                 if xFromCenter > 150 { /// Если карта ушла за пределы 215 пунктов то лайкаем пользователя
+                    
                     UIView.animate(withDuration: 0.2, delay: 0) {
-                        card.center = CGPoint(x: card.center.x + 150 , y: card.center.y + 150 )
+                        card.center = CGPoint(x: card.center.x + 150 , y: card.center.y + 100 )
                         card.alpha = 0
                         self.loadNewPeople(card: card)
                         
@@ -131,7 +146,7 @@ class ViewController: UIViewController {
                     
                 }else if abs(xFromCenter) > 150 { /// Дизлайк пользователя
                     UIView.animate(withDuration: 0.22, delay: 0) {
-                        card.center = CGPoint(x: card.center.x - 150 , y: card.center.y - 150 )
+                        card.center = CGPoint(x: card.center.x - 150 , y: card.center.y + 100 )
                         card.alpha = 0
                         self.loadNewPeople(card: card)
                         
@@ -141,7 +156,6 @@ class ViewController: UIViewController {
                     UIView.animate(withDuration: 0.2, delay: 0) { /// Вызывает анимацию длительностью 0.3 секунды после анимации мы выставляем card view  на первоначальную позицию
                         
                         card.center = self.center
-                        print(card.center)
                         card.transform = CGAffineTransform(rotationAngle: 0)
                         card.likHeartImage.isHidden = true
                         card.dislikeHeartImage.isHidden = true
@@ -201,12 +215,11 @@ extension ViewController {
                 
             }
             
-            
+            indexCurrentImage = 0
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 card.removeFromSuperview()
             }
             
-            indexCurrentImage = 0
             
         }
     }
@@ -242,6 +255,8 @@ extension ViewController {
     
 }
 
+//MARK: - Создание нового CardView
+
 
 extension ViewController {
     
@@ -269,6 +284,8 @@ extension ViewController {
             
             let label = UILabel(frame: CGRect(x: 8.0, y: 494, width: 331, height: 48.0))
             label.text = textName
+            label.font = .boldSystemFont(ofSize: 40)
+            label.textColor = .white
             
             let likeHeart = UIImageView(frame: CGRect(x: 0.0, y: 8.0, width: 106, height: 79))
             let dislikeHeart = UIImageView(frame: CGRect(x: 234, y: 0.0, width: 127, height: 93))
@@ -287,15 +304,13 @@ extension ViewController {
             imageView.clipsToBounds = true /// Ограничиваем фото в размерах
         
             
-            let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,label: label)
+            let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,label: label,imageUser: imageView,imageArr: image)
             
-            card.backgroundColor = .yellow
             card.addSubview(imageView)
             card.addSubview(likeHeart)
             card.addSubview(dislikeHeart)
             card.addSubview(label)
             center = card.center
-            print("Первый центр", card.center)
             
             
             
@@ -307,6 +322,10 @@ extension ViewController {
         
     }
     
+    
+    
+//MARK: - Создание пустого Card
+    
     func createEmptyCard() -> CardView {
         let frame =  CGRect(x: 16, y: 118, width: 361, height: 603)
         
@@ -316,9 +335,9 @@ extension ViewController {
         let likeHeart = UIImageView(frame: CGRect(x: 0.0, y: 8.0, width: 106, height: 79))
         let dislikeHeart = UIImageView(frame: CGRect(x: 234, y: 0.0, width: 127, height: 93))
        
-        let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,label: label)
+        let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,label: label,imageUser: nil,imageArr: nil)
         
-        card.backgroundColor = .white
+        
         card.addSubview(label)
         
         return card
