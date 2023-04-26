@@ -282,9 +282,9 @@ extension ViewController {
             
             let frame =  CGRect(x: 16, y: 118, width: 361, height: 603)
             
-            let label = UILabel(frame: CGRect(x: 8.0, y: 494, width: 331, height: 48.0))
+            let label = UILabel(frame: CGRect(x: 10, y: 480, width: 331, height: 48.0))
             label.text = textName
-            label.font = .boldSystemFont(ofSize: 40)
+            label.font = .boldSystemFont(ofSize: 48)
             label.textColor = .white
             
             let likeHeart = UIImageView(frame: CGRect(x: 0.0, y: 8.0, width: 106, height: 79))
@@ -304,6 +304,12 @@ extension ViewController {
             imageView.clipsToBounds = true /// Ограничиваем фото в размерах
         
             
+            let gradient = CAGradientLayer()
+            gradient.frame = CGRect(x: 0, y: 400, width: 361, height: 203)
+            gradient.locations = [0.0, 1.0]
+            gradient.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]
+            imageView.layer.insertSublayer(gradient, at: 0)
+                        
             let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,label: label,imageUser: imageView,imageArr: image)
             
             card.addSubview(imageView)
