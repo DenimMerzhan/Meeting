@@ -15,6 +15,8 @@
 		CF069DAC29EC2D3E005ED378 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CF069DAA29EC2D3E005ED378 /* LaunchScreen.storyboard */; };
 		CF1DC80829F0D46C001E2EAD /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1DC80729F0D46C001E2EAD /* CardView.swift */; };
 		CF1DC80A29F0DFC3001E2EAD /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1DC80929F0DFC3001E2EAD /* User.swift */; };
+		CFFD03E029F9003B000732AC /* CardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFD03DF29F9003B000732AC /* CardModel.swift */; };
+		CFFD03E529F90FEF000732AC /* LoadUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFD03E429F90FEF000732AC /* LoadUsers.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +30,8 @@
 		CF069DAD29EC2D3E005ED378 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CF1DC80729F0D46C001E2EAD /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		CF1DC80929F0DFC3001E2EAD /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		CFFD03DF29F9003B000732AC /* CardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardModel.swift; sourceTree = "<group>"; };
+		CFFD03E429F90FEF000732AC /* LoadUsers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadUsers.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,15 +66,41 @@
 			children = (
 				CF069D9F29EC2D3D005ED378 /* AppDelegate.swift */,
 				CF069DA129EC2D3D005ED378 /* SceneDelegate.swift */,
-				CF069DA329EC2D3D005ED378 /* ViewController.swift */,
-				CF1DC80929F0DFC3001E2EAD /* User.swift */,
-				CF1DC80729F0D46C001E2EAD /* CardView.swift */,
-				CF069DA529EC2D3E005ED378 /* Main.storyboard */,
+				CFFD03E229F90FB4000732AC /* Model */,
+				CFFD03E129F90FAD000732AC /* Controller */,
+				CFFD03E329F90FD7000732AC /* View */,
 				CF069DA829EC2D3E005ED378 /* Assets.xcassets */,
 				CF069DAA29EC2D3E005ED378 /* LaunchScreen.storyboard */,
 				CF069DAD29EC2D3E005ED378 /* Info.plist */,
 			);
 			path = Meeting;
+			sourceTree = "<group>";
+		};
+		CFFD03E129F90FAD000732AC /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				CF069DA329EC2D3D005ED378 /* ViewController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		CFFD03E229F90FB4000732AC /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				CF1DC80729F0D46C001E2EAD /* CardView.swift */,
+				CF1DC80929F0DFC3001E2EAD /* User.swift */,
+				CFFD03DF29F9003B000732AC /* CardModel.swift */,
+				CFFD03E429F90FEF000732AC /* LoadUsers.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		CFFD03E329F90FD7000732AC /* View */ = {
+			isa = PBXGroup;
+			children = (
+				CF069DA529EC2D3E005ED378 /* Main.storyboard */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -149,6 +179,8 @@
 				CF069DA029EC2D3D005ED378 /* AppDelegate.swift in Sources */,
 				CF1DC80A29F0DFC3001E2EAD /* User.swift in Sources */,
 				CF069DA229EC2D3D005ED378 /* SceneDelegate.swift in Sources */,
+				CFFD03E029F9003B000732AC /* CardModel.swift in Sources */,
+				CFFD03E529F90FEF000732AC /* LoadUsers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
