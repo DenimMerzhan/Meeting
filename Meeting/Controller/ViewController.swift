@@ -23,40 +23,60 @@ class ViewController: UIViewController {
     var usersArr = [User]()
     var indexUser = 0
     var indexCurrentImage = 0
-    var stopCard = false
     
+    var stopCard = false
     var center = CGPoint()
     var oddCard: CardView?
+    
     var honestCard: CardView?
     var cardModel = CardModel()
-    var users = Users()
     
-    var honest = false
+    var currentCard: CardView?
     
-    var scale = CGFloat(1)
+    
     override func viewDidLoad() {
         
         super.viewDidLoad()
         
-        usersArr = users.loadUsers()
+        usersArr = Users().loadUsers()
+
+        oddCard = createCard()
+        honestCard = createCard()
+        currentCard = oddCard
+
         
-//        buttonStackView.backgroundColor = .clear
-
-        self.oddCard = createCard()
-        self.honestCard = createCard()
-
         oddCard!.addGestureRecognizer(panGesture)
         oddCard!.addGestureRecognizer(tapGesture)
         self.view.addSubview(honestCard!)
         self.view.addSubview(oddCard!)
         self.view.bringSubviewToFront(buttonStackView)
-        
-        
-            
-
-        
-
     
+        
+    }
+    
+    
+    
+    @IBAction func buttonPressed(_ sender: UIButton) {
+        
+        var differenceX = CGFloat()
+        var differenceY = CGFloat(-150)
+        
+        if sender.restorationIdentifier == "Cancel" {
+            differenceX = -200
+        }else if sender.restorationIdentifier == "SuperLike" {
+            differenceY = -600
+        }else if sender.restorationIdentifier == "Like" {
+            differenceX = 200
+        }
+        
+        changeHeart(xFromCenter: differenceX, currentCard: currentCard!, yFromCenter: differenceY)
+        UIView.animate(withDuration: 0.4, delay: 0) {
+            
+            self.currentCard!.center = CGPoint(x: self.currentCard!.center.x + differenceX , y: self.currentCard!.center.y + differenceY )
+            self.currentCard!.transform = CGAffineTransform(rotationAngle: abs(differenceX) * 0.002)
+            self.currentCard!.alpha = 0
+            self.loadNewPeople(card: self.currentCard!)
+        }
         
     }
     
@@ -144,7 +164,7 @@ class ViewController: UIViewController {
                         self.loadNewPeople(card: card)
                         
                     }
-                }else if yFromCenter < -300 {
+                }else if yFromCenter < -250 {
                     
                     UIView.animate(withDuration: 0.22, delay: 0) {
                         card.center = CGPoint(x: card.center.x , y: card.center.y - 600 )
@@ -162,6 +182,7 @@ class ViewController: UIViewController {
                         card.transform = CGAffineTransform(rotationAngle: 0)
                         card.likHeartImage.isHidden = true
                         card.dislikeHeartImage.isHidden = true
+                        card.superLike.isHidden = true
                         
                     }
                 }
@@ -197,7 +218,7 @@ extension ViewController {
                 oddCard!.addGestureRecognizer(panGesture)
                 oddCard!.addGestureRecognizer(tapGesture)
                 honestCard = createCard()
-                
+                currentCard = oddCard!
                
                 view.addSubview(honestCard!)
                 view.sendSubviewToBack(honestCard!)
@@ -209,7 +230,7 @@ extension ViewController {
                 honestCard!.addGestureRecognizer(panGesture)
                 honestCard!.addGestureRecognizer(tapGesture)
                 oddCard = createCard()
-                
+                currentCard = honestCard!
                
                 view.addSubview(oddCard!)
                 view.sendSubviewToBack(oddCard!)
@@ -219,9 +240,6 @@ extension ViewController {
             }
             
             indexCurrentImage = 0
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-//                card.removeFromSuperview()
-//            }
             
             
         }
@@ -247,15 +265,21 @@ extension ViewController {
         
         
         if xFromCenter > 25 { /// Если пользователь перетаскивает вправо то появляется зеленое сердечко
+            
             currentCard.likHeartImage.tintColor = UIColor.green.withAlphaComponent(xFromCenter * 0.005)
             currentCard.likHeartImage.isHidden = false
             currentCard.dislikeHeartImage.isHidden = true
+            currentCard.superLike.isHidden = true
+            
         }else if xFromCenter < -25 { /// Если влево красное
             
             currentCard.dislikeHeartImage.tintColor = UIColor.red.withAlphaComponent(abs(xFromCenter) * 0.005)
             currentCard.dislikeHeartImage.isHidden = false
             currentCard.likHeartImage.isHidden = true
+            currentCard.superLike.isHidden = true
+            
         }else if yFromCenter < 0 {
+            
             currentCard.superLike.alpha = abs(yFromCenter) * 0.005
             currentCard.superLike.isHidden = false
             currentCard.dislikeHeartImage.isHidden = true
