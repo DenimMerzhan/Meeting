@@ -19,6 +19,7 @@ class ViewController: UIViewController {
     @IBOutlet var tapGesture: UITapGestureRecognizer!
     @IBOutlet weak var buttonStackView: UIStackView!
     
+    @IBOutlet weak var preferencesButton: UIButton!
     
     var usersArr = [User]()
     var indexUser = 0
@@ -37,6 +38,7 @@ class ViewController: UIViewController {
         
         super.viewDidLoad()
         
+        preferencesButton.titleLabel?.text = ""
         usersArr = Users().loadUsers()
 
         oddCard = createCard()

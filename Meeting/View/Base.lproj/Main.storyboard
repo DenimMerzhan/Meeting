@@ -69,6 +69,25 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="R14-rZ-JrA">
+                                <rect key="frame" x="338" y="63" width="39" height="35"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="tintColor" systemColor="systemGray2Color"/>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" title="Button" image="gearshape" catalog="system">
+                                    <attributedString key="attributedTitle">
+                                        <fragment content="-">
+                                            <attributes>
+                                                <font key="NSFont" metaFont="toolTip"/>
+                                                <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                            </attributes>
+                                        </fragment>
+                                    </attributedString>
+                                </state>
+                                <buttonConfiguration key="configuration" style="plain" image="gearshape" catalog="system">
+                                    <color key="baseForegroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </buttonConfiguration>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -87,6 +106,7 @@
                     <connections>
                         <outlet property="buttonStackView" destination="t4n-2B-dJj" id="Vfr-Jo-tH7"/>
                         <outlet property="panGesture" destination="nVL-eb-bzh" id="uUv-Je-A4n"/>
+                        <outlet property="preferencesButton" destination="R14-rZ-JrA" id="Zle-zh-ZZ1"/>
                         <outlet property="tapGesture" destination="2Ma-FL-cJ8" id="wbh-Ig-Mxq"/>
                     </connections>
                 </viewController>
@@ -168,12 +188,16 @@
         <image name="Fire" width="33.333332061767578" height="33.333332061767578"/>
         <image name="Message" width="32.333332061767578" height="33.333332061767578"/>
         <image name="Preferences" width="50" height="28.333333969116211"/>
+        <image name="gearshape" catalog="system" width="128" height="123"/>
         <image name="imgonline-com-ua-Replace-color-CZNdjiapwUJJA" width="50" height="47.666667938232422"/>
         <systemColor name="opaqueSeparatorColor">
             <color red="0.77647058823529413" green="0.77647058823529413" blue="0.78431372549019607" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemGray2Color">
+            <color red="0.68235294117647061" green="0.68235294117647061" blue="0.69803921568627447" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
