@@ -13,6 +13,5 @@ struct User {
     
     var name = String()
     var iD: String?
-    var imageArr = [UIImage()]
     
 }

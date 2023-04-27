@@ -30,7 +30,6 @@ class ViewController: UIViewController {
     
     var honestCard: CardView?
     var cardModel = CardModel()
-    
     var currentCard: CardView?
     
     
@@ -55,6 +54,9 @@ class ViewController: UIViewController {
     }
     
     
+    
+    
+//MARK: -  Однак из кнопок лайка была нажата
     
     @IBAction func buttonPressed(_ sender: UIButton) {
         
@@ -192,10 +194,6 @@ class ViewController: UIViewController {
     
     
 }
-
-
-
-
 
 
 
