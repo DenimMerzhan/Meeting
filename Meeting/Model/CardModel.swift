@@ -27,12 +27,15 @@ struct CardModel {
         
         let likeHeart = UIImageView(frame: CGRect(x: 0.0, y: 8.0, width: 106, height: 79))
         let dislikeHeart = UIImageView(frame: CGRect(x: 234, y: 0.0, width: 127, height: 93))
+        let superLike = UIImageView(frame: CGRect(x: 117, y: 8, width: 130, height: 100))
         
         likeHeart.image = UIImage(named: "LikeHeart")!
+        superLike.image = UIImage(named: "SuperLike")
         dislikeHeart.image = UIImage(named: "DislikeHeart")!
         
         likeHeart.isHidden = true
         dislikeHeart.isHidden = true
+        superLike.isHidden = true
         
         
         let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 361, height: 603))
@@ -47,12 +50,13 @@ struct CardModel {
         gradient.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]
         imageView.layer.insertSublayer(gradient, at: 0)
                     
-        let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,label: label,imageUser: imageView,imageArr: image)
+        let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,label: label,imageUser: imageView,imageArr: image,superLike: superLike)
         
         card.addSubview(imageView)
         card.addSubview(likeHeart)
         card.addSubview(dislikeHeart)
         card.addSubview(label)
+        card.addSubview(superLike)
       
         
         
@@ -73,8 +77,9 @@ struct CardModel {
         
         let likeHeart = UIImageView(frame: CGRect(x: 0.0, y: 8.0, width: 106, height: 79))
         let dislikeHeart = UIImageView(frame: CGRect(x: 234, y: 0.0, width: 127, height: 93))
-       
-        let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,label: label,imageUser: nil,imageArr: nil)
+        let superLike = UIImageView(frame: CGRect(x: 117, y: 8, width: 150, height: 100))
+        
+        let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,label: label,imageUser: nil,imageArr: nil,superLike:superLike)
         
         
         card.addSubview(label)

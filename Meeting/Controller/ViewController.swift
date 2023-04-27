@@ -111,12 +111,10 @@ class ViewController: UIViewController {
             let point = sender.translation(in: card) /// Отклонение от начального положения по x и y  в зависимости от того куда перетащил палец пользователь
             
             let xFromCenter = card.center.x - view.center.x
+            let yFromCenter = card.center.y - view.center.y
             
-            changeHeart(xFromCenter: xFromCenter, currentCard: card)
+            changeHeart(xFromCenter: xFromCenter, currentCard: card,yFromCenter: yFromCenter)
             
-            if abs(xFromCenter) > 50 { /// Уменьшаем параметр что бы уменьшить View
-                scale = scale - 0.003
-            }
             
             card.center = CGPoint(x: view.center.x + point.x , y: view.center.y + point.y ) /// Перемящем View взависимости от движения пальца
             card.transform = CGAffineTransform(rotationAngle: abs(xFromCenter) * 0.002) /// Поворачиваем View, внутри  rotationAngle радианты а не градусы
@@ -146,7 +144,17 @@ class ViewController: UIViewController {
                         self.loadNewPeople(card: card)
                         
                     }
-                }else { /// Если не ушла то возвращаем в центр
+                }else if yFromCenter < -300 {
+                    
+                    UIView.animate(withDuration: 0.22, delay: 0) {
+                        card.center = CGPoint(x: card.center.x , y: card.center.y - 600 )
+                        card.alpha = 0
+                        self.loadNewPeople(card: card)
+                    }
+                }
+                
+                
+                else { /// Если не ушла то возвращаем в центр
                     
                     UIView.animate(withDuration: 0.2, delay: 0) { /// Вызывает анимацию длительностью 0.3 секунды после анимации мы выставляем card view  на первоначальную позицию
                         
@@ -235,7 +243,7 @@ extension ViewController {
 
 extension ViewController {
     
-    func changeHeart(xFromCenter:CGFloat,currentCard: CardView){ /// Функция обработки сердец
+    func changeHeart(xFromCenter:CGFloat,currentCard: CardView,yFromCenter:CGFloat){ /// Функция обработки сердец
         
         
         if xFromCenter > 25 { /// Если пользователь перетаскивает вправо то появляется зеленое сердечко
@@ -247,7 +255,11 @@ extension ViewController {
             currentCard.dislikeHeartImage.tintColor = UIColor.red.withAlphaComponent(abs(xFromCenter) * 0.005)
             currentCard.dislikeHeartImage.isHidden = false
             currentCard.likHeartImage.isHidden = true
-        }else {
+        }else if yFromCenter < 0 {
+            currentCard.superLike.alpha = abs(yFromCenter) * 0.005
+            currentCard.superLike.isHidden = false
+            currentCard.dislikeHeartImage.isHidden = true
+            currentCard.likHeartImage.isHidden = true
             
         }
                 
