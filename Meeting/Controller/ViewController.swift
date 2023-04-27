@@ -29,15 +29,18 @@ class ViewController: UIViewController {
     var oddCard: CardView?
     var honestCard: CardView?
     var cardModel = CardModel()
+    var users = Users()
     
-
     var honest = false
     
     var scale = CGFloat(1)
     override func viewDidLoad() {
         
         super.viewDidLoad()
-        buttonStackView.backgroundColor = .clear
+        
+        usersArr = users.loadUsers()
+        
+//        buttonStackView.backgroundColor = .clear
 
         self.oddCard = createCard()
         self.honestCard = createCard()
@@ -47,7 +50,6 @@ class ViewController: UIViewController {
         self.view.addSubview(honestCard!)
         self.view.addSubview(oddCard!)
         self.view.bringSubviewToFront(buttonStackView)
-        
         
         
             
@@ -188,11 +190,11 @@ extension ViewController {
                 oddCard!.addGestureRecognizer(tapGesture)
                 honestCard = createCard()
                 
-                if honestCard != nil {
-                    view.addSubview(honestCard!)
-                    view.sendSubviewToBack(honestCard!)
-                    honestCard?.alpha = 1
-                }
+               
+                view.addSubview(honestCard!)
+                view.sendSubviewToBack(honestCard!)
+                honestCard?.alpha = 1
+                
                 
             }else {
                 
@@ -200,20 +202,24 @@ extension ViewController {
                 honestCard!.addGestureRecognizer(tapGesture)
                 oddCard = createCard()
                 
-                if oddCard != nil {
-                    view.addSubview(oddCard!)
-                    view.sendSubviewToBack(oddCard!)
-                    oddCard?.alpha = 1
-                }
+               
+                view.addSubview(oddCard!)
+                view.sendSubviewToBack(oddCard!)
+                oddCard?.alpha = 1
+                
                 
             }
             
             indexCurrentImage = 0
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                card.removeFromSuperview()
-            }
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+//                card.removeFromSuperview()
+//            }
             
             
+        }
+        
+        else {
+            buttonStackView.isHidden = true
         }
     }
     
@@ -232,15 +238,17 @@ extension ViewController {
     func changeHeart(xFromCenter:CGFloat,currentCard: CardView){ /// Функция обработки сердец
         
         
-        if xFromCenter > 0 { /// Если пользователь перетаскивает вправо то появляется зеленое сердечко
+        if xFromCenter > 25 { /// Если пользователь перетаскивает вправо то появляется зеленое сердечко
             currentCard.likHeartImage.tintColor = UIColor.green.withAlphaComponent(xFromCenter * 0.005)
             currentCard.likHeartImage.isHidden = false
             currentCard.dislikeHeartImage.isHidden = true
-        }else if xFromCenter < 0 { /// Если влево красное
+        }else if xFromCenter < -25 { /// Если влево красное
             
             currentCard.dislikeHeartImage.tintColor = UIColor.red.withAlphaComponent(abs(xFromCenter) * 0.005)
             currentCard.dislikeHeartImage.isHidden = false
             currentCard.likHeartImage.isHidden = true
+        }else {
+            
         }
                 
         
@@ -287,8 +295,6 @@ extension ViewController {
     
     
     func createEmptyCard() -> CardView {
-        
-        buttonStackView.isHidden = true
         
         let card = cardModel.createEmptyCard()
         

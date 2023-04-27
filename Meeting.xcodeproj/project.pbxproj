@@ -16,7 +16,7 @@
 		CF1DC80829F0D46C001E2EAD /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1DC80729F0D46C001E2EAD /* CardView.swift */; };
 		CF1DC80A29F0DFC3001E2EAD /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1DC80929F0DFC3001E2EAD /* User.swift */; };
 		CFFD03E029F9003B000732AC /* CardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFD03DF29F9003B000732AC /* CardModel.swift */; };
-		CFFD03E529F90FEF000732AC /* LoadUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFD03E429F90FEF000732AC /* LoadUsers.swift */; };
+		CFFD03E529F90FEF000732AC /* Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFD03E429F90FEF000732AC /* Users.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,7 +31,7 @@
 		CF1DC80729F0D46C001E2EAD /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		CF1DC80929F0DFC3001E2EAD /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		CFFD03DF29F9003B000732AC /* CardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardModel.swift; sourceTree = "<group>"; };
-		CFFD03E429F90FEF000732AC /* LoadUsers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadUsers.swift; sourceTree = "<group>"; };
+		CFFD03E429F90FEF000732AC /* Users.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Users.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,7 +90,7 @@
 				CF1DC80729F0D46C001E2EAD /* CardView.swift */,
 				CF1DC80929F0DFC3001E2EAD /* User.swift */,
 				CFFD03DF29F9003B000732AC /* CardModel.swift */,
-				CFFD03E429F90FEF000732AC /* LoadUsers.swift */,
+				CFFD03E429F90FEF000732AC /* Users.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -180,7 +180,7 @@
 				CF1DC80A29F0DFC3001E2EAD /* User.swift in Sources */,
 				CF069DA229EC2D3D005ED378 /* SceneDelegate.swift in Sources */,
 				CFFD03E029F9003B000732AC /* CardModel.swift in Sources */,
-				CFFD03E529F90FEF000732AC /* LoadUsers.swift in Sources */,
+				CFFD03E529F90FEF000732AC /* Users.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
