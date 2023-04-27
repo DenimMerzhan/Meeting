@@ -13,18 +13,19 @@ class CardView: UIView {
     var imageUser: UIImageView?
     var imageArr: [UIImage]?
     var nameUser = UILabel()
+    
     var likHeartImage = UIImageView()
     var dislikeHeartImage = UIImageView()
-    var label = UILabel()
+    
     var superLike = UIImageView()
     var age = UILabel()
     var progressBar = [UIView]()
     
-    init(frame: CGRect, heartLikeImage: UIImageView = UIImageView(), heartDislikeImage: UIImageView = UIImageView(),label: UILabel,imageUser: UIImageView?,imageArr: [UIImage]?,superLike: UIImageView,age:UILabel) {
+    init(frame: CGRect, heartLikeImage: UIImageView = UIImageView(), heartDislikeImage: UIImageView = UIImageView(),nameUser: UILabel,imageUser: UIImageView?,imageArr: [UIImage]?,superLike: UIImageView,age:UILabel) {
         
         self.likHeartImage = heartLikeImage
         self.dislikeHeartImage = heartDislikeImage
-        self.label = label
+        self.nameUser = nameUser
         self.imageUser = imageUser
         self.imageArr = imageArr
         self.superLike = superLike

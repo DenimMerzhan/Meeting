@@ -91,30 +91,20 @@ class ViewController: UIViewController {
     @IBAction func cardTap(_ sender: UITapGestureRecognizer) {
 
 
-        var coordinates = CGFloat()
-        var currentImage = UIImageView()
-        var imageArr = [UIImage]()
-
-        if sender.view == honestCard {
-          
-            coordinates = sender.location(in: honestCard!).x
-            currentImage = honestCard!.imageUser!
-            imageArr = honestCard!.imageArr!
-        }else {
-           
-            coordinates = sender.location(in: oddCard!).x
-            currentImage = oddCard!.imageUser!
-            imageArr = oddCard!.imageArr!
-        }
+        let coordinates = sender.location(in: currentCard!).x
+        let currentImage = currentCard!.imageUser!
+        let imageArr = currentCard!.imageArr!
         
 
         if coordinates > 220 && indexCurrentImage < imageArr.count - 1 {
             indexCurrentImage += 1
-            currentImage.image = imageArr[indexCurrentImage]
+            currentCard!.progressBar[indexCurrentImage-1].backgroundColor = .gray
         }else if  coordinates < 180 && indexCurrentImage > 0  {
             indexCurrentImage -= 1
-            currentImage.image = imageArr[indexCurrentImage]
+            currentCard!.progressBar[indexCurrentImage+1].backgroundColor = .gray
         }
+        currentCard!.progressBar[indexCurrentImage].backgroundColor = .white
+        currentImage.image = imageArr[indexCurrentImage]
     }
     
     

@@ -64,7 +64,7 @@ struct CardModel {
         
        
         
-        let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,label: nameLabel,imageUser: imageView,imageArr: image,superLike: superLike,age: ageLabel)
+        let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,nameUser: nameLabel,imageUser: imageView,imageArr: image,superLike: superLike,age: ageLabel)
         
         
         
@@ -101,12 +101,13 @@ struct CardModel {
             
             if i == 0 {
                 newView.frame = CGRect(x: 5, y: 10, width: mostWidth, height: 4)
+                newView.backgroundColor = .white
             }else {
                 let xCoor = viewArr[i-1].frame.maxX
                 newView.frame = CGRect(x: xCoor + 7, y: 10, width: mostWidth, height: 4)
+                newView.backgroundColor = .gray
             }
             
-            newView.backgroundColor = .gray
             newView.layer.cornerRadius = 2
             newView.layer.masksToBounds = true
             newView.alpha = 0.6
@@ -136,7 +137,7 @@ struct CardModel {
         let dislikeHeart = UIImageView(frame: CGRect(x: 234, y: 0.0, width: 127, height: 93))
         let superLike = UIImageView(frame: CGRect(x: 117, y: 8, width: 150, height: 100))
         
-        let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,label: label,imageUser: nil,imageArr: nil,superLike:superLike, age: label)
+        let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,nameUser: label,imageUser: nil,imageArr: nil,superLike:superLike, age: label)
         
         card.addSubview(label)
         
