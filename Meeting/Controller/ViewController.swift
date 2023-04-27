@@ -299,24 +299,27 @@ extension ViewController {
 extension ViewController {
     
     
-    func createDataCard() -> (textName: String?, image: [UIImage]?){
+    func createDataCard() -> (textName: String?, image: [UIImage]?,age: Int?){
+        
+        
         
         if indexUser < usersArr.count {
-            return (usersArr[indexUser].name, usersArr[indexUser].imageArr)
+            let currentUser = usersArr[indexUser]
+            return (currentUser.name, currentUser.imageArr,currentUser.age)
         }else {
             print("Пользователи закончились")
-            return (nil,nil)
+            return (nil,nil,nil)
         }
         
     }
     
     func createCard() -> CardView {
         
-        
-        if let textName = createDataCard().textName, let image = createDataCard().image {
+        let data = createDataCard()
+        if let textName = data.textName, let image = data.image,let age = data.age  {
             
             indexUser += 1
-            let card = cardModel.createCard(textName: textName, image: image)
+            let card = cardModel.createCard(textName: textName, image: image,age:age)
             center = card.center
             
             return card

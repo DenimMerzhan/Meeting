@@ -17,8 +17,9 @@ class CardView: UIView {
     var dislikeHeartImage = UIImageView()
     var label = UILabel()
     var superLike = UIImageView()
+    var age = UILabel()
     
-    init(frame: CGRect, heartLikeImage: UIImageView = UIImageView(), heartDislikeImage: UIImageView = UIImageView(),label: UILabel,imageUser: UIImageView?,imageArr: [UIImage]?,superLike: UIImageView) {
+    init(frame: CGRect, heartLikeImage: UIImageView = UIImageView(), heartDislikeImage: UIImageView = UIImageView(),label: UILabel,imageUser: UIImageView?,imageArr: [UIImage]?,superLike: UIImageView,age:UILabel) {
         
         self.likHeartImage = heartLikeImage
         self.dislikeHeartImage = heartDislikeImage
@@ -26,6 +27,7 @@ class CardView: UIView {
         self.imageUser = imageUser
         self.imageArr = imageArr
         self.superLike = superLike
+        self.age = age
         
         super.init(frame: frame)
     }

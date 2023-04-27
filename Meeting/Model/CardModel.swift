@@ -15,17 +15,28 @@ struct CardModel {
     var usersArr = [User]()
     
     
-    func createCard(textName:String,image: [UIImage]) -> CardView {
+    func createCard(textName:String,image: [UIImage],age: Int) -> CardView {
         
         
         let frame =  CGRect(x: 16, y: 118, width: 361, height: 603)
         
-        let label = UILabel(frame: CGRect(x: 10, y: 480, width: 331, height: 48.0))
-        label.text = textName
-        label.font = .boldSystemFont(ofSize: 48)
-        label.textColor = .white
         
-        let likeHeart = UIImageView(frame: CGRect(x: 0.0, y: 8.0, width: 106, height: 79))
+        let nameLabel = UILabel() /// Имя
+        let point = CGPoint(x: 10, y: 480)
+        nameLabel.text = textName
+        nameLabel.font = .boldSystemFont(ofSize: 48)
+        nameLabel.frame = CGRect(origin: point, size: nameLabel.sizeThatFits(CGSize(width: CGFloat.infinity, height: 48))) /// Расширяем рамку в зависимости от размера текста
+        nameLabel.textColor = .white
+        
+        
+        let ageLabel = UILabel(frame: CGRect(x: nameLabel.frame.maxX + 10, y: 485, width: 100, height: 48.0)) /// Возраст, ставим по позиции x относительно имени
+        ageLabel.text = String(age)
+        ageLabel.font = .systemFont(ofSize: 48)
+        ageLabel.textColor = .white
+        
+        
+        
+        let likeHeart = UIImageView(frame: CGRect(x: 0.0, y: 8.0, width: 106, height: 79)) /// Картинки сердец
         let dislikeHeart = UIImageView(frame: CGRect(x: 234, y: 0.0, width: 127, height: 93))
         let superLike = UIImageView(frame: CGRect(x: 117, y: 8, width: 130, height: 100))
         
@@ -38,25 +49,27 @@ struct CardModel {
         superLike.isHidden = true
         
         
-        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 361, height: 603))
+        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 361, height: 603)) /// Фото
         imageView.image = image[0]
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true /// Ограничиваем фото в размерах
     
         
-        let gradient = CAGradientLayer() /// Создаем градиент
+        let gradient = CAGradientLayer() ///  Градиент
         gradient.frame = CGRect(x: 0, y: 400, width: 361, height: 203)
         gradient.locations = [0.0, 1.0]
         gradient.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]
         imageView.layer.insertSublayer(gradient, at: 0)
                     
-        let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,label: label,imageUser: imageView,imageArr: image,superLike: superLike)
+        
+        let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,label: nameLabel,imageUser: imageView,imageArr: image,superLike: superLike,age: ageLabel)
         
         card.addSubview(imageView)
         card.addSubview(likeHeart)
         card.addSubview(dislikeHeart)
-        card.addSubview(label)
+        card.addSubview(nameLabel)
         card.addSubview(superLike)
+        card.addSubview(ageLabel)
       
         
         
@@ -83,7 +96,7 @@ struct CardModel {
         let dislikeHeart = UIImageView(frame: CGRect(x: 234, y: 0.0, width: 127, height: 93))
         let superLike = UIImageView(frame: CGRect(x: 117, y: 8, width: 150, height: 100))
         
-        let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,label: label,imageUser: nil,imageArr: nil,superLike:superLike)
+        let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,label: label,imageUser: nil,imageArr: nil,superLike:superLike, age: label)
         
         card.addSubview(label)
         
