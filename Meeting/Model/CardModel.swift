@@ -60,9 +60,13 @@ struct CardModel {
         gradient.locations = [0.0, 1.0]
         gradient.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]
         imageView.layer.insertSublayer(gradient, at: 0)
-                    
+        
+        
+       
         
         let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,label: nameLabel,imageUser: imageView,imageArr: image,superLike: superLike,age: ageLabel)
+        
+        
         
         card.addSubview(imageView)
         card.addSubview(likeHeart)
@@ -70,7 +74,9 @@ struct CardModel {
         card.addSubview(nameLabel)
         card.addSubview(superLike)
         card.addSubview(ageLabel)
-      
+        
+        let progressBar = createProgressBar(countPhoto: image.count, card: card)
+        card.progressBar = progressBar
         
         
         
@@ -79,6 +85,40 @@ struct CardModel {
         
         
     }
+ 
+ 
+    
+//MARK: - Создание ProgressBar
+    
+    func createProgressBar(countPhoto: Int,card: CardView) -> [UIView] {
+        
+        var viewArr = [UIView]()
+        let mostWidth = (card.frame.size.width - 5 - CGFloat(countPhoto * 7)) / CGFloat(countPhoto) /// Расчитываем длинну каждой полоски
+        
+        for i in 0...countPhoto - 1 {
+            
+            let newView = UIView()
+            
+            if i == 0 {
+                newView.frame = CGRect(x: 5, y: 10, width: mostWidth, height: 4)
+            }else {
+                let xCoor = viewArr[i-1].frame.maxX
+                newView.frame = CGRect(x: xCoor + 7, y: 10, width: mostWidth, height: 4)
+            }
+            
+            newView.backgroundColor = .gray
+            newView.layer.cornerRadius = 2
+            newView.layer.masksToBounds = true
+            newView.alpha = 0.6
+            viewArr.append(newView)
+            card.addSubview(newView)
+        }
+        
+        
+        return viewArr
+    }
+    
+//MARK: - Создаение пустой карты
     
     
     func createEmptyCard() -> CardView {

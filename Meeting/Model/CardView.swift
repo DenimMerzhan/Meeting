@@ -18,6 +18,7 @@ class CardView: UIView {
     var label = UILabel()
     var superLike = UIImageView()
     var age = UILabel()
+    var progressBar = [UIView]()
     
     init(frame: CGRect, heartLikeImage: UIImageView = UIImageView(), heartDislikeImage: UIImageView = UIImageView(),label: UILabel,imageUser: UIImageView?,imageArr: [UIImage]?,superLike: UIImageView,age:UILabel) {
         
