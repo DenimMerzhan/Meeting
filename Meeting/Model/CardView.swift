@@ -13,24 +13,19 @@ class CardView: UIView {
     
     var imageUser: UIImageView?
     var imageArr: [UIImage]?
-    var nameUser = UILabel()
     
     var likHeartImage = UIImageView()
     var dislikeHeartImage = UIImageView()
-    
     var superLike = UIImageView()
-    var age = UILabel()
-    var progressBar = [UIView]()
     
-    init(frame: CGRect, heartLikeImage: UIImageView = UIImageView(), heartDislikeImage: UIImageView = UIImageView(),nameUser: UILabel,imageUser: UIImageView?,imageArr: [UIImage]?,superLike: UIImageView,age:UILabel) {
+    init(frame: CGRect, heartLikeImage: UIImageView = UIImageView(), heartDislikeImage: UIImageView = UIImageView(),imageUser: imageUserView?,imageArr: [UIImage]?,superLike: UIImageView) {
         
         self.likHeartImage = heartLikeImage
         self.dislikeHeartImage = heartDislikeImage
-        self.nameUser = nameUser
         self.imageUser = imageUser
         self.imageArr = imageArr
         self.superLike = superLike
-        self.age = age
+        
         
         super.init(frame: frame)
     }
@@ -39,4 +34,26 @@ class CardView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+}
+
+
+class imageUserView: UIImageView {
+    
+    var nameUser = UILabel()
+    var age = UILabel()
+    var progressBar = [UIView]()
+    
+    
+    init(frame:CGRect, nameUser: UILabel = UILabel(), age: UILabel = UILabel(), progressBar: [UIView] = [UIView]()) {
+        
+        self.nameUser = nameUser
+        self.age = age
+        self.progressBar = progressBar
+        
+        super.init(frame: frame)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 }

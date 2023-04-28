@@ -93,33 +93,30 @@ class ViewController: UIViewController {
     
     @IBAction func cardTap(_ sender: UITapGestureRecognizer) {
 
-        var nextCard: CardView?
-        
-        if currentCard == honestCard {
-            nextCard = oddCard
-        }else {
-            nextCard = honestCard
-        }
         
         let coordinates = sender.location(in: currentCard!).x
-        let currentImage = currentCard!.imageUser!
+        let currentImage = currentCard!.imageUser! as! imageUserView
         let imageArr = currentCard!.imageArr!
-        
 
+        
 
         if coordinates > 220 && indexCurrentImage < imageArr.count - 1 {
             indexCurrentImage += 1
-            currentCard!.progressBar[indexCurrentImage-1].backgroundColor = .gray
+            currentImage.progressBar[indexCurrentImage-1].backgroundColor = .gray
         }else if  coordinates < 180 && indexCurrentImage > 0  {
             indexCurrentImage -= 1
-            currentCard!.progressBar[indexCurrentImage+1].backgroundColor = .gray
+            currentImage.progressBar[indexCurrentImage+1].backgroundColor = .gray
         }else if indexCurrentImage == 0 || indexCurrentImage == imageArr.count - 1 {
             currentCard?.backgroundColor = .white
-            cardModel.createAnimate(indexImage: indexCurrentImage, currentCard: currentCard!,nextCard: nextCard!)
+            cardModel.createAnimate(indexImage: indexCurrentImage, currentCard: currentCard!)
+           
+        }
+        
+        AudioServicesPlayAlertSoundWithCompletion(SystemSoundID(1161)) {
             
         }
         
-        currentCard!.progressBar[indexCurrentImage].backgroundColor = .white
+        currentImage.progressBar[indexCurrentImage].backgroundColor = .white
         currentImage.image = imageArr[indexCurrentImage]
         
 }
@@ -158,7 +155,7 @@ class ViewController: UIViewController {
             
             if sender.state == UIGestureRecognizer.State.ended { ///  Когда пользователь отпустил палец
                 
-                if xFromCenter > 150 { /// Если карта ушла за пределы 215 пунктов то лайкаем пользователя
+                if xFromCenter > 120 { /// Если карта ушла за пределы 215 пунктов то лайкаем пользователя
                     
                     UIView.animate(withDuration: 0.2, delay: 0) {
                         card.center = CGPoint(x: card.center.x + 150 , y: card.center.y + 100 )
@@ -167,7 +164,7 @@ class ViewController: UIViewController {
                         
                     }
                     
-                }else if abs(xFromCenter) > 150 { /// Дизлайк пользователя
+                }else if abs(xFromCenter) > 120 { /// Дизлайк пользователя
                     UIView.animate(withDuration: 0.22, delay: 0) {
                         card.center = CGPoint(x: card.center.x - 150 , y: card.center.y + 100 )
                         card.alpha = 0

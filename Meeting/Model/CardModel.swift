@@ -51,7 +51,7 @@ struct CardModel {
         superLike.isHidden = true
         
         
-        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 361, height: 603)) /// Фото
+        let imageView = imageUserView(frame: CGRect(x: 0, y: 0, width: 361, height: 603),nameUser: nameLabel,age: ageLabel)
         imageView.image = image[0]
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true /// Ограничиваем фото в размерах
@@ -66,19 +66,19 @@ struct CardModel {
         
        
         
-        let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,nameUser: nameLabel,imageUser: imageView,imageArr: image,superLike: superLike,age: ageLabel)
+        let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,imageUser: imageView,imageArr: image,superLike: superLike)
         
         
         
         card.addSubview(imageView)
+        imageView.addSubview(nameLabel)
+        imageView.addSubview(ageLabel)
         card.addSubview(likeHeart)
         card.addSubview(dislikeHeart)
-        card.addSubview(nameLabel)
         card.addSubview(superLike)
-        card.addSubview(ageLabel)
         
-        let progressBar = createProgressBar(countPhoto: image.count, card: card)
-        card.progressBar = progressBar
+        let progressBar = createProgressBar(countPhoto: image.count, image: imageView)
+        imageView.progressBar = progressBar
         
         
         
@@ -92,34 +92,39 @@ struct CardModel {
     
 //MARK: - Создание ProgressBar
     
-    func createProgressBar(countPhoto: Int,card: CardView) -> [UIView] {
+    func createProgressBar(countPhoto: Int,image: imageUserView) -> [UIView] { /// Создаем кучу одинаковых View
         
         var viewArr = [UIView]()
-        let mostWidth = (card.frame.size.width - 5 - CGFloat(countPhoto * 7)) / CGFloat(countPhoto) /// Расчитываем длинну каждой полоски
+        let mostWidth = (image.frame.size.width - 5 - CGFloat(countPhoto * 7)) / CGFloat(countPhoto) /// Расчитываем длинну каждой полоски
         
         for i in 0...countPhoto - 1 {
             
             let newView = UIView()
             
-            if i == 0 {
+            if i == 0 { /// Если первый элемент то задаем начальную позицию
                 newView.frame = CGRect(x: 5, y: 10, width: mostWidth, height: 4)
                 newView.backgroundColor = .white
             }else {
-                let xCoor = viewArr[i-1].frame.maxX
-                newView.frame = CGRect(x: xCoor + 7, y: 10, width: mostWidth, height: 4)
+                let xCoor = viewArr[i-1].frame.maxX /// Узнаем где кончилась предыдущая полоска
+                newView.frame = CGRect(x: xCoor + 7, y: 10, width: mostWidth, height: 4) /// Добавляем к ней 7 пунктов и создаем новую
                 newView.backgroundColor = .gray
             }
             
-            newView.layer.cornerRadius = 2
-            newView.layer.masksToBounds = true
+            newView.layer.cornerRadius = 2 /// Закругление
+            newView.layer.masksToBounds = true /// Обрезание слоев по границам
             newView.alpha = 0.6
-            viewArr.append(newView)
-            card.addSubview(newView)
+            viewArr.append(newView) /// Добавляем в архи полосок
+            image.addSubview(newView)
         }
         
         
         return viewArr
     }
+    
+    
+    
+    
+    
     
 //MARK: - Создаение пустой карты
     
@@ -139,7 +144,7 @@ struct CardModel {
         let dislikeHeart = UIImageView(frame: CGRect(x: 234, y: 0.0, width: 127, height: 93))
         let superLike = UIImageView(frame: CGRect(x: 117, y: 8, width: 150, height: 100))
         
-        let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,nameUser: label,imageUser: nil,imageArr: nil,superLike:superLike, age: label)
+        let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,imageUser: nil,imageArr: nil,superLike:superLike)
         
         card.addSubview(label)
         
@@ -147,18 +152,19 @@ struct CardModel {
     }
     
     
+    
+    
+    
+    
 //MARK: - Создание анимации на последней карты
     
-    func createAnimate(indexImage:Int,currentCard: CardView,nextCard: CardView){
+    func createAnimate(indexImage:Int,currentCard: CardView){
         
-        let imageUser = currentCard.imageUser!
-        let name = currentCard.nameUser
-        let age = currentCard.age
         
         var firstCornerY = CGFloat()
         var secondCornerY = CGFloat()
         
-        if indexImage == 0 {
+        if indexImage == 0 { /// Если фото первое то поворачиваем в лево
             firstCornerY = -1 * 0.2
             secondCornerY = 1 * 0.2
         }else {
@@ -167,28 +173,20 @@ struct CardModel {
         }
         
         
-        let layer = imageUser.layer
-        imageUser.addSubview(name)
-        imageUser.addSubview(age)
+        let layer = currentCard.imageUser!.layer /// Создаем ссылку на слой imageUser
         
         var rotationAndPerspectiveTransform : CATransform3D = CATransform3DIdentity
         rotationAndPerspectiveTransform.m34 = 1.0 / -1000
-        rotationAndPerspectiveTransform = CATransform3DRotate(rotationAndPerspectiveTransform, 0.15, 0.0,firstCornerY, 0.0)
-        layer.transform = CATransform3DIdentity
+        rotationAndPerspectiveTransform = CATransform3DRotate(rotationAndPerspectiveTransform, 0.15, 0.0,firstCornerY, 0.0) /// Поворачиваем t на угол в радиантах вокруг осей x y z
         layer.transform = rotationAndPerspectiveTransform
         
         
-        
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.1) {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.1) { /// Через некоторое время возвращаем изображение в прежнюю форму
 
             rotationAndPerspectiveTransform = CATransform3DRotate(rotationAndPerspectiveTransform, 0.15, 0.0, secondCornerY, 0.0)
             layer.transform = rotationAndPerspectiveTransform
         }
 
-        
-        AudioServicesPlayAlertSoundWithCompletion(SystemSoundID(kSystemSoundID_Vibrate)) {
-            
-        }
         
         
     }
