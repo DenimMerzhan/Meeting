@@ -7,6 +7,8 @@
 
 import Foundation
 import UIKit
+import AudioToolbox
+
 
 
 struct CardModel {
@@ -142,6 +144,43 @@ struct CardModel {
         card.addSubview(label)
         
         return card
+    }
+    
+    
+//MARK: - Создание анимации на последней карты
+    
+    func createAnimate(indexImage:Int,currentCard: CardView){
+        
+        let transformLayer = CATransformLayer()
+       
+        var perspective = CATransform3DIdentity
+        
+        if indexImage == 0 {
+            perspective.m14 = 1 / 4000
+        }else {
+            perspective.m14 = -1 / 4000
+        }
+        
+        transformLayer.transform = perspective
+        
+        transformLayer.addSublayer(currentCard.imageUser!.layer)
+        currentCard.layer.addSublayer(transformLayer)
+        currentCard.imageUser!.layer.transform = CATransform3DMakeRotation(-0.2, -1, 0.0, 0)
+        currentCard.backgroundColor = .white
+    
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.05) {
+            perspective.m14 = 0
+            transformLayer.transform = perspective
+            currentCard.imageUser!.layer.transform = CATransform3DMakeRotation(0.2, 1, 0.0, 0)
+            
+        }
+        
+        AudioServicesPlayAlertSoundWithCompletion(SystemSoundID(kSystemSoundID_Vibrate)) {
+            
+        }
+        
+        
     }
     
 }

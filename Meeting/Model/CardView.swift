@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 
+
 class CardView: UIView {
     
     var imageUser: UIImageView?

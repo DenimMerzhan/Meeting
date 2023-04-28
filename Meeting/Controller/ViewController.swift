@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AudioToolbox
 
 class ViewController: UIViewController {
     
@@ -58,7 +59,7 @@ class ViewController: UIViewController {
     
     
     
-//MARK: -  Однак из кнопок лайка была нажата
+//MARK: -  Одна из кнопок лайка была нажата
     
     @IBAction func buttonPressed(_ sender: UIButton) {
         
@@ -98,16 +99,22 @@ class ViewController: UIViewController {
         let imageArr = currentCard!.imageArr!
         
 
+
         if coordinates > 220 && indexCurrentImage < imageArr.count - 1 {
             indexCurrentImage += 1
             currentCard!.progressBar[indexCurrentImage-1].backgroundColor = .gray
         }else if  coordinates < 180 && indexCurrentImage > 0  {
             indexCurrentImage -= 1
             currentCard!.progressBar[indexCurrentImage+1].backgroundColor = .gray
+        }else if indexCurrentImage == 0 || indexCurrentImage == imageArr.count - 1 {
+            cardModel.createAnimate(indexImage: indexCurrentImage, currentCard: currentCard!)
+
         }
+        
         currentCard!.progressBar[indexCurrentImage].backgroundColor = .white
         currentImage.image = imageArr[indexCurrentImage]
-    }
+        
+}
     
     
     
@@ -132,6 +139,7 @@ class ViewController: UIViewController {
             
             card.center = CGPoint(x: view.center.x + point.x , y: view.center.y + point.y ) /// Перемящем View взависимости от движения пальца
             card.transform = CGAffineTransform(rotationAngle: abs(xFromCenter) * 0.002) /// Поворачиваем View, внутри  rotationAngle радианты а не градусы
+            
    
          
     
