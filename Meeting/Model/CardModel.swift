@@ -149,32 +149,42 @@ struct CardModel {
     
 //MARK: - Создание анимации на последней карты
     
-    func createAnimate(indexImage:Int,currentCard: CardView){
+    func createAnimate(indexImage:Int,currentCard: CardView,nextCard: CardView){
         
-        let transformLayer = CATransformLayer()
-       
-        var perspective = CATransform3DIdentity
+        let imageUser = currentCard.imageUser!
+        let name = currentCard.nameUser
+        let age = currentCard.age
+        
+        var firstCornerY = CGFloat()
+        var secondCornerY = CGFloat()
         
         if indexImage == 0 {
-            perspective.m14 = 1 / 4000
+            firstCornerY = -1 * 0.2
+            secondCornerY = 1 * 0.2
         }else {
-            perspective.m14 = -1 / 4000
+            firstCornerY = 1 * 0.2
+            secondCornerY = -1 * 0.2
         }
         
-        transformLayer.transform = perspective
         
-        transformLayer.addSublayer(currentCard.imageUser!.layer)
-        currentCard.layer.addSublayer(transformLayer)
-        currentCard.imageUser!.layer.transform = CATransform3DMakeRotation(-0.2, -1, 0.0, 0)
-        currentCard.backgroundColor = .white
-    
+        let layer = imageUser.layer
+        imageUser.addSubview(name)
+        imageUser.addSubview(age)
         
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.05) {
-            perspective.m14 = 0
-            transformLayer.transform = perspective
-            currentCard.imageUser!.layer.transform = CATransform3DMakeRotation(0.2, 1, 0.0, 0)
-            
+        var rotationAndPerspectiveTransform : CATransform3D = CATransform3DIdentity
+        rotationAndPerspectiveTransform.m34 = 1.0 / -1000
+        rotationAndPerspectiveTransform = CATransform3DRotate(rotationAndPerspectiveTransform, 0.15, 0.0,firstCornerY, 0.0)
+        layer.transform = CATransform3DIdentity
+        layer.transform = rotationAndPerspectiveTransform
+        
+        
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.1) {
+
+            rotationAndPerspectiveTransform = CATransform3DRotate(rotationAndPerspectiveTransform, 0.15, 0.0, secondCornerY, 0.0)
+            layer.transform = rotationAndPerspectiveTransform
         }
+
         
         AudioServicesPlayAlertSoundWithCompletion(SystemSoundID(kSystemSoundID_Vibrate)) {
             

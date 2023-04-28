@@ -93,7 +93,14 @@ class ViewController: UIViewController {
     
     @IBAction func cardTap(_ sender: UITapGestureRecognizer) {
 
-
+        var nextCard: CardView?
+        
+        if currentCard == honestCard {
+            nextCard = oddCard
+        }else {
+            nextCard = honestCard
+        }
+        
         let coordinates = sender.location(in: currentCard!).x
         let currentImage = currentCard!.imageUser!
         let imageArr = currentCard!.imageArr!
@@ -107,8 +114,9 @@ class ViewController: UIViewController {
             indexCurrentImage -= 1
             currentCard!.progressBar[indexCurrentImage+1].backgroundColor = .gray
         }else if indexCurrentImage == 0 || indexCurrentImage == imageArr.count - 1 {
-            cardModel.createAnimate(indexImage: indexCurrentImage, currentCard: currentCard!)
-
+            currentCard?.backgroundColor = .white
+            cardModel.createAnimate(indexImage: indexCurrentImage, currentCard: currentCard!,nextCard: nextCard!)
+            
         }
         
         currentCard!.progressBar[indexCurrentImage].backgroundColor = .white
