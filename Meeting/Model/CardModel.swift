@@ -17,6 +17,11 @@ struct CardModel {
     var usersArr = [User]()
     
     
+    
+    
+//MARK: - Создание новой карты
+    
+    
     func createCard(textName:String,image: [UIImage],age: Int) -> CardView {
         
         
@@ -156,7 +161,7 @@ struct CardModel {
     
     
     
-//MARK: - Создание анимации на последней карты
+//MARK: - Создание 3D анимации на последней карты
     
     func createAnimate(indexImage:Int,currentCard: CardView){
         

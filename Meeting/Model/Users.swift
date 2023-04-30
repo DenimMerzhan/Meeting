@@ -15,7 +15,7 @@ struct Users {
         
         var usersArr = [User]()
         
-        usersArr.append(User(name: "Карина",age: 22, imageArr: [UIImage(named: "1")!,UIImage(named: "2")!,UIImage(named: "3")!,UIImage(named: "4")!]))
+        usersArr.append(User(name: "Настя",age: 22, imageArr: [UIImage(named: "1")!,UIImage(named: "2")!,UIImage(named: "3")!,UIImage(named: "4")!]))
         usersArr.append(User(name: "Света",age: 21, imageArr: [UIImage(named: "S1")!,UIImage(named: "S2")!,UIImage(named: "S3")!,UIImage(named: "S4")!,UIImage(named: "S5")!]))
         usersArr.append(User(name: "Екатерина",age: 27, imageArr: [UIImage(named: "K1")!,UIImage(named: "K2")!,UIImage(named: "K3")!]))
         usersArr.append(User(name: "Ольга",age: 32, imageArr: [UIImage(named: "O1")!,UIImage(named: "O2")!]))

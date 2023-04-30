@@ -37,6 +37,8 @@ class CardView: UIView {
 }
 
 
+
+
 class imageUserView: UIImageView {
     
     var nameUser = UILabel()
