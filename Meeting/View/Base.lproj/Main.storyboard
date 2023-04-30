@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="1iw-3c-KrR">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="4NK-x7-t2w">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
@@ -254,10 +254,10 @@
             </objects>
             <point key="canvasLocation" x="2482" y="-230"/>
         </scene>
-        <!--View Controller-->
+        <!--Settings Photo View Controller-->
         <scene sceneID="LpA-l0-EQL">
             <objects>
-                <viewController id="4NK-x7-t2w" sceneMemberID="viewController">
+                <viewController id="4NK-x7-t2w" customClass="SettingsPhotoViewController" customModule="Meeting" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="6Ia-Wz-XpI">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -270,7 +270,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="tAL-3a-eWJ">
-                                <rect key="frame" x="16" y="157" width="361" height="391"/>
+                                <rect key="frame" x="16" y="205" width="361" height="507"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="xCQ-N2-S9D">
@@ -294,6 +294,9 @@
                         <viewLayoutGuide key="safeArea" id="1i2-KJ-LUT"/>
                         <color key="backgroundColor" name="GrayColor"/>
                     </view>
+                    <connections>
+                        <outlet property="collectionPhotoView" destination="tAL-3a-eWJ" id="hkt-Qs-cBe"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Koi-h7-AxS" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
