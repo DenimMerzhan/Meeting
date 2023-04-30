@@ -31,7 +31,7 @@ class CircularProgressBarView: UIView {
         circleLayer.path = circularPath.cgPath
         circleLayer.fillColor = UIColor.clear.cgColor
         circleLayer.lineCap = .round /// Задает стиль окончания линии для контура фигуры.
-        circleLayer.lineWidth = 10.0
+        circleLayer.lineWidth = 7.0
         circleLayer.strokeEnd = 1.0 /// Относительное местоположение, в котором следует прекратить обводку контура. Анимация.
         circleLayer.strokeColor = UIColor.gray.cgColor /// Цвет, используемый для обводки траектории фигуры. Анимация.
         circleLayer.opacity = 0.2
@@ -41,7 +41,7 @@ class CircularProgressBarView: UIView {
         progressLayer.path = circularPath.cgPath
         progressLayer.fillColor = UIColor.clear.cgColor
         progressLayer.lineCap = .round
-        progressLayer.lineWidth = 10
+        progressLayer.lineWidth = 7
         progressLayer.strokeEnd = 0
         progressLayer.strokeColor = UIColor(named: "MainAppColor")?.cgColor
         

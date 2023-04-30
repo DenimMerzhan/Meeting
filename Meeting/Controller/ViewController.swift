@@ -35,27 +35,18 @@ class ViewController: UIViewController {
     var currentCard: CardView?
     
     
+    
+    
     override func viewDidLoad() {
-        
         super.viewDidLoad()
         
-        preferencesButton.titleLabel?.text = ""
-        usersArr = Users().loadUsers()
-
-        oddCard = createCard()
-        honestCard = createCard()
-        currentCard = oddCard
-
-        
-        oddCard!.addGestureRecognizer(panGesture)
-        oddCard!.addGestureRecognizer(tapGesture)
-        self.view.addSubview(honestCard!)
-        self.view.addSubview(oddCard!)
-        self.view.bringSubviewToFront(buttonStackView)
-    
+        startSettings()
         
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        preferencesButton.titleLabel?.isHidden = true
+    }
     
     
     
@@ -341,6 +332,27 @@ extension ViewController {
         let card = cardModel.createEmptyCard()
         
         return card
+    }
+    
+}
+
+extension ViewController {
+    
+    func startSettings(){
+        
+        usersArr = Users().loadUsers()
+
+        oddCard = createCard()
+        honestCard = createCard()
+        currentCard = oddCard
+
+        
+        oddCard!.addGestureRecognizer(panGesture)
+        oddCard!.addGestureRecognizer(tapGesture)
+        self.view.addSubview(honestCard!)
+        self.view.addSubview(oddCard!)
+        self.view.bringSubviewToFront(buttonStackView)
+        
     }
     
 }

@@ -70,12 +70,12 @@
                                 <color key="textColor" name="MainAppColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="R14-rZ-JrA">
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tCU-e5-7Ys">
                                 <rect key="frame" x="338" y="63" width="39" height="35"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="tintColor" systemColor="systemGray2Color"/>
+                                <color key="tintColor" name="MainAppColor"/>
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                <state key="normal" title="Button" image="gearshape" catalog="system">
+                                <state key="normal" image="gearshape" catalog="system">
                                     <attributedString key="attributedTitle">
                                         <fragment content="-">
                                             <attributes>
@@ -84,6 +84,7 @@
                                             </attributes>
                                         </fragment>
                                     </attributedString>
+                                    <color key="titleColor" name="MainAppColor"/>
                                 </state>
                                 <buttonConfiguration key="configuration" style="plain" image="gearshape" catalog="system">
                                     <color key="baseForegroundColor" name="MainAppColor"/>
@@ -107,7 +108,7 @@
                     <connections>
                         <outlet property="buttonStackView" destination="t4n-2B-dJj" id="Vfr-Jo-tH7"/>
                         <outlet property="panGesture" destination="nVL-eb-bzh" id="uUv-Je-A4n"/>
-                        <outlet property="preferencesButton" destination="R14-rZ-JrA" id="Zle-zh-ZZ1"/>
+                        <outlet property="preferencesButton" destination="tCU-e5-7Ys" id="tRk-75-VfP"/>
                         <outlet property="tapGesture" destination="2Ma-FL-cJ8" id="wbh-Ig-Mxq"/>
                     </connections>
                 </viewController>
@@ -179,12 +180,12 @@
                                 <color key="textColor" name="MainAppColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="swp-tF-jkg">
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="swp-tF-jkg">
                                 <rect key="frame" x="338" y="59" width="39" height="35"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="tintColor" systemColor="systemGray2Color"/>
+                                <color key="tintColor" name="MainAppColor"/>
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                <state key="normal" title="Button" image="gearshape" catalog="system">
+                                <state key="normal" image="gearshape" catalog="system">
                                     <attributedString key="attributedTitle">
                                         <fragment content="-">
                                             <attributes>
@@ -193,16 +194,48 @@
                                             </attributes>
                                         </fragment>
                                     </attributedString>
+                                    <color key="titleColor" name="MainAppColor"/>
                                 </state>
                                 <buttonConfiguration key="configuration" style="plain" image="gearshape" catalog="system">
                                     <color key="baseForegroundColor" name="MainAppColor"/>
                                 </buttonConfiguration>
                             </button>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="1" translatesAutoresizingMaskIntoConstraints="NO" id="lFT-3Z-kJV">
-                                <rect key="frame" x="106" y="151" width="180" height="180"/>
+                                <rect key="frame" x="106" y="169" width="180" height="180"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="default" weight="ultraLight"/>
                             </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XuX-sM-fga">
+                                <rect key="frame" x="236" y="151" width="60" height="60"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="tintColor" systemColor="systemGray2Color"/>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal">
+                                    <color key="titleColor" systemColor="systemGray2Color"/>
+                                    <imageReference key="image" image="pencil.circle" catalog="system" symbolScale="large"/>
+                                </state>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="90% ЗАПОЛНЕНО" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2FS-Qe-uXV">
+                                <rect key="frame" x="110" y="333" width="172" height="28"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" name="MainAppColor"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rvc-Hi-DcG">
+                                <rect key="frame" x="0.0" y="454" width="393" height="315"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" name="GrayColor"/>
+                            </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Карина, 22" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="M7k-t4-R0P">
+                                <rect key="frame" x="106" y="376" width="180" height="34"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="32"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6G0-mr-Kmo"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -211,6 +244,8 @@
                         <color key="badgeColor" systemColor="opaqueSeparatorColor"/>
                     </tabBarItem>
                     <connections>
+                        <outlet property="changePhotoButton" destination="XuX-sM-fga" id="lz0-3h-csm"/>
+                        <outlet property="fillingScaleProfile" destination="2FS-Qe-uXV" id="ooI-OH-1Xk"/>
                         <outlet property="profilePhoto" destination="lFT-3Z-kJV" id="w50-RG-FVi"/>
                     </connections>
                 </viewController>
@@ -228,8 +263,12 @@
         <image name="Preferences" width="50" height="28.333333969116211"/>
         <image name="gearshape" catalog="system" width="128" height="123"/>
         <image name="imgonline-com-ua-Replace-color-CZNdjiapwUJJA" width="50" height="47.666667938232422"/>
+        <image name="pencil.circle" catalog="system" width="128" height="123"/>
+        <namedColor name="GrayColor">
+            <color red="0.94117647410000005" green="0.94509804249999996" blue="0.9529411793" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+        </namedColor>
         <namedColor name="MainAppColor">
-            <color red="0.82352948189999997" green="0.76470589639999997" blue="0.60392159219999997" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+            <color red="0.82400000095367432" green="0.76499998569488525" blue="0.60399997234344482" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
         </namedColor>
         <systemColor name="opaqueSeparatorColor">
             <color red="0.77647058823529413" green="0.77647058823529413" blue="0.78431372549019607" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
