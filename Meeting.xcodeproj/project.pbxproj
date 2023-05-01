@@ -97,9 +97,9 @@
 			children = (
 				CFC6D2FF29FE43B100A712BA /* CircularProgressBarView.swift */,
 				CF1DC80729F0D46C001E2EAD /* CardView.swift */,
+				CFFD03DF29F9003B000732AC /* CardModel.swift */,
 				CF1DC80929F0DFC3001E2EAD /* User.swift */,
 				CFFD03E429F90FEF000732AC /* Users.swift */,
-				CFFD03DF29F9003B000732AC /* CardModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";

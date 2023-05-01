@@ -263,7 +263,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="tAL-3a-eWJ">
-                                <rect key="frame" x="16" y="192" width="361" height="519"/>
+                                <rect key="frame" x="16" y="192" width="361" height="551"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" name="GrayColor"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="xCQ-N2-S9D">
@@ -328,7 +328,7 @@
         <image name="imgonline-com-ua-Replace-color-CZNdjiapwUJJA" width="50" height="47.666667938232422"/>
         <image name="pencil.circle" catalog="system" width="128" height="123"/>
         <namedColor name="GrayColor">
-            <color red="0.94117647410000005" green="0.94509804249999996" blue="0.9529411793" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+            <color red="0.94099998474121094" green="0.94499999284744263" blue="0.95300000905990601" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
         </namedColor>
         <namedColor name="MainAppColor">
             <color red="0.82400000095367432" green="0.76499998569488525" blue="0.60399997234344482" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
