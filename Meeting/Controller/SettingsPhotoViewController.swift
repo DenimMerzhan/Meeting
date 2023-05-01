@@ -12,7 +12,9 @@ class SettingsPhotoViewController: UIViewController {
     
     @IBOutlet weak var collectionPhotoView: UICollectionView!
     
-    let imageArr = [UIImage(named: "1")!,UIImage(named: "2")!,UIImage(named: "3")!,UIImage(named: "4")!]
+    let imagePicker = UIImagePickerController()
+    var imageArr = [UIImage(named: "1")!,UIImage(named: "2")!,UIImage(named: "3")!,UIImage(named: "4")!]
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,6 +22,8 @@ class SettingsPhotoViewController: UIViewController {
         collectionPhotoView.delegate = self
         collectionPhotoView.dataSource = self
         
+        imagePicker.delegate = self
+        imagePicker.allowsEditing = false /// Спрашивает может ли пользователь редактикровать фото
         
     }
 
@@ -47,11 +51,14 @@ extension SettingsPhotoViewController : UICollectionViewDataSource, UICollection
         
         if let imageView = createImage(indexPath: indexPath.row, cellWidth: cell.frame.width, cellHeight: cell.frame.height) {
             
+            
             cell.contentView.addSubview(imageView)
+            
             let button = createButton(x: cell.frame.maxX ,y: cell.frame.maxY,add: false)
             collectionPhotoView.addSubview(button)
             
         }else {
+            
             cell.backgroundColor = UIColor(named: "PhotoCollage")
             
             let newBorder = createDottedLine(bounds: cell.bounds)
@@ -85,6 +92,8 @@ extension SettingsPhotoViewController : UICollectionViewDataSource, UICollection
 }
 
 
+
+
 //MARK: - Внешние оформление ячеек
 
 
@@ -92,6 +101,7 @@ extension SettingsPhotoViewController {
         
     func createImage(indexPath: Int,cellWidth: CGFloat,cellHeight: CGFloat) -> UIImageView? { /// Создание фото
         
+        print(imageArr.count)
         if indexPath < imageArr.count {
             let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: cellWidth, height: cellHeight))
             imageView.image = imageArr[indexPath]
@@ -102,6 +112,9 @@ extension SettingsPhotoViewController {
         return nil
     }
     
+    
+    
+//MARK: - Создаем пунктирную обводку
     
     func createDottedLine(bounds: CGRect) -> CAShapeLayer { /// Создание пунткирной границы
         
@@ -140,15 +153,48 @@ extension SettingsPhotoViewController {
             button.backgroundColor = UIColor(named: "MainAppColor")
             button.setImage(UIImage(named: "Plus"), for: .normal)
             button.tintColor = UIColor.white
+            
+            let action = UIAction { action in
+                self.collectionPhotoView.reloadData()
+                
+            }
+            button.addAction(action, for: .touchUpInside)
+            
             return button
+            
         }else {
+            
             button.backgroundColor = .white
             button.setImage(UIImage(named: "DeletePhoto1"), for: .normal)
             button.tintColor = UIColor.gray
+            
             button.layer.borderWidth = 0.5
             button.layer.borderColor = UIColor.gray.cgColor
+            
+            let action = UIAction { action in
+                print("Delete")
+            }
+            button.addAction(action, for: .touchUpInside)
 
             return button
         }
     }
+}
+
+
+
+//MARK: - Логика загрузок фото
+
+
+extension SettingsPhotoViewController: UIImagePickerControllerDelegate & UINavigationControllerDelegate  {
+    
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+            self.imageArr.append(image)
+        }
+        imagePicker.dismiss(animated: true)
+       
+    }
+
 }
