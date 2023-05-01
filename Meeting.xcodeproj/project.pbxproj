@@ -15,6 +15,7 @@
 		CF069DAC29EC2D3E005ED378 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CF069DAA29EC2D3E005ED378 /* LaunchScreen.storyboard */; };
 		CF1DC80829F0D46C001E2EAD /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1DC80729F0D46C001E2EAD /* CardView.swift */; };
 		CF1DC80A29F0DFC3001E2EAD /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1DC80929F0DFC3001E2EAD /* User.swift */; };
+		CF807F0929FFF57800D5ACD1 /* CollectionPhotoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF807F0829FFF57800D5ACD1 /* CollectionPhotoCell.swift */; };
 		CFC6D2FE29FE403000A712BA /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC6D2FD29FE403000A712BA /* ProfileViewController.swift */; };
 		CFC6D30029FE43B100A712BA /* CircularProgressBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC6D2FF29FE43B100A712BA /* CircularProgressBarView.swift */; };
 		CFD1CAE729FEABB6009AE9A7 /* SettingsPhotoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD1CAE629FEABB6009AE9A7 /* SettingsPhotoViewController.swift */; };
@@ -33,6 +34,7 @@
 		CF069DAD29EC2D3E005ED378 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CF1DC80729F0D46C001E2EAD /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		CF1DC80929F0DFC3001E2EAD /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		CF807F0829FFF57800D5ACD1 /* CollectionPhotoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionPhotoCell.swift; sourceTree = "<group>"; };
 		CFC6D2FD29FE403000A712BA /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		CFC6D2FF29FE43B100A712BA /* CircularProgressBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressBarView.swift; sourceTree = "<group>"; };
 		CFD1CAE629FEABB6009AE9A7 /* SettingsPhotoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPhotoViewController.swift; sourceTree = "<group>"; };
@@ -98,6 +100,7 @@
 				CFC6D2FF29FE43B100A712BA /* CircularProgressBarView.swift */,
 				CF1DC80729F0D46C001E2EAD /* CardView.swift */,
 				CFFD03DF29F9003B000732AC /* CardModel.swift */,
+				CF807F0829FFF57800D5ACD1 /* CollectionPhotoCell.swift */,
 				CF1DC80929F0DFC3001E2EAD /* User.swift */,
 				CFFD03E429F90FEF000732AC /* Users.swift */,
 			);
@@ -185,6 +188,7 @@
 			files = (
 				CF069DA429EC2D3D005ED378 /* ViewController.swift in Sources */,
 				CF1DC80829F0D46C001E2EAD /* CardView.swift in Sources */,
+				CF807F0929FFF57800D5ACD1 /* CollectionPhotoCell.swift in Sources */,
 				CF069DA029EC2D3D005ED378 /* AppDelegate.swift in Sources */,
 				CF1DC80A29F0DFC3001E2EAD /* User.swift in Sources */,
 				CFC6D30029FE43B100A712BA /* CircularProgressBarView.swift in Sources */,
@@ -347,7 +351,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -376,7 +380,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
