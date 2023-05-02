@@ -67,8 +67,7 @@ extension SettingsPhotoViewController : UICollectionViewDataSource, UICollection
             cell.photoImage.contentMode = .scaleAspectFill
             cell.dottedBorder.isHidden = true
             
-            
-            let button = createButton(x: cell.frame.maxX ,y: cell.frame.maxY,add: false,index: indexPath.row,cell: cell)
+            let button = createDeleteButton(x: cell.frame.maxX ,y: cell.frame.maxY, index: indexPath.row,cell: cell)
             collectionPhotoView.addSubview(button)
             
         }else {
@@ -77,7 +76,7 @@ extension SettingsPhotoViewController : UICollectionViewDataSource, UICollection
             cell.dottedBorder.isHidden = false
             cell.photoImage.image = .none
             
-            let button = createButton(x: cell.frame.maxX ,y: cell.frame.maxY,add: true,index: indexPath.row,cell: cell)
+            let button = createAddButton(x: cell.frame.maxX ,y: cell.frame.maxY, index: indexPath.row,cell: cell)
             collectionPhotoView.addSubview(button)
             
         }
@@ -130,61 +129,34 @@ extension SettingsPhotoViewController {
 //MARK: - Создание кнопок удаления и добавления
     
     
-    func createButton(x: CGFloat, y: CGFloat, add: Bool,index: Int,cell:CollectionPhotoCell ) -> UIButton {
+    func createAddButton(x: CGFloat, y: CGFloat,index: Int,cell:CollectionPhotoCell ) -> UIButton {
+        let buttonAdd = CreateButton().createAddButtonPhotoSetings(x: x, y: y)
         
-        let button = UIButton(frame: CGRect(x: 0, y: 0,width: 30, height: 30))
-        button.center = CGPoint(x: x - 5, y: y - 5)
-        button.layer.cornerRadius = button.frame.size.width / 2
-        button.layer.masksToBounds = true
-        
-        button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOffset = .zero
-        button.layer.opacity = 1
-        button.layer.shadowRadius = 10
-        
-        
-        if add { /// Добавляем фото
+        let action = UIAction { action in
             
-            button.backgroundColor = UIColor(named: "MainAppColor")
-            button.setImage(UIImage(named: "Plus"), for: .normal)
-            button.tintColor = UIColor.white
-            
-            let action = UIAction { action in
-                
-                self.imagePicker.delegate = self
-                self.imagePicker.allowsEditing = false /// Спрашивает может ли пользователь редактикровать фото
-                self.imagePicker.sourceType = .photoLibrary
-                self.present(self.imagePicker, animated: true)
-                
-                
-            }
-            
-            button.addAction(action, for: .touchUpInside)
-            
-            return button
-            
-            
-            
-        }else { /// Удаляем фото
-            
-            button.backgroundColor = .white
-            button.setImage(UIImage(named: "DeletePhoto"), for: .normal)
-            button.tintColor = UIColor.gray
-            
-            button.layer.borderWidth = 0.5
-            button.layer.borderColor = UIColor.gray.cgColor
-            
-            let action = UIAction { action in
-                
-                self.imageArr.remove(at: index)
-                self.collectionPhotoView.reloadData()
-                
-                
-            }
-            button.addAction(action, for: .touchUpInside)
+            self.imagePicker.delegate = self
+            self.imagePicker.allowsEditing = false /// Спрашивает может ли пользователь редактикровать фото
+            self.imagePicker.sourceType = .photoLibrary
+            self.present(self.imagePicker, animated: true)
 
-            return button
         }
+        buttonAdd.addAction(action, for: .touchUpInside)
+        
+        return buttonAdd
+    }
+    
+    
+    func createDeleteButton(x: CGFloat, y: CGFloat,index: Int,cell:CollectionPhotoCell ) -> UIButton {
+        let buttonDelete = CreateButton().createDeleteButtonPhotoSetings(x: x, y: y)
+        
+        let action = UIAction { action in
+            
+            self.imageArr.remove(at: index)
+            self.collectionPhotoView.reloadData()
+        }
+        buttonDelete.addAction(action, for: .touchUpInside)
+        
+        return buttonDelete
     }
 }
 
