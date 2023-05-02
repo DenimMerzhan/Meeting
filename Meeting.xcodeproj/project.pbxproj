@@ -20,6 +20,8 @@
 		CFA140D92A00D61A00DD384B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CFA140D82A00D61A00DD384B /* GoogleService-Info.plist */; };
 		CFC6D2FE29FE403000A712BA /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC6D2FD29FE403000A712BA /* ProfileViewController.swift */; };
 		CFC6D30029FE43B100A712BA /* CircularProgressBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC6D2FF29FE43B100A712BA /* CircularProgressBarView.swift */; };
+		CFC72D4C2A0130C9008CDB14 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC72D4B2A0130C9008CDB14 /* Extension.swift */; };
+		CFC72D4F2A0135F2008CDB14 /* FirebaseStorageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC72D4E2A0135F2008CDB14 /* FirebaseStorageModel.swift */; };
 		CFD1CAE729FEABB6009AE9A7 /* SettingsPhotoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD1CAE629FEABB6009AE9A7 /* SettingsPhotoViewController.swift */; };
 		CFFD03E029F9003B000732AC /* CardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFD03DF29F9003B000732AC /* CardModel.swift */; };
 		CFFD03E529F90FEF000732AC /* Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFD03E429F90FEF000732AC /* Users.swift */; };
@@ -43,6 +45,8 @@
 		CFA140D82A00D61A00DD384B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CFC6D2FD29FE403000A712BA /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		CFC6D2FF29FE43B100A712BA /* CircularProgressBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressBarView.swift; sourceTree = "<group>"; };
+		CFC72D4B2A0130C9008CDB14 /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
+		CFC72D4E2A0135F2008CDB14 /* FirebaseStorageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseStorageModel.swift; sourceTree = "<group>"; };
 		CFD1CAE629FEABB6009AE9A7 /* SettingsPhotoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPhotoViewController.swift; sourceTree = "<group>"; };
 		CFFD03DF29F9003B000732AC /* CardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardModel.swift; sourceTree = "<group>"; };
 		CFFD03E429F90FEF000732AC /* Users.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Users.swift; sourceTree = "<group>"; };
@@ -91,6 +95,7 @@
 			children = (
 				CF069D9F29EC2D3D005ED378 /* AppDelegate.swift */,
 				CF069DA129EC2D3D005ED378 /* SceneDelegate.swift */,
+				CFC72D4D2A0130CE008CDB14 /* Extension */,
 				CFA140DB2A00E24300DD384B /* CustomStruct */,
 				CFA140DA2A00E21600DD384B /* CustomClass */,
 				CFFD03E229F90FB4000732AC /* Model */,
@@ -123,6 +128,14 @@
 			path = CustomStruct;
 			sourceTree = "<group>";
 		};
+		CFC72D4D2A0130CE008CDB14 /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				CFC72D4B2A0130C9008CDB14 /* Extension.swift */,
+			);
+			path = Extension;
+			sourceTree = "<group>";
+		};
 		CFFD03E129F90FAD000732AC /* Controller */ = {
 			isa = PBXGroup;
 			children = (
@@ -137,6 +150,7 @@
 			isa = PBXGroup;
 			children = (
 				CFFD03DF29F9003B000732AC /* CardModel.swift */,
+				CFC72D4E2A0135F2008CDB14 /* FirebaseStorageModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -277,6 +291,7 @@
 				CF069DA429EC2D3D005ED378 /* ViewController.swift in Sources */,
 				CF1DC80829F0D46C001E2EAD /* CardView.swift in Sources */,
 				CF807F0929FFF57800D5ACD1 /* CollectionPhotoCell.swift in Sources */,
+				CFC72D4C2A0130C9008CDB14 /* Extension.swift in Sources */,
 				CF069DA029EC2D3D005ED378 /* AppDelegate.swift in Sources */,
 				CF1DC80A29F0DFC3001E2EAD /* User.swift in Sources */,
 				CFC6D30029FE43B100A712BA /* CircularProgressBarView.swift in Sources */,
@@ -285,6 +300,7 @@
 				CFC6D2FE29FE403000A712BA /* ProfileViewController.swift in Sources */,
 				CFD1CAE729FEABB6009AE9A7 /* SettingsPhotoViewController.swift in Sources */,
 				CFFD03E529F90FEF000732AC /* Users.swift in Sources */,
+				CFC72D4F2A0135F2008CDB14 /* FirebaseStorageModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -205,6 +205,7 @@ extension SettingsPhotoViewController: UIImagePickerControllerDelegate & UINavig
     }
     
     
+//MARK: -  Загрузка фото на сервре
     
     func uploadDataToServer(image: UIImage){
         
@@ -239,7 +240,7 @@ extension SettingsPhotoViewController: UIImagePickerControllerDelegate & UINavig
                 if let url = url {
                     
                     let db = Firestore.firestore().collection("Users").document(self.userID) /// Добавляем в FiresStore ссылку на фото
-                    db.setData([imageID : url.absoluteString]) { err in
+                    db.setData([imageID : url.absoluteString],merge: true) { err in
                         if let error = err {
                             print(error)
                         }else{ /// В случае успешного выполнения обновляем архив
@@ -270,41 +271,6 @@ extension SettingsPhotoViewController: UIImagePickerControllerDelegate & UINavig
     func randomString(length: Int) -> String {
       let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
       return String((0..<length).map{ _ in letters.randomElement()! })
-    }
-    
-    func createProgressBarLoadPhoto() -> (progressBar : UIProgressView,backView: UIView, checkMark: UIImageView) {
-        
-        
-        let backView = UIView(frame: CGRect(x: 20, y: 50, width: 350, height: 50))
-        backView.backgroundColor = UIColor(named: "LoadPhotoColor")
-        backView.layer.cornerRadius = 10
-        
-        let checkMarkImage = UIImageView(frame: CGRect(x: 290, y: 10, width: 50, height: 20))
-        checkMarkImage.image = UIImage(systemName: "checkmark")
-        checkMarkImage.contentMode = .scaleAspectFit
-        checkMarkImage.tintColor = .white
-        checkMarkImage.isHidden = true
-        backView.addSubview(checkMarkImage)
-        
-        let label = UILabel(frame: CGRect(x: 25, y: 10, width: 100, height: 20))
-        label.text = "Загрузка фото..."
-        label.font = .systemFont(ofSize: 17)
-        label.textColor = .white
-        
-        backView.addSubview(label)
-        
-        
-        let progressBar = UIProgressView(frame: CGRect(x: 25, y: 35, width: 300, height: 30))
-        backView.addSubview(progressBar)
-        progressBar.progressViewStyle = .bar
-        progressBar.progressTintColor = UIColor(named: "MainAppColor")
-        progressBar.trackTintColor = .gray
-        progressBar.setProgress(0.0, animated: false)
-        
-        
-        return (progressBar,backView,checkMarkImage)
-        
-        
     }
 
 }
