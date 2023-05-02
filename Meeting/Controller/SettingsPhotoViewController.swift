@@ -8,6 +8,7 @@
 import UIKit
 import FirebaseCore
 import FirebaseStorage
+import FirebaseFirestore
 
 class SettingsPhotoViewController: UIViewController {
     
@@ -18,6 +19,7 @@ class SettingsPhotoViewController: UIViewController {
     var imageArr = [UIImage(named: "1")!,UIImage(named: "2")!,UIImage(named: "3")!,UIImage(named: "4")!]
     var index = IndexPath()
     
+  
     let storage = Storage.storage()
     var userID = "+79817550000"
     
@@ -197,32 +199,112 @@ extension SettingsPhotoViewController: UIImagePickerControllerDelegate & UINavig
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-            self.imageArr.append(image)
             uploadDataToServer(image: image)
         }
         imagePicker.dismiss(animated: true)
-        self.collectionPhotoView.reloadData()
     }
     
     
     
     func uploadDataToServer(image: UIImage){
         
-        var imagesRef = Storage.storage().reference().child("UsersPhoto").child(userID) /// Создаем ссылку на файл
+        let imageID = "photoImage" + randomString(length: 5)
         
-        guard let imageData = image.jpegData(compressionQuality: 0.4) else {
+        let progressView = createProgressBarLoadPhoto()
+        view.addSubview(progressView.backView)
+        
+        UIView.animate(withDuration: 4, delay: 0.2) {
+            progressView.progressBar.setProgress(0.7, animated: true)
+        }
+        
+        let imagesRef = Storage.storage().reference().child("UsersPhoto").child(userID).child(imageID) /// Создаем ссылку на файл
+        
+        guard let imageData = image.jpegData(compressionQuality: 0.4) else { /// Преобразуем в Jpeg c сжатием
             return
         }
         
         let metaData = StorageMetadata()
-        metaData.contentType = "image/jpeg"
+        metaData.contentType = "image/jpeg" /// Указываем явный тип данных в FireBase
         
-        let uploadTask = imagesRef.putData(imageData) { metadata, erorr in
-            guard let metadata = metadata else {
+        
+        imagesRef.putData(imageData,metadata: metaData) { metadata, erorr in
+            
+            guard metadata != nil else {
+                print(erorr!)
                 return
             }
-            let size = metadata.size
+            
+            imagesRef.downloadURL { url, error in /// Получаем URL адрес фото
+                
+                if let url = url {
+                    
+                    let db = Firestore.firestore().collection("Users").document(self.userID) /// Добавляем в FiresStore ссылку на фото
+                    db.setData([imageID : url.absoluteString]) { err in
+                        if let error = err {
+                            print(error)
+                        }else{ /// В случае успешного выполнения обновляем архив
+                            
+                            UIView.animate(withDuration: 1.5, delay: 0) {
+                                progressView.progressBar.setProgress(1, animated: true)
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                    progressView.checkMark.isHidden = false
+                                    self.imageArr.append(image)
+                                    self.collectionPhotoView.reloadData()
+                                }
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 2.3) {
+                                    progressView.backView.removeFromSuperview()
+                                }
+                            }
+
+                        }
+                    }
+
+                }else{
+                    print(erorr!)
+                }
+            }
         }
+    }
+    
+    
+    func randomString(length: Int) -> String {
+      let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+      return String((0..<length).map{ _ in letters.randomElement()! })
+    }
+    
+    func createProgressBarLoadPhoto() -> (progressBar : UIProgressView,backView: UIView, checkMark: UIImageView) {
+        
+        
+        let backView = UIView(frame: CGRect(x: 20, y: 50, width: 350, height: 50))
+        backView.backgroundColor = UIColor(named: "LoadPhotoColor")
+        backView.layer.cornerRadius = 10
+        
+        let checkMarkImage = UIImageView(frame: CGRect(x: 290, y: 10, width: 50, height: 20))
+        checkMarkImage.image = UIImage(systemName: "checkmark")
+        checkMarkImage.contentMode = .scaleAspectFit
+        checkMarkImage.tintColor = .white
+        checkMarkImage.isHidden = true
+        backView.addSubview(checkMarkImage)
+        
+        let label = UILabel(frame: CGRect(x: 25, y: 10, width: 100, height: 20))
+        label.text = "Загрузка фото..."
+        label.font = .systemFont(ofSize: 17)
+        label.textColor = .white
+        
+        backView.addSubview(label)
+        
+        
+        let progressBar = UIProgressView(frame: CGRect(x: 25, y: 35, width: 300, height: 30))
+        backView.addSubview(progressBar)
+        progressBar.progressViewStyle = .bar
+        progressBar.progressTintColor = UIColor(named: "MainAppColor")
+        progressBar.trackTintColor = .gray
+        progressBar.setProgress(0.0, animated: false)
+        
+        
+        return (progressBar,backView,checkMarkImage)
+        
+        
     }
 
 }
