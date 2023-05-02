@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import FirebaseCore
+import FirebaseStorage
 
 class SettingsPhotoViewController: UIViewController {
     
@@ -16,6 +18,12 @@ class SettingsPhotoViewController: UIViewController {
     var imageArr = [UIImage(named: "1")!,UIImage(named: "2")!,UIImage(named: "3")!,UIImage(named: "4")!]
     var index = IndexPath()
     
+    let storage = Storage.storage()
+    var userID = "+79817550000"
+    
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -23,9 +31,7 @@ class SettingsPhotoViewController: UIViewController {
         collectionPhotoView.dataSource = self
         
         collectionPhotoView.register(CollectionPhotoCell.self, forCellWithReuseIdentifier: CollectionPhotoCell.identifier)
-        
-        imagePicker.delegate = self
-        imagePicker.allowsEditing = false /// Спрашивает может ли пользователь редактикровать фото
+
         
     }
 
@@ -143,6 +149,8 @@ extension SettingsPhotoViewController {
             
             let action = UIAction { action in
                 
+                self.imagePicker.delegate = self
+                self.imagePicker.allowsEditing = false /// Спрашивает может ли пользователь редактикровать фото
                 self.imagePicker.sourceType = .photoLibrary
                 self.present(self.imagePicker, animated: true)
                 
@@ -181,7 +189,7 @@ extension SettingsPhotoViewController {
 
 
 
-//MARK: - Логика загрузок фото
+//MARK: - Загрузка фото из галереи пользователя
 
 
 extension SettingsPhotoViewController: UIImagePickerControllerDelegate & UINavigationControllerDelegate  {
@@ -190,9 +198,31 @@ extension SettingsPhotoViewController: UIImagePickerControllerDelegate & UINavig
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
             self.imageArr.append(image)
+            uploadDataToServer(image: image)
         }
         imagePicker.dismiss(animated: true)
         self.collectionPhotoView.reloadData()
+    }
+    
+    
+    
+    func uploadDataToServer(image: UIImage){
+        
+        var imagesRef = Storage.storage().reference().child("UsersPhoto").child(userID) /// Создаем ссылку на файл
+        
+        guard let imageData = image.jpegData(compressionQuality: 0.4) else {
+            return
+        }
+        
+        let metaData = StorageMetadata()
+        metaData.contentType = "image/jpeg"
+        
+        let uploadTask = imagesRef.putData(imageData) { metadata, erorr in
+            guard let metadata = metadata else {
+                return
+            }
+            let size = metadata.size
+        }
     }
 
 }
