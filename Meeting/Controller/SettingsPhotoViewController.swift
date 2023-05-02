@@ -209,68 +209,37 @@ extension SettingsPhotoViewController: UIImagePickerControllerDelegate & UINavig
     
     func uploadDataToServer(image: UIImage){
         
-        let imageID = "photoImage" + randomString(length: 5)
-        
         let progressView = createProgressBarLoadPhoto()
         view.addSubview(progressView.backView)
+        
+        let  firebaseStorage = FirebaseStorageModel(userID: userID)
         
         UIView.animate(withDuration: 4, delay: 0.2) {
             progressView.progressBar.setProgress(0.7, animated: true)
         }
         
-        let imagesRef = Storage.storage().reference().child("UsersPhoto").child(userID).child(imageID) /// Создаем ссылку на файл
-        
-        guard let imageData = image.jpegData(compressionQuality: 0.4) else { /// Преобразуем в Jpeg c сжатием
-            return
-        }
-        
-        let metaData = StorageMetadata()
-        metaData.contentType = "image/jpeg" /// Указываем явный тип данных в FireBase
-        
-        
-        imagesRef.putData(imageData,metadata: metaData) { metadata, erorr in
+        Task { /// Ждем пока поступит ответ, либо успешная загрузка либо нет
             
-            guard metadata != nil else {
-                print(erorr!)
-                return
-            }
+            let succesful = await firebaseStorage.uploadImageToStorage(image: image)
             
-            imagesRef.downloadURL { url, error in /// Получаем URL адрес фото
+            if succesful {
                 
-                if let url = url {
+                UIView.animate(withDuration: 1.5, delay: 0) {
                     
-                    let db = Firestore.firestore().collection("Users").document(self.userID) /// Добавляем в FiresStore ссылку на фото
-                    db.setData([imageID : url.absoluteString],merge: true) { err in
-                        if let error = err {
-                            print(error)
-                        }else{ /// В случае успешного выполнения обновляем архив
-                            
-                            UIView.animate(withDuration: 1.5, delay: 0) {
-                                progressView.progressBar.setProgress(1, animated: true)
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                                    progressView.checkMark.isHidden = false
-                                    self.imageArr.append(image)
-                                    self.collectionPhotoView.reloadData()
-                                }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 2.3) {
-                                    progressView.backView.removeFromSuperview()
-                                }
-                            }
-
+                    progressView.progressBar.setProgress(1, animated: true)
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                        progressView.checkMark.isHidden = false
+                        self.imageArr.append(image)
+                        self.collectionPhotoView.reloadData()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+                            progressView.backView.removeFromSuperview()
                         }
                     }
-
-                }else{
-                    print(erorr!)
                 }
+                
             }
         }
-    }
-    
-    
-    func randomString(length: Int) -> String {
-      let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-      return String((0..<length).map{ _ in letters.randomElement()! })
     }
 
 }

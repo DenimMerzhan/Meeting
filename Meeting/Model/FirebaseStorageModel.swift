@@ -15,10 +15,11 @@ struct FirebaseStorageModel {
     
     private var userID = String()
     
+    init(userID: String = String()) {
+        self.userID = userID
+    }
     
-    func uploadImageToStorage(image: UIImage) -> Bool {
-        
-        var successfulUpload = Bool()
+    func uploadImageToStorage(image: UIImage) async -> Bool {
         
         let imageID = "photoImage" + randomString(length: 5)
         
@@ -32,50 +33,34 @@ struct FirebaseStorageModel {
         let metaData = StorageMetadata()
         metaData.contentType = "image/jpeg" /// Указываем явный тип данных в FireBase
         
-        imagesRef.putData(imageData,metadata: metaData) { metadata, erorr in
-            
-            
-            if let err = erorr {
-                print(err)
-            }
-            else {
-                imagesRef.downloadURL { url, error in /// Получаем URL адрес фото
-                    
-                    if let url = url {
-                        if uploadDataToFirestore(url: url, imageID: imageID) {
-                            successfulUpload = true
-                        }
-                    }
-                }
-            }
+        do {
+            try await imagesRef.putDataAsync(imageData)
+            let url = try await imagesRef.downloadURL()
+            let status = await uploadDataToFirestore(url: url, imageID: imageID)
+            return status
+        }catch {
+            print(error)
+            return false
         }
         
-        return successfulUpload
     }
     
     
     
-    func uploadDataToFirestore(url:URL,imageID: String) -> Bool {
+    func uploadDataToFirestore(url:URL,imageID: String) async -> Bool {
      
-        var successfulUpload = false
+        let db = Firestore.firestore().collection("Users").document(userID) /// Добавляем в FiresStore ссылку на фото\
         
-        let db = Firestore.firestore().collection("Users").document(userID) /// Добавляем в FiresStore ссылку на фото
-        
-        db.setData([imageID : url.absoluteString],merge: true) { err in
-            if let error = err {
-                print(error)
-            }else{ /// В случае успешного выполнения обновляем архив
-                successfulUpload = true
-            }
+        do {
+           try await db.setData([imageID : url.absoluteString], merge: true)
+            return true
+        }catch{
+            print(error)
+            return false
         }
-        return successfulUpload
     }
     
 }
-
-
-
-
 
 
 
