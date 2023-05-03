@@ -19,7 +19,8 @@ class SettingsPhotoViewController: UIViewController {
     var imageArr = [UIImage(named: "1")!,UIImage(named: "2")!,UIImage(named: "3")!,UIImage(named: "4")!]
     var index = IndexPath()
     
-  
+
+    
     let storage = Storage.storage()
     var userID = "+79817550000"
     
@@ -29,6 +30,12 @@ class SettingsPhotoViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        let firebaseStorage = FirebaseStorageModel(userID: userID)
+        Task {
+            var newArr = await firebaseStorage.loadImage()
+            print(newArr.count)
+        }
+        
         collectionPhotoView.delegate = self
         collectionPhotoView.dataSource = self
         
@@ -83,17 +90,13 @@ extension SettingsPhotoViewController : UICollectionViewDataSource, UICollection
         return cell
     }
     
-    
-    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize { /// Расчитываем размеры ячейки
         return CGSize(width: (collectionView.frame.size.width / 3) - 14 , height: (collectionView.frame.height / 3) - 20)
     }
     
-    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat { /// Запрашивает у делегата расстояние между последовательными строками или столбцами раздела.
         return 15
     }
-    
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets { /// Делаем отступы
         return UIEdgeInsets(top: 0, left: 3, bottom: 0, right: 10)
@@ -215,3 +218,44 @@ extension SettingsPhotoViewController: UIImagePickerControllerDelegate & UINavig
     }
 
 }
+
+
+extension SettingsPhotoViewController {
+   
+   func createProgressBarLoadPhoto() -> (progressBar : UIProgressView,backView: UIView, checkMark: UIImageView) {
+       
+       
+       let backView = UIView(frame: CGRect(x: 20, y: 50, width: 350, height: 50))
+       backView.backgroundColor = UIColor(named: "LoadPhotoColor")
+       backView.layer.cornerRadius = 10
+       
+       let checkMarkImage = UIImageView(frame: CGRect(x: 290, y: 10, width: 50, height: 20))
+       checkMarkImage.image = UIImage(systemName: "checkmark")
+       checkMarkImage.contentMode = .scaleAspectFit
+       checkMarkImage.tintColor = .white
+       checkMarkImage.isHidden = true
+       backView.addSubview(checkMarkImage)
+       
+       let label = UILabel(frame: CGRect(x: 25, y: 10, width: 100, height: 20))
+       label.text = "Загрузка фото..."
+       label.font = .systemFont(ofSize: 17)
+       label.textColor = .white
+       
+       backView.addSubview(label)
+       
+       
+       let progressBar = UIProgressView(frame: CGRect(x: 25, y: 35, width: 300, height: 30))
+       backView.addSubview(progressBar)
+       progressBar.progressViewStyle = .bar
+       progressBar.progressTintColor = UIColor(named: "MainAppColor")
+       progressBar.trackTintColor = .gray
+       progressBar.setProgress(0.0, animated: false)
+       
+       
+       return (progressBar,backView,checkMarkImage)
+       
+       
+   }
+   
+}
+

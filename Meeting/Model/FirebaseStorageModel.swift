@@ -14,16 +14,21 @@ import FirebaseFirestore
 struct FirebaseStorageModel {
     
     private var userID = String()
+    private let db = Firestore.firestore()
+    private let storage = Storage.storage()
     
     init(userID: String = String()) {
         self.userID = userID
     }
     
+    
+//MARK: -  Загрузка фото на сервер
+    
     func uploadImageToStorage(image: UIImage) async -> Bool {
         
         let imageID = "photoImage" + randomString(length: 5)
         
-        let imagesRef = Storage.storage().reference().child("UsersPhoto").child(userID).child(imageID) /// Создаем ссылку на файл
+        let imagesRef = storage.reference().child("UsersPhoto").child(userID).child(imageID) /// Создаем ссылку на файл
         
         guard let imageData = image.jpegData(compressionQuality: 0.4) else { /// Преобразуем в Jpeg c сжатием
             return false
@@ -47,12 +52,12 @@ struct FirebaseStorageModel {
     
     
     
-    func uploadDataToFirestore(url:URL,imageID: String) async -> Bool {
+    private func uploadDataToFirestore(url:URL,imageID: String) async -> Bool {
      
-        let db = Firestore.firestore().collection("Users").document(userID) /// Добавляем в FiresStore ссылку на фото\
+        let colletcion = db.collection("Users").document(userID) /// Добавляем в FiresStore ссылку на фото\
         
         do {
-           try await db.setData([imageID : url.absoluteString], merge: true)
+           try await colletcion.setData([imageID : url.absoluteString], merge: true)
             return true
         }catch{
             print(error)
@@ -60,11 +65,71 @@ struct FirebaseStorageModel {
         }
     }
     
+    
+    
+//MARK: -  Заггрузка фото с сервера
+    
+    func loadImage() async -> [UIImage] {
+        
+        
+        var imageArr = [UIImage]()
+        let urlArr = await loadUrlImage()
+        
+        for url in urlArr {
+            let pathReference = storage.reference(forURL: url)
+            let megaByte = Int64(1*2048*2048)
+            
+            pathReference.getData(maxSize: megaByte) { data, error in
+                if let err = error {
+                    print(err)
+                }else {
+                    let image = UIImage(data: data!)
+                    imageArr.append(image!)
+                }
+            }
+        }
+        
+        return imageArr
+    }
+    
+    
+    private func loadUrlImage() async -> [String] {
+        
+        var urlArr = [String]()
+        let collection  = db.collection("Users")
+        
+        do {
+            let querySnapshot = try await collection.getDocuments()
+            for document in querySnapshot.documents {
+                if document.documentID == userID {
+                    for data in document.data() {
+                        if data.key.contains("photoImage") {
+                            if let url = data.value as? String {
+                                urlArr.append(url)
+                            }
+                        }
+                    }
+                }
+            }
+        }catch{
+            print("Ошибка получения данных - \(error)")
+        }
+        return urlArr
+    }
+    
 }
 
 
 
-extension FirebaseStorageModel {
+
+
+
+
+
+
+//MARK: -  Расширение для формирования рандомного ID для фото - Надо исправить т.к есть шанс получить одинаковый ID
+
+private extension FirebaseStorageModel {
     
     func randomString(length: Int) -> String {
       let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
