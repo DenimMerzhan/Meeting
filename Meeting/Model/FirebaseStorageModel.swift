@@ -17,6 +17,8 @@ struct FirebaseStorageModel {
     private let db = Firestore.firestore()
     private let storage = Storage.storage()
     
+    private let fileManager = FileManager.default
+    
     init(userID: String = String()) {
         self.userID = userID
     }
@@ -24,14 +26,13 @@ struct FirebaseStorageModel {
     
 //MARK: -  Загрузка фото на сервер
     
-    func uploadImageToStorage(image: UIImage) async -> Bool {
+    func uploadImageToStorage(image: UIImage,countName: Int) async -> (succes:Bool,imageId:String)  {
         
-        let imageID = "photoImage" + randomString(length: 5)
+        let imageID = "photoImage" + randomString(length: 15)
         
         let imagesRef = storage.reference().child("UsersPhoto").child(userID).child(imageID) /// Создаем ссылку на файл
-        
         guard let imageData = image.jpegData(compressionQuality: 0.4) else { /// Преобразуем в Jpeg c сжатием
-            return false
+            return (false,"")
         }
         
         
@@ -39,17 +40,19 @@ struct FirebaseStorageModel {
         metaData.contentType = "image/jpeg" /// Указываем явный тип данных в FireBase
         
         do {
-            try await imagesRef.putDataAsync(imageData)
+            let metaData = try await imagesRef.putDataAsync(imageData)
             let url = try await imagesRef.downloadURL()
             let status = await uploadDataToFirestore(url: url, imageID: imageID)
-            return status
+            if status {
+                savePhotoToFolder(image: image, fileName: imageID)
+            }
+            return (status,imageID)
         }catch {
             print(error)
-            return false
+            return (false,"")
         }
         
     }
-    
     
     
     private func uploadDataToFirestore(url:URL,imageID: String) async -> Bool {
@@ -65,33 +68,34 @@ struct FirebaseStorageModel {
         }
     }
     
-    
+
     
 //MARK: -  Заггрузка фото с сервера
     
-    func loadImage() async -> [UIImage] {
+    
+    func loadImageFromServer() async -> [URL] {
         
-        
-        var imageArr = [UIImage]()
         let urlArr = await loadUrlImage()
         
-        for url in urlArr {
-            let pathReference = storage.reference(forURL: url)
-            let megaByte = Int64(1*2048*2048)
+        let libaryPhotoUrlArr = [URL]()
+        
+        
+        for urlPhoto in urlArr {
             
-            pathReference.getData(maxSize: megaByte) { data, error in
-                if let err = error {
-                    print(err)
+            let Reference = storage.reference(forURL: urlPhoto)
+
+            
+            Reference.getData(maxSize: Int64(1*2048*2048)) { data, erorr in
+                if let err = erorr {
+                    print("Ошибка загрузки данных \(err)")
                 }else {
-                    let image = UIImage(data: data!)
-                    imageArr.append(image!)
+                    let image = UIImage(data: data!)!
                 }
             }
         }
         
-        return imageArr
+        return libaryPhotoUrlArr
     }
-    
     
     private func loadUrlImage() async -> [String] {
         
@@ -123,6 +127,44 @@ struct FirebaseStorageModel {
 
 
 
+
+
+//MARK: - Удаление фото с сервера
+
+func removePhotoFromServer(){
+    
+}
+
+
+//MARK:  - Сохранение фото пользователя на устройстве
+
+private extension FirebaseStorageModel {
+    
+    func savePhotoToFolder(image: UIImage, fileName:String){
+        
+        guard let data = image.jpegData(compressionQuality: 1) ?? image.pngData() else { /// Преобразуем фото в дата данные
+            return
+        }
+        
+        let userLibary = fileManager.urls(for: .documentDirectory, in: .userDomainMask) /// Стандартная библиотека пользователя
+        let newFolder = userLibary[0].appendingPathComponent("CurrentUsersPhoto") as NSURL /// Добавляем к ней новую папку
+        
+        if checkDirectoryExist(directory: newFolder as URL) == false { /// Если директории нет создаем эту папку
+            try! fileManager.createDirectory(at: newFolder as URL, withIntermediateDirectories: false)
+        }
+        
+        do {
+            try data.write(to: newFolder.appendingPathComponent("\(fileName).png")!) /// Создаем новый файл по директории
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
+    func checkDirectoryExist(directory: URL) -> Bool { /// Проверка существует ли директория по указаному пути
+        let exists = FileManager.default.fileExists(atPath: directory.path)
+        return exists
+    }
+}
 
 
 

@@ -16,11 +16,15 @@ class SettingsPhotoViewController: UIViewController {
     @IBOutlet weak var collectionPhotoView: UICollectionView!
     
     let imagePicker = UIImagePickerController()
-    var imageArr = [UIImage(named: "1")!,UIImage(named: "2")!,UIImage(named: "3")!,UIImage(named: "4")!]
+    
+    var imageDict = [String: UIImage]()
+    var indexImageDict =  [String]()
+    
     var index = IndexPath()
     
+    let fileManager = FileManager.default
+    var currentPhotoFolder = URL(string: "")
 
-    
     let storage = Storage.storage()
     var userID = "+79817550000"
     
@@ -29,16 +33,15 @@ class SettingsPhotoViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        let firebaseStorage = FirebaseStorageModel(userID: userID)
-        Task {
-            var newArr = await firebaseStorage.loadImage()
-            print(newArr.count)
+        
+        if let newArr = getSavedImage() {
+            imageDict = newArr
+            collectionPhotoView.reloadData()
         }
         
         collectionPhotoView.delegate = self
         collectionPhotoView.dataSource = self
-        
+
         collectionPhotoView.register(CollectionPhotoCell.self, forCellWithReuseIdentifier: CollectionPhotoCell.identifier)
 
         
@@ -116,9 +119,9 @@ extension SettingsPhotoViewController {
     func createImage(indexPath: Int,cellWidth: CGFloat,cellHeight: CGFloat) -> UIImageView? { /// Создание фото
         
         
-        if indexPath < imageArr.count {
+        if indexPath < imageDict.count {
             let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: cellWidth, height: cellHeight))
-            imageView.image = imageArr[indexPath]
+            imageView.image = imageDict["d"]
             imageView.contentMode = .scaleAspectFill
             return imageView
             
@@ -132,7 +135,7 @@ extension SettingsPhotoViewController {
 //MARK: - Создание кнопок удаления и добавления
     
     
-    func createAddButton(x: CGFloat, y: CGFloat,index: Int,cell:CollectionPhotoCell ) -> UIButton {
+    func createAddButton(x: CGFloat, y: CGFloat,cell:CollectionPhotoCell) -> UIButton {
         let buttonAdd = CreateButton().createAddButtonPhotoSetings(x: x, y: y)
         
         let action = UIAction { action in
@@ -149,12 +152,12 @@ extension SettingsPhotoViewController {
     }
     
     
-    func createDeleteButton(x: CGFloat, y: CGFloat,index: Int,cell:CollectionPhotoCell ) -> UIButton {
+    func createDeleteButton(x: CGFloat, y: CGFloat,index: Int,cell:CollectionPhotoCell,keyImage: String) -> UIButton {
         let buttonDelete = CreateButton().createDeleteButtonPhotoSetings(x: x, y: y)
         
         let action = UIAction { action in
             
-            self.imageArr.remove(at: index)
+            self.imageDict.removeValue(forKey: k)
             self.collectionPhotoView.reloadData()
         }
         buttonDelete.addAction(action, for: .touchUpInside)
@@ -195,9 +198,10 @@ extension SettingsPhotoViewController: UIImagePickerControllerDelegate & UINavig
         
         Task { /// Ждем пока поступит ответ, либо успешная загрузка либо нет
             
-            let succesful = await firebaseStorage.uploadImageToStorage(image: image)
+            let data = await firebaseStorage.uploadImageToStorage(image: image,countName: imageArr.count - 1)
             
-            if succesful {
+            if data.succes {
+                
                 
                 UIView.animate(withDuration: 1.5, delay: 0) {
                     
@@ -218,6 +222,60 @@ extension SettingsPhotoViewController: UIImagePickerControllerDelegate & UINavig
     }
 
 }
+
+
+
+
+
+//MARK: -  Сохранение изображения
+
+extension SettingsPhotoViewController {
+    
+    
+//MARK: - Получение изображения
+    
+    func getSavedImage() -> [String: UIImage]? {
+        
+        var imageDict = [String: UIImage]()
+        
+        if let urlArr = getUrlFile() {
+            
+            for url in urlArr {
+                let fileName = String((url.path as NSString).lastPathComponent)
+                if let newImage = UIImage(contentsOfFile: url.path) {
+                    imageDict[fileName] = newImage
+                }
+            }
+        }
+        
+        if imageArr.count == 0 {
+            return nil
+        }else {
+            return imageDict
+        }
+    }
+    
+    private func getUrlFile() -> [URL]? {
+        
+        let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("CurrentUsersPhoto")
+        do {
+            let fileURLs = try fileManager.contentsOfDirectory(at: documentsURL, includingPropertiesForKeys: nil,options: .skipsHiddenFiles)
+            return fileURLs
+        } catch {
+            print("Error while enumerating files \(documentsURL.path): \(error.localizedDescription)")
+            return nil
+        }
+        
+    }
+    
+}
+
+
+
+
+
+
+
 
 
 extension SettingsPhotoViewController {
@@ -258,4 +316,3 @@ extension SettingsPhotoViewController {
    }
    
 }
-
