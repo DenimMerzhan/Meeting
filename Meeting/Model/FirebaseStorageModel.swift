@@ -26,7 +26,7 @@ struct FirebaseStorageModel {
     
 //MARK: -  Загрузка фото на сервер
     
-    func uploadImageToStorage(image: UIImage,countName: Int) async -> (succes:Bool,imageId:String)  {
+    func uploadImageToStorage(image: UIImage) async -> (succes:Bool,imageId:String)  {
         
         let imageID = "photoImage" + randomString(length: 15)
         

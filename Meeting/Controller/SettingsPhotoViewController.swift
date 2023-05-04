@@ -17,8 +17,7 @@ class SettingsPhotoViewController: UIViewController {
     
     let imagePicker = UIImagePickerController()
     
-    var imageDict = [String: UIImage]()
-    var indexImageDict =  [String]()
+    var imageFiles = [CurrentUserFile]()
     
     var index = IndexPath()
     
@@ -35,7 +34,7 @@ class SettingsPhotoViewController: UIViewController {
         super.viewDidLoad()
         
         if let newArr = getSavedImage() {
-            imageDict = newArr
+            imageFiles = newArr
             collectionPhotoView.reloadData()
         }
         
@@ -86,7 +85,7 @@ extension SettingsPhotoViewController : UICollectionViewDataSource, UICollection
             cell.dottedBorder.isHidden = false
             cell.photoImage.image = .none
             
-            let button = createAddButton(x: cell.frame.maxX ,y: cell.frame.maxY, index: indexPath.row,cell: cell)
+            let button = createAddButton(x: cell.frame.maxX ,y: cell.frame.maxY)
             collectionPhotoView.addSubview(button)
             
         }
@@ -119,9 +118,9 @@ extension SettingsPhotoViewController {
     func createImage(indexPath: Int,cellWidth: CGFloat,cellHeight: CGFloat) -> UIImageView? { /// Создание фото
         
         
-        if indexPath < imageDict.count {
+        if indexPath < imageFiles.count {
             let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: cellWidth, height: cellHeight))
-            imageView.image = imageDict["d"]
+            imageView.image = imageFiles[indexPath].image
             imageView.contentMode = .scaleAspectFill
             return imageView
             
@@ -135,7 +134,7 @@ extension SettingsPhotoViewController {
 //MARK: - Создание кнопок удаления и добавления
     
     
-    func createAddButton(x: CGFloat, y: CGFloat,cell:CollectionPhotoCell) -> UIButton {
+    func createAddButton(x: CGFloat, y: CGFloat) -> UIButton {
         let buttonAdd = CreateButton().createAddButtonPhotoSetings(x: x, y: y)
         
         let action = UIAction { action in
@@ -152,12 +151,12 @@ extension SettingsPhotoViewController {
     }
     
     
-    func createDeleteButton(x: CGFloat, y: CGFloat,index: Int,cell:CollectionPhotoCell,keyImage: String) -> UIButton {
+    func createDeleteButton(x: CGFloat, y: CGFloat,index: Int,cell:CollectionPhotoCell) -> UIButton {
         let buttonDelete = CreateButton().createDeleteButtonPhotoSetings(x: x, y: y)
         
         let action = UIAction { action in
             
-            self.imageDict.removeValue(forKey: k)
+            self.imageFiles.remove(at: index)
             self.collectionPhotoView.reloadData()
         }
         buttonDelete.addAction(action, for: .touchUpInside)
@@ -198,18 +197,18 @@ extension SettingsPhotoViewController: UIImagePickerControllerDelegate & UINavig
         
         Task { /// Ждем пока поступит ответ, либо успешная загрузка либо нет
             
-            let data = await firebaseStorage.uploadImageToStorage(image: image,countName: imageArr.count - 1)
+            let data = await firebaseStorage.uploadImageToStorage(image: image)
             
             if data.succes {
                 
-                
+                print(data.imageId)
                 UIView.animate(withDuration: 1.5, delay: 0) {
                     
                     progressView.progressBar.setProgress(1, animated: true)
                     
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                         progressView.checkMark.isHidden = false
-                        self.imageArr.append(image)
+                        self.imageFiles.append(CurrentUserFile(nameFile: data.imageId,image: image))
                         self.collectionPhotoView.reloadData()
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
                             progressView.backView.removeFromSuperview()
@@ -226,32 +225,28 @@ extension SettingsPhotoViewController: UIImagePickerControllerDelegate & UINavig
 
 
 
-
-//MARK: -  Сохранение изображения
+//MARK: - Получение изображения из файлов
 
 extension SettingsPhotoViewController {
     
-    
-//MARK: - Получение изображения
-    
-    func getSavedImage() -> [String: UIImage]? {
+    func getSavedImage() -> [CurrentUserFile]? {
         
-        var imageDict = [String: UIImage]()
+        var imageFiles = [CurrentUserFile]()
         
         if let urlArr = getUrlFile() {
             
             for url in urlArr {
                 let fileName = String((url.path as NSString).lastPathComponent)
                 if let newImage = UIImage(contentsOfFile: url.path) {
-                    imageDict[fileName] = newImage
+                    imageFiles.append(CurrentUserFile(nameFile: fileName,image: newImage))
                 }
             }
         }
         
-        if imageArr.count == 0 {
+        if imageFiles.count == 0 {
             return nil
         }else {
-            return imageDict
+            return imageFiles
         }
     }
     

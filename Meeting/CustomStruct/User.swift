@@ -17,3 +17,10 @@ struct User {
     var imageArr = [UIImage()]
     
 }
+
+struct CurrentUserFile {
+    
+    var nameFile = String()
+    var image = UIImage()
+    
+}
