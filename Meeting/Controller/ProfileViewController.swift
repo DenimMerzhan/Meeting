@@ -14,7 +14,7 @@ class ProfileViewController: UIViewController {
     @IBOutlet weak var fillingScaleProfile: UILabel!
     
     var circularProgressBar = CircularProgressBarView(frame: .zero)
-    
+    var animateProgressToValue = Float(0)
     
     override func viewDidAppear(_ animated: Bool) {
         changePhotoButton.titleLabel?.text = ""
@@ -23,9 +23,23 @@ class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        startSettings()
+        startSettings(animateProgressToValue: animateProgressToValue)
         
     }
+    
+    
+    @IBAction func settingsPhotoPressed(_ sender: UIButton) {
+        performSegue(withIdentifier: "settingsToPhotoSettings", sender: self)
+    }
+    
+    @IBAction func unwindSegue(_ sender: UIStoryboardSegue){
+        
+        guard let source = sender.source as? SettingsPhotoViewController else { return }
+        animateProgressToValue = source.animateProgressToValue
+        print(animateProgressToValue)
+        circularProgressBar.progressAnimation(duration: Double(animateProgressToValue) * 5, toValue: animateProgressToValue)
+    }
+    
 }
 
 
@@ -37,7 +51,7 @@ class ProfileViewController: UIViewController {
 
 extension ProfileViewController {
         
-    func startSettings(){
+    func startSettings(animateProgressToValue: Float){
         
         let changePhotoLayer = changePhotoButton.layer
         let filingScaleLayer = fillingScaleProfile.layer
@@ -47,7 +61,7 @@ extension ProfileViewController {
         
         circularProgressBar.center = profilePhoto.center
         circularProgressBar.createCircularPath(radius: 98) /// Создаем прогресс бар
-        circularProgressBar.progressAnimation(duration: 2,toValue: 0.5)
+        circularProgressBar.progressAnimation(duration: 2,toValue: animateProgressToValue)
         view.addSubview(circularProgressBar)
         
         changePhotoLayer.cornerRadius = changePhotoButton.frame.size.width / 2 /// Делаем круглым наш карандаш
@@ -66,8 +80,8 @@ extension ProfileViewController {
         filingScaleLayer.shadowOpacity = 1
         filingScaleLayer.shadowRadius = 10
         
-        
         view.bringSubviewToFront(fillingScaleProfile)
         view.bringSubviewToFront(changePhotoButton)
     }
+    
 }

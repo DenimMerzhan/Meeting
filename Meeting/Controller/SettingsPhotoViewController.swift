@@ -16,7 +16,7 @@ class SettingsPhotoViewController: UIViewController {
     @IBOutlet weak var collectionPhotoView: UICollectionView!
     
     let imagePicker = UIImagePickerController()
-    
+    var animateProgressToValue = Float(0)
     var imageFiles = [CurrentUserFile]()
     
     var index = IndexPath()
@@ -45,11 +45,13 @@ class SettingsPhotoViewController: UIViewController {
 
         
     }
-
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) { /// Передаем на предыдущий контроллер данные
+        animateProgressToValue =  Float(imageFiles.count) / 7
+    }
+    
 
 }
-
-
 
 
 //MARK:  - Настройка фотоколлажа
@@ -261,7 +263,7 @@ extension SettingsPhotoViewController {
             let fileURLs = try fileManager.contentsOfDirectory(at: documentsURL, includingPropertiesForKeys: nil,options: .skipsHiddenFiles)
             return fileURLs
         } catch {
-            print("Error while enumerating files \(documentsURL.path): \(error.localizedDescription)")
+            print("Ошибка получения адресов файлов \(documentsURL.path): \(error.localizedDescription)")
             return nil
         }
         

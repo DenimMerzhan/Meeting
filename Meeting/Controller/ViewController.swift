@@ -234,8 +234,9 @@ extension ViewController {
             }
             
             indexCurrentImage = 0
-            
-            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { /// Чем выше параметр тем выше шанс что карточка не удалиться и останется висеть в памяти надо подумать над этим
+                card.removeFromSuperview()
+            }
         }
         
         else {
