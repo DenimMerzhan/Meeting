@@ -156,6 +156,8 @@ extension SettingsPhotoViewController {
         
         let action = UIAction { action in
             
+            let  firebaseStorage = FirebaseStorageModel(userID: self.userID)
+            firebaseStorage.removePhotoFromServer(userID: self.userID, imageID: self.imageFiles[index].nameFile)
             self.imageFiles.remove(at: index)
             self.collectionPhotoView.reloadData()
         }
@@ -180,13 +182,16 @@ extension SettingsPhotoViewController: UIImagePickerControllerDelegate & UINavig
         }
         imagePicker.dismiss(animated: true)
     }
-    
-    
+}
+
+
 //MARK: -  Загрузка фото на сервре
-    
+
+extension SettingsPhotoViewController {
+
     func uploadDataToServer(image: UIImage){
         
-        let progressView = createProgressBarLoadPhoto()
+        let progressView = CreateButton().createProgressBarLoadPhoto()
         view.addSubview(progressView.backView)
         
         let  firebaseStorage = FirebaseStorageModel(userID: userID)
@@ -201,14 +206,13 @@ extension SettingsPhotoViewController: UIImagePickerControllerDelegate & UINavig
             
             if data.succes {
                 
-                print(data.imageId)
                 UIView.animate(withDuration: 1.5, delay: 0) {
                     
                     progressView.progressBar.setProgress(1, animated: true)
                     
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                         progressView.checkMark.isHidden = false
-                        self.imageFiles.append(CurrentUserFile(nameFile: data.imageId,image: image))
+                        self.imageFiles.append(CurrentUserFile(nameFile: data.fileName,image: image))
                         self.collectionPhotoView.reloadData()
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
                             progressView.backView.removeFromSuperview()
@@ -265,49 +269,8 @@ extension SettingsPhotoViewController {
     
 }
 
-
-
-
-
-
-
-
-
-extension SettingsPhotoViewController {
+       
+       
    
-   func createProgressBarLoadPhoto() -> (progressBar : UIProgressView,backView: UIView, checkMark: UIImageView) {
-       
-       
-       let backView = UIView(frame: CGRect(x: 20, y: 50, width: 350, height: 50))
-       backView.backgroundColor = UIColor(named: "LoadPhotoColor")
-       backView.layer.cornerRadius = 10
-       
-       let checkMarkImage = UIImageView(frame: CGRect(x: 290, y: 10, width: 50, height: 20))
-       checkMarkImage.image = UIImage(systemName: "checkmark")
-       checkMarkImage.contentMode = .scaleAspectFit
-       checkMarkImage.tintColor = .white
-       checkMarkImage.isHidden = true
-       backView.addSubview(checkMarkImage)
-       
-       let label = UILabel(frame: CGRect(x: 25, y: 10, width: 100, height: 20))
-       label.text = "Загрузка фото..."
-       label.font = .systemFont(ofSize: 17)
-       label.textColor = .white
-       
-       backView.addSubview(label)
-       
-       
-       let progressBar = UIProgressView(frame: CGRect(x: 25, y: 35, width: 300, height: 30))
-       backView.addSubview(progressBar)
-       progressBar.progressViewStyle = .bar
-       progressBar.progressTintColor = UIColor(named: "MainAppColor")
-       progressBar.trackTintColor = .gray
-       progressBar.setProgress(0.0, animated: false)
-       
-       
-       return (progressBar,backView,checkMarkImage)
-       
-       
-   }
-   
-}
+
+

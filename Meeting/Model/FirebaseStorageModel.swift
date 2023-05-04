@@ -26,7 +26,7 @@ struct FirebaseStorageModel {
     
 //MARK: -  Загрузка фото на сервер
     
-    func uploadImageToStorage(image: UIImage) async -> (succes:Bool,imageId:String)  {
+    func uploadImageToStorage(image: UIImage) async -> (succes:Bool,fileName:String)  {
         
         let imageID = "photoImage" + randomString(length: 15)
         
@@ -40,18 +40,18 @@ struct FirebaseStorageModel {
         metaData.contentType = "image/jpeg" /// Указываем явный тип данных в FireBase
         
         do {
-            let metaData = try await imagesRef.putDataAsync(imageData)
+            try await imagesRef.putDataAsync(imageData)
             let url = try await imagesRef.downloadURL()
             let status = await uploadDataToFirestore(url: url, imageID: imageID)
             if status {
-                savePhotoToFolder(image: image, fileName: imageID)
+                let fileName = savePhotoToUserPhone(image: image, fileName: imageID)
+                return (status,fileName)
             }
-            return (status,imageID)
         }catch {
             print(error)
             return (false,"")
         }
-        
+        return(false,"")
     }
     
     
@@ -70,7 +70,7 @@ struct FirebaseStorageModel {
     
 
     
-//MARK: -  Заггрузка фото с сервера
+//MARK: -  Загрузка фото с сервера
     
     
     func loadImageFromServer() async -> [URL] {
@@ -121,29 +121,39 @@ struct FirebaseStorageModel {
         return urlArr
     }
     
-}
+    
+    //MARK: - Удаление фото с сервера
 
-
-
-
-
-
-
-//MARK: - Удаление фото с сервера
-
-func removePhotoFromServer(){
+    func removePhotoFromServer(userID:String,imageID:String){
+        
+        var newImageServerID = imageID /// Создаем новое имя файла для сервера
+        if let dotRange = newImageServerID.range(of: ".") {
+          newImageServerID.removeSubrange(dotRange.lowerBound..<newImageServerID.endIndex) /// Удаляем расширение
+        }
+        
+        let imagesRef = storage.reference().child("UsersPhoto").child(userID).child(newImageServerID)
+        imagesRef.delete { error in
+            if let err = error {
+                print("Ошибка удаления фото с сервера \(err)")
+            }else {
+                deletePhotoOnUserPhone(fileName: imageID)
+            }
+        }
+    }
     
 }
+
+
 
 
 //MARK:  - Сохранение фото пользователя на устройстве
 
 private extension FirebaseStorageModel {
     
-    func savePhotoToFolder(image: UIImage, fileName:String){
+    func savePhotoToUserPhone(image: UIImage, fileName:String) -> String {
         
         guard let data = image.jpegData(compressionQuality: 1) ?? image.pngData() else { /// Преобразуем фото в дата данные
-            return
+            return ""
         }
         
         let userLibary = fileManager.urls(for: .documentDirectory, in: .userDomainMask) /// Стандартная библиотека пользователя
@@ -155,16 +165,41 @@ private extension FirebaseStorageModel {
         
         do {
             try data.write(to: newFolder.appendingPathComponent("\(fileName).png")!) /// Создаем новый файл по директории
+            return "\(fileName).png"
         } catch {
             print(error.localizedDescription)
         }
+        return ""
     }
     
     func checkDirectoryExist(directory: URL) -> Bool { /// Проверка существует ли директория по указаному пути
         let exists = FileManager.default.fileExists(atPath: directory.path)
         return exists
     }
+    
 }
+
+
+
+//MARK:  - Удаление фото пользователя на устройстве
+
+private extension FirebaseStorageModel {
+    
+    func deletePhotoOnUserPhone(fileName:String){
+        
+        let userLibary = fileManager.urls(for: .documentDirectory, in: .userDomainMask) /// Стандартная библиотека пользователя
+        let filePath = userLibary[0].appendingPathComponent("CurrentUsersPhoto").appendingPathComponent(fileName) /// Добавляем к ней новую папку
+        
+        do {
+            try fileManager.removeItem(at: filePath)
+        } catch {
+            print("Ошибка удаления файла с директории - ",error.localizedDescription)
+        }
+    }
+}
+
+
+
 
 
 
