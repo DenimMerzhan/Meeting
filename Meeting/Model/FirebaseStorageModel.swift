@@ -13,7 +13,7 @@ import FirebaseFirestore
 
 struct FirebaseStorageModel {
     
-    private var userID = String()
+    var userID = String()
     private let db = Firestore.firestore()
     private let storage = Storage.storage()
     

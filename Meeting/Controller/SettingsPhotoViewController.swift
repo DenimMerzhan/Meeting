@@ -13,44 +13,47 @@ import FirebaseFirestore
 class SettingsPhotoViewController: UIViewController {
     
     
+    @IBOutlet weak var doneButton: UIButton!
     @IBOutlet weak var collectionPhotoView: UICollectionView!
     
     let imagePicker = UIImagePickerController()
     var animateProgressToValue = Float(0)
     var imageFiles = [CurrentUserFile]()
     
+    var defaults = UserDefaults.standard
     var index = IndexPath()
     
     let fileManager = FileManager.default
     var currentPhotoFolder = URL(string: "")
-
+    
     let storage = Storage.storage()
     var userID = "+79817550000"
-    
-    
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let newArr = getSavedImage() {
+        
+        if let newArr = getSavedImage() { /// Если в каталоге есть фото текущего пользователя то загружаем их
             imageFiles = newArr
             collectionPhotoView.reloadData()
         }
         
         collectionPhotoView.delegate = self
         collectionPhotoView.dataSource = self
-
+        
         collectionPhotoView.register(CollectionPhotoCell.self, forCellWithReuseIdentifier: CollectionPhotoCell.identifier)
-
+        
         
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) { /// Передаем на предыдущий контроллер данные
-        animateProgressToValue =  Float(imageFiles.count) / 7
+    
+    @IBAction func donePressed(_ sender: UIButton) {
+        defaults.set(Float(imageFiles.count) / 9 , forKey: "ProfileFilingScale") /// Записываем данные о количествах фото текущего пользователя
+        print("arr count - ",imageFiles.count)
+        self.dismiss(animated: true)
     }
     
-
 }
 
 
@@ -112,7 +115,7 @@ extension SettingsPhotoViewController : UICollectionViewDataSource, UICollection
 
 
 
-//MARK: - Внешние оформление ячеек
+//MARK: - Создание фото из архива
 
 
 extension SettingsPhotoViewController {
@@ -158,6 +161,7 @@ extension SettingsPhotoViewController {
         
         let action = UIAction { action in
             
+            
             let  firebaseStorage = FirebaseStorageModel(userID: self.userID)
             firebaseStorage.removePhotoFromServer(userID: self.userID, imageID: self.imageFiles[index].nameFile)
             self.imageFiles.remove(at: index)
@@ -192,7 +196,7 @@ extension SettingsPhotoViewController: UIImagePickerControllerDelegate & UINavig
 extension SettingsPhotoViewController {
 
     func uploadDataToServer(image: UIImage){
-        
+        doneButton.isHidden = true
         let progressView = CreateButton().createProgressBarLoadPhoto()
         view.addSubview(progressView.backView)
         
@@ -207,6 +211,9 @@ extension SettingsPhotoViewController {
             let data = await firebaseStorage.uploadImageToStorage(image: image)
             
             if data.succes {
+                print("yeah")
+                self.imageFiles.append(CurrentUserFile(nameFile: data.fileName,image: image))
+                print(self.imageFiles.count)
                 
                 UIView.animate(withDuration: 1.5, delay: 0) {
                     
@@ -214,8 +221,8 @@ extension SettingsPhotoViewController {
                     
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                         progressView.checkMark.isHidden = false
-                        self.imageFiles.append(CurrentUserFile(nameFile: data.fileName,image: image))
                         self.collectionPhotoView.reloadData()
+                        self.doneButton.isHidden = false
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
                             progressView.backView.removeFromSuperview()
                         }
@@ -231,11 +238,11 @@ extension SettingsPhotoViewController {
 
 
 
-//MARK: - Получение изображения из файлов
+//MARK: - Получение изображения из файлов библиотеки пользователя
 
 extension SettingsPhotoViewController {
     
-    func getSavedImage() -> [CurrentUserFile]? {
+    func getSavedImage() -> [CurrentUserFile]? { /// Фото сохраняется в памяти, и при выходи из контроллера не удаляется!
         
         var imageFiles = [CurrentUserFile]()
         

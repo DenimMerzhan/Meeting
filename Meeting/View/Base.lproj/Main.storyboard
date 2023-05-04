@@ -295,7 +295,7 @@
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="plain" title="Готово"/>
                                         <connections>
-                                            <segue destination="SDu-qk-jW5" kind="unwind" unwindAction="unwindSegue:" id="GQr-Pf-YEg"/>
+                                            <action selector="donePressed:" destination="4NK-x7-t2w" eventType="touchUpInside" id="viK-5l-Pvs"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -315,10 +315,10 @@
                     <navigationItem key="navigationItem" id="tsF-6W-N5U"/>
                     <connections>
                         <outlet property="collectionPhotoView" destination="tAL-3a-eWJ" id="hkt-Qs-cBe"/>
+                        <outlet property="doneButton" destination="50e-j7-uEj" id="nnl-Ub-3Dq"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Koi-h7-AxS" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-                <exit id="SDu-qk-jW5" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="3482" y="-875"/>
         </scene>

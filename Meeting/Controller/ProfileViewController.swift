@@ -15,29 +15,21 @@ class ProfileViewController: UIViewController {
     
     var circularProgressBar = CircularProgressBarView(frame: .zero)
     var animateProgressToValue = Float(0)
+    let defaults = UserDefaults.standard
     
     override func viewDidAppear(_ animated: Bool) {
-        changePhotoButton.titleLabel?.text = ""
+        profileUpdate()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         startSettings(animateProgressToValue: animateProgressToValue)
-        
     }
     
     
     @IBAction func settingsPhotoPressed(_ sender: UIButton) {
         performSegue(withIdentifier: "settingsToPhotoSettings", sender: self)
-    }
-    
-    @IBAction func unwindSegue(_ sender: UIStoryboardSegue){
-        
-        guard let source = sender.source as? SettingsPhotoViewController else { return }
-        animateProgressToValue = source.animateProgressToValue
-        print(animateProgressToValue)
-        circularProgressBar.progressAnimation(duration: Double(animateProgressToValue) * 5, toValue: animateProgressToValue)
     }
     
 }
@@ -49,7 +41,7 @@ class ProfileViewController: UIViewController {
 
 //MARK: - Стартовые нстройки при запуске контроллера
 
-extension ProfileViewController {
+private extension ProfileViewController {
         
     func startSettings(animateProgressToValue: Float){
         
@@ -82,6 +74,23 @@ extension ProfileViewController {
         
         view.bringSubviewToFront(fillingScaleProfile)
         view.bringSubviewToFront(changePhotoButton)
+    }
+    
+    func profileUpdate(){ /// Обновления шкалы заполненности профиля
+        
+        changePhotoButton.titleLabel?.text = ""
+        
+        let oldValue = animateProgressToValue
+        animateProgressToValue = defaults.float(forKey: "ProfileFilingScale")
+        
+        if oldValue != animateProgressToValue { /// Если значения разные то обновляем шкалу заполненности
+            
+            circularProgressBar.progressAnimation(duration: Double(animateProgressToValue) * 5, toValue: animateProgressToValue)
+            
+            var newStatus = animateProgressToValue * 100
+            if newStatus > 100 {newStatus = 100}
+            fillingScaleProfile.text = String(format: "%.0f", newStatus)  + "% ЗАПОЛНЕНО"
+        }
     }
     
 }
