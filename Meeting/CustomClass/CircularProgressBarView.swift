@@ -62,5 +62,7 @@ class CircularProgressBarView: UIView {
             progressLayer.add(circularProgressAnimation, forKey: "progressAnim")
         }
    
-    
+    deinit {
+        print("CircularProgressBarView уничтожен")
+    }
 }

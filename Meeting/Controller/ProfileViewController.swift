@@ -85,7 +85,7 @@ private extension ProfileViewController {
         
         if oldValue != animateProgressToValue { /// Если значения разные то обновляем шкалу заполненности
             
-            circularProgressBar.progressAnimation(duration: Double(animateProgressToValue) * 5, toValue: animateProgressToValue)
+            circularProgressBar.progressAnimation(duration: Double(animateProgressToValue) * 5, toValue: animateProgressToValue - 0.1)
             
             var newStatus = animateProgressToValue * 100
             if newStatus > 100 {newStatus = 100}

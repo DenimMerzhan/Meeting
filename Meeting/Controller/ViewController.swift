@@ -28,14 +28,13 @@ class ViewController: UIViewController {
     
     var stopCard = false
     var center = CGPoint()
-    var oddCard: CardView?
     
+    var oddCard: CardView?
     var honestCard: CardView?
-    var cardModel = CardModel()
     var currentCard: CardView?
     
-    
-    
+    var cardModel = CardModel()
+   
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -88,8 +87,6 @@ class ViewController: UIViewController {
         let coordinates = sender.location(in: currentCard!).x
         let currentImage = currentCard!.imageUser! as! imageUserView
         let imageArr = currentCard!.imageArr!
-
-        
 
         if coordinates > 220 && indexCurrentImage < imageArr.count - 1 {
             indexCurrentImage += 1
@@ -240,6 +237,7 @@ extension ViewController {
         }
         
         else {
+            card.removeFromSuperview()
             buttonStackView.isHidden = true
         }
     }

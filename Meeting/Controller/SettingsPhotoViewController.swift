@@ -33,7 +33,6 @@ class SettingsPhotoViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
         if let newArr = getSavedImage() { /// Если в каталоге есть фото текущего пользователя то загружаем их
             imageFiles = newArr
             collectionPhotoView.reloadData()
@@ -41,17 +40,25 @@ class SettingsPhotoViewController: UIViewController {
         
         collectionPhotoView.delegate = self
         collectionPhotoView.dataSource = self
+        imagePicker.delegate = self
+        imagePicker.allowsEditing = false /// Спрашивает может ли пользователь редактикровать фото
+        imagePicker.sourceType = .photoLibrary
+
         
         collectionPhotoView.register(CollectionPhotoCell.self, forCellWithReuseIdentifier: CollectionPhotoCell.identifier)
-        
         
     }
     
     
     @IBAction func donePressed(_ sender: UIButton) {
         defaults.set(Float(imageFiles.count) / 9 , forKey: "ProfileFilingScale") /// Записываем данные о количествах фото текущего пользователя
-        print("arr count - ",imageFiles.count)
+        
+        
         self.dismiss(animated: true)
+    }
+    
+    deinit {
+        print("\(self) уничтожен")
     }
     
 }
@@ -142,11 +149,8 @@ extension SettingsPhotoViewController {
     func createAddButton(x: CGFloat, y: CGFloat) -> UIButton {
         let buttonAdd = CreateButton().createAddButtonPhotoSetings(x: x, y: y)
         
-        let action = UIAction { action in
+        let action = UIAction { [unowned self] action in
             
-            self.imagePicker.delegate = self
-            self.imagePicker.allowsEditing = false /// Спрашивает может ли пользователь редактикровать фото
-            self.imagePicker.sourceType = .photoLibrary
             self.present(self.imagePicker, animated: true)
 
         }
@@ -159,7 +163,7 @@ extension SettingsPhotoViewController {
     func createDeleteButton(x: CGFloat, y: CGFloat,index: Int,cell:CollectionPhotoCell) -> UIButton {
         let buttonDelete = CreateButton().createDeleteButtonPhotoSetings(x: x, y: y)
         
-        let action = UIAction { action in
+        let action = UIAction { [unowned self] action in
             
             
             let  firebaseStorage = FirebaseStorageModel(userID: self.userID)
@@ -206,20 +210,20 @@ extension SettingsPhotoViewController {
             progressView.progressBar.setProgress(0.7, animated: true)
         }
         
-        Task { /// Ждем пока поступит ответ, либо успешная загрузка либо нет
+        Task {  /// Ждем пока поступит ответ, либо успешная загрузка либо нет
             
             let data = await firebaseStorage.uploadImageToStorage(image: image)
             
             if data.succes {
-                print("yeah")
-                self.imageFiles.append(CurrentUserFile(nameFile: data.fileName,image: image))
-                print(self.imageFiles.count)
+               
+                imageFiles.append(CurrentUserFile(nameFile: data.fileName,image: image))
+                
                 
                 UIView.animate(withDuration: 1.5, delay: 0) {
                     
                     progressView.progressBar.setProgress(1, animated: true)
                     
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [unowned self] in
                         progressView.checkMark.isHidden = false
                         self.collectionPhotoView.reloadData()
                         self.doneButton.isHidden = false
@@ -250,8 +254,10 @@ extension SettingsPhotoViewController {
             
             for url in urlArr {
                 let fileName = String((url.path as NSString).lastPathComponent)
-                if let newImage = UIImage(contentsOfFile: url.path) {
+                
+                if var newImage = UIImage(contentsOfFile: url.path) {
                     imageFiles.append(CurrentUserFile(nameFile: fileName,image: newImage))
+                    newImage = .remove
                 }
             }
         }
@@ -261,6 +267,7 @@ extension SettingsPhotoViewController {
         }else {
             return imageFiles
         }
+        
     }
     
     private func getUrlFile() -> [URL]? {
