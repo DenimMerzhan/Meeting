@@ -78,32 +78,34 @@ struct FirebaseStorageModel {
         
         Task {
             
-            let urlArr = await loadUrlImage(currentUserID: currentUserID)
+            var urlArr = await loadUrlImage(currentUserID: currentUserID)
             if urlArr.count == 0 {
-                print("Нет пользователей по этому ID")
+                print("Нет фото у пользователя по этому ID \(currentUserID)")
                 completion(nil)
+                return
             }
             var imageArr = [UIImage]()
+            var countIndex = 0
             
             for urlPhoto in urlArr {
                 
                 let Reference = storage.reference(forURL: urlPhoto)
                 
                 Reference.getData(maxSize: Int64(1*2048*2048)) { data, erorr in
-                    
+                    print(countIndex)
                     if let err = erorr {
                         print("Ошибка загрузки данных изображения с FirebaseStorage \(err)")
                         completion(nil)
+                        return
                     }else {
                         if let image = UIImage(data: data!) {
                             imageArr.append(image)
                         }
+                        countIndex += 1
                     }
                     
-                    if urlPhoto == urlArr.last {
+                    if countIndex == urlArr.count {
                         completion(imageArr)
-                    }else {
-                        completion(nil)
                     }
                 }
                 
