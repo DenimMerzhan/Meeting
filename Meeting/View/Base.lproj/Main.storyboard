@@ -107,9 +107,9 @@
                     </tabBarItem>
                     <connections>
                         <outlet property="buttonStackView" destination="t4n-2B-dJj" id="Vfr-Jo-tH7"/>
-                        <outlet property="panGesture" destination="nVL-eb-bzh" id="uUv-Je-A4n"/>
+                        <outlet property="panGesture" destination="nVL-eb-bzh" id="SsJ-2u-0UF"/>
                         <outlet property="preferencesButton" destination="tCU-e5-7Ys" id="tRk-75-VfP"/>
-                        <outlet property="tapGesture" destination="2Ma-FL-cJ8" id="wbh-Ig-Mxq"/>
+                        <outlet property="tapGesture" destination="2Ma-FL-cJ8" id="sLp-Dn-Prh"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

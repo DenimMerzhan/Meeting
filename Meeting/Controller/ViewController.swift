@@ -16,14 +16,13 @@ class ViewController: UIViewController {
 
     
     
-    @IBOutlet var panGesture: UIPanGestureRecognizer!
-    @IBOutlet var tapGesture: UITapGestureRecognizer!
+    @IBOutlet weak var panGesture: UIPanGestureRecognizer!
+    @IBOutlet weak var tapGesture: UITapGestureRecognizer!
     @IBOutlet weak var buttonStackView: UIStackView!
     
     @IBOutlet weak var preferencesButton: UIButton!
     
     var usersArr = [User]()
-    var indexUser = 0
     var indexCurrentImage = 0
     
     var stopCard = false
@@ -202,8 +201,6 @@ extension ViewController {
             card.removeGestureRecognizer(panGesture)
             card.removeGestureRecognizer(tapGesture)
             
-            
-            
             if card == honestCard {
                 
                 oddCard!.addGestureRecognizer(panGesture)
@@ -213,7 +210,6 @@ extension ViewController {
                
                 view.addSubview(honestCard!)
                 view.sendSubviewToBack(honestCard!)
-                honestCard?.alpha = 1
                 
                 
             }else {
@@ -225,7 +221,6 @@ extension ViewController {
                
                 view.addSubview(oddCard!)
                 view.sendSubviewToBack(oddCard!)
-                oddCard?.alpha = 1
                 
                 
             }
@@ -298,8 +293,8 @@ extension ViewController {
         
         
         
-        if indexUser < usersArr.count {
-            let currentUser = usersArr[indexUser]
+        if  usersArr.count > 0 {
+            let currentUser = usersArr[0]
             return (currentUser.name, currentUser.imageArr,currentUser.age)
         }else {
             print("Пользователи закончились")
@@ -313,10 +308,9 @@ extension ViewController {
         let data = createDataCard()
         if let textName = data.textName, let image = data.image,let age = data.age  {
             
-            indexUser += 1
             let card = cardModel.createCard(textName: textName, image: image,age:age)
             center = card.center
-            
+            usersArr.removeFirst()
             return card
         }else {
             stopCard = true
@@ -339,18 +333,24 @@ extension ViewController {
     
     func startSettings(){
         
-        usersArr = Users().loadUsers()
+        Users().loadUsers(completion: { [unowned self] otherUser in
+            if otherUser != nil {
+                self.usersArr = otherUser!
+                
+                oddCard = createCard()
+                honestCard = createCard()
+                currentCard = oddCard
+                
+                oddCard!.addGestureRecognizer(panGesture)
+                oddCard!.addGestureRecognizer(tapGesture)
+                self.view.addSubview(honestCard!)
+                self.view.addSubview(oddCard!)
+                self.view.bringSubviewToFront(buttonStackView)
+            }
+        })
+    
 
-        oddCard = createCard()
-        honestCard = createCard()
-        currentCard = oddCard
 
-        
-        oddCard!.addGestureRecognizer(panGesture)
-        oddCard!.addGestureRecognizer(tapGesture)
-        self.view.addSubview(honestCard!)
-        self.view.addSubview(oddCard!)
-        self.view.bringSubviewToFront(buttonStackView)
         
     }
     

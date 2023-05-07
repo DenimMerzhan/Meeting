@@ -34,6 +34,10 @@ class CardView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit {
+        print("Объект CardView уничтожен")
+    }
+    
 }
 
 
@@ -60,6 +64,6 @@ class imageUserView: UIImageView {
     }
     
     deinit {
-        print("Объект CardView уничтожен")
+        print("Объект imageUserView уничтожен")
     }
 }
