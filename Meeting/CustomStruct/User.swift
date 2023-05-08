@@ -13,7 +13,14 @@ struct User {
     
     var name = String()
     var age = Int()
-    var iD: String?
+    var iD = String()
     var imageArr = [UIImage()]
+    
+}
+
+struct CurrentUserFile {
+    
+    var nameFile = String()
+    var image = UIImage()
     
 }

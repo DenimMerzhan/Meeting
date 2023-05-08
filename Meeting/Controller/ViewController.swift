@@ -16,46 +16,35 @@ class ViewController: UIViewController {
 
     
     
-    @IBOutlet var panGesture: UIPanGestureRecognizer!
-    @IBOutlet var tapGesture: UITapGestureRecognizer!
+    @IBOutlet weak var panGesture: UIPanGestureRecognizer!
+    @IBOutlet weak var tapGesture: UITapGestureRecognizer!
     @IBOutlet weak var buttonStackView: UIStackView!
     
     @IBOutlet weak var preferencesButton: UIButton!
     
     var usersArr = [User]()
-    var indexUser = 0
     var indexCurrentImage = 0
     
     var stopCard = false
     var center = CGPoint()
-    var oddCard: CardView?
     
+    var oddCard: CardView?
     var honestCard: CardView?
-    var cardModel = CardModel()
     var currentCard: CardView?
     
+    var cardModel = CardModel()
+   
     
     override func viewDidLoad() {
-        
         super.viewDidLoad()
         
-        preferencesButton.titleLabel?.text = ""
-        usersArr = Users().loadUsers()
-
-        oddCard = createCard()
-        honestCard = createCard()
-        currentCard = oddCard
-
-        
-        oddCard!.addGestureRecognizer(panGesture)
-        oddCard!.addGestureRecognizer(tapGesture)
-        self.view.addSubview(honestCard!)
-        self.view.addSubview(oddCard!)
-        self.view.bringSubviewToFront(buttonStackView)
-    
+        startSettings()
         
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        preferencesButton.titleLabel?.isHidden = true
+    }
     
     
     
@@ -95,10 +84,8 @@ class ViewController: UIViewController {
 
         
         let coordinates = sender.location(in: currentCard!).x
-        let currentImage = currentCard!.imageUser! as! imageUserView
+        let currentImage = currentCard!.imageUserView as! imageUserView
         let imageArr = currentCard!.imageArr!
-
-        
 
         if coordinates > 220 && indexCurrentImage < imageArr.count - 1 {
             indexCurrentImage += 1
@@ -214,8 +201,6 @@ extension ViewController {
             card.removeGestureRecognizer(panGesture)
             card.removeGestureRecognizer(tapGesture)
             
-            
-            
             if card == honestCard {
                 
                 oddCard!.addGestureRecognizer(panGesture)
@@ -225,7 +210,6 @@ extension ViewController {
                
                 view.addSubview(honestCard!)
                 view.sendSubviewToBack(honestCard!)
-                honestCard?.alpha = 1
                 
                 
             }else {
@@ -237,17 +221,18 @@ extension ViewController {
                
                 view.addSubview(oddCard!)
                 view.sendSubviewToBack(oddCard!)
-                oddCard?.alpha = 1
                 
                 
             }
             
             indexCurrentImage = 0
-            
-            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { /// Чем выше параметр тем выше шанс что карточка не удалиться и останется висеть в памяти надо подумать над этим
+                card.removeFromSuperview()
+            }
         }
         
         else {
+            card.removeFromSuperview()
             buttonStackView.isHidden = true
         }
     }
@@ -304,29 +289,27 @@ extension ViewController {
 extension ViewController {
     
     
-    func createDataCard() -> (textName: String?, image: [UIImage]?,age: Int?){
+    func createDataCard() -> User? {
         
         
         
-        if indexUser < usersArr.count {
-            let currentUser = usersArr[indexUser]
-            return (currentUser.name, currentUser.imageArr,currentUser.age)
+        if  usersArr.count > 0 {
+            let newUser = usersArr[0]
+            return (newUser)
         }else {
             print("Пользователи закончились")
-            return (nil,nil,nil)
+            return nil
         }
         
     }
     
     func createCard() -> CardView {
         
-        let data = createDataCard()
-        if let textName = data.textName, let image = data.image,let age = data.age  {
+        if let newUser = createDataCard() {
             
-            indexUser += 1
-            let card = cardModel.createCard(textName: textName, image: image,age:age)
+            let card = cardModel.createCard(newUser: newUser)
             center = card.center
-            
+            usersArr.removeFirst()
             return card
         }else {
             stopCard = true
@@ -341,6 +324,36 @@ extension ViewController {
         let card = cardModel.createEmptyCard()
         
         return card
+    }
+    
+}
+
+extension ViewController {
+    
+    func startSettings(){
+        
+        
+        Users().loadFirtsUsers(countUsers: 20) {[unowned self] otherUser,error  in
+            
+            if let err = error {
+                print(err)
+            }
+            
+            if otherUser != nil {
+                self.usersArr = otherUser!
+                
+                oddCard = createCard()
+                honestCard = createCard()
+                currentCard = oddCard
+                
+                oddCard!.addGestureRecognizer(panGesture)
+                oddCard!.addGestureRecognizer(tapGesture)
+                self.view.addSubview(honestCard!)
+                self.view.addSubview(oddCard!)
+                self.view.bringSubviewToFront(buttonStackView)
+            }
+        }
+        
     }
     
 }

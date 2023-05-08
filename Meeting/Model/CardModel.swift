@@ -17,7 +17,12 @@ struct CardModel {
     var usersArr = [User]()
     
     
-    func createCard(textName:String,image: [UIImage],age: Int) -> CardView {
+    
+    
+//MARK: - Создание новой карты
+    
+    
+    func createCard(newUser: User) -> CardView {
         
         
         let frame =  CGRect(x: 16, y: 118, width: 361, height: 603)
@@ -25,14 +30,14 @@ struct CardModel {
         
         let nameLabel = UILabel() /// Имя
         let point = CGPoint(x: 10, y: 480)
-        nameLabel.text = textName
+        nameLabel.text = newUser.name
         nameLabel.font = .boldSystemFont(ofSize: 48)
         nameLabel.frame = CGRect(origin: point, size: nameLabel.sizeThatFits(CGSize(width: CGFloat.infinity, height: 48))) /// Расширяем рамку в зависимости от размера текста
         nameLabel.textColor = .white
         
         
         let ageLabel = UILabel(frame: CGRect(x: nameLabel.frame.maxX + 10, y: 485, width: 100, height: 48.0)) /// Возраст, ставим по позиции x относительно имени
-        ageLabel.text = String(age)
+        ageLabel.text = String(newUser.age)
         ageLabel.font = .systemFont(ofSize: 48)
         ageLabel.textColor = .white
         
@@ -52,7 +57,7 @@ struct CardModel {
         
         
         let imageView = imageUserView(frame: CGRect(x: 0, y: 0, width: 361, height: 603),nameUser: nameLabel,age: ageLabel)
-        imageView.image = image[0]
+        imageView.image = newUser.imageArr[0]
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true /// Ограничиваем фото в размерах
     
@@ -66,7 +71,7 @@ struct CardModel {
         
        
         
-        let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,imageUser: imageView,imageArr: image,superLike: superLike)
+        let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,imageUser: imageView,imageArr: newUser.imageArr,superLike: superLike, userID: newUser.iD)
         
         
         
@@ -77,7 +82,7 @@ struct CardModel {
         card.addSubview(dislikeHeart)
         card.addSubview(superLike)
         
-        let progressBar = createProgressBar(countPhoto: image.count, image: imageView)
+        let progressBar = createProgressBar(countPhoto: newUser.imageArr.count, image: imageView)
         imageView.progressBar = progressBar
         
         
@@ -144,7 +149,7 @@ struct CardModel {
         let dislikeHeart = UIImageView(frame: CGRect(x: 234, y: 0.0, width: 127, height: 93))
         let superLike = UIImageView(frame: CGRect(x: 117, y: 8, width: 150, height: 100))
         
-        let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,imageUser: nil,imageArr: nil,superLike:superLike)
+        let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,imageUser: nil,imageArr: nil,superLike:superLike, userID: "")
         
         card.addSubview(label)
         
@@ -156,7 +161,7 @@ struct CardModel {
     
     
     
-//MARK: - Создание анимации на последней карты
+//MARK: - Создание 3D анимации на последней карты
     
     func createAnimate(indexImage:Int,currentCard: CardView){
         
@@ -173,7 +178,7 @@ struct CardModel {
         }
         
         
-        let layer = currentCard.imageUser!.layer /// Создаем ссылку на слой imageUser
+        let layer = currentCard.imageUserView!.layer /// Создаем ссылку на слой imageUser
         
         var rotationAndPerspectiveTransform : CATransform3D = CATransform3DIdentity
         rotationAndPerspectiveTransform.m34 = 1.0 / -1000
