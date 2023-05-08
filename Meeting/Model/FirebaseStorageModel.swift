@@ -71,41 +71,42 @@ struct FirebaseStorageModel {
     
 
     
-//MARK: -  Загрузка фото с сервера
+//MARK: -  Загрузка пользователей с сервера
     
     
-    func loadImageFromServer(currentUserID: String, completion: @escaping ([UIImage]?) -> Void) {
+    func loadUsersFromServer(currentUserID: String, completion: @escaping (User?) -> Void) {
         
         Task {
             
-            var urlArr = await loadUrlImage(currentUserID: currentUserID)
-            if urlArr.count == 0 {
+            var dataUser = await loadUrlImage(currentUserID: currentUserID)
+            if dataUser.urlArr.count == 0 {
                 print("Нет фото у пользователя по этому ID \(currentUserID)")
                 completion(nil)
                 return
             }
-            var imageArr = [UIImage]()
+            var user = User(name: dataUser.nameUser,age: dataUser.ageUser,imageArr: [UIImage]())
             var countIndex = 0
             
-            for urlPhoto in urlArr {
+            for urlPhoto in dataUser.urlArr {
                 
                 let Reference = storage.reference(forURL: urlPhoto)
                 
                 Reference.getData(maxSize: Int64(1*2048*2048)) { data, erorr in
-                    print(countIndex)
+                   
                     if let err = erorr {
                         print("Ошибка загрузки данных изображения с FirebaseStorage \(err)")
+                        dataUser.urlArr.removeAll()
                         completion(nil)
                         return
                     }else {
                         if let image = UIImage(data: data!) {
-                            imageArr.append(image)
+                            user.imageArr.append(image)
                         }
                         countIndex += 1
                     }
                     
-                    if countIndex == urlArr.count {
-                        completion(imageArr)
+                    if countIndex == dataUser.urlArr.count {
+                        completion(user)
                     }
                 }
                 
@@ -114,9 +115,14 @@ struct FirebaseStorageModel {
         
     }
     
-    private func loadUrlImage(currentUserID: String) async -> [String] {
+    
+//MARK: -  Загрузка URL фото и данных о пользователе
+    
+    private func loadUrlImage(currentUserID: String) async -> (urlArr : [String],nameUser: String,ageUser: Int) {
         
         var urlArr = [String]()
+        var nameUser = String()
+        var ageUser = Int()
         let collection  = db.collection("Users")
         
         do {
@@ -127,16 +133,23 @@ struct FirebaseStorageModel {
                         if data.key.contains("photoImage") {
                             if let url = data.value as? String {
                                 urlArr.append(url)
-
+                            }
+                        }else if data.key == "Name" {
+                            if let name = data.value as?  String {
+                                nameUser = name
+                            }
+                        }else if data.key == "Age"{
+                            if let age = data.value as?  Int {
+                                ageUser = age
                             }
                         }
-                    }
+                     }
                 }
             }
         }catch{
             print("Ошибка получения ссылок на фото с сервера FirebaseFirestore - \(error)")
         }
-        return urlArr
+        return (urlArr,nameUser,ageUser)
     }
     
     

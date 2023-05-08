@@ -333,7 +333,13 @@ extension ViewController {
     
     func startSettings(){
         
-        Users().loadUsers(completion: { [unowned self] otherUser in
+        
+        Users().loadFirtsUsers(countUsers: 5) {[unowned self] otherUser,error  in
+            
+            if let err = error {
+                print(err)
+            }
+            
             if otherUser != nil {
                 self.usersArr = otherUser!
                 
@@ -347,9 +353,7 @@ extension ViewController {
                 self.view.addSubview(oddCard!)
                 self.view.bringSubviewToFront(buttonStackView)
             }
-        })
-    
-
+        }
 
         
     }

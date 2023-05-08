@@ -11,30 +11,49 @@ import UIKit
 
 struct Users {
     
-    func loadFirtsUsers(completion: @escaping([User]?) -> Void ) {
+    func loadFirtsUsers(countUsers: Int, completion: @escaping([User]?,Error?) -> Void) {
         
         var usersArr = [User]()
-        let usersIDArr = ["+79213229900","+374788092","+79218909922","+79817550000"]
+        var usersIDArr = ["+79213229900","+374788092","+79218909922","+79817550000","+79213229988","+374788021","+79218909943","+79817550082"]
         var countIndex = 0
         
-        for userID in usersIDArr {
+
+        if countUsers > usersIDArr.count {
+            completion(nil,erorrLoadUsers.fewUsers(code: usersIDArr.count))
+            return
+        }
+        
+        for i in 0...countUsers - 1 {
             
-            FirebaseStorageModel().loadImageFromServer(currentUserID: userID, completion: { imageUser in
-                
-                if imageUser != nil {
-                    usersArr.append(User(name: "Джозефина",age:48 ,imageArr: imageUser!))
+            FirebaseStorageModel().loadUsersFromServer(currentUserID: usersIDArr[i]) { user in
+                print(countIndex)
+                if let newUser = user {
+                    usersArr.append(User(name: newUser.name,age:newUser.age ,imageArr: newUser.imageArr))
+                   print("Yeah")
+                    usersIDArr.remove(at: i)
                 }
                 countIndex += 1
-                if countIndex == usersIDArr.count {
-                    completion(usersArr)
+                if countIndex == countUsers {
+                    completion(usersArr,nil)
                 }
-                
-            })
+            }
         }
     }
     
-    func backgroundDowload30Users(){
-        
-    }
+}
+
+
+enum erorrLoadUsers: Error {
+  
+    case fewUsers(code:Int)
+}
+
+extension erorrLoadUsers: CustomStringConvertible {
     
+    public var description: String {
+        switch self {
+        case .fewUsers(let code):
+            return "Оставщихся пользователей меньше чем запрошенных. Оставшихся пользователей - " + String(code)
+        }
+    }
 }

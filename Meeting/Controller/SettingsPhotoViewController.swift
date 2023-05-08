@@ -27,7 +27,8 @@ class SettingsPhotoViewController: UIViewController {
     var currentPhotoFolder = URL(string: "")
     
     let storage = Storage.storage()
-    var userID = "+79213229900"
+    var usersIDArr = ["+79213229900","+374788092","+79218909922","+79817550000","+79213229988","+374788021","+79218909943","+79817550082"]
+    var userID = "+79218909922"
     
     
     override func viewDidLoad() {
