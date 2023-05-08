@@ -346,7 +346,7 @@ extension ViewController {
                 oddCard = createCard()
                 honestCard = createCard()
                 currentCard = oddCard
-                
+                print("Ha")
                 oddCard!.addGestureRecognizer(panGesture)
                 oddCard!.addGestureRecognizer(tapGesture)
                 self.view.addSubview(honestCard!)
