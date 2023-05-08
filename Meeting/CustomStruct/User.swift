@@ -13,7 +13,7 @@ struct User {
     
     var name = String()
     var age = Int()
-    var iD: String?
+    var iD = String()
     var imageArr = [UIImage()]
     
 }

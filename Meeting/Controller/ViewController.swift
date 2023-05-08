@@ -84,7 +84,7 @@ class ViewController: UIViewController {
 
         
         let coordinates = sender.location(in: currentCard!).x
-        let currentImage = currentCard!.imageUser! as! imageUserView
+        let currentImage = currentCard!.imageUserView as! imageUserView
         let imageArr = currentCard!.imageArr!
 
         if coordinates > 220 && indexCurrentImage < imageArr.count - 1 {
@@ -289,26 +289,25 @@ extension ViewController {
 extension ViewController {
     
     
-    func createDataCard() -> (textName: String?, image: [UIImage]?,age: Int?){
+    func createDataCard() -> User? {
         
         
         
         if  usersArr.count > 0 {
-            let currentUser = usersArr[0]
-            return (currentUser.name, currentUser.imageArr,currentUser.age)
+            let newUser = usersArr[0]
+            return (newUser)
         }else {
             print("Пользователи закончились")
-            return (nil,nil,nil)
+            return nil
         }
         
     }
     
     func createCard() -> CardView {
         
-        let data = createDataCard()
-        if let textName = data.textName, let image = data.image,let age = data.age  {
+        if let newUser = createDataCard() {
             
-            let card = cardModel.createCard(textName: textName, image: image,age:age)
+            let card = cardModel.createCard(newUser: newUser)
             center = card.center
             usersArr.removeFirst()
             return card
@@ -334,7 +333,7 @@ extension ViewController {
     func startSettings(){
         
         
-        Users().loadFirtsUsers(countUsers: 5) {[unowned self] otherUser,error  in
+        Users().loadFirtsUsers(countUsers: 20) {[unowned self] otherUser,error  in
             
             if let err = error {
                 print(err)
@@ -346,7 +345,7 @@ extension ViewController {
                 oddCard = createCard()
                 honestCard = createCard()
                 currentCard = oddCard
-                print("Ha")
+                
                 oddCard!.addGestureRecognizer(panGesture)
                 oddCard!.addGestureRecognizer(tapGesture)
                 self.view.addSubview(honestCard!)
@@ -354,7 +353,6 @@ extension ViewController {
                 self.view.bringSubviewToFront(buttonStackView)
             }
         }
-
         
     }
     

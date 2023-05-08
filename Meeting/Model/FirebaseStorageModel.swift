@@ -78,7 +78,7 @@ struct FirebaseStorageModel {
         
         Task {
             
-            var dataUser = await loadUrlImage(currentUserID: currentUserID)
+            var dataUser = await loadDataUser(currentUserID: currentUserID)
             if dataUser.urlArr.count == 0 {
                 print("Нет фото у пользователя по этому ID \(currentUserID)")
                 completion(nil)
@@ -116,9 +116,9 @@ struct FirebaseStorageModel {
     }
     
     
-//MARK: -  Загрузка URL фото и данных о пользователе
+//MARK: -  Загрузка данных о конкретном пользователе
     
-    private func loadUrlImage(currentUserID: String) async -> (urlArr : [String],nameUser: String,ageUser: Int) {
+    private func loadDataUser(currentUserID: String) async -> (urlArr : [String],nameUser: String,ageUser: Int) {
         
         var urlArr = [String]()
         var nameUser = String()
@@ -151,8 +151,28 @@ struct FirebaseStorageModel {
         }
         return (urlArr,nameUser,ageUser)
     }
+  
+//MARK: - Загрузка определленого количества пользователей
     
-    
+    func loadUsersID(countUser: Int) async -> [String]? {
+        var count = 0
+        let collection  = db.collection("Users")
+        var userIDArr = [String]()
+        do {
+            let querySnapshot = try await collection.getDocuments()
+            for document in querySnapshot.documents {
+                userIDArr.append(document.documentID)
+                count += 1
+                if count == countUser {
+                    break
+                }
+            }
+        }catch{
+            print("Ошибка загрузки ID пользователей - \(error)")
+            return nil
+        }
+        return userIDArr
+    }
     
     //MARK: - Удаление фото с сервера
 

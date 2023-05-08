@@ -11,20 +11,22 @@ import UIKit
 
 class CardView: UIView {
     
-    var imageUser: UIImageView?
+    var imageUserView: UIImageView?
     var imageArr: [UIImage]?
+    var userID = String()
     
     var likHeartImage = UIImageView()
     var dislikeHeartImage = UIImageView()
     var superLike = UIImageView()
     
-    init(frame: CGRect, heartLikeImage: UIImageView = UIImageView(), heartDislikeImage: UIImageView = UIImageView(),imageUser: imageUserView?,imageArr: [UIImage]?,superLike: UIImageView) {
+    init(frame: CGRect, heartLikeImage: UIImageView = UIImageView(), heartDislikeImage: UIImageView = UIImageView(),imageUser: imageUserView?,imageArr: [UIImage]?,superLike: UIImageView,userID: String) {
         
         self.likHeartImage = heartLikeImage
         self.dislikeHeartImage = heartDislikeImage
-        self.imageUser = imageUser
+        self.imageUserView = imageUser
         self.imageArr = imageArr
         self.superLike = superLike
+        self.userID = userID
         
         
         super.init(frame: frame)
