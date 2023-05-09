@@ -359,6 +359,11 @@ extension ViewController {
         
             if let  dataCurrentUser = await FirebaseStorageModel().loadMetadataDataCurrentUser(currentUserID: currentAuthUserID) {
                 currentAuthUser = dataCurrentUser
+                
+                FirebaseStorageModel().loadUserFromServer(urlArrUser: currentAuthUser.urlPhotoArr, userID: currentAuthUser.ID) { [unowned self] imageArr in
+                    guard imageArr != nil else {return}
+                    currentAuthUser.imageArr = imageArr!
+                }
             }
             
             usersModel.loadUsers(currentAuthUser: currentAuthUser, countUsers: 20) { [unowned self] otherUser, err in

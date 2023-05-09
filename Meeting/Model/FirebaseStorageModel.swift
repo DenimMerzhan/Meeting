@@ -74,19 +74,18 @@ struct FirebaseStorageModel {
 //MARK: -  Загрузка фото пользователя с сервера
     
     
-    func loadUsersFromServer(newUser: User, completion: @escaping ([UIImage]?) -> Void) {
+    func loadUserFromServer(urlArrUser: [String],userID: String, completion: @escaping ([UIImage]?) -> Void) {
         
         Task {
             
-            
-            if newUser.urlPhotoArr?.count == 0 {
-                print("Нет фото у пользователя по этому ID \(newUser.ID)")
+            if urlArrUser.count == 0 {
+                print("Нет фото у пользователя по этому ID \(userID)")
                 completion(nil)
                 return
             }
             var imageArr = [UIImage]()
             var countIndex = 0
-            var urlArr = newUser.urlPhotoArr!
+            var urlArr = urlArrUser
             
             for urlPhoto in urlArr {
                 
@@ -106,7 +105,7 @@ struct FirebaseStorageModel {
                         countIndex += 1
                     }
                     
-                    if countIndex == newUser.urlPhotoArr!.count {
+                    if countIndex == urlArr.count {
                         completion(imageArr)
                     }
                 }
@@ -141,7 +140,7 @@ struct FirebaseStorageModel {
                     }
                     
                 }else {
-                    print("Ошибка в преобразование")
+                    print("Ошибка в преобразование имени и возраста у данного пользователя \(newUserID)")
                 }
             }
             
@@ -156,7 +155,7 @@ struct FirebaseStorageModel {
     func loadMetadataDataCurrentUser(currentUserID: String) async -> CurrentAuthUser? {
         
         var currentUser = CurrentAuthUser(ID: currentUserID)
-        let collection  = db.collection("Users").document("newUserID")
+        let collection  = db.collection("Users").document(currentUserID)
         
         do {
             let docSnap = try await collection.getDocument()
@@ -164,14 +163,16 @@ struct FirebaseStorageModel {
                 
                 
                 
-                if let name = dataDoc["Name"] as? String ,let age = dataDoc["Age"] as? Int,let likeArr = dataDoc["LikeArr"] as? [String], let disLikeArr = dataDoc["DislikeArr"] as? [String], let superLikeArr = dataDoc["SuperLike"] as? [String] {
+                if let name = dataDoc["Name"] as? String ,let age = dataDoc["Age"] as? Int {
                     
                     currentUser.name = name
                     currentUser.age = age
                     
-                    currentUser.likeArr = likeArr
-                    currentUser.disLikeArr = disLikeArr
-                    currentUser.superLikeArr = superLikeArr
+                    if let likeArr = dataDoc["LikeArr"] as? [String], let disLikeArr = dataDoc["DisLikeArr"] as? [String], let superLikeArr = dataDoc["SuperLikeArr"] as? [String]  {
+                        currentUser.likeArr = likeArr
+                        currentUser.disLikeArr = disLikeArr
+                        currentUser.superLikeArr = superLikeArr
+                    }
                     
                     
                     for data in dataDoc {
@@ -183,7 +184,7 @@ struct FirebaseStorageModel {
                     }
                     
                 }else {
-                    print("Ошибка в преобразование")
+                    print("Ошибка в преобразование данных о текущем пользователе")
                     return nil
                 }
             }
@@ -201,11 +202,15 @@ struct FirebaseStorageModel {
         var count = 0
         let collection  = db.collection("Users")
         var userIDArr = [String]()
+        var i = 0
         
         let viewedUsers = currentUser.likeArr + currentUser.disLikeArr + currentUser.superLikeArr
+        print(viewedUsers.count, "количество ограничений")
         do {
             let querySnapshot = try await collection.getDocuments()
+            
             for document in querySnapshot.documents {
+                print(document.documentID)
                 
                 if document.documentID == currentUser.ID { /// Если текущий пользователь пропускаем его добавление
                    continue
@@ -218,6 +223,8 @@ struct FirebaseStorageModel {
                     break
                 }
             }
+            
+            print(querySnapshot.count, "Количество элементов в снапшоте ")
         }catch{
             print("Ошибка загрузки ID пользователей - \(error)")
             return nil

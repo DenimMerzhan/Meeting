@@ -16,7 +16,10 @@ struct UsersModel {
     private let db = Firestore.firestore()
     
     
-    func loadUsers(currentAuthUser: CurrentAuthUser ,countUsers: Int, completion: @escaping([User]?,Error?) -> Void) {
+  //MARK: -  Загрузка новых пользователей для их показа
+    
+    func loadUsers(currentAuthUser: CurrentAuthUser ,countUsers: Int, completion: @escaping([User]?,Error?) -> Void)
+    {
         
         Task {
             
@@ -26,7 +29,7 @@ struct UsersModel {
             
             if let arr = await FirebaseStorageModel().loadUsersID(countUser: countUsers,currentUser: currentAuthUser) { /// Загружаем определенное количество URL пользователей
                 usersIDArr = arr
-                print(usersIDArr.count, "Count ")
+                print(usersIDArr.count, "Count userIDArr ")
             }
             
             if countUsers > usersIDArr.count { /// Если URL меньше чем счетчик значит они заканчиваются
@@ -39,10 +42,10 @@ struct UsersModel {
             for i in 0...countUsers - 1 {
                 
                 
-                let userMetadata = await FirebaseStorageModel().loadMetaDataNewUser(newUserID: usersIDArr[i])
+                let userMetadata = await FirebaseStorageModel().loadMetaDataNewUser(newUserID: usersIDArr[i]) /// Загрузка метаданных о пользователе
                 
-                FirebaseStorageModel().loadUsersFromServer(newUser:userMetadata) { imageArrUser in
-                
+                FirebaseStorageModel().loadUserFromServer(urlArrUser: userMetadata.urlPhotoArr!, userID: userMetadata.ID) { imageArrUser in
+                    
                     if let imageArr = imageArrUser {
                         usersArr.append(User(name: userMetadata.name,age:userMetadata.age ,ID: usersIDArr[i],imageArr: imageArr))
                         
@@ -51,8 +54,10 @@ struct UsersModel {
                     if countIndex == countUsers {
                         completion(usersArr,nil)
                     }
+
                 }
-            }
+                                                          
+           }
         }
     }
     
@@ -61,6 +66,7 @@ struct UsersModel {
         
     
     func writingPairsInfrormation(likeArr:[String],disLikeArr: [String],superLikeArr: [String]){
+        print("CurrentUSerIDAtuh - \(currentUserID)")
         let documenRef = db.collection("Users").document(currentUserID)
         
         documenRef.setData([
