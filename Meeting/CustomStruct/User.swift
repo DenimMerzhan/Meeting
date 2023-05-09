@@ -26,6 +26,9 @@ struct CurrentAuthUser {
     var age = Int()
     var ID  = String()
     
+    var urlPhotoArr = [String]()
+    var imageArr = [UIImage()]
+    
     var likeArr = [String]()
     var disLikeArr = [String]()
     var superLikeArr = [String]()

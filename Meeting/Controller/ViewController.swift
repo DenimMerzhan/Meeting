@@ -31,15 +31,17 @@ class ViewController: UIViewController {
     var honestCard: CardView?
     var currentCard: CardView?
     
-    
+    var currentAuthUserID = "+79817550000"
     var cardModel = CardModel()
-    var currentAuthUser = CurrentAuthUser(name: "Name",age: 22,ID: "+79817550000")
+    var currentAuthUser = CurrentAuthUser()
+    
     var usersModel = UsersModel()
+    
     var usersArr =  [User]() {
         didSet {
-            if usersArr.count < 10 {
+            if usersArr.count < 14 {
                 print("Загрузка новых пользователей")
-                loadNewUsers(countUser: 20)
+                loadNewUsers(countUser: 5)
                 usersModel.writingPairsInfrormation(likeArr: currentAuthUser.likeArr, disLikeArr: currentAuthUser.disLikeArr, superLikeArr: currentAuthUser.superLikeArr)
             }
         }
@@ -49,7 +51,7 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        currentAuthUser.ID = currentAuthUserID
         startSettings()
 
     }
@@ -353,32 +355,33 @@ extension ViewController {
         
         usersModel.currentUserID = currentAuthUser.ID
         
-        var dataPairsUser = usersModel.getUserInformationAboutPairs()
-        currentAuthUser.disLikeArr = dataPairsUser.disLikeArr
-        currentAuthUser.likeArr = dataPairsUser.likeArr
-        currentAuthUser.superLikeArr = dataPairsUser.superLikeArr
+        Task {
         
-        usersModel.loadUsers(countUsers: 20) { [unowned self] otherUser, err in
-            if let error = err {
-                print(error)
+            if let  dataCurrentUser = await FirebaseStorageModel().loadMetadataDataCurrentUser(currentUserID: currentAuthUserID) {
+                currentAuthUser = dataCurrentUser
             }
-            guard let otherUserArr = otherUser else {return}
             
-            self.usersArr = self.usersArr + otherUserArr
+            usersModel.loadUsers(currentAuthUser: currentAuthUser, countUsers: 20) { [unowned self] otherUser, err in
+                if let error = err {
+                    print(error)
+                }
+                guard let otherUserArr = otherUser else {return}
+                
+                self.usersArr = self.usersArr + otherUserArr
+                
+                oddCard = createCard()
+                honestCard = createCard()
+                currentCard = oddCard
+                
+                oddCard!.addGestureRecognizer(panGesture)
+                oddCard!.addGestureRecognizer(tapGesture)
+                self.view.addSubview(honestCard!)
+                self.view.addSubview(oddCard!)
+                self.view.bringSubviewToFront(buttonStackView)
+            }
             
-            oddCard = createCard()
-            honestCard = createCard()
-            currentCard = oddCard
             
-            oddCard!.addGestureRecognizer(panGesture)
-            oddCard!.addGestureRecognizer(tapGesture)
-            self.view.addSubview(honestCard!)
-            self.view.addSubview(oddCard!)
-            self.view.bringSubviewToFront(buttonStackView)
         }
-        
-        
-            
         
         
     }
@@ -388,7 +391,7 @@ extension ViewController {
     func loadNewUsers(countUser: Int){
         
         let usersModel = UsersModel(currentUserID: currentAuthUser.ID)
-        usersModel.loadUsers(countUsers: countUser) { [unowned self] otherUser, err in
+        usersModel.loadUsers(currentAuthUser: currentAuthUser, countUsers: countUser) { [unowned self] otherUser, err in
             if let error = err {
                 print(error)
             }

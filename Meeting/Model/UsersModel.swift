@@ -16,31 +16,35 @@ struct UsersModel {
     private let db = Firestore.firestore()
     
     
-    func loadUsers(countUsers: Int, completion: @escaping([User]?,Error?) -> Void) {
+    func loadUsers(currentAuthUser: CurrentAuthUser ,countUsers: Int, completion: @escaping([User]?,Error?) -> Void) {
         
-
         Task {
             
             var usersArr = [User]()
             var usersIDArr = [String]()
             var countIndex = 0
-            print(currentUserID)
-            if let arr = await FirebaseStorageModel().loadUsersID(countUser: countUsers,currentUserID: currentUserID) { /// Загружаем определенное количество URL пользователей
+            
+            if let arr = await FirebaseStorageModel().loadUsersID(countUser: countUsers,currentUser: currentAuthUser) { /// Загружаем определенное количество URL пользователей
                 usersIDArr = arr
                 print(usersIDArr.count, "Count ")
             }
             
-            if countUsers > usersIDArr.count {
+            if countUsers > usersIDArr.count { /// Если URL меньше чем счетчик значит они заканчиваются
                 completion(nil,erorrLoadUsers.fewUsers(code: usersIDArr.count))
                 return
             }
             
+            
+            
             for i in 0...countUsers - 1 {
                 
-                FirebaseStorageModel().loadUsersFromServer(newUserID: usersIDArr[i]) { user in
                 
-                    if let newUser = user {
-                        usersArr.append(User(name: newUser.name,age:newUser.age ,ID: usersIDArr[i],imageArr: newUser.imageArr))
+                let userMetadata = await FirebaseStorageModel().loadMetaDataNewUser(newUserID: usersIDArr[i])
+                
+                FirebaseStorageModel().loadUsersFromServer(newUser:userMetadata) { imageArrUser in
+                
+                    if let imageArr = imageArrUser {
+                        usersArr.append(User(name: userMetadata.name,age:userMetadata.age ,ID: usersIDArr[i],imageArr: imageArr))
                         
                     }
                     countIndex += 1
@@ -69,37 +73,6 @@ struct UsersModel {
             }
             
         }
-    }
-    
-//MARK: -  Получение данных о парах пользователя
-    
-    func getUserInformationAboutPairs() -> (likeArr: [String],disLikeArr: [String],superLikeArr: [String]){
-        
-        let documentRef = db.collection("Users").document(currentUserID)
-        var likeArr = [String]()
-        var disLikeArr = [String]()
-        var superLikeArr = [String]()
-        
-        documentRef.getDocument { Snapshot, err in
-            
-            if let error = err {
-                print("Ошибка получения архива статиситики пар пользователя \(error)")
-                return
-            }
-            
-            if let dataArr = Snapshot?.data() as? [String:Any]{
-                if let userLikeArr = dataArr["LikeArr"] as? [String] {
-                    likeArr = userLikeArr
-                }else if let disArr = dataArr["DislikeArr"] as? [String]{
-                    disLikeArr = disArr
-                }else if let superArr = dataArr["SuperLikeArr"] as? [String]{
-                    superLikeArr = superArr
-                }
-            }
-        }
-        
-        return (likeArr,superLikeArr,disLikeArr)
-        
     }
     
 }

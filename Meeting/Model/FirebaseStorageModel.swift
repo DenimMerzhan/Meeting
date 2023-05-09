@@ -74,20 +74,21 @@ struct FirebaseStorageModel {
 //MARK: -  Загрузка фото пользователя с сервера
     
     
-    func loadUsersFromServer(newUserID: String, completion: @escaping (User?) -> Void) {
+    func loadUsersFromServer(newUser: User, completion: @escaping ([UIImage]?) -> Void) {
         
         Task {
             
-            var newUser = await loadDataUser(newUserID: newUserID)
+            
             if newUser.urlPhotoArr?.count == 0 {
-                print("Нет фото у пользователя по этому ID \(currentUserID)")
+                print("Нет фото у пользователя по этому ID \(newUser.ID)")
                 completion(nil)
                 return
             }
-            var user = User(name: newUser.name,age: newUser.age,imageArr: [UIImage]())
+            var imageArr = [UIImage]()
             var countIndex = 0
+            var urlArr = newUser.urlPhotoArr!
             
-            for urlPhoto in newUser.urlPhotoArr! {
+            for urlPhoto in urlArr {
                 
                 let Reference = storage.reference(forURL: urlPhoto)
                 
@@ -95,18 +96,18 @@ struct FirebaseStorageModel {
                    
                     if let err = erorr {
                         print("Ошибка загрузки данных изображения с FirebaseStorage \(err)")
-                        newUser.urlPhotoArr!.removeAll()
                         completion(nil)
+                        urlArr.removeAll()
                         return
                     }else {
                         if let image = UIImage(data: data!) {
-                            user.imageArr.append(image)
+                            imageArr.append(image)
                         }
                         countIndex += 1
                     }
                     
                     if countIndex == newUser.urlPhotoArr!.count {
-                        completion(user)
+                        completion(imageArr)
                     }
                 }
                 
@@ -118,52 +119,99 @@ struct FirebaseStorageModel {
     
 //MARK: -  Загрузка метаданных о пользователе с FireStore
     
-    private func loadDataUser(newUserID: String) async -> User {
+    func loadMetaDataNewUser(newUserID: String) async -> User {
         
-        var newUser = User(urlPhotoArr: [String]())
-        let collection  = db.collection("Users")
+        var newUser = User(ID: newUserID, urlPhotoArr: [String]())
+        let collection  = db.collection("Users").document(newUserID)
         
         do {
-            let querySnapshot = try await collection.getDocuments()
-            for document in querySnapshot.documents {
-                if document.documentID == currentUserID {
-                    for data in document.data() {
+            let docSnap = try await collection.getDocument()
+            if let dataDoc = docSnap.data() {
+                
+                if let name = dataDoc["Name"] as? String ,let age = dataDoc["Age"] as? Int {
+                    newUser.name = name
+                    newUser.age = age
+                    
+                    for data in dataDoc {
                         if data.key.contains("photoImage") {
-                            if let url = data.value as? String {
-                                newUser.urlPhotoArr?.append(url)
-                            }
-                        }else if data.key == "Name" {
-                            if let name = data.value as?  String {
-                                newUser.name = name
-                            }
-                        }else if data.key == "Age"{
-                            if let age = data.value as?  Int {
-                                newUser.age = age
+                            if let urlPhoto = data.value as? String {
+                                newUser.urlPhotoArr?.append(urlPhoto)
                             }
                         }
-                     }
+                    }
+                    
+                }else {
+                    print("Ошибка в преобразование")
                 }
             }
+            
         }catch{
             print("Ошибка получения ссылок на фото с сервера FirebaseFirestore - \(error)")
         }
         return (newUser)
     }
   
+//MARK: -  Загрузка метаданных о текущем авторизованном пользователе с FireStore
+        
+    func loadMetadataDataCurrentUser(currentUserID: String) async -> CurrentAuthUser? {
+        
+        var currentUser = CurrentAuthUser(ID: currentUserID)
+        let collection  = db.collection("Users").document("newUserID")
+        
+        do {
+            let docSnap = try await collection.getDocument()
+            if let dataDoc = docSnap.data() {
+                
+                
+                
+                if let name = dataDoc["Name"] as? String ,let age = dataDoc["Age"] as? Int,let likeArr = dataDoc["LikeArr"] as? [String], let disLikeArr = dataDoc["DislikeArr"] as? [String], let superLikeArr = dataDoc["SuperLike"] as? [String] {
+                    
+                    currentUser.name = name
+                    currentUser.age = age
+                    
+                    currentUser.likeArr = likeArr
+                    currentUser.disLikeArr = disLikeArr
+                    currentUser.superLikeArr = superLikeArr
+                    
+                    
+                    for data in dataDoc {
+                        if data.key.contains("photoImage") {
+                            if let urlPhoto = data.value as? String {
+                                currentUser.urlPhotoArr.append(urlPhoto)
+                            }
+                        }
+                    }
+                    
+                }else {
+                    print("Ошибка в преобразование")
+                    return nil
+                }
+            }
+            
+        }catch{
+            print("Ошибка получения ссылок на фото с сервера FirebaseFirestore - \(error)")
+            return nil
+        }
+        return (currentUser)
+    }
+    
 //MARK: - Загрузка определленого количества ID пользователей, кроме текущего пользователя
     
-    func loadUsersID(countUser: Int,currentUserID: String) async -> [String]? {
+    func loadUsersID(countUser: Int,currentUser:CurrentAuthUser) async -> [String]? {
         var count = 0
         let collection  = db.collection("Users")
         var userIDArr = [String]()
+        
+        let viewedUsers = currentUser.likeArr + currentUser.disLikeArr + currentUser.superLikeArr
         do {
             let querySnapshot = try await collection.getDocuments()
             for document in querySnapshot.documents {
                 
-//                if document.documentID != currentUserID {
-//                    userIDArr.append(document.documentID)
-//                    count += 1
-//                }
+                if document.documentID == currentUser.ID { /// Если текущий пользователь пропускаем его добавление
+                   continue
+                }else if viewedUsers.contains(document.documentID) {
+                    continue
+                }
                 userIDArr.append(document.documentID)
                 count += 1
                 if count == countUser {
@@ -176,6 +224,9 @@ struct FirebaseStorageModel {
         }
         return userIDArr
     }
+    
+    
+    
     
     //MARK: - Удаление фото с сервера
 
