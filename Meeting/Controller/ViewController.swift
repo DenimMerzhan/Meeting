@@ -22,7 +22,6 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var preferencesButton: UIButton!
     
-    var usersArr = [User]()
     var indexCurrentImage = 0
     
     var stopCard = false
@@ -32,14 +31,27 @@ class ViewController: UIViewController {
     var honestCard: CardView?
     var currentCard: CardView?
     
+    
     var cardModel = CardModel()
+    var currentAuthUser = CurrentAuthUser(name: "Name",age: 22,ID: "+79817550000")
+    var usersModel = UsersModel()
+    var usersArr =  [User]() {
+        didSet {
+            if usersArr.count < 10 {
+                print("Загрузка новых пользователей")
+                loadNewUsers(countUser: 20)
+                usersModel.writingPairsInfrormation(likeArr: currentAuthUser.likeArr, disLikeArr: currentAuthUser.disLikeArr, superLikeArr: currentAuthUser.superLikeArr)
+            }
+        }
+    }
+
    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         startSettings()
-        
+
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -54,12 +66,16 @@ class ViewController: UIViewController {
         
         var differenceX = CGFloat()
         var differenceY = CGFloat(-150)
+        guard let userID = currentCard?.userID else {return}
         
         if sender.restorationIdentifier == "Cancel" {
             differenceX = -200
+            currentAuthUser.disLikeArr.append(userID)
         }else if sender.restorationIdentifier == "SuperLike" {
+            currentAuthUser.superLikeArr.append(userID)
             differenceY = -600
         }else if sender.restorationIdentifier == "Like" {
+            currentAuthUser.likeArr.append(userID)
             differenceX = 200
         }
         
@@ -148,6 +164,7 @@ class ViewController: UIViewController {
                         card.center = CGPoint(x: card.center.x + 150 , y: card.center.y + 100 )
                         card.alpha = 0
                         self.loadNewPeople(card: card)
+                        self.currentAuthUser.likeArr.append(card.userID)
                         
                     }
                     
@@ -156,14 +173,16 @@ class ViewController: UIViewController {
                         card.center = CGPoint(x: card.center.x - 150 , y: card.center.y + 100 )
                         card.alpha = 0
                         self.loadNewPeople(card: card)
+                        self.currentAuthUser.disLikeArr.append(card.userID)
                         
                     }
-                }else if yFromCenter < -250 {
+                }else if yFromCenter < -250 { /// Супер Лайк
                     
                     UIView.animate(withDuration: 0.22, delay: 0) {
                         card.center = CGPoint(x: card.center.x , y: card.center.y - 600 )
                         card.alpha = 0
                         self.loadNewPeople(card: card)
+                        self.currentAuthUser.superLikeArr.append(card.userID)
                     }
                 }
                 
@@ -332,28 +351,50 @@ extension ViewController {
     
     func startSettings(){
         
+        usersModel.currentUserID = currentAuthUser.ID
         
-        Users().loadFirtsUsers(countUsers: 20) {[unowned self] otherUser,error  in
-            
-            if let err = error {
-                print(err)
+        var dataPairsUser = usersModel.getUserInformationAboutPairs()
+        currentAuthUser.disLikeArr = dataPairsUser.disLikeArr
+        currentAuthUser.likeArr = dataPairsUser.likeArr
+        currentAuthUser.superLikeArr = dataPairsUser.superLikeArr
+        
+        usersModel.loadUsers(countUsers: 20) { [unowned self] otherUser, err in
+            if let error = err {
+                print(error)
             }
+            guard let otherUserArr = otherUser else {return}
             
-            if otherUser != nil {
-                self.usersArr = otherUser!
-                
-                oddCard = createCard()
-                honestCard = createCard()
-                currentCard = oddCard
-                
-                oddCard!.addGestureRecognizer(panGesture)
-                oddCard!.addGestureRecognizer(tapGesture)
-                self.view.addSubview(honestCard!)
-                self.view.addSubview(oddCard!)
-                self.view.bringSubviewToFront(buttonStackView)
-            }
+            self.usersArr = self.usersArr + otherUserArr
+            
+            oddCard = createCard()
+            honestCard = createCard()
+            currentCard = oddCard
+            
+            oddCard!.addGestureRecognizer(panGesture)
+            oddCard!.addGestureRecognizer(tapGesture)
+            self.view.addSubview(honestCard!)
+            self.view.addSubview(oddCard!)
+            self.view.bringSubviewToFront(buttonStackView)
         }
         
+        
+            
+        
+        
+    }
+    
+//MARK: -  Загрузка новых пользователей ассинхронно
+    
+    func loadNewUsers(countUser: Int){
+        
+        let usersModel = UsersModel(currentUserID: currentAuthUser.ID)
+        usersModel.loadUsers(countUsers: countUser) { [unowned self] otherUser, err in
+            if let error = err {
+                print(error)
+            }
+            guard let otherUserArr = otherUser else {return}
+            self.usersArr = self.usersArr + otherUserArr
+        }
     }
     
 }

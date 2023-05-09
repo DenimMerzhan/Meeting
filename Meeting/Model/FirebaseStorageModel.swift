@@ -13,14 +13,14 @@ import FirebaseFirestore
 
 struct FirebaseStorageModel {
     
-    var userID = String()
+    private var currentUserID = String()
     private let db = Firestore.firestore()
     private let storage = Storage.storage()
     
     private let fileManager = FileManager.default
     
     init(userID: String = String()) {
-        self.userID = userID
+        self.currentUserID = userID
     }
     
     
@@ -31,7 +31,7 @@ struct FirebaseStorageModel {
         
         let imageID = "photoImage" + randomString(length: 15)
         
-        let imagesRef = storage.reference().child("UsersPhoto").child(userID).child(imageID) /// Создаем ссылку на файл
+        let imagesRef = storage.reference().child("UsersPhoto").child(currentUserID).child(imageID) /// Создаем ссылку на файл
         guard let imageData = image.jpegData(compressionQuality: 0.4) else { /// Преобразуем в Jpeg c сжатием
             return (false,"")
         }
@@ -58,7 +58,7 @@ struct FirebaseStorageModel {
     
     private func uploadDataToFirestore(url:URL,imageID: String) async -> Bool {
      
-        let colletcion = db.collection("Users").document(userID) /// Добавляем в FiresStore ссылку на фото\
+        let colletcion = db.collection("Users").document(currentUserID) /// Добавляем в FiresStore ссылку на фото\
         
         do {
            try await colletcion.setData([imageID : url.absoluteString], merge: true)
@@ -71,23 +71,23 @@ struct FirebaseStorageModel {
     
 
     
-//MARK: -  Загрузка пользователей с сервера
+//MARK: -  Загрузка фото пользователя с сервера
     
     
-    func loadUsersFromServer(currentUserID: String, completion: @escaping (User?) -> Void) {
+    func loadUsersFromServer(newUserID: String, completion: @escaping (User?) -> Void) {
         
         Task {
             
-            var dataUser = await loadDataUser(currentUserID: currentUserID)
-            if dataUser.urlArr.count == 0 {
+            var newUser = await loadDataUser(newUserID: newUserID)
+            if newUser.urlPhotoArr?.count == 0 {
                 print("Нет фото у пользователя по этому ID \(currentUserID)")
                 completion(nil)
                 return
             }
-            var user = User(name: dataUser.nameUser,age: dataUser.ageUser,imageArr: [UIImage]())
+            var user = User(name: newUser.name,age: newUser.age,imageArr: [UIImage]())
             var countIndex = 0
             
-            for urlPhoto in dataUser.urlArr {
+            for urlPhoto in newUser.urlPhotoArr! {
                 
                 let Reference = storage.reference(forURL: urlPhoto)
                 
@@ -95,7 +95,7 @@ struct FirebaseStorageModel {
                    
                     if let err = erorr {
                         print("Ошибка загрузки данных изображения с FirebaseStorage \(err)")
-                        dataUser.urlArr.removeAll()
+                        newUser.urlPhotoArr!.removeAll()
                         completion(nil)
                         return
                     }else {
@@ -105,7 +105,7 @@ struct FirebaseStorageModel {
                         countIndex += 1
                     }
                     
-                    if countIndex == dataUser.urlArr.count {
+                    if countIndex == newUser.urlPhotoArr!.count {
                         completion(user)
                     }
                 }
@@ -116,13 +116,11 @@ struct FirebaseStorageModel {
     }
     
     
-//MARK: -  Загрузка данных о конкретном пользователе
+//MARK: -  Загрузка метаданных о пользователе с FireStore
     
-    private func loadDataUser(currentUserID: String) async -> (urlArr : [String],nameUser: String,ageUser: Int) {
+    private func loadDataUser(newUserID: String) async -> User {
         
-        var urlArr = [String]()
-        var nameUser = String()
-        var ageUser = Int()
+        var newUser = User(urlPhotoArr: [String]())
         let collection  = db.collection("Users")
         
         do {
@@ -132,15 +130,15 @@ struct FirebaseStorageModel {
                     for data in document.data() {
                         if data.key.contains("photoImage") {
                             if let url = data.value as? String {
-                                urlArr.append(url)
+                                newUser.urlPhotoArr?.append(url)
                             }
                         }else if data.key == "Name" {
                             if let name = data.value as?  String {
-                                nameUser = name
+                                newUser.name = name
                             }
                         }else if data.key == "Age"{
                             if let age = data.value as?  Int {
-                                ageUser = age
+                                newUser.age = age
                             }
                         }
                      }
@@ -149,18 +147,23 @@ struct FirebaseStorageModel {
         }catch{
             print("Ошибка получения ссылок на фото с сервера FirebaseFirestore - \(error)")
         }
-        return (urlArr,nameUser,ageUser)
+        return (newUser)
     }
   
-//MARK: - Загрузка определленого количества пользователей
+//MARK: - Загрузка определленого количества ID пользователей, кроме текущего пользователя
     
-    func loadUsersID(countUser: Int) async -> [String]? {
+    func loadUsersID(countUser: Int,currentUserID: String) async -> [String]? {
         var count = 0
         let collection  = db.collection("Users")
         var userIDArr = [String]()
         do {
             let querySnapshot = try await collection.getDocuments()
             for document in querySnapshot.documents {
+                
+//                if document.documentID != currentUserID {
+//                    userIDArr.append(document.documentID)
+//                    count += 1
+//                }
                 userIDArr.append(document.documentID)
                 count += 1
                 if count == countUser {
@@ -196,12 +199,14 @@ struct FirebaseStorageModel {
     
     func deletePhotoFromFirebase(imageId: String){
         let fieldID = "photoImage" + imageId
-        db.collection("Users").document(userID).updateData([fieldID : FieldValue.delete()]) { err in
+        db.collection("Users").document(currentUserID).updateData([fieldID : FieldValue.delete()]) { err in
             if let error = err {print( "Ошибка удаления фото с сервера FirebaseFirestore \(error)")}
         }
-        
     }
 }
+
+
+
 
 
 
