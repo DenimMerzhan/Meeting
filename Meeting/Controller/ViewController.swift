@@ -31,28 +31,40 @@ class ViewController: UIViewController {
     var honestCard: CardView?
     var currentCard: CardView?
     
-    var currentAuthUserID = "+79817550000"
     var cardModel = CardModel()
-    var currentAuthUser = CurrentAuthUser()
-    
-    var usersModel = UsersModel()
-    
+    var currentAuthUser = CurrentAuthUser(ID: "4a4KXZljBz")
+
     var usersArr =  [User]() {
         didSet {
-            if usersArr.count < 14 {
+            print(usersArr.count)
+            
+            if usersArr.count < 3 && currentAuthUser.couplesOver == false {
                 print("Загрузка новых пользователей")
-                loadNewUsers(countUser: 5)
-                usersModel.writingPairsInfrormation(likeArr: currentAuthUser.likeArr, disLikeArr: currentAuthUser.disLikeArr, superLikeArr: currentAuthUser.superLikeArr)
+                loadNewUsers(numberRequsetedUsers: 5)
+               
+                currentAuthUser.writingPairsInfrormation()
+                
+            }else if usersArr.count == 0 {
+                print("Пользователи закончились")
+                currentAuthUser.writingPairsInfrormation()
             }
         }
     }
 
-   
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        currentAuthUser.ID = currentAuthUserID
-        startSettings()
+        
+        
+        Task {
+            
+            var testCurrent = self.currentAuthUser
+            await testCurrent.loadMetadata()
+            self.currentAuthUser = testCurrent
+            
+            startSettings(numberRequsetedUsers: 5)
+        }
+        
+        
 
     }
     
@@ -217,6 +229,10 @@ extension ViewController {
     
     func loadNewPeople(card:CardView){
         
+        if usersArr.count != 0 {
+            usersArr.removeFirst()
+        }
+        
         if stopCard == false {
             
             card.removeGestureRecognizer(panGesture)
@@ -259,9 +275,6 @@ extension ViewController {
     }
     
 }
-    
-    
-
 
 
     
@@ -302,8 +315,6 @@ extension ViewController {
 }
 
 
-
-
 //MARK: - Создание нового CardView
 
 
@@ -312,13 +323,10 @@ extension ViewController {
     
     func createDataCard() -> User? {
         
-        
-        
         if  usersArr.count > 0 {
             let newUser = usersArr[0]
             return (newUser)
         }else {
-            print("Пользователи закончились")
             return nil
         }
         
@@ -330,7 +338,6 @@ extension ViewController {
             
             let card = cardModel.createCard(newUser: newUser)
             center = card.center
-            usersArr.removeFirst()
             return card
         }else {
             stopCard = true
@@ -349,60 +356,89 @@ extension ViewController {
     
 }
 
+
+//MARK: -  Работа с пользователями
+
 extension ViewController {
     
-    func startSettings(){
+    func startSettings(numberRequsetedUsers: Int){
         
-        usersModel.currentUserID = currentAuthUser.ID
+        let usersModel = UsersModel(currentUserID: currentAuthUser.ID)
         
         Task {
-        
-            if let  dataCurrentUser = await FirebaseStorageModel().loadMetadataDataCurrentUser(currentUserID: currentAuthUserID) {
-                currentAuthUser = dataCurrentUser
-                
-                FirebaseStorageModel().loadUserFromServer(urlArrUser: currentAuthUser.urlPhotoArr, userID: currentAuthUser.ID) { [unowned self] imageArr in
-                    guard imageArr != nil else {return}
-                    currentAuthUser.imageArr = imageArr!
+            
+                await loadCurrentUsersPhoto()
+            
+                if let urlUsersArr = await usersModel.loadURLUsers(numberRequsetedUsers: numberRequsetedUsers, currentAuthUser: currentAuthUser) {
+                    
+                    if numberRequsetedUsers > urlUsersArr.count {
+                        currentAuthUser.couplesOver = true
+                    }
+                    
+                    usersModel.loadUsers(urlUsersArr: urlUsersArr) { [unowned self] otherUser, err in
+                        
+                        if let error = err {
+                            print(error)
+                        }
+                        
+                        guard let otherUserArr = otherUser else {return}
+                        
+                        self.usersArr = self.usersArr + otherUserArr
+                        
+                        oddCard = createCard()
+                        honestCard = createCard()
+                        currentCard = oddCard
+                        
+                        oddCard!.addGestureRecognizer(panGesture)
+                        oddCard!.addGestureRecognizer(tapGesture)
+                        self.view.addSubview(honestCard!)
+                        self.view.addSubview(oddCard!)
+                        self.view.bringSubviewToFront(buttonStackView)
+                    }
+                    
                 }
-            }
-            
-            usersModel.loadUsers(currentAuthUser: currentAuthUser, countUsers: 20) { [unowned self] otherUser, err in
-                if let error = err {
-                    print(error)
-                }
-                guard let otherUserArr = otherUser else {return}
-                
-                self.usersArr = self.usersArr + otherUserArr
-                
-                oddCard = createCard()
-                honestCard = createCard()
-                currentCard = oddCard
-                
-                oddCard!.addGestureRecognizer(panGesture)
-                oddCard!.addGestureRecognizer(tapGesture)
-                self.view.addSubview(honestCard!)
-                self.view.addSubview(oddCard!)
-                self.view.bringSubviewToFront(buttonStackView)
-            }
-            
-            
         }
-        
         
     }
     
 //MARK: -  Загрузка новых пользователей ассинхронно
     
-    func loadNewUsers(countUser: Int){
+    func loadNewUsers(numberRequsetedUsers: Int){
         
         let usersModel = UsersModel(currentUserID: currentAuthUser.ID)
-        usersModel.loadUsers(currentAuthUser: currentAuthUser, countUsers: countUser) { [unowned self] otherUser, err in
-            if let error = err {
-                print(error)
+        Task {
+            
+            if let urlUsersArr = await usersModel.loadURLUsers(numberRequsetedUsers: numberRequsetedUsers, currentAuthUser: currentAuthUser) {
+                
+                if numberRequsetedUsers > urlUsersArr.count {
+                    currentAuthUser.couplesOver = true
+                }
+                
+                usersModel.loadUsers(urlUsersArr: urlUsersArr) { [unowned self] otherUser, err in
+                    
+                    if let error = err {
+                        print(error)
+                    }
+                    
+                    guard let otherUserArr = otherUser else {return}
+                    self.usersArr = self.usersArr + otherUserArr
+                }
             }
-            guard let otherUserArr = otherUser else {return}
-            self.usersArr = self.usersArr + otherUserArr
         }
     }
     
+ //MARK: -  Загрузка метаданных о текущем авторизованном пользователе
+    
+    func loadCurrentUsersPhoto() async {
+        
+        if currentAuthUser.urlPhotoArr.count == 0 {return}
+        
+        FirebaseStorageModel().loadUserFromServer(urlArrUser: currentAuthUser.urlPhotoArr, userID: currentAuthUser.ID) { [unowned self] imageArr in /// Заргузка фото
+            guard imageArr != nil else {return}
+            currentAuthUser.imageArr = imageArr!
+        }
+        
+    }
 }
+
+

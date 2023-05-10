@@ -20,19 +20,7 @@ struct User {
 }
 
 
-struct CurrentAuthUser {
-    
-    var name = String()
-    var age = Int()
-    var ID  = String()
-    
-    var urlPhotoArr = [String]()
-    var imageArr = [UIImage()]
-    
-    var likeArr = [String]()
-    var disLikeArr = [String]()
-    var superLikeArr = [String]()
-}
+
 
 
 

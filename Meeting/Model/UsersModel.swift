@@ -12,76 +12,67 @@ import FirebaseFirestore
 
 struct UsersModel {
     
-    var currentUserID = String()
+    private var currentUserID = String()
     private let db = Firestore.firestore()
     
+    init(currentUserID: String) {
+        self.currentUserID = currentUserID
+    }
     
-  //MARK: -  Загрузка новых пользователей для их показа
+  
     
-    func loadUsers(currentAuthUser: CurrentAuthUser ,countUsers: Int, completion: @escaping([User]?,Error?) -> Void)
+//MARK: -  Загрузка URL пользователей
+    
+    func loadURLUsers(numberRequsetedUsers: Int,currentAuthUser: CurrentAuthUser) async -> [String]? {
+        
+        if let arr = await FirebaseStorageModel().loadUsersID(countUser: numberRequsetedUsers,currentUser: currentAuthUser) { /// Загружаем определенное количество URL пользователей
+            print(arr.count, "Count userIDArr ")
+            return arr
+        }else {
+            return nil
+        }
+    }
+    
+    
+//MARK: -  Загрузка новых пользователей для их показа
+    
+    func loadUsers(urlUsersArr : [String],completion: @escaping([User]?,Error?) -> Void)
     {
         
         Task {
             
             var usersArr = [User]()
-            var usersIDArr = [String]()
             var countIndex = 0
             
-            if let arr = await FirebaseStorageModel().loadUsersID(countUser: countUsers,currentUser: currentAuthUser) { /// Загружаем определенное количество URL пользователей
-                usersIDArr = arr
-                print(usersIDArr.count, "Count userIDArr ")
-            }
-            
-            if countUsers > usersIDArr.count { /// Если URL меньше чем счетчик значит они заканчиваются
-                completion(nil,erorrLoadUsers.fewUsers(code: usersIDArr.count))
+            if urlUsersArr.count == 0 {
+                completion(nil,erorrLoadUsers.fewUsers(code: 0))
                 return
             }
             
-            
-            
-            for i in 0...countUsers - 1 {
+            for i in 0...urlUsersArr.count - 1 {
                 
                 
-                let userMetadata = await FirebaseStorageModel().loadMetaDataNewUser(newUserID: usersIDArr[i]) /// Загрузка метаданных о пользователе
+                let userMetadata = await FirebaseStorageModel().loadMetaDataNewUser(newUserID: urlUsersArr[i]) /// Загрузка метаданных о пользователе
                 
                 FirebaseStorageModel().loadUserFromServer(urlArrUser: userMetadata.urlPhotoArr!, userID: userMetadata.ID) { imageArrUser in
                     
                     if let imageArr = imageArrUser {
-                        usersArr.append(User(name: userMetadata.name,age:userMetadata.age ,ID: usersIDArr[i],imageArr: imageArr))
+                        usersArr.append(User(name: userMetadata.name,age:userMetadata.age ,ID: urlUsersArr[i],imageArr: imageArr))
                         
                     }
                     countIndex += 1
-                    if countIndex == countUsers {
+                    if countIndex == urlUsersArr.count {
                         completion(usersArr,nil)
                     }
-
                 }
                                                           
            }
         }
     }
     
-    
-    //MARK: -  Запись архива лайка, дизлайка или супер лайка на сервер
-        
-    
-    func writingPairsInfrormation(likeArr:[String],disLikeArr: [String],superLikeArr: [String]){
-        print("CurrentUSerIDAtuh - \(currentUserID)")
-        let documenRef = db.collection("Users").document(currentUserID)
-        
-        documenRef.setData([
-            "LikeArr" : likeArr,
-            "DisLikeArr" : disLikeArr,
-            "SuperLikeArr": superLikeArr
-        ],merge: true) { err in
-            if let error = err {
-                print("Ошибка записи данных о парах пользователя - \(error)")
-            }
-            
-        }
-    }
-    
 }
+
+
 
 
 enum erorrLoadUsers: Error {

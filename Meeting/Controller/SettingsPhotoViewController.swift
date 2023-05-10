@@ -39,6 +39,7 @@ class SettingsPhotoViewController: UIViewController {
         }
         
         
+        
         collectionPhotoView.delegate = self
         collectionPhotoView.dataSource = self
         imagePicker.delegate = self
