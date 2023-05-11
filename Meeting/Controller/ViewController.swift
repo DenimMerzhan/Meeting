@@ -34,25 +34,30 @@ class ViewController: UIViewController {
     var cardModel = CardModel()
     var currentAuthUser = CurrentAuthUser(ID: "4a4KXZljBz")
 
+    var usersIDArr:  [String] {
+        get{
+            var newArr = [String]()
+            for user in usersArr {
+                newArr.append(user.ID)
+            }
+            return newArr
+        }set{
+            
+        }
+    }
+    
     var usersArr =  [User]() {
         didSet {
-            
-            var userIDArr = [String]()
-            for i in usersArr {
-                userIDArr.append(i.ID)
-            }
-            
-           print("UserIDArr - \(userIDArr)")
-            
+            print(usersIDArr)
             if usersArr.count < 3 && currentAuthUser.couplesOver == false {
                 
                 print("Загрузка новых пользователей")
                 currentAuthUser.writingPairsInfrormation()
                 Task {
-                    await loadNewUsers(numberRequsetedUsers: 5,nonSwipedUsers: userIDArr)
+                
+                    await loadNewUsers(numberRequsetedUsers: 5,nonSwipedUsers: usersIDArr)
                 }
                 
-               
             }else if usersArr.count == 0 {
                 print("Пользователи закончились")
                 currentAuthUser.writingPairsInfrormation()}
@@ -184,7 +189,6 @@ class ViewController: UIViewController {
                         self.currentAuthUser.likeArr.append(card.userID)
                         self.loadNewPeople(card: card)
                         
-                        
                     }
                     
                 }else if abs(xFromCenter) > 120 { /// Дизлайк пользователя
@@ -194,7 +198,6 @@ class ViewController: UIViewController {
                         self.currentAuthUser.disLikeArr.append(card.userID)
                         self.loadNewPeople(card: card)
                        
-                        
                     }
                 }else if yFromCenter < -250 { /// Супер Лайк
                     
@@ -237,12 +240,8 @@ extension ViewController {
     func loadNewPeople(card:CardView){
         
         if usersArr.count != 0 {
-            var newUserArrID = [String]()
-            
-            for newUser in usersArr {
-                newUserArrID.append(newUser.ID)
-            }
-            if let i = newUserArrID.firstIndex(where: { $0 == card.userID}) {
+            if let i = usersIDArr.firstIndex(where: { $0 == card.userID}) {
+                usersArr[i].cleanPhotoUser()
                 usersArr.remove(at: i)
             }
         }
@@ -362,8 +361,6 @@ extension ViewController {
         }
         
     }
-    
-    
     func createEmptyCard() -> CardView {
         
         let card = cardModel.createEmptyCard()
@@ -374,7 +371,7 @@ extension ViewController {
 }
 
 
-//MARK: -  Работа с пользователями
+//MARK: -  Загрузка новых пользователей
 
 extension ViewController {
     
@@ -404,7 +401,7 @@ extension ViewController {
     }
 }
     
-    //MARK: -  Загрузка данных о текущем авторизованном пользователе
+//MARK: -  Загрузка данных о текущем авторизованном пользователе
     
     func loadCurrentUsersData() async {
         
