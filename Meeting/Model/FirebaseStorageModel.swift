@@ -70,6 +70,33 @@ struct FirebaseStorageModel {
     }
     
 
+//MARK: - Загрузка фото в память устройства
+    
+    func loadPhotoToFile(urlPhotoArr: [String],userID: String) async -> [URL] {
+        
+        var urlFileArr = [URL]()
+        
+        let userLibary = fileManager.urls(for: .documentDirectory, in: .userDomainMask) /// Стандартная библиотека пользователя
+        let newFolder = userLibary[0].appendingPathComponent("OtherUsersPhoto/\(userID)") /// Добавляем к ней новую папку
+        
+        if checkDirectoryExist(directory: newFolder) == false { /// Если директории нет создаем эту папку
+            try! fileManager.createDirectory(at: newFolder, withIntermediateDirectories: true)
+        }
+        
+        for urlPhoto in urlPhotoArr {
+            
+            let Reference = storage.reference(forURL: urlPhoto)
+            do {
+                if let namePhoto = try await Reference.getMetadata().name {
+                    let url = try await Reference.writeAsync(toFile: newFolder.appendingPathComponent(namePhoto))
+                    urlFileArr.append(url)
+                }
+            }catch{
+                print(error)
+            }
+        }
+        return urlFileArr
+    }
     
 //MARK: -  Загрузка фото пользователя с сервера
     
@@ -114,6 +141,7 @@ struct FirebaseStorageModel {
         }
         
     }
+    
     
 //MARK: - Загрузка определленого количества ID пользователей
     

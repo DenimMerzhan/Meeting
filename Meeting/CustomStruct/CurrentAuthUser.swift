@@ -19,7 +19,7 @@ class CurrentAuthUser {
     var age = Int()
     
     var urlPhotoArr = [String]()
-    var imageArr = [UIImage()]
+    var imageArr = [UIImage]()
     
     var likeArr = [String]()
     var disLikeArr = [String]()
@@ -38,7 +38,7 @@ class CurrentAuthUser {
             
      func loadMetadata() async {
         
-        let collection  = db.collection("Users2").document(ID)
+        let collection  = db.collection("Users").document(ID)
         
         do {
             
@@ -82,7 +82,7 @@ class CurrentAuthUser {
     func writingPairsInfrormation(){
         
         
-        let documenRef = db.collection("Users2").document(ID)
+        let documenRef = db.collection("Users").document(ID)
     
         documenRef.setData([
             "LikeArr" : self.likeArr,
@@ -96,4 +96,13 @@ class CurrentAuthUser {
         }
     }
     
+    func loadPhotoFromDirectory(urlFileArr: [URL] ){
+        
+        for url in urlFileArr {
+            if let newImage = UIImage(contentsOfFile: url.path) {
+                imageArr.append(newImage)
+//                newImage = .remove
+            }
+        }
+    }
 }

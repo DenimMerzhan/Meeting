@@ -32,7 +32,7 @@ class ViewController: UIViewController {
     var currentCard: CardView?
     
     var cardModel = CardModel()
-    var currentAuthUser = CurrentAuthUser(ID: "4a4KXZljBz")
+    var currentAuthUser = CurrentAuthUser(ID: "+374788092")
 
     var usersArr =  [User]() {
         didSet {
@@ -62,7 +62,9 @@ class ViewController: UIViewController {
         
         
         Task {
+            
             await loadCurrentUsersData()
+            await FirebaseStorageModel().loadPhotoToFile(urlPhotoArr:currentAuthUser.urlPhotoArr,  userID:currentAuthUser.ID)
             startLoadUsers(numberRequsetedUsers: 5)
         }
 
@@ -468,16 +470,11 @@ func startSettings(){
     func loadCurrentUsersData() async {
         
         await currentAuthUser.loadMetadata()
-        
         if currentAuthUser.urlPhotoArr.count == 0 {return}
+        let urlArrFiles = await FirebaseStorageModel().loadPhotoToFile(urlPhotoArr: currentAuthUser.urlPhotoArr, userID: currentAuthUser.ID)
+        currentAuthUser.loadPhotoFromDirectory(urlFileArr: urlArrFiles)
+        print("количество фото текущего пользователя ", currentAuthUser.imageArr.count)
         
-        FirebaseStorageModel().loadPhotoFromServer(urlArrUser: currentAuthUser.urlPhotoArr, userID: currentAuthUser.ID) { [unowned self] imageArr,err  in /// Заргузка фото
-            if let error = err {
-                print(error)
-            }
-            guard imageArr != nil else {return}
-            currentAuthUser.imageArr = imageArr!
-        }
         
     }
     

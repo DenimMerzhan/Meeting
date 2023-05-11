@@ -20,13 +20,15 @@ class User {
     var urlPhotoArr = [String]()
     
     private let db = Firestore.firestore()
+    private let fileManager = FileManager.default
     
     init(ID:String) {
         self.ID = ID
     }
     
     
-//MARK:  Загрузка метаданных о пользователе
+    
+//MARK: - Загрузка метаданных о пользователе
     
     func loadMetaData() async {
         
@@ -59,23 +61,29 @@ class User {
     }
     
     
-//MARK: - Загрузка фото пользователя
+//MARK: - Загрузка фото пользователя с директории
     
-    func loadPhoto(completion: @escaping (Bool) -> Void) {
-        FirebaseStorageModel().loadPhotoFromServer(urlArrUser: urlPhotoArr, userID: ID) { [unowned self] imageUserArr,err in
-            
-            if let error = err {
-                print(error)
-                completion(false)
+    func loadPhotoFromDirectory(urlFileArr: [URL] ){
+        
+        for url in urlFileArr {
+            if let newImage = UIImage(contentsOfFile: url.path) {
+                imageArr.append(newImage)
+//                newImage = .remove
             }
-            
-            guard imageUserArr != nil else {return}
-            
-            self.imageArr = imageUserArr!
-            completion(true)
         }
     }
     
+    func cleanPhotoUser(){
+        
+        let userLibary = fileManager.urls(for: .documentDirectory, in: .userDomainMask) /// Стандартная библиотека пользователя
+        let currentFolder = userLibary[0].appendingPathComponent("OtherUsersPhoto/\(ID)") /// Добавляем к ней новую папку
+        
+        do {
+            try fileManager.removeItem(at: currentFolder)
+        }catch{
+            print("Ошибка удаления файла")
+        }
+    }
 }
 
 

@@ -248,7 +248,7 @@ extension SettingsPhotoViewController {
 
 extension SettingsPhotoViewController {
     
-    func getSavedImage() -> [CurrentUserFile]? { /// Фото сохраняется в памяти, и при выходи из контроллера не удаляется!
+    func getSavedImage() -> [CurrentUserFile]? {
         
         var imageFiles = [CurrentUserFile]()
         
