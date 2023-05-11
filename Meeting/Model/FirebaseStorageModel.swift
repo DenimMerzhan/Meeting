@@ -74,13 +74,13 @@ struct FirebaseStorageModel {
 //MARK: -  Загрузка фото пользователя с сервера
     
     
-    func loadUserFromServer(urlArrUser: [String],userID: String, completion: @escaping ([UIImage]?) -> Void) {
+    func loadPhotoFromServer(urlArrUser: [String],userID: String, completion: @escaping ([UIImage]?,Error?) -> Void) {
         
         Task {
             
             if urlArrUser.count == 0 {
                 print("Нет фото у пользователя по этому ID \(userID)")
-                completion(nil)
+                completion(nil,erorrMeeting.missingUserPhoto)
                 return
             }
             var imageArr = [UIImage]()
@@ -95,7 +95,7 @@ struct FirebaseStorageModel {
                    
                     if let err = erorr {
                         print("Ошибка загрузки данных изображения с FirebaseStorage \(err)")
-                        completion(nil)
+                        completion(nil,erorrMeeting.errorLoadPhoto(code: err))
                         urlArr.removeAll()
                         return
                     }else {
@@ -106,7 +106,7 @@ struct FirebaseStorageModel {
                     }
                     
                     if countIndex == urlArr.count {
-                        completion(imageArr)
+                        completion(imageArr,nil)
                     }
                 }
                 
@@ -114,43 +114,6 @@ struct FirebaseStorageModel {
         }
         
     }
-    
-    
-//MARK: -  Загрузка метаданных о новом пользователе с FireStore
-    
-    func loadMetaDataNewUser(newUserID: String) async -> User {
-        
-        var newUser = User(ID: newUserID, urlPhotoArr: [String]())
-        let collection  = db.collection("Users2").document(newUserID)
-        
-        do {
-            let docSnap = try await collection.getDocument()
-            if let dataDoc = docSnap.data() {
-                
-                if let name = dataDoc["Name"] as? String ,let age = dataDoc["Age"] as? Int {
-                    newUser.name = name
-                    newUser.age = age
-                    
-                    for data in dataDoc {
-                        if data.key.contains("photoImage") {
-                            if let urlPhoto = data.value as? String {
-                                newUser.urlPhotoArr?.append(urlPhoto)
-                            }
-                        }
-                    }
-                    
-                }else {
-                    print("Ошибка в преобразование имени и возраста у данного пользователя \(newUserID)")
-                }
-            }
-            
-        }catch{
-            print("Ошибка получения ссылок на фото с сервера FirebaseFirestore - \(error)")
-        }
-        return (newUser)
-    }
-  
-
     
 //MARK: - Загрузка определленого количества ID пользователей, кроме текущего пользователя
     

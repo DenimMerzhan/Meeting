@@ -62,15 +62,9 @@ class ViewController: UIViewController {
         
         
         Task {
-            
-            var testCurrent = self.currentAuthUser
-            await testCurrent.loadMetadata()
-            self.currentAuthUser = testCurrent
-            
-            startSettings(numberRequsetedUsers: 5)
+            await loadCurrentUsersData()
+            startLoadUsers(numberRequsetedUsers: 5)
         }
-        
-        
 
     }
     
@@ -380,87 +374,97 @@ extension ViewController {
 
 extension ViewController {
     
-    func startSettings(numberRequsetedUsers: Int){
+    func startLoadUsers(numberRequsetedUsers: Int){
         
-        let usersModel = UsersModel(currentUserID: currentAuthUser.ID)
-        
+      
         Task {
             
-            await loadCurrentUsersPhoto()
-            
-            if let urlUsersArr = await usersModel.loadURLUsers(numberRequsetedUsers: numberRequsetedUsers, currentAuthUser: currentAuthUser) {
+            if let usersIDArr = await FirebaseStorageModel().loadUsersID(countUser: numberRequsetedUsers,currentUser: currentAuthUser) {
                 
-                if numberRequsetedUsers > urlUsersArr.count {
+                if numberRequsetedUsers > usersIDArr.count {
                     currentAuthUser.couplesOver = true
                 }
                 
-                if urlUsersArr.count == 0 {
+                if usersIDArr.count == 0 {
                     oddCard = createCard(currentUserIDCard: nil)
                     self.view.addSubview(oddCard!)
                     buttonStackView.isHidden = true
                 }
-                
-                usersModel.loadUsers(urlUsersArr: urlUsersArr) { [unowned self] otherUser, err in
+                var cointBreak = 0
+                for ID in usersIDArr {
                     
-                    if let error = err {
-                        print(error)
+                    let newUser = User(ID: ID)
+                    await newUser.loadMetaData()
+                    newUser.loadPhoto { [unowned self] succes in
+                        
+                    if succes {
+                        self.usersArr.append(newUser)
+                        cointBreak += 1
                     }
-                    
-                    guard let otherUserArr = otherUser else {return}
-                    
-                    usersArr = usersArr + otherUserArr
-                    print(usersArr.count)
-                    
-                    oddCard = createCard(currentUserIDCard: nil)
-                    honestCard = createCard(currentUserIDCard: oddCard?.userID)
-                    currentCard = oddCard
-                    
-                    oddCard!.addGestureRecognizer(panGesture)
-                    oddCard!.addGestureRecognizer(tapGesture)
-                    self.view.addSubview(honestCard!)
-                    self.view.addSubview(oddCard!)
-                    self.view.bringSubviewToFront(buttonStackView)
+                        
+                    if cointBreak == usersIDArr.count {
+                        startSettings()
+                    }
                 }
-                
             }
         }
-        
     }
+        
+}
+    
+func startSettings(){
+    oddCard = createCard(currentUserIDCard: nil)
+    honestCard = createCard(currentUserIDCard: oddCard?.userID)
+    currentCard = oddCard
+    
+    oddCard!.addGestureRecognizer(panGesture)
+    oddCard!.addGestureRecognizer(tapGesture)
+    self.view.addSubview(honestCard!)
+    self.view.addSubview(oddCard!)
+    self.view.bringSubviewToFront(buttonStackView)
+}
     
     //MARK: -  Загрузка новых пользователей ассинхронно
     
     func loadNewUsers(numberRequsetedUsers: Int,nonSwipedUsers:[String]){
         
-        let usersModel = UsersModel(currentUserID: currentAuthUser.ID)
+        
         Task {
             
-            if let urlUsersArr = await usersModel.loadURLUsers(numberRequsetedUsers: numberRequsetedUsers, currentAuthUser: currentAuthUser,nonSwipedUsers: nonSwipedUsers) {
+            if let usersIDArr = await FirebaseStorageModel().loadUsersID(countUser: numberRequsetedUsers,currentUser: currentAuthUser,nonSwipedUsers: nonSwipedUsers) {
                 
-                if numberRequsetedUsers > urlUsersArr.count {
+                if numberRequsetedUsers > usersIDArr.count {
                     currentAuthUser.couplesOver = true
                 }
                 
-                usersModel.loadUsers(urlUsersArr: urlUsersArr) { [unowned self] otherUser, err in
-                    
-                    if let error = err {
-                        print(error)
+                for ID in usersIDArr {
+                    let newUser = User(ID: ID)
+                    await newUser.loadMetaData()
+                    newUser.loadPhoto { [unowned self] succes in
+                        
+                        if succes {
+                            self.usersArr.append(newUser)
                     }
-                    
-                    guard let otherUserArr = otherUser else {return}
-                    
-                    self.usersArr = self.usersArr + otherUserArr
                 }
             }
         }
     }
+}
     
-    //MARK: -  Загрузка метаданных о текущем авторизованном пользователе
+    //MARK: -  Загрузка данных о текущем авторизованном пользователе
     
-    func loadCurrentUsersPhoto() async {
+    func loadCurrentUsersData() async {
+        
+        var testCurrent = self.currentAuthUser
+        await testCurrent.loadMetadata()
+        self.currentAuthUser = testCurrent
         
         if currentAuthUser.urlPhotoArr.count == 0 {return}
         
-        FirebaseStorageModel().loadUserFromServer(urlArrUser: currentAuthUser.urlPhotoArr, userID: currentAuthUser.ID) { [unowned self] imageArr in /// Заргузка фото
+        FirebaseStorageModel().loadPhotoFromServer(urlArrUser: currentAuthUser.urlPhotoArr, userID: currentAuthUser.ID) { [unowned self] imageArr,err  in /// Заргузка фото
+            if let error = err {
+                print(error)
+            }
             guard imageArr != nil else {return}
             currentAuthUser.imageArr = imageArr!
         }
