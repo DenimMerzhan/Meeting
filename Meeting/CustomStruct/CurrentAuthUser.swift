@@ -38,7 +38,7 @@ class CurrentAuthUser {
             
      func loadMetadata() async {
         
-        let collection  = db.collection("Users").document(ID)
+        let collection  = db.collection("Users2").document(ID)
         
         do {
             
@@ -82,7 +82,7 @@ class CurrentAuthUser {
     func writingPairsInfrormation(){
         
         
-        let documenRef = db.collection("Users").document(ID)
+        let documenRef = db.collection("Users2").document(ID)
     
         documenRef.setData([
             "LikeArr" : self.likeArr,

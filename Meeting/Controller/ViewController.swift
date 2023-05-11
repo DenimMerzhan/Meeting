@@ -32,7 +32,7 @@ class ViewController: UIViewController {
     var currentCard: CardView?
     
     var cardModel = CardModel()
-    var currentAuthUser = CurrentAuthUser(ID: "+374788092")
+    var currentAuthUser = CurrentAuthUser(ID: "4a4KXZljBz")
 
     var usersArr =  [User]() {
         didSet {
@@ -48,7 +48,9 @@ class ViewController: UIViewController {
                 
                 print("Загрузка новых пользователей")
                 currentAuthUser.writingPairsInfrormation()
-                loadNewUsers(numberRequsetedUsers: 5,nonSwipedUsers: userIDArr)
+                Task {
+                    await loadNewUsers(numberRequsetedUsers: 5,nonSwipedUsers: userIDArr)
+                }
                 
                
             }else if usersArr.count == 0 {
@@ -64,8 +66,8 @@ class ViewController: UIViewController {
         Task {
             
             await loadCurrentUsersData()
-            await FirebaseStorageModel().loadPhotoToFile(urlPhotoArr:currentAuthUser.urlPhotoArr,  userID:currentAuthUser.ID)
-            startLoadUsers(numberRequsetedUsers: 5)
+            await loadNewUsers(numberRequsetedUsers: 5)
+            startSettings()
         }
 
     }
@@ -376,92 +378,29 @@ extension ViewController {
 
 extension ViewController {
     
-    func startLoadUsers(numberRequsetedUsers: Int){
+    func loadNewUsers(numberRequsetedUsers: Int,nonSwipedUsers:[String] = [String]()) async{
         
-      
-        Task {
+        var newUsersArr = [User]()
+        
+        if let usersIDArr = await FirebaseStorageModel().loadUsersID(countUser: numberRequsetedUsers,currentUser: currentAuthUser,nonSwipedUsers: nonSwipedUsers) {
             
-            var cointBreak = 0
-            var newUserArr = [User]()
             
-            if let usersIDArr = await FirebaseStorageModel().loadUsersID(countUser: numberRequsetedUsers,currentUser: currentAuthUser) {
-                
-                if numberRequsetedUsers > usersIDArr.count {
-                    currentAuthUser.couplesOver = true
-                }
-                
-                if usersIDArr.count == 0 {
-                    oddCard = createCard(currentUserIDCard: nil)
-                    self.view.addSubview(oddCard!)
-                    buttonStackView.isHidden = true
-                }
-              
-                for ID in usersIDArr {
-                    
-                    let newUser = User(ID: ID)
-                    await newUser.loadMetaData()
-                    newUser.loadPhoto { [unowned self] succes in
-                        
-                    if succes {
-                        newUserArr.append(newUser)
-                        cointBreak += 1
-                    }
-                        
-                    if cointBreak == usersIDArr.count {
-                        usersArr = newUserArr
-                        startSettings()
-                    }
-                }
+            if numberRequsetedUsers > usersIDArr.count {
+                currentAuthUser.couplesOver = true
             }
-        }
-    }
-        
-}
-    
-func startSettings(){
-    oddCard = createCard(currentUserIDCard: nil)
-    honestCard = createCard(currentUserIDCard: oddCard?.userID)
-    currentCard = oddCard
-    
-    oddCard!.addGestureRecognizer(panGesture)
-    oddCard!.addGestureRecognizer(tapGesture)
-    self.view.addSubview(honestCard!)
-    self.view.addSubview(oddCard!)
-    self.view.bringSubviewToFront(buttonStackView)
-}
-    
-    //MARK: -  Загрузка новых пользователей ассинхронно
-    
-    func loadNewUsers(numberRequsetedUsers: Int,nonSwipedUsers:[String]){
-        
-        
-        Task {
-        
-            var cointBreak = 0
-            var newUserArr = [User]()
             
-            if let usersIDArr = await FirebaseStorageModel().loadUsersID(countUser: numberRequsetedUsers,currentUser: currentAuthUser,nonSwipedUsers: nonSwipedUsers) {
+            for ID in usersIDArr {
                 
-                if numberRequsetedUsers > usersIDArr.count {
-                    currentAuthUser.couplesOver = true
-                }
+                let newUser = User(ID: ID)
+                await newUser.loadMetaData()
                 
-                for ID in usersIDArr {
-                    
-                    let newUser = User(ID: ID)
-                    await newUser.loadMetaData()
-                    newUser.loadPhoto { [unowned self] succes in
-                        
-                        if succes {
-                            newUserArr.append(newUser)
-                            cointBreak += 1
-                    }
-                        if cointBreak == usersIDArr.count {
-                            usersArr = usersArr + newUserArr
-                        }
-                }
+                let urlFilesArr = await FirebaseStorageModel().loadPhotoToFile(urlPhotoArr: newUser.urlPhotoArr, userID: ID,currentUser: false)
+                newUser.loadPhotoFromDirectory(urlFileArr: urlFilesArr)
+                newUsersArr.append(newUser)
+                
             }
-        }
+            
+            usersArr = usersArr +  newUsersArr
     }
 }
     
@@ -471,11 +410,31 @@ func startSettings(){
         
         await currentAuthUser.loadMetadata()
         if currentAuthUser.urlPhotoArr.count == 0 {return}
-        let urlArrFiles = await FirebaseStorageModel().loadPhotoToFile(urlPhotoArr: currentAuthUser.urlPhotoArr, userID: currentAuthUser.ID)
+        let urlArrFiles = await FirebaseStorageModel().loadPhotoToFile(urlPhotoArr: currentAuthUser.urlPhotoArr, userID: currentAuthUser.ID,currentUser: true)
         currentAuthUser.loadPhotoFromDirectory(urlFileArr: urlArrFiles)
         print("количество фото текущего пользователя ", currentAuthUser.imageArr.count)
         
         
+    }
+    
+
+}
+
+//MARK: -  Дополнительные расширения
+
+extension ViewController {
+    
+    
+    func startSettings(){
+        oddCard = createCard(currentUserIDCard: nil)
+        honestCard = createCard(currentUserIDCard: oddCard?.userID)
+        currentCard = oddCard
+        
+        oddCard!.addGestureRecognizer(panGesture)
+        oddCard!.addGestureRecognizer(tapGesture)
+        self.view.addSubview(honestCard!)
+        self.view.addSubview(oddCard!)
+        self.view.bringSubviewToFront(buttonStackView)
     }
     
     func randomUserFromArray(currentUserID:String) -> User? {
@@ -487,6 +446,5 @@ func startSettings(){
         }
         return newUser
     }
+    
 }
-
-

@@ -72,12 +72,20 @@ struct FirebaseStorageModel {
 
 //MARK: - Загрузка фото в память устройства
     
-    func loadPhotoToFile(urlPhotoArr: [String],userID: String) async -> [URL] {
+    func loadPhotoToFile(urlPhotoArr: [String],userID: String,currentUser: Bool) async -> [URL] {
         
         var urlFileArr = [URL]()
         
         let userLibary = fileManager.urls(for: .documentDirectory, in: .userDomainMask) /// Стандартная библиотека пользователя
-        let newFolder = userLibary[0].appendingPathComponent("OtherUsersPhoto/\(userID)") /// Добавляем к ней новую папку
+    
+        var newFolder = userLibary[0]
+        
+        if currentUser {
+            newFolder = newFolder.appendingPathComponent("CurrentUserPhoto")
+        }else{
+            newFolder = newFolder.appendingPathComponent("OtherUsersPhoto/\(userID)")
+        }
+        
         
         if checkDirectoryExist(directory: newFolder) == false { /// Если директории нет создаем эту папку
             try! fileManager.createDirectory(at: newFolder, withIntermediateDirectories: true)
@@ -96,50 +104,6 @@ struct FirebaseStorageModel {
             }
         }
         return urlFileArr
-    }
-    
-//MARK: -  Загрузка фото пользователя с сервера
-    
-    
-    func loadPhotoFromServer(urlArrUser: [String],userID: String, completion: @escaping ([UIImage]?,Error?) -> Void) {
-        
-        Task {
-            
-            if urlArrUser.count == 0 {
-                print("Нет фото у пользователя по этому ID \(userID)")
-                completion(nil,erorrMeeting.missingUserPhoto)
-                return
-            }
-            var imageArr = [UIImage]()
-            var countIndex = 0
-            var urlArr = urlArrUser
-            
-            for urlPhoto in urlArr {
-                
-                let Reference = storage.reference(forURL: urlPhoto)
-                
-                Reference.getData(maxSize: Int64(1*2048*2048)) { data, erorr in
-                   
-                    if let err = erorr {
-                        print("Ошибка загрузки данных изображения с FirebaseStorage \(err)")
-                        completion(nil,erorrMeeting.errorLoadPhoto(code: err))
-                        urlArr.removeAll()
-                        return
-                    }else {
-                        if let image = UIImage(data: data!) {
-                            imageArr.append(image)
-                        }
-                        countIndex += 1
-                    }
-                    
-                    if countIndex == urlArr.count {
-                        completion(imageArr,nil)
-                    }
-                }
-                
-            }
-        }
-        
     }
     
     
