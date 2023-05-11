@@ -10,7 +10,7 @@ import UIKit
 import FirebaseFirestore
 
 
-struct CurrentAuthUser {
+class CurrentAuthUser {
     
     
     var ID  = String()
@@ -36,7 +36,7 @@ struct CurrentAuthUser {
     
     //MARK: -  Загрузка метаданных о текущем авторизованном пользователе с FireStore
             
-    mutating func loadMetadata() async {
+     func loadMetadata() async {
         
         let collection  = db.collection("Users2").document(ID)
         

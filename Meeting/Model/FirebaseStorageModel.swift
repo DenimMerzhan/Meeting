@@ -115,7 +115,7 @@ struct FirebaseStorageModel {
         
     }
     
-//MARK: - Загрузка определленого количества ID пользователей, кроме текущего пользователя
+//MARK: - Загрузка определленого количества ID пользователей
     
     func loadUsersID(countUser: Int,currentUser:CurrentAuthUser,nonSwipedUsers: [String] = [String]()) async -> [String]? {
         var count = 0

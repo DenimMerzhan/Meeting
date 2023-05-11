@@ -27,7 +27,6 @@
 		CFCD0F9C2A0A887E00C17AFC /* TestFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFCD0F9B2A0A887E00C17AFC /* TestFile.swift */; };
 		CFD1CAE729FEABB6009AE9A7 /* SettingsPhotoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD1CAE629FEABB6009AE9A7 /* SettingsPhotoViewController.swift */; };
 		CFFD03E029F9003B000732AC /* CardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFD03DF29F9003B000732AC /* CardModel.swift */; };
-		CFFD03E529F90FEF000732AC /* UsersModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFD03E429F90FEF000732AC /* UsersModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,7 +54,6 @@
 		CFCD0F9B2A0A887E00C17AFC /* TestFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFile.swift; sourceTree = "<group>"; };
 		CFD1CAE629FEABB6009AE9A7 /* SettingsPhotoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPhotoViewController.swift; sourceTree = "<group>"; };
 		CFFD03DF29F9003B000732AC /* CardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardModel.swift; sourceTree = "<group>"; };
-		CFFD03E429F90FEF000732AC /* UsersModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,6 +124,7 @@
 		CFA140DA2A00E21600DD384B /* CustomClass */ = {
 			isa = PBXGroup;
 			children = (
+				CF1DC80929F0DFC3001E2EAD /* User.swift */,
 				CFC6D2FF29FE43B100A712BA /* CircularProgressBarView.swift */,
 				CF1DC80729F0D46C001E2EAD /* CardView.swift */,
 				CF807F0829FFF57800D5ACD1 /* CollectionPhotoCell.swift */,
@@ -136,7 +135,6 @@
 		CFA140DB2A00E24300DD384B /* CustomStruct */ = {
 			isa = PBXGroup;
 			children = (
-				CF1DC80929F0DFC3001E2EAD /* User.swift */,
 				CF7D03082A0B80330028E7EB /* CurrentAuthUser.swift */,
 			);
 			path = CustomStruct;
@@ -155,7 +153,6 @@
 		CFFD03E229F90FB4000732AC /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				CFFD03E429F90FEF000732AC /* UsersModel.swift */,
 				CFFD03DF29F9003B000732AC /* CardModel.swift */,
 				CFC72D4E2A0135F2008CDB14 /* FirebaseStorageModel.swift */,
 				CFC72D502A014543008CDB14 /* CreateButton.swift */,
@@ -311,7 +308,6 @@
 				CFFD03E029F9003B000732AC /* CardModel.swift in Sources */,
 				CFC6D2FE29FE403000A712BA /* ProfileViewController.swift in Sources */,
 				CFD1CAE729FEABB6009AE9A7 /* SettingsPhotoViewController.swift in Sources */,
-				CFFD03E529F90FEF000732AC /* UsersModel.swift in Sources */,
 				CFC72D4F2A0135F2008CDB14 /* FirebaseStorageModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

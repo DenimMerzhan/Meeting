@@ -25,6 +25,9 @@ class User {
         self.ID = ID
     }
     
+    
+//MARK:  Загрузка метаданных о пользователе
+    
     func loadMetaData() async {
         
         let collection  = db.collection("Users2").document(ID)
@@ -54,6 +57,9 @@ class User {
             print("Ошибка получения ссылок на фото с сервера FirebaseFirestore - \(error)")
         }
     }
+    
+    
+//MARK: - Загрузка фото пользователя
     
     func loadPhoto(completion: @escaping (Bool) -> Void) {
         FirebaseStorageModel().loadPhotoFromServer(urlArrUser: urlPhotoArr, userID: ID) { [unowned self] imageUserArr,err in

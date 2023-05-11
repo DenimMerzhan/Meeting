@@ -379,6 +379,9 @@ extension ViewController {
       
         Task {
             
+            var cointBreak = 0
+            var newUserArr = [User]()
+            
             if let usersIDArr = await FirebaseStorageModel().loadUsersID(countUser: numberRequsetedUsers,currentUser: currentAuthUser) {
                 
                 if numberRequsetedUsers > usersIDArr.count {
@@ -390,7 +393,7 @@ extension ViewController {
                     self.view.addSubview(oddCard!)
                     buttonStackView.isHidden = true
                 }
-                var cointBreak = 0
+              
                 for ID in usersIDArr {
                     
                     let newUser = User(ID: ID)
@@ -398,11 +401,12 @@ extension ViewController {
                     newUser.loadPhoto { [unowned self] succes in
                         
                     if succes {
-                        self.usersArr.append(newUser)
+                        newUserArr.append(newUser)
                         cointBreak += 1
                     }
                         
                     if cointBreak == usersIDArr.count {
+                        usersArr = newUserArr
                         startSettings()
                     }
                 }
@@ -430,6 +434,9 @@ func startSettings(){
         
         
         Task {
+        
+            var cointBreak = 0
+            var newUserArr = [User]()
             
             if let usersIDArr = await FirebaseStorageModel().loadUsersID(countUser: numberRequsetedUsers,currentUser: currentAuthUser,nonSwipedUsers: nonSwipedUsers) {
                 
@@ -438,13 +445,18 @@ func startSettings(){
                 }
                 
                 for ID in usersIDArr {
+                    
                     let newUser = User(ID: ID)
                     await newUser.loadMetaData()
                     newUser.loadPhoto { [unowned self] succes in
                         
                         if succes {
-                            self.usersArr.append(newUser)
+                            newUserArr.append(newUser)
+                            cointBreak += 1
                     }
+                        if cointBreak == usersIDArr.count {
+                            usersArr = usersArr + newUserArr
+                        }
                 }
             }
         }
@@ -455,9 +467,7 @@ func startSettings(){
     
     func loadCurrentUsersData() async {
         
-        var testCurrent = self.currentAuthUser
-        await testCurrent.loadMetadata()
-        self.currentAuthUser = testCurrent
+        await currentAuthUser.loadMetadata()
         
         if currentAuthUser.urlPhotoArr.count == 0 {return}
         
