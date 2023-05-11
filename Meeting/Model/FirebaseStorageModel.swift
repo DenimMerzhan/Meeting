@@ -154,13 +154,12 @@ struct FirebaseStorageModel {
     
 //MARK: - Загрузка определленого количества ID пользователей, кроме текущего пользователя
     
-    func loadUsersID(countUser: Int,currentUser:CurrentAuthUser) async -> [String]? {
+    func loadUsersID(countUser: Int,currentUser:CurrentAuthUser,nonSwipedUsers: [String] = [String]()) async -> [String]? {
         var count = 0
         let collection  = db.collection("Users2")
         var userIDArr = [String]()
-        var i = 0
         
-        let viewedUsers = currentUser.likeArr + currentUser.disLikeArr + currentUser.superLikeArr
+        let viewedUsers = currentUser.likeArr + currentUser.disLikeArr + currentUser.superLikeArr + nonSwipedUsers
         print(viewedUsers.count, "количество ограничений")
         do {
             let querySnapshot = try await collection.getDocuments()
@@ -172,14 +171,13 @@ struct FirebaseStorageModel {
                 }else if viewedUsers.contains(document.documentID) {
                     continue
                 }
+                
                 userIDArr.append(document.documentID)
                 count += 1
                 if count == countUser {
                     break
                 }
             }
-            
-            print(querySnapshot.count, "Количество элементов в снапшоте ")
         }catch{
             print("Ошибка загрузки ID пользователей - \(error)")
             return nil

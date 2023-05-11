@@ -81,9 +81,9 @@ struct CurrentAuthUser {
     
     func writingPairsInfrormation(){
         
-        print("CurrentUSerIDAtuh - \(ID)")
+        
         let documenRef = db.collection("Users2").document(ID)
-        print(superLikeArr)
+    
         documenRef.setData([
             "LikeArr" : self.likeArr,
             "DisLikeArr" : self.disLikeArr,

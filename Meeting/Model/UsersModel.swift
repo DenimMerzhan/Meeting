@@ -23,10 +23,9 @@ struct UsersModel {
     
 //MARK: -  Загрузка URL пользователей
     
-    func loadURLUsers(numberRequsetedUsers: Int,currentAuthUser: CurrentAuthUser) async -> [String]? {
+    func loadURLUsers(numberRequsetedUsers: Int,currentAuthUser: CurrentAuthUser,nonSwipedUsers: [String] = [String]()) async -> [String]? {
         
-        if let arr = await FirebaseStorageModel().loadUsersID(countUser: numberRequsetedUsers,currentUser: currentAuthUser) { /// Загружаем определенное количество URL пользователей
-            print(arr.count, "Count userIDArr ")
+        if let arr = await FirebaseStorageModel().loadUsersID(countUser: numberRequsetedUsers,currentUser: currentAuthUser,nonSwipedUsers: nonSwipedUsers) { /// Загружаем определенное количество URL пользователей
             return arr
         }else {
             return nil
