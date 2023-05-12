@@ -19,11 +19,22 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let _ = (scene as? UIWindowScene) else { return }
     }
 
-    func sceneDidDisconnect(_ scene: UIScene) {
-        // Called as the scene is being released by the system.
-        // This occurs shortly after the scene enters the background, or when its session is discarded.
-        // Release any resources associated with this scene that can be re-created the next time the scene connects.
-        // The scene may re-connect later, as its session was not necessarily discarded (see `application:didDiscardSceneSessions` instead).
+    func sceneDidDisconnect(_ scene: UIScene) { /// После закрытия приложения удаляем все фото с директории пользователя
+        print("sceneDidDisconnect")
+        
+        let fileManager = FileManager.default
+        
+        let userLibary = fileManager.urls(for: .documentDirectory, in: .userDomainMask) /// Стандартная библиотека пользователя
+        let usersFolder = userLibary[0].appendingPathComponent("OtherUsersPhoto") /// Добавляем к ней новую папку
+        
+        let currentUserAuthFolder = userLibary[0].appendingPathComponent("CurrentUserPhoto") /// Добавляем к ней новую папку
+        
+        do {
+            try fileManager.removeItem(at: usersFolder)
+            try fileManager.removeItem(at: currentUserAuthFolder)
+        }catch{
+            print("Ошибка удаления папок при закрытие приложения - \(error)")
+        }
     }
 
     func sceneDidBecomeActive(_ scene: UIScene) {
@@ -37,8 +48,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func sceneWillEnterForeground(_ scene: UIScene) {
-        // Called as the scene transitions from the background to the foreground.
-        // Use this method to undo the changes made on entering the background.
     }
 
     func sceneDidEnterBackground(_ scene: UIScene) {
@@ -47,6 +56,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // to restore the scene back to its current state.
     }
 
+    
 
 }
 

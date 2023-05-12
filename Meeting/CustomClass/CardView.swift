@@ -37,10 +37,10 @@ class CardView: UIView {
     }
     
     deinit {
-        print("Объект CardView уничтожен")
+//        print("Объект CardView уничтожен")
     }
     
-}
+}   
 
 
 
@@ -66,6 +66,6 @@ class imageUserView: UIImageView {
     }
     
     deinit {
-        print("Объект imageUserView уничтожен")
+//        print("Объект imageUserView уничтожен")
     }
 }

@@ -13,9 +13,23 @@ class ProfileViewController: UIViewController {
     @IBOutlet weak var changePhotoButton: UIButton!
     @IBOutlet weak var fillingScaleProfile: UILabel!
     
+    @IBOutlet weak var nameAgeLabel: UILabel!
+    
     var circularProgressBar = CircularProgressBarView(frame: .zero)
     var animateProgressToValue = Float(0)
     let defaults = UserDefaults.standard
+    
+
+    var currentAuthUser:  CurrentAuthUser? {
+        didSet {
+            if currentAuthUser!.userLoaded {
+                nameAgeLabel.text = currentAuthUser!.name + "  " + String(currentAuthUser!.age)
+                profilePhoto.image = currentAuthUser!.imageArr[0].image
+            }else{
+                
+            }
+        }
+    }
     
     override func viewDidAppear(_ animated: Bool) {
         profileUpdate()
@@ -24,18 +38,34 @@ class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        if let navViewController = tabBarController?.viewControllers?[0] as? ViewController { /// Передаем ссылку на currentAuthUser
+            currentAuthUser = navViewController.currentAuthUser
+        }
+
         startSettings(animateProgressToValue: animateProgressToValue)
     }
     
     
     @IBAction func settingsPhotoPressed(_ sender: UIButton) {
-        performSegue(withIdentifier: "settingsToPhotoSettings", sender: self)
+        
+        guard (currentAuthUser != nil) else {return}
+        
+        if currentAuthUser!.userLoaded {
+            print(currentAuthUser!.imageArr.count)
+            performSegue(withIdentifier: "settingsToPhotoSettings", sender: self)
+        }
+        
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        guard segue.identifier == "settingsToPhotoSettings" else {return}
+        guard let destination = segue.destination as? SettingsPhotoViewController else {return}
+        destination.currentAuthUser = currentAuthUser!
+        
     }
     
 }
-
-
-
 
 
 
@@ -75,6 +105,8 @@ private extension ProfileViewController {
         view.bringSubviewToFront(fillingScaleProfile)
         view.bringSubviewToFront(changePhotoButton)
     }
+    
+//MARK: -  Обновление шкалы профиля
     
     func profileUpdate(){ /// Обновления шкалы заполненности профиля
         

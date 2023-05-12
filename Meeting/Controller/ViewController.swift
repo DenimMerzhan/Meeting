@@ -22,7 +22,6 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var preferencesButton: UIButton!
     
-    var usersArr = [User]()
     var indexCurrentImage = 0
     
     var stopCard = false
@@ -33,13 +32,69 @@ class ViewController: UIViewController {
     var currentCard: CardView?
     
     var cardModel = CardModel()
-   
+    var currentAuthUser = CurrentAuthUser(ID: "+79817550000")
+    
+    var progressViewLoadUsers = CreateButton().createProgressLoadUsersStartForLaunch()
+    
+    var timer = Timer()
+    
+    var usersIDArr:  [String] {
+        get{
+            var newArr = [String]()
+            for user in usersArr {
+                newArr.append(user.ID)
+            }
+            return newArr
+        }set{
+            
+        }
+    }
+    
+    var usersArr =  [User]() {
+        didSet {
+            
+            print("Количество пользователей в архиве - \(usersIDArr.count)")
+            
+            if usersArr.count < 15 && currentAuthUser.couplesOver == false {
+                
+                print("Загрузка новых пользователей")
+                currentAuthUser.writingPairsInfrormation()
+                Task {
+                
+                    await loadNewUsers(numberRequsetedUsers: 15,nonSwipedUsers: usersIDArr)
+                }
+                
+            }else if usersArr.count == 0 {
+                print("Пользователи закончились")
+                currentAuthUser.writingPairsInfrormation()}
+        }
+    }
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        startSettings()
+        tabBarController?.tabBar.isHidden = true
+        buttonStackView.isHidden = true
+
         
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+            self.fireTimer()
+        }
+        
+        view.addSubview(progressViewLoadUsers.backView)
+        progressViewLoadUsers.backView.center = view.center
+        
+        Task {
+            
+            if await loadCurrentUsersData() {
+                await loadNewUsers(numberRequsetedUsers: 15)
+                startSettings()
+            }else{
+                print("Ошибка загрузки текущего пользователя")
+            }
+        }
+
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -54,12 +109,16 @@ class ViewController: UIViewController {
         
         var differenceX = CGFloat()
         var differenceY = CGFloat(-150)
+        guard let userID = currentCard?.userID else {return}
         
         if sender.restorationIdentifier == "Cancel" {
             differenceX = -200
+            currentAuthUser.disLikeArr.append(userID)
         }else if sender.restorationIdentifier == "SuperLike" {
+            currentAuthUser.superLikeArr.append(userID)
             differenceY = -600
         }else if sender.restorationIdentifier == "Like" {
+            currentAuthUser.likeArr.append(userID)
             differenceX = 200
         }
         
@@ -147,6 +206,7 @@ class ViewController: UIViewController {
                     UIView.animate(withDuration: 0.2, delay: 0) {
                         card.center = CGPoint(x: card.center.x + 150 , y: card.center.y + 100 )
                         card.alpha = 0
+                        self.currentAuthUser.likeArr.append(card.userID)
                         self.loadNewPeople(card: card)
                         
                     }
@@ -155,18 +215,20 @@ class ViewController: UIViewController {
                     UIView.animate(withDuration: 0.22, delay: 0) {
                         card.center = CGPoint(x: card.center.x - 150 , y: card.center.y + 100 )
                         card.alpha = 0
+                        self.currentAuthUser.disLikeArr.append(card.userID)
                         self.loadNewPeople(card: card)
-                        
+                       
                     }
-                }else if yFromCenter < -250 {
+                }else if yFromCenter < -250 { /// Супер Лайк
                     
                     UIView.animate(withDuration: 0.22, delay: 0) {
                         card.center = CGPoint(x: card.center.x , y: card.center.y - 600 )
                         card.alpha = 0
+                        self.currentAuthUser.superLikeArr.append(card.userID)
                         self.loadNewPeople(card: card)
+                      
                     }
                 }
-                
                 
                 else { /// Если не ушла то возвращаем в центр
                     
@@ -196,6 +258,13 @@ extension ViewController {
     
     func loadNewPeople(card:CardView){
         
+        if usersArr.count != 0 {
+            if let i = usersIDArr.firstIndex(where: { $0 == card.userID}) {
+                usersArr[i].cleanPhotoUser()
+                usersArr.remove(at: i)
+            }
+        }
+        
         if stopCard == false {
             
             card.removeGestureRecognizer(panGesture)
@@ -205,7 +274,7 @@ extension ViewController {
                 
                 oddCard!.addGestureRecognizer(panGesture)
                 oddCard!.addGestureRecognizer(tapGesture)
-                honestCard = createCard()
+                honestCard = createCard(currentUserIDCard: oddCard?.userID)
                 currentCard = oddCard!
                
                 view.addSubview(honestCard!)
@@ -216,7 +285,7 @@ extension ViewController {
                 
                 honestCard!.addGestureRecognizer(panGesture)
                 honestCard!.addGestureRecognizer(tapGesture)
-                oddCard = createCard()
+                oddCard = createCard(currentUserIDCard: honestCard?.userID)
                 currentCard = honestCard!
                
                 view.addSubview(oddCard!)
@@ -238,9 +307,6 @@ extension ViewController {
     }
     
 }
-    
-    
-
 
 
     
@@ -281,35 +347,32 @@ extension ViewController {
 }
 
 
-
-
 //MARK: - Создание нового CardView
 
 
 extension ViewController {
     
     
-    func createDataCard() -> User? {
+    func createDataCard(currentUserIDCard: String?) -> User? {
         
-        
-        
-        if  usersArr.count > 0 {
-            let newUser = usersArr[0]
+        if  usersArr.count > 1 {
+            var newUser = usersArr.randomElement()
+            if let currentUserID = currentUserIDCard {
+                newUser = randomUserFromArray(currentUserID: currentUserID)
+            }
             return (newUser)
         }else {
-            print("Пользователи закончились")
             return nil
         }
         
     }
     
-    func createCard() -> CardView {
+    func createCard(currentUserIDCard:String?) -> CardView {
         
-        if let newUser = createDataCard() {
+        if let newUser = createDataCard(currentUserIDCard: currentUserIDCard) {
             
             let card = cardModel.createCard(newUser: newUser)
             center = card.center
-            usersArr.removeFirst()
             return card
         }else {
             stopCard = true
@@ -317,8 +380,6 @@ extension ViewController {
         }
         
     }
-    
-    
     func createEmptyCard() -> CardView {
         
         let card = cardModel.createEmptyCard()
@@ -328,32 +389,106 @@ extension ViewController {
     
 }
 
+
+//MARK: -  Загрузка новых пользователей
+
 extension ViewController {
+    
+    func loadNewUsers(numberRequsetedUsers: Int,nonSwipedUsers:[String] = [String]()) async{
+        
+        var newUsersArr = [User]()
+        
+        if let loadUsersIDArr = await FirebaseStorageModel().loadUsersID(countUser: numberRequsetedUsers,currentUser: currentAuthUser,nonSwipedUsers: nonSwipedUsers) {
+            
+            print("Количество только что загруженных полльзователей - \(loadUsersIDArr.count)")
+            if numberRequsetedUsers > loadUsersIDArr.count {
+                currentAuthUser.couplesOver = true
+            }
+            
+            for ID in loadUsersIDArr {
+                
+                var newUser = User(ID: ID)
+                await newUser.loadMetaData()
+                
+                if let urlFilesArr = await FirebaseStorageModel().loadPhotoToFile(urlPhotoArr: newUser.urlPhotoArr, userID: ID,currentUser: false) {
+                    newUser.loadPhotoFromDirectory(urlFileArr: urlFilesArr)
+                    newUsersArr.append(newUser)
+                    progressViewLoadUsers.progressBar.progress += 0.02
+                }
+                
+            }
+            
+            usersArr = usersArr +  newUsersArr
+    }
+}
+    
+//MARK: -  Загрузка данных о текущем авторизованном пользователе
+    
+    func loadCurrentUsersData() async -> Bool {
+        
+        if await currentAuthUser.loadMetadata() {
+            
+            if let urlArrFiles = await FirebaseStorageModel().loadPhotoToFile(urlPhotoArr: currentAuthUser.urlPhotoArr, userID: currentAuthUser.ID,currentUser: true) {
+                currentAuthUser.loadPhotoFromDirectory(urlFileArr: urlArrFiles)
+            }
+            print("количество фото текущего пользователя ", currentAuthUser.imageArr.count)
+            return true
+        }else {
+            return false
+        }
+    }
+}
+
+//MARK: -  Дополнительные расширения
+
+extension ViewController {
+    
     
     func startSettings(){
         
+        timer.invalidate()
+        progressViewLoadUsers.progressBar.setProgress(1, animated: true)
+       
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            
+            self.progressViewLoadUsers.backView.removeFromSuperview()
+            self.tabBarController?.tabBar.isHidden = false
+            self.buttonStackView.isHidden = false
+            
+            self.oddCard = self.createCard(currentUserIDCard: nil)
+            self.honestCard = self.createCard(currentUserIDCard: self.oddCard?.userID)
+            self.currentCard = self.oddCard
+            
+            self.oddCard!.addGestureRecognizer(self.panGesture)
+            self.oddCard!.addGestureRecognizer(self.tapGesture)
+            self.view.addSubview(self.honestCard!)
+            self.view.addSubview(self.oddCard!)
+            self.view.bringSubviewToFront(self.buttonStackView)
+        }
+    }
+    
+    func randomUserFromArray(currentUserID:String) -> User? {
         
-        Users().loadFirtsUsers(countUsers: 20) {[unowned self] otherUser,error  in
-            
-            if let err = error {
-                print(err)
-            }
-            
-            if otherUser != nil {
-                self.usersArr = otherUser!
-                
-                oddCard = createCard()
-                honestCard = createCard()
-                currentCard = oddCard
-                
-                oddCard!.addGestureRecognizer(panGesture)
-                oddCard!.addGestureRecognizer(tapGesture)
-                self.view.addSubview(honestCard!)
-                self.view.addSubview(oddCard!)
-                self.view.bringSubviewToFront(buttonStackView)
-            }
+        var newUser = usersArr.randomElement()
+        
+        if currentUserID == newUser?.ID {
+            newUser = randomUserFromArray(currentUserID: currentUserID)
+        }
+        return newUser
+    }
+ 
+    func fireTimer(){
+        
+        progressViewLoadUsers.progressBar.progress += 0.005
+        let progress = progressViewLoadUsers.progressBar.progress
+        let randomFloat = Float.random(in: 0...0.025)
+        
+        UIView.animate(withDuration: 0.8, delay: 0) { [unowned self] in
+            self.progressViewLoadUsers.progressBar.setProgress(progress + randomFloat, animated: true)
         }
         
     }
     
 }
+
+
