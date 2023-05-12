@@ -25,51 +25,51 @@ struct FirebaseStorageModel {
     
     
     
-//MARK: -  Загрузка фото на сервер
-    
-    func uploadImageToStorage(image: UIImage) async -> (succes:Bool,fileName:String)  {
-        
-        let imageID = "photoImage" + randomString(length: 15)
-        
-        let imagesRef = storage.reference().child("UsersPhoto").child(currentUserID).child(imageID) /// Создаем ссылку на файл
-        guard let imageData = image.jpegData(compressionQuality: 0.4) else { /// Преобразуем в Jpeg c сжатием
-            return (false,"")
-        }
-        
-        
-        let metaData = StorageMetadata()
-        metaData.contentType = "image/jpeg" /// Указываем явный тип данных в FireBase
-        
-        do {
-            try await imagesRef.putDataAsync(imageData)
-            let url = try await imagesRef.downloadURL()
-            let status = await uploadDataToFirestore(url: url, imageID: imageID)
-            if status {
-                return (status,imageID)
-            }
-        }catch {
-            print(error)
-            return (false,"")
-        }
-        return(false,"")
-    }
-    
-    
-    private func uploadDataToFirestore(url:URL,imageID: String) async -> Bool {
-     
-        let colletcion = db.collection("Users").document(currentUserID) /// Добавляем в FiresStore ссылку на фото\
-        
-        do {
-           try await colletcion.setData([imageID : url.absoluteString], merge: true)
-            return true
-        }catch{
-            print("Ошибка загрузки данных фото на сервер Firebase Firestore \(error)")
-            return false
-        }
-    }
+////MARK: -  Загрузка фото на сервер
+//    
+//    func uploadImageToStorage(image: UIImage) async -> (succes:Bool,fileName:String)  {
+//        
+//        let imageID = "photoImage" + randomString(length: 15)
+//        
+//        let imagesRef = storage.reference().child("UsersPhoto").child(currentUserID).child(imageID) /// Создаем ссылку на файл
+//        guard let imageData = image.jpegData(compressionQuality: 0.4) else { /// Преобразуем в Jpeg c сжатием
+//            return (false,"")
+//        }
+//        
+//        
+//        let metaData = StorageMetadata()
+//        metaData.contentType = "image/jpeg" /// Указываем явный тип данных в FireBase
+//        
+//        do {
+//            try await imagesRef.putDataAsync(imageData)
+//            let url = try await imagesRef.downloadURL()
+//            let status = await uploadDataToFirestore(url: url, imageID: imageID)
+//            if status {
+//                return (status,imageID)
+//            }
+//        }catch {
+//            print(error)
+//            return (false,"")
+//        }
+//        return(false,"")
+//    }
+//    
+//    
+//    private func uploadDataToFirestore(url:URL,imageID: String) async -> Bool {
+//     
+//        let colletcion = db.collection("Users").document(currentUserID) /// Добавляем в FiresStore ссылку на фото\
+//        
+//        do {
+//           try await colletcion.setData([imageID : url.absoluteString], merge: true)
+//            return true
+//        }catch{
+//            print("Ошибка загрузки данных фото на сервер Firebase Firestore \(error)")
+//            return false
+//        }
+//    }
     
 
-//MARK: - Загрузка фото в память устройства
+//MARK: - Загрузка фото с сервера в память устройства
     
     func loadPhotoToFile(urlPhotoArr: [String],userID: String,currentUser: Bool) async -> [URL]? {
         
@@ -144,33 +144,31 @@ struct FirebaseStorageModel {
     }
     
     
-    
-    
-    //MARK: - Удаление фото с сервера
-
-    func removePhotoFromServer(userID:String,imageID:String){
-        
-        var newImageServerID = imageID /// Создаем новое имя файла для сервера
-        if let dotRange = newImageServerID.range(of: ".") {
-          newImageServerID.removeSubrange(dotRange.lowerBound..<newImageServerID.endIndex) /// Удаляем расширение
-        }
-        
-        let imagesRef = storage.reference().child("UsersPhoto2").child(userID).child(newImageServerID)
-        imagesRef.delete { error in
-            if let err = error {
-                print("Ошибка удаления фото с сервера FirebaseStorage \(err)")
-            }else {
-                deletePhotoFromFirebase(imageId: newImageServerID)
-            }
-        }
-    }
-    
-    func deletePhotoFromFirebase(imageId: String){
-        let fieldID = "photoImage" + imageId
-        db.collection("Users").document(currentUserID).updateData([fieldID : FieldValue.delete()]) { err in
-            if let error = err {print( "Ошибка удаления фото с сервера FirebaseFirestore \(error)")}
-        }
-    }
+//    //MARK: - Удаление фото с сервера
+//
+//    func removePhotoFromServer(userID:String,imageID:String){
+//
+//        var newImageServerID = imageID /// Создаем новое имя файла для сервера
+//        if let dotRange = newImageServerID.range(of: ".") {
+//          newImageServerID.removeSubrange(dotRange.lowerBound..<newImageServerID.endIndex) /// Удаляем расширение
+//        }
+//
+//        let imagesRef = storage.reference().child("UsersPhoto2").child(userID).child(newImageServerID)
+//        imagesRef.delete { error in
+//            if let err = error {
+//                print("Ошибка удаления фото с сервера FirebaseStorage \(err)")
+//            }else {
+//                deletePhotoFromFirebase(imageId: newImageServerID)
+//            }
+//        }
+//    }
+//
+//    func deletePhotoFromFirebase(imageId: String){
+//        let fieldID = "photoImage" + imageId
+//        db.collection("Users").document(currentUserID).updateData([fieldID : FieldValue.delete()]) { err in
+//            if let error = err {print( "Ошибка удаления фото с сервера FirebaseFirestore \(error)")}
+//        }
+//    }
 }
 
 
@@ -186,6 +184,9 @@ private extension FirebaseStorageModel {
         let exists = FileManager.default.fileExists(atPath: directory.path)
         return exists
     }
+}
+
+extension String {
     
     func randomString(length: Int) -> String {
       let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"

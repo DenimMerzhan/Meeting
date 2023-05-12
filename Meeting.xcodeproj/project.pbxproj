@@ -125,6 +125,7 @@
 		CFA140DA2A00E21600DD384B /* CustomClass */ = {
 			isa = PBXGroup;
 			children = (
+				CF7D03082A0B80330028E7EB /* CurrentAuthUser.swift */,
 				CFC6D2FF29FE43B100A712BA /* CircularProgressBarView.swift */,
 				CF1DC80729F0D46C001E2EAD /* CardView.swift */,
 				CF807F0829FFF57800D5ACD1 /* CollectionPhotoCell.swift */,
@@ -135,7 +136,6 @@
 		CFA140DB2A00E24300DD384B /* CustomStruct */ = {
 			isa = PBXGroup;
 			children = (
-				CF7D03082A0B80330028E7EB /* CurrentAuthUser.swift */,
 				CF1DC80929F0DFC3001E2EAD /* User.swift */,
 			);
 			path = CustomStruct;

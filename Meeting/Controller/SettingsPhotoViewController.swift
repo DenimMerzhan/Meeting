@@ -18,27 +18,14 @@ class SettingsPhotoViewController: UIViewController {
     
     let imagePicker = UIImagePickerController()
     var animateProgressToValue = Float(0)
-    var imageFiles = [CurrentUserImage]()
     
     var defaults = UserDefaults.standard
     var index = IndexPath()
     
-    let fileManager = FileManager.default
-    var currentPhotoFolder = URL(string: "")
-    
-    var currentAuthUser = CurrentAuthUser(ID: "+79817550000")
-    
-    let storage = Storage.storage()
-    var userID = "+79817550000"
-    
-    
+    var currentAuthUser = CurrentAuthUser(ID: "dwdw")
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        if let newArr = getSavedImage() { /// Если в каталоге есть фото текущего пользователя то загружаем их
-            imageFiles = newArr
-            collectionPhotoView.reloadData()
-        }
         
         collectionPhotoView.delegate = self
         collectionPhotoView.dataSource = self
@@ -48,13 +35,12 @@ class SettingsPhotoViewController: UIViewController {
 
         
         collectionPhotoView.register(CollectionPhotoCell.self, forCellWithReuseIdentifier: CollectionPhotoCell.identifier)
-        
     }
     
     
     @IBAction func donePressed(_ sender: UIButton) {
-        defaults.set(Float(imageFiles.count) / 9 , forKey: "ProfileFilingScale") /// Записываем данные о количествах фото текущего пользователя
-        
+        defaults.set(Float(currentAuthUser.imageArr.count) / 9 , forKey: "ProfileFilingScale") /// Записываем данные о количествах фото текущего пользователя
+
         
         self.dismiss(animated: true)
     }
@@ -85,7 +71,6 @@ extension SettingsPhotoViewController : UICollectionViewDataSource, UICollection
         
         if let imageView = createImage(indexPath: indexPath.row, cellWidth: cell.frame.width, cellHeight: cell.frame.height) {
             
-        
             cell.photoImage.image = imageView.image
             cell.photoImage.contentMode = .scaleAspectFill
             cell.dottedBorder.isHidden = true
@@ -132,9 +117,9 @@ extension SettingsPhotoViewController {
     func createImage(indexPath: Int,cellWidth: CGFloat,cellHeight: CGFloat) -> UIImageView? { /// Создание фото
         
         
-        if indexPath < imageFiles.count {
+        if indexPath < currentAuthUser.imageArr.count {
             let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: cellWidth, height: cellHeight))
-            imageView.image = imageFiles[indexPath].image
+            imageView.image = currentAuthUser.imageArr[indexPath].image
             imageView.contentMode = .scaleAspectFill
             return imageView
             
@@ -167,9 +152,8 @@ extension SettingsPhotoViewController {
         
         let action = UIAction { [unowned self] action in
             
-            let  firebaseStorage = FirebaseStorageModel(userID: self.userID)
-            firebaseStorage.removePhotoFromServer(userID: self.userID, imageID: self.imageFiles[index].imageID)
-            self.imageFiles.remove(at: index)
+            currentAuthUser.removePhotoFromServer(imageID: currentAuthUser.imageArr[index].imageID)
+            self.currentAuthUser.imageArr.remove(at: index)
             self.collectionPhotoView.reloadData()
         }
         buttonDelete.addAction(action, for: .touchUpInside)
@@ -177,8 +161,6 @@ extension SettingsPhotoViewController {
         return buttonDelete
     }
 }
-
-
 
 
 //MARK: - Загрузка фото из галереи пользователя
@@ -205,19 +187,17 @@ extension SettingsPhotoViewController {
         let progressView = CreateButton().createProgressBarLoadPhoto()
         view.addSubview(progressView.backView)
         
-        let  firebaseStorage = FirebaseStorageModel(userID: userID)
-        
         UIView.animate(withDuration: 4, delay: 0.2) {
             progressView.progressBar.setProgress(0.7, animated: true)
         }
         
         Task {  /// Ждем пока поступит ответ, либо успешная загрузка либо нет
             
-            let data = await firebaseStorage.uploadImageToStorage(image: image)
+            let succes = await currentAuthUser.uploadImageToStorage(image: image)
             
-            if data.succes {
+            
+            if succes {
                 
-                imageFiles.append(CurrentUserImage(imageID: data.fileName,image: image))
                 UIView.animate(withDuration: 1.5, delay: 0) {
                     
                     progressView.progressBar.setProgress(1, animated: true)
@@ -241,48 +221,48 @@ extension SettingsPhotoViewController {
 
 
 
-//MARK: - Получение изображения из файлов библиотеки пользователя
-
-extension SettingsPhotoViewController {
-    
-    func getSavedImage() -> [CurrentUserImage]? {
-        
-        var imageFiles = [CurrentUserImage]()
-        
-        if let urlArr = getUrlFile() {
-            
-            for url in urlArr {
-                let fileName = String((url.path as NSString).lastPathComponent)
-                
-                if var newImage = UIImage(contentsOfFile: url.path) {
-                    imageFiles.append(CurrentUserImage(imageID: fileName,image: newImage))
-                    newImage = .remove
-                }
-            }
-        }
-        
-        if imageFiles.count == 0 {
-            return nil
-        }else {
-            return imageFiles
-        }
-        
-    }
-    
-    private func getUrlFile() -> [URL]? {
-        
-        let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("CurrentUsersPhoto")
-        do {
-            let fileURLs = try fileManager.contentsOfDirectory(at: documentsURL, includingPropertiesForKeys: nil,options: .skipsHiddenFiles)
-            return fileURLs
-        } catch {
-            print("Ошибка получения адресов файлов \(documentsURL.path): \(error.localizedDescription)")
-            return nil
-        }
-        
-    }
-    
-}
+////MARK: - Получение изображения из файлов библиотеки пользователя
+//
+//extension SettingsPhotoViewController {
+//
+//    func getSavedImage() -> [CurrentUserImage]? {
+//
+//        var imageFiles = [CurrentUserImage]()
+//
+//        if let urlArr = getUrlFile() {
+//
+//            for url in urlArr {
+//                let fileName = String((url.path as NSString).lastPathComponent)
+//
+//                if var newImage = UIImage(contentsOfFile: url.path) {
+//                    imageFiles.append(CurrentUserImage(imageID: fileName,image: newImage))
+//                    newImage = .remove
+//                }
+//            }
+//        }
+//
+//        if imageFiles.count == 0 {
+//            return nil
+//        }else {
+//            return imageFiles
+//        }
+//
+//    }
+//
+//    private func getUrlFile() -> [URL]? {
+//
+//        let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("CurrentUsersPhoto")
+//        do {
+//            let fileURLs = try fileManager.contentsOfDirectory(at: documentsURL, includingPropertiesForKeys: nil,options: .skipsHiddenFiles)
+//            return fileURLs
+//        } catch {
+//            print("Ошибка получения адресов файлов \(documentsURL.path): \(error.localizedDescription)")
+//            return nil
+//        }
+//
+//    }
+//
+//}
 
        
        

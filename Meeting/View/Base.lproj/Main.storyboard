@@ -217,7 +217,6 @@
                                 </state>
                                 <connections>
                                     <action selector="settingsPhotoPressed:" destination="qng-RP-u3q" eventType="touchUpInside" id="XTw-kL-S3Z"/>
-                                    <segue destination="4NK-x7-t2w" kind="presentation" identifier="settingsToPhotoSettings" modalPresentationStyle="fullScreen" id="iDE-tQ-xTa"/>
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="90% ЗАПОЛНЕНО" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2FS-Qe-uXV">
@@ -248,9 +247,10 @@
                         <color key="badgeColor" systemColor="opaqueSeparatorColor"/>
                     </tabBarItem>
                     <connections>
-                        <outlet property="changePhotoButton" destination="XuX-sM-fga" id="lz0-3h-csm"/>
+                        <outlet property="changePhotoButton" destination="XuX-sM-fga" id="Tl7-nb-gSV"/>
                         <outlet property="fillingScaleProfile" destination="2FS-Qe-uXV" id="ooI-OH-1Xk"/>
                         <outlet property="profilePhoto" destination="lFT-3Z-kJV" id="w50-RG-FVi"/>
+                        <segue destination="4NK-x7-t2w" kind="presentation" identifier="settingsToPhotoSettings" modalPresentationStyle="fullScreen" id="xHZ-Bl-XsT"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lrK-ip-phe" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

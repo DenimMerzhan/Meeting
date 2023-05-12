@@ -89,9 +89,4 @@ struct User {
 
 
 
-struct CurrentUserImage {
-    
-    var imageID = String()
-    var image = UIImage()
-    
-}
+

@@ -17,6 +17,9 @@ class ProfileViewController: UIViewController {
     var animateProgressToValue = Float(0)
     let defaults = UserDefaults.standard
     
+
+    var currentAuthUser:  CurrentAuthUser?
+    
     override func viewDidAppear(_ animated: Bool) {
         profileUpdate()
     }
@@ -24,12 +27,27 @@ class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        if let navViewController = tabBarController?.viewControllers?[0] as? ViewController { /// Передаем ссылку на currentAuthUser
+            currentAuthUser = navViewController.currentAuthUser
+        }
+
         startSettings(animateProgressToValue: animateProgressToValue)
     }
     
     
     @IBAction func settingsPhotoPressed(_ sender: UIButton) {
-        performSegue(withIdentifier: "settingsToPhotoSettings", sender: self)
+        guard (currentAuthUser != nil) else {return}
+        if currentAuthUser!.userLoaded {
+            print(currentAuthUser!.imageArr.count)
+            performSegue(withIdentifier: "settingsToPhotoSettings", sender: self)
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard segue.identifier == "settingsToPhotoSettings" else {return}
+        guard let destination = segue.destination as? SettingsPhotoViewController else {return}
+        destination.currentAuthUser = currentAuthUser!
+        
     }
     
 }

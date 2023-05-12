@@ -407,9 +407,7 @@ extension ViewController {
     
     func loadCurrentUsersData() async {
         
-        var testStruct = currentAuthUser
-        await testStruct.loadMetadata()
-        currentAuthUser = testStruct
+        await currentAuthUser.loadMetadata()
         
         if let urlArrFiles = await FirebaseStorageModel().loadPhotoToFile(urlPhotoArr: currentAuthUser.urlPhotoArr, userID: currentAuthUser.ID,currentUser: true) {
             currentAuthUser.loadPhotoFromDirectory(urlFileArr: urlArrFiles)

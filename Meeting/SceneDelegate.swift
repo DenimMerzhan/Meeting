@@ -19,7 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let _ = (scene as? UIWindowScene) else { return }
     }
 
-    func sceneDidDisconnect(_ scene: UIScene) {
+    func sceneDidDisconnect(_ scene: UIScene) { /// После закрытия приложения удаляем все фото с директории пользователя
         print("sceneDidDisconnect")
         
         let fileManager = FileManager.default
@@ -48,7 +48,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func sceneWillEnterForeground(_ scene: UIScene) {
-        print("sceneWillEnterForeground")
     }
 
     func sceneDidEnterBackground(_ scene: UIScene) {
