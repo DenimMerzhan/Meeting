@@ -45,8 +45,7 @@ struct FirebaseStorageModel {
             let url = try await imagesRef.downloadURL()
             let status = await uploadDataToFirestore(url: url, imageID: imageID)
             if status {
-                let fileName = savePhotoToUserPhone(image: image, fileName: imageID)
-                return (status,fileName)
+                return (status,imageID)
             }
         }catch {
             print(error)
@@ -162,7 +161,6 @@ struct FirebaseStorageModel {
                 print("Ошибка удаления фото с сервера FirebaseStorage \(err)")
             }else {
                 deletePhotoFromFirebase(imageId: newImageServerID)
-                deletePhotoOnUserPhone(fileName: imageID)
             }
         }
     }
@@ -180,68 +178,14 @@ struct FirebaseStorageModel {
 
 
 
-
-//MARK:  - Сохранение фото пользователя на устройстве
+//MARK: -  Расширение для формирования рандомного ID для фото - Надо исправить т.к есть шанс получить одинаковый ID
 
 private extension FirebaseStorageModel {
-    
-    func savePhotoToUserPhone(image: UIImage, fileName:String) -> String {
-        
-        guard let data = image.jpegData(compressionQuality: 1) ?? image.pngData() else { /// Преобразуем фото в дата данные
-            return ""
-        }
-        
-        let userLibary = fileManager.urls(for: .documentDirectory, in: .userDomainMask) /// Стандартная библиотека пользователя
-        let newFolder = userLibary[0].appendingPathComponent("CurrentUsersPhoto") as NSURL /// Добавляем к ней новую папку
-        
-        if checkDirectoryExist(directory: newFolder as URL) == false { /// Если директории нет создаем эту папку
-            try! fileManager.createDirectory(at: newFolder as URL, withIntermediateDirectories: false)
-        }
-        
-        do {
-            try data.write(to: newFolder.appendingPathComponent("\(fileName).png")!) /// Создаем новый файл по директории
-            return "\(fileName).png"
-        } catch {
-            print(error.localizedDescription)
-        }
-        return ""
-    }
     
     func checkDirectoryExist(directory: URL) -> Bool { /// Проверка существует ли директория по указаному пути
         let exists = FileManager.default.fileExists(atPath: directory.path)
         return exists
     }
-    
-}
-
-
-
-//MARK:  - Удаление фото пользователя на устройстве
-
-private extension FirebaseStorageModel {
-    
-    func deletePhotoOnUserPhone(fileName:String){
-        
-        let userLibary = fileManager.urls(for: .documentDirectory, in: .userDomainMask) /// Стандартная библиотека пользователя
-        let filePath = userLibary[0].appendingPathComponent("CurrentUsersPhoto").appendingPathComponent(fileName) /// Добавляем к ней новую папку
-        
-        do {
-            try fileManager.removeItem(at: filePath)
-        } catch {
-            print("Ошибка удаления файла с директории - ",error.localizedDescription)
-        }
-    }
-}
-
-
-
-
-
-
-
-//MARK: -  Расширение для формирования рандомного ID для фото - Надо исправить т.к есть шанс получить одинаковый ID
-
-private extension FirebaseStorageModel {
     
     func randomString(length: Int) -> String {
       let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"

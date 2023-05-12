@@ -89,9 +89,9 @@ struct User {
 
 
 
-struct CurrentUserFile {
+struct CurrentUserImage {
     
-    var nameFile = String()
+    var imageID = String()
     var image = UIImage()
     
 }

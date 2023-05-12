@@ -18,7 +18,7 @@ class SettingsPhotoViewController: UIViewController {
     
     let imagePicker = UIImagePickerController()
     var animateProgressToValue = Float(0)
-    var imageFiles = [CurrentUserFile]()
+    var imageFiles = [CurrentUserImage]()
     
     var defaults = UserDefaults.standard
     var index = IndexPath()
@@ -26,8 +26,10 @@ class SettingsPhotoViewController: UIViewController {
     let fileManager = FileManager.default
     var currentPhotoFolder = URL(string: "")
     
+    var currentAuthUser = CurrentAuthUser(ID: "+79817550000")
+    
     let storage = Storage.storage()
-    var userID = "+79218909922"
+    var userID = "+79817550000"
     
     
     override func viewDidLoad() {
@@ -37,8 +39,6 @@ class SettingsPhotoViewController: UIViewController {
             imageFiles = newArr
             collectionPhotoView.reloadData()
         }
-        
-        
         
         collectionPhotoView.delegate = self
         collectionPhotoView.dataSource = self
@@ -167,9 +167,8 @@ extension SettingsPhotoViewController {
         
         let action = UIAction { [unowned self] action in
             
-            
             let  firebaseStorage = FirebaseStorageModel(userID: self.userID)
-            firebaseStorage.removePhotoFromServer(userID: self.userID, imageID: self.imageFiles[index].nameFile)
+            firebaseStorage.removePhotoFromServer(userID: self.userID, imageID: self.imageFiles[index].imageID)
             self.imageFiles.remove(at: index)
             self.collectionPhotoView.reloadData()
         }
@@ -217,10 +216,8 @@ extension SettingsPhotoViewController {
             let data = await firebaseStorage.uploadImageToStorage(image: image)
             
             if data.succes {
-               
-                imageFiles.append(CurrentUserFile(nameFile: data.fileName,image: image))
                 
-                
+                imageFiles.append(CurrentUserImage(imageID: data.fileName,image: image))
                 UIView.animate(withDuration: 1.5, delay: 0) {
                     
                     progressView.progressBar.setProgress(1, animated: true)
@@ -248,9 +245,9 @@ extension SettingsPhotoViewController {
 
 extension SettingsPhotoViewController {
     
-    func getSavedImage() -> [CurrentUserFile]? {
+    func getSavedImage() -> [CurrentUserImage]? {
         
-        var imageFiles = [CurrentUserFile]()
+        var imageFiles = [CurrentUserImage]()
         
         if let urlArr = getUrlFile() {
             
@@ -258,7 +255,7 @@ extension SettingsPhotoViewController {
                 let fileName = String((url.path as NSString).lastPathComponent)
                 
                 if var newImage = UIImage(contentsOfFile: url.path) {
-                    imageFiles.append(CurrentUserFile(nameFile: fileName,image: newImage))
+                    imageFiles.append(CurrentUserImage(imageID: fileName,image: newImage))
                     newImage = .remove
                 }
             }

@@ -94,6 +94,8 @@ struct CurrentAuthUser {
         }
     }
     
+//MARK: -  Загрузка фото с директории
+    
     mutating func loadPhotoFromDirectory(urlFileArr: [URL] ){
         
         for url in urlFileArr {
@@ -102,5 +104,11 @@ struct CurrentAuthUser {
 //                newImage = .remove
             }
         }
+    }
+    
+    
+    func deletePhotoFromServer(){
+        
+        
     }
 }
