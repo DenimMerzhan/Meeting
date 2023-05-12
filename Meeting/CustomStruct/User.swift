@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import FirebaseFirestore
 
-class User {
+struct User {
     
     var ID = String()
     
@@ -30,9 +30,9 @@ class User {
     
 //MARK: - Загрузка метаданных о пользователе
     
-    func loadMetaData() async {
+    mutating func loadMetaData() async {
         
-        let collection  = db.collection("Users2").document(ID)
+        let collection  = db.collection("Users").document(ID)
         
         do {
             let docSnap = try await collection.getDocument()
@@ -52,9 +52,9 @@ class User {
                     
                 }else {
                     print("Ошибка в преобразование имени и возраста у данного пользователя \(ID)")
+                    
                 }
             }
-            
         }catch{
             print("Ошибка получения ссылок на фото с сервера FirebaseFirestore - \(error)")
         }
@@ -63,7 +63,7 @@ class User {
     
 //MARK: - Загрузка фото пользователя с директории
     
-    func loadPhotoFromDirectory(urlFileArr: [URL] ){
+    mutating func loadPhotoFromDirectory(urlFileArr: [URL] ){
         
         for url in urlFileArr {
             if let newImage = UIImage(contentsOfFile: url.path) {
@@ -81,7 +81,7 @@ class User {
         do {
             try fileManager.removeItem(at: currentFolder)
         }catch{
-            print("Ошибка удаления файла")
+            print("Ошибка удаления файла по этому - \(ID) , ошибка - \(error)")
         }
     }
 }

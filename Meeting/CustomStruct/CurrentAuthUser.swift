@@ -10,7 +10,7 @@ import UIKit
 import FirebaseFirestore
 
 
-class CurrentAuthUser {
+struct CurrentAuthUser {
     
     
     var ID  = String()
@@ -36,9 +36,9 @@ class CurrentAuthUser {
     
     //MARK: -  Загрузка метаданных о текущем авторизованном пользователе с FireStore
             
-     func loadMetadata() async {
+    mutating func loadMetadata() async {
         
-        let collection  = db.collection("Users2").document(ID)
+        let collection  = db.collection("Users").document(ID)
         
         do {
             
@@ -64,8 +64,6 @@ class CurrentAuthUser {
                             }
                         }
                     }
-                        
-                    
                 }else {
                     print("Ошибка в преобразование данных о текущем пользователе")
                 }
@@ -82,7 +80,7 @@ class CurrentAuthUser {
     func writingPairsInfrormation(){
         
         
-        let documenRef = db.collection("Users2").document(ID)
+        let documenRef = db.collection("Users").document(ID)
     
         documenRef.setData([
             "LikeArr" : self.likeArr,
@@ -96,7 +94,7 @@ class CurrentAuthUser {
         }
     }
     
-    func loadPhotoFromDirectory(urlFileArr: [URL] ){
+    mutating func loadPhotoFromDirectory(urlFileArr: [URL] ){
         
         for url in urlFileArr {
             if let newImage = UIImage(contentsOfFile: url.path) {

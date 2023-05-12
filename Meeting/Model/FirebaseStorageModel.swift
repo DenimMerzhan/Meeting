@@ -31,7 +31,7 @@ struct FirebaseStorageModel {
         
         let imageID = "photoImage" + randomString(length: 15)
         
-        let imagesRef = storage.reference().child("UsersPhoto2").child(currentUserID).child(imageID) /// Создаем ссылку на файл
+        let imagesRef = storage.reference().child("UsersPhoto").child(currentUserID).child(imageID) /// Создаем ссылку на файл
         guard let imageData = image.jpegData(compressionQuality: 0.4) else { /// Преобразуем в Jpeg c сжатием
             return (false,"")
         }
@@ -58,7 +58,7 @@ struct FirebaseStorageModel {
     
     private func uploadDataToFirestore(url:URL,imageID: String) async -> Bool {
      
-        let colletcion = db.collection("Users2").document(currentUserID) /// Добавляем в FiresStore ссылку на фото\
+        let colletcion = db.collection("Users").document(currentUserID) /// Добавляем в FiresStore ссылку на фото\
         
         do {
            try await colletcion.setData([imageID : url.absoluteString], merge: true)
@@ -72,10 +72,12 @@ struct FirebaseStorageModel {
 
 //MARK: - Загрузка фото в память устройства
     
-    func loadPhotoToFile(urlPhotoArr: [String],userID: String,currentUser: Bool) async -> [URL] {
+    func loadPhotoToFile(urlPhotoArr: [String],userID: String,currentUser: Bool) async -> [URL]? {
         
         var urlFileArr = [URL]()
-        
+        if urlPhotoArr.count == 0 {
+            return nil
+        }
         let userLibary = fileManager.urls(for: .documentDirectory, in: .userDomainMask) /// Стандартная библиотека пользователя
     
         var newFolder = userLibary[0]
@@ -111,7 +113,7 @@ struct FirebaseStorageModel {
     
     func loadUsersID(countUser: Int,currentUser:CurrentAuthUser,nonSwipedUsers: [String] = [String]()) async -> [String]? {
         var count = 0
-        let collection  = db.collection("Users2")
+        let collection  = db.collection("Users")
         var userIDArr = [String]()
         
         let viewedUsers = currentUser.likeArr + currentUser.disLikeArr + currentUser.superLikeArr + nonSwipedUsers
@@ -133,10 +135,12 @@ struct FirebaseStorageModel {
                     break
                 }
             }
+            print("Общее количество пользователей - \(querySnapshot.count)")
         }catch{
             print("Ошибка загрузки ID пользователей - \(error)")
             return nil
         }
+        
         return userIDArr
     }
     
@@ -165,7 +169,7 @@ struct FirebaseStorageModel {
     
     func deletePhotoFromFirebase(imageId: String){
         let fieldID = "photoImage" + imageId
-        db.collection("Users2").document(currentUserID).updateData([fieldID : FieldValue.delete()]) { err in
+        db.collection("Users").document(currentUserID).updateData([fieldID : FieldValue.delete()]) { err in
             if let error = err {print( "Ошибка удаления фото с сервера FirebaseFirestore \(error)")}
         }
     }

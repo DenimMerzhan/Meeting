@@ -20,38 +20,42 @@ struct Test {
     //MARK: -  Загрузка фото на сервер
         
     
-    func createUser() -> (nameUser: String,ageUser: Int,imageUser: UIImage){
+    func createUser() -> (nameUser: String,ageUser: Int,imageUserArr: [UIImage]){
         
         let name = randomString(length: 10)
         let age = Int.random(in: 0...100)
-        let image = UIImage(color: colorArr.randomElement()!)!
-        
-        return (name,age,image)
+        let rand = Int.random(in: 1...5)
+        var imageArr = [UIImage]()
+        for i in 0...rand {
+            let image = UIImage(color: colorArr.randomElement()!)!
+            imageArr.append(image)
+        }
+        return (name,age,imageArr)
     }
     
     func uploadImageToStorage() async {
         
         let dataUser = createUser()
-        
-        let imageID = "photoImage" + dataUser.nameUser
-        
-        let imagesRef = storage.reference().child("UsersPhoto2").child(dataUser.nameUser).child(imageID) /// Создаем ссылку на файл
-        guard let imageData = dataUser.imageUser.jpegData(compressionQuality: 0.4) else { /// Преобразуем в Jpeg c сжатием
-            return
+        for image in dataUser.imageUserArr {
+            
+            let imageID = "photoImage" + dataUser.nameUser + randomString(length: 5)
+            
+            let imagesRef = storage.reference().child("UsersPhoto2").child(dataUser.nameUser).child(imageID) /// Создаем ссылку на файл
+            guard let imageData = image.jpegData(compressionQuality: 0.4) else { /// Преобразуем в Jpeg c сжатием
+                return
+            }
+            let metaData = StorageMetadata()
+            metaData.contentType = "image/jpeg" /// Указываем явный тип данных в FireBase
+            
+            do {
+                try await imagesRef.putDataAsync(imageData)
+                let url = try await imagesRef.downloadURL()
+                await uploadDataToFirestore(url: url, imageID: imageID,currentUserID: dataUser.nameUser,name: dataUser.nameUser,age: dataUser.ageUser)
+            }catch {
+                print(error)
+            }
         }
-        
-        
-        let metaData = StorageMetadata()
-        metaData.contentType = "image/jpeg" /// Указываем явный тип данных в FireBase
-        
-        do {
-            try await imagesRef.putDataAsync(imageData)
-            let url = try await imagesRef.downloadURL()
-            await uploadDataToFirestore(url: url, imageID: imageID,currentUserID: dataUser.nameUser,name: dataUser.nameUser,age: dataUser.ageUser)
-        }catch {
-            print(error)
-        }
-        }
+}
         
         
     private func uploadDataToFirestore(url:URL,imageID: String,currentUserID: String,name: String,age:Int) async -> Bool {

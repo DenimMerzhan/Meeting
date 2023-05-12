@@ -32,7 +32,7 @@ class ViewController: UIViewController {
     var currentCard: CardView?
     
     var cardModel = CardModel()
-    var currentAuthUser = CurrentAuthUser(ID: "4a4KXZljBz")
+    var currentAuthUser = CurrentAuthUser(ID: "+79817550000")
 
     var usersIDArr:  [String] {
         get{
@@ -48,14 +48,14 @@ class ViewController: UIViewController {
     
     var usersArr =  [User]() {
         didSet {
-            print(usersIDArr)
-            if usersArr.count < 3 && currentAuthUser.couplesOver == false {
+            print("Количество пользователей в архиве - \(usersIDArr.count)")
+            if usersArr.count < 15 && currentAuthUser.couplesOver == false {
                 
                 print("Загрузка новых пользователей")
                 currentAuthUser.writingPairsInfrormation()
                 Task {
                 
-                    await loadNewUsers(numberRequsetedUsers: 5,nonSwipedUsers: usersIDArr)
+                    await loadNewUsers(numberRequsetedUsers: 15,nonSwipedUsers: usersIDArr)
                 }
                 
             }else if usersArr.count == 0 {
@@ -68,10 +68,12 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         
+
+        
         Task {
             
             await loadCurrentUsersData()
-            await loadNewUsers(numberRequsetedUsers: 5)
+            await loadNewUsers(numberRequsetedUsers: 20)
             startSettings()
         }
 
@@ -209,7 +211,6 @@ class ViewController: UIViewController {
                       
                     }
                 }
-                
                 
                 else { /// Если не ушла то возвращаем в центр
                     
@@ -379,21 +380,22 @@ extension ViewController {
         
         var newUsersArr = [User]()
         
-        if let usersIDArr = await FirebaseStorageModel().loadUsersID(countUser: numberRequsetedUsers,currentUser: currentAuthUser,nonSwipedUsers: nonSwipedUsers) {
+        if let loadUsersIDArr = await FirebaseStorageModel().loadUsersID(countUser: numberRequsetedUsers,currentUser: currentAuthUser,nonSwipedUsers: nonSwipedUsers) {
             
-            
-            if numberRequsetedUsers > usersIDArr.count {
+            print("Количество только что загруженных полльзователей - \(loadUsersIDArr.count)")
+            if numberRequsetedUsers > loadUsersIDArr.count {
                 currentAuthUser.couplesOver = true
             }
             
-            for ID in usersIDArr {
+            for ID in loadUsersIDArr {
                 
-                let newUser = User(ID: ID)
+                var newUser = User(ID: ID)
                 await newUser.loadMetaData()
                 
-                let urlFilesArr = await FirebaseStorageModel().loadPhotoToFile(urlPhotoArr: newUser.urlPhotoArr, userID: ID,currentUser: false)
-                newUser.loadPhotoFromDirectory(urlFileArr: urlFilesArr)
-                newUsersArr.append(newUser)
+                if let urlFilesArr = await FirebaseStorageModel().loadPhotoToFile(urlPhotoArr: newUser.urlPhotoArr, userID: ID,currentUser: false) {
+                    newUser.loadPhotoFromDirectory(urlFileArr: urlFilesArr)
+                    newUsersArr.append(newUser)
+                }
                 
             }
             
@@ -405,10 +407,13 @@ extension ViewController {
     
     func loadCurrentUsersData() async {
         
-        await currentAuthUser.loadMetadata()
-        if currentAuthUser.urlPhotoArr.count == 0 {return}
-        let urlArrFiles = await FirebaseStorageModel().loadPhotoToFile(urlPhotoArr: currentAuthUser.urlPhotoArr, userID: currentAuthUser.ID,currentUser: true)
-        currentAuthUser.loadPhotoFromDirectory(urlFileArr: urlArrFiles)
+        var testStruct = currentAuthUser
+        await testStruct.loadMetadata()
+        currentAuthUser = testStruct
+        
+        if let urlArrFiles = await FirebaseStorageModel().loadPhotoToFile(urlPhotoArr: currentAuthUser.urlPhotoArr, userID: currentAuthUser.ID,currentUser: true) {
+            currentAuthUser.loadPhotoFromDirectory(urlFileArr: urlArrFiles)
+        }
         print("количество фото текущего пользователя ", currentAuthUser.imageArr.count)
         
         
