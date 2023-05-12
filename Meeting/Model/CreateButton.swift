@@ -94,4 +94,23 @@ extension CreateButton {
         return (progressBar,backView,checkMarkImage)
     }
     
+    
+    func createProgressLoadUsersStartForLaunch() -> (backView: UIView,progressBar: UIProgressView){
+        
+        let backView = UIView(frame: CGRect(x: 20, y: 50, width: 350, height: 50))
+        backView.backgroundColor = UIColor(named: "LoadPhotoColor")
+        backView.layer.cornerRadius = 10
+        
+        let progressBar = UIProgressView(frame: CGRect(x: 25, y: 25, width: 300, height: 100))
+        backView.addSubview(progressBar)
+        progressBar.progressViewStyle = .bar
+        progressBar.progressTintColor = UIColor(named: "MainAppColor")
+        progressBar.trackTintColor = .gray
+        progressBar.setProgress(0.0, animated: false)
+        
+        backView.addSubview(progressBar)
+        
+        return (backView,progressBar)
+    }
+    
 }

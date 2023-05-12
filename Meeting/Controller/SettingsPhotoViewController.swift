@@ -220,50 +220,6 @@ extension SettingsPhotoViewController {
 
 
 
-
-////MARK: - Получение изображения из файлов библиотеки пользователя
-//
-//extension SettingsPhotoViewController {
-//
-//    func getSavedImage() -> [CurrentUserImage]? {
-//
-//        var imageFiles = [CurrentUserImage]()
-//
-//        if let urlArr = getUrlFile() {
-//
-//            for url in urlArr {
-//                let fileName = String((url.path as NSString).lastPathComponent)
-//
-//                if var newImage = UIImage(contentsOfFile: url.path) {
-//                    imageFiles.append(CurrentUserImage(imageID: fileName,image: newImage))
-//                    newImage = .remove
-//                }
-//            }
-//        }
-//
-//        if imageFiles.count == 0 {
-//            return nil
-//        }else {
-//            return imageFiles
-//        }
-//
-//    }
-//
-//    private func getUrlFile() -> [URL]? {
-//
-//        let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("CurrentUsersPhoto")
-//        do {
-//            let fileURLs = try fileManager.contentsOfDirectory(at: documentsURL, includingPropertiesForKeys: nil,options: .skipsHiddenFiles)
-//            return fileURLs
-//        } catch {
-//            print("Ошибка получения адресов файлов \(documentsURL.path): \(error.localizedDescription)")
-//            return nil
-//        }
-//
-//    }
-//
-//}
-
        
        
    

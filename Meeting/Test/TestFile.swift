@@ -26,7 +26,7 @@ struct Test {
         let age = Int.random(in: 0...100)
         let rand = Int.random(in: 1...5)
         var imageArr = [UIImage]()
-        for i in 0...rand {
+        for i in 1...rand {
             let image = UIImage(color: colorArr.randomElement()!)!
             imageArr.append(image)
         }
@@ -40,8 +40,8 @@ struct Test {
             
             let imageID = "photoImage" + dataUser.nameUser + randomString(length: 5)
             
-            let imagesRef = storage.reference().child("UsersPhoto2").child(dataUser.nameUser).child(imageID) /// Создаем ссылку на файл
-            guard let imageData = image.jpegData(compressionQuality: 0.4) else { /// Преобразуем в Jpeg c сжатием
+            let imagesRef = storage.reference().child("UsersPhoto").child(dataUser.nameUser).child(imageID) /// Создаем ссылку на файл
+            guard let imageData = image.jpegData(compressionQuality: 0.2) else { /// Преобразуем в Jpeg c сжатием
                 return
             }
             let metaData = StorageMetadata()
@@ -61,7 +61,7 @@ struct Test {
     private func uploadDataToFirestore(url:URL,imageID: String,currentUserID: String,name: String,age:Int) async -> Bool {
         
          
-        let colletcion = db.collection("Users2").document(currentUserID) /// Добавляем в FiresStore ссылку на фото\
+        let colletcion = db.collection("Users").document(currentUserID) /// Добавляем в FiresStore ссылку на фото\
         
         do {
             try await colletcion.setData(["Name" : name],merge: true)

@@ -26,6 +26,7 @@
 		CFC72D512A014543008CDB14 /* CreateButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC72D502A014543008CDB14 /* CreateButton.swift */; };
 		CFCD0F9C2A0A887E00C17AFC /* TestFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFCD0F9B2A0A887E00C17AFC /* TestFile.swift */; };
 		CFD1CAE729FEABB6009AE9A7 /* SettingsPhotoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD1CAE629FEABB6009AE9A7 /* SettingsPhotoViewController.swift */; };
+		CFD689222A0E5EB0003EB21A /* CurrentUserImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD689212A0E5EB0003EB21A /* CurrentUserImage.swift */; };
 		CFFD03E029F9003B000732AC /* CardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFD03DF29F9003B000732AC /* CardModel.swift */; };
 /* End PBXBuildFile section */
 
@@ -53,6 +54,7 @@
 		CFC72D502A014543008CDB14 /* CreateButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateButton.swift; sourceTree = "<group>"; };
 		CFCD0F9B2A0A887E00C17AFC /* TestFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFile.swift; sourceTree = "<group>"; };
 		CFD1CAE629FEABB6009AE9A7 /* SettingsPhotoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPhotoViewController.swift; sourceTree = "<group>"; };
+		CFD689212A0E5EB0003EB21A /* CurrentUserImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserImage.swift; sourceTree = "<group>"; };
 		CFFD03DF29F9003B000732AC /* CardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -137,6 +139,7 @@
 			isa = PBXGroup;
 			children = (
 				CF1DC80929F0DFC3001E2EAD /* User.swift */,
+				CFD689212A0E5EB0003EB21A /* CurrentUserImage.swift */,
 			);
 			path = CustomStruct;
 			sourceTree = "<group>";
@@ -308,6 +311,7 @@
 				CF1DC80829F0D46C001E2EAD /* CardView.swift in Sources */,
 				CF7D03092A0B80330028E7EB /* CurrentAuthUser.swift in Sources */,
 				CFCD0F9C2A0A887E00C17AFC /* TestFile.swift in Sources */,
+				CFD689222A0E5EB0003EB21A /* CurrentUserImage.swift in Sources */,
 				CF807F0929FFF57800D5ACD1 /* CollectionPhotoCell.swift in Sources */,
 				CF069DA029EC2D3D005ED378 /* AppDelegate.swift in Sources */,
 				CF1DC80A29F0DFC3001E2EAD /* User.swift in Sources */,

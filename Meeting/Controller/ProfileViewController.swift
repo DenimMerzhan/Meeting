@@ -13,12 +13,23 @@ class ProfileViewController: UIViewController {
     @IBOutlet weak var changePhotoButton: UIButton!
     @IBOutlet weak var fillingScaleProfile: UILabel!
     
+    @IBOutlet weak var nameAgeLabel: UILabel!
+    
     var circularProgressBar = CircularProgressBarView(frame: .zero)
     var animateProgressToValue = Float(0)
     let defaults = UserDefaults.standard
     
 
-    var currentAuthUser:  CurrentAuthUser?
+    var currentAuthUser:  CurrentAuthUser? {
+        didSet {
+            if currentAuthUser!.userLoaded {
+                nameAgeLabel.text = currentAuthUser!.name + "  " + String(currentAuthUser!.age)
+                profilePhoto.image = currentAuthUser!.imageArr[0].image
+            }else{
+                
+            }
+        }
+    }
     
     override func viewDidAppear(_ animated: Bool) {
         profileUpdate()
@@ -36,14 +47,18 @@ class ProfileViewController: UIViewController {
     
     
     @IBAction func settingsPhotoPressed(_ sender: UIButton) {
+        
         guard (currentAuthUser != nil) else {return}
+        
         if currentAuthUser!.userLoaded {
             print(currentAuthUser!.imageArr.count)
             performSegue(withIdentifier: "settingsToPhotoSettings", sender: self)
         }
+        
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
         guard segue.identifier == "settingsToPhotoSettings" else {return}
         guard let destination = segue.destination as? SettingsPhotoViewController else {return}
         destination.currentAuthUser = currentAuthUser!
@@ -51,9 +66,6 @@ class ProfileViewController: UIViewController {
     }
     
 }
-
-
-
 
 
 
@@ -93,6 +105,8 @@ private extension ProfileViewController {
         view.bringSubviewToFront(fillingScaleProfile)
         view.bringSubviewToFront(changePhotoButton)
     }
+    
+//MARK: -  Обновление шкалы профиля
     
     func profileUpdate(){ /// Обновления шкалы заполненности профиля
         

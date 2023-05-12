@@ -200,10 +200,9 @@
                                     <color key="baseForegroundColor" name="MainAppColor"/>
                                 </buttonConfiguration>
                             </button>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="1" translatesAutoresizingMaskIntoConstraints="NO" id="lFT-3Z-kJV">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lFT-3Z-kJV">
                                 <rect key="frame" x="106" y="169" width="180" height="180"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="default" weight="ultraLight"/>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XuX-sM-fga">
                                 <rect key="frame" x="236" y="151" width="60" height="60"/>
@@ -249,6 +248,7 @@
                     <connections>
                         <outlet property="changePhotoButton" destination="XuX-sM-fga" id="Tl7-nb-gSV"/>
                         <outlet property="fillingScaleProfile" destination="2FS-Qe-uXV" id="ooI-OH-1Xk"/>
+                        <outlet property="nameAgeLabel" destination="M7k-t4-R0P" id="sqy-g0-5AU"/>
                         <outlet property="profilePhoto" destination="lFT-3Z-kJV" id="w50-RG-FVi"/>
                         <segue destination="4NK-x7-t2w" kind="presentation" identifier="settingsToPhotoSettings" modalPresentationStyle="fullScreen" id="xHZ-Bl-XsT"/>
                     </connections>
@@ -324,7 +324,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="1" width="1718" height="2160"/>
         <image name="714022-removebg-preview" width="50" height="46.333332061767578"/>
         <image name="ButtonLike" width="50" height="50"/>
         <image name="Fire" width="33.333332061767578" height="33.333332061767578"/>

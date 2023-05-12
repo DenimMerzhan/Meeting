@@ -37,9 +37,10 @@ class CurrentAuthUser {
     }
     
     
+    
     //MARK: -  Загрузка метаданных о текущем авторизованном пользователе с FireStore
             
-    func loadMetadata() async {
+    func loadMetadata() async -> Bool {
         
         let collection  = db.collection("Users").document(ID)
         
@@ -69,18 +70,22 @@ class CurrentAuthUser {
                     }
                 }else {
                     print("Ошибка в преобразование данных о текущем пользователе")
+                    return false
                 }
             }
             
         }catch{
             print("Ошибка получения ссылок на фото с сервера FirebaseFirestore - \(error)")
+            return false
         }
         
         if urlPhotoArr.count == 0 {
             userLoaded = true /// Если фото у пользователя нету, то указываем что он загрузился
         }
+        return true
     }
 
+    
     
 //MARK:  - Записиь информации о парах
     
@@ -160,20 +165,15 @@ class CurrentAuthUser {
             }
         }
     
+    
     //MARK: - Удаление фото с сервера
     
     func removePhotoFromServer(imageID:String){
         
-        print(imageID)
-//        var newImageServerID = imageID /// Создаем новое имя файла для сервера
-//        if let dotRange = newImageServerID.range(of: ".") {
-//          newImageServerID.removeSubrange(dotRange.lowerBound..<newImageServerID.endIndex) /// Удаляем расширение
-//        }
-        
-        let imagesRef = storage.reference().child("UsersPhoto2").child(ID).child(imageID)
+        let imagesRef = storage.reference().child("UsersPhoto").child(ID).child(imageID)
         imagesRef.delete { [unowned self] error in
             if let err = error {
-                print("Ошибка удаления фото с сервера FirebaseStorage \(err)")
+                print("Ошибка удаления фото с хранилища Firebase \(err)")
             }else {
                 self.deletePhotoFromFirebase(imageId: imageID)
             }
@@ -182,18 +182,10 @@ class CurrentAuthUser {
     
     func deletePhotoFromFirebase(imageId: String){
         db.collection("Users").document(ID).updateData([imageId : FieldValue.delete()]) { err in
-            if let error = err {print( "Ошибка удаления фото с сервера FirebaseFirestore \(error)")}
+            if let error = err {print( "Ошибка удаления фото с Firestore \(error)")}
         }
     }
 }
 
 
 
-
-
-struct CurrentUserImage {
-    
-    var imageID = String()
-    var image = UIImage()
-    
-}
