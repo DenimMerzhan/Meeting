@@ -23,9 +23,9 @@ class ViewController: UIViewController {
     var stopCard = false
     var center = CGPoint()
     
-    var oddCard: CardView?
-    var honestCard: CardView?
+  
     var currentCard: CardView?
+    var nextCard: CardView?
     
     var cardModel = CardModel()
     var currentAuthUser = CurrentAuthUser(ID: "+79817550000")
@@ -37,7 +37,7 @@ class ViewController: UIViewController {
     var usersArr =  [User]() {
         didSet {
             
-            print("Количество загруженных пользователей в архиве - \(usersArr.count)")
+//            print("Количество загруженных пользователей в архиве - \(usersArr.count)")
             
             if usersArr.count < 50 && currentAuthUser.couplesOver == false && currentAuthUser.newUsersLoading == false {
                 print("Загрузка новых пользователей")
@@ -48,16 +48,24 @@ class ViewController: UIViewController {
             }else if usersArr.count == 0 {
                 print("Пользователи закончились")
                 currentAuthUser.writingPairsInfrormation()}
+            
+            if currentCard?.ID == "Loading_Card" && usersArr.count > 3{
+                currentCard?.removeFromSuperview()
+                createStartCard()
+            }
+            
+            if currentCard?.ID == "Loading_Card" && currentAuthUser.couplesOver {
+                currentCard?.removeFromSuperview()
+                createStartCard()
+            }
         }
     }
-
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         tabBarController?.tabBar.isHidden = true
         buttonStackView.isHidden = true
-
         
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
             self.fireTimer()
@@ -69,7 +77,7 @@ class ViewController: UIViewController {
         Task {
             
             if await loadCurrentUsersData() {
-                await loadNewUsers(numberRequsetedUsers: 5)
+                await loadNewUsers(numberRequsetedUsers: 3)
                 startSettings()
             }else{
                 print("Ошибка загрузки текущего пользователя")
@@ -90,7 +98,7 @@ class ViewController: UIViewController {
         
         var differenceX = CGFloat()
         var differenceY = CGFloat(-150)
-        guard let userID = currentCard?.userID else {return}
+        guard let userID = currentCard?.ID else {return}
         
         if sender.restorationIdentifier == "Cancel" {
             differenceX = -200
@@ -103,7 +111,7 @@ class ViewController: UIViewController {
             differenceX = 200
         }
         
-        changeHeart(xFromCenter: differenceX, currentCard: currentCard!, yFromCenter: differenceY)
+        currentCard?.changeHeart(xFromCenter: differenceX, yFromCenter: differenceY)
         UIView.animate(withDuration: 0.4, delay: 0) {
             
             self.currentCard!.center = CGPoint(x: self.currentCard!.center.x + differenceX , y: self.currentCard!.center.y + differenceY )
@@ -113,9 +121,6 @@ class ViewController: UIViewController {
         }
         
     }
-    
-    
-    
     
 //MARK: - Пользователь тапнул по фото
     
@@ -139,8 +144,7 @@ class ViewController: UIViewController {
            
         }
         
-        AudioServicesPlayAlertSoundWithCompletion(SystemSoundID(1161)) {
-            
+        AudioServicesPlayAlertSoundWithCompletion(SystemSoundID(1161)) { /// Cоздаем звук при Тапе
         }
         
         currentImage.progressBar[indexCurrentImage].backgroundColor = .white
@@ -166,19 +170,14 @@ class ViewController: UIViewController {
             let xFromCenter = card.center.x - view.center.x
             let yFromCenter = card.center.y - view.center.y
             
-            changeHeart(xFromCenter: xFromCenter, currentCard: card,yFromCenter: yFromCenter)
+            card.changeHeart(xFromCenter: xFromCenter, yFromCenter: yFromCenter)
             
             
             card.center = CGPoint(x: view.center.x + point.x , y: view.center.y + point.y ) /// Перемящем View взависимости от движения пальца
             card.transform = CGAffineTransform(rotationAngle: abs(xFromCenter) * 0.002) /// Поворачиваем View, внутри  rotationAngle радианты а не градусы
             
-   
-         
-    
-            
             
 //MARK: -   Когда пользователь отпустил палец
-            
             
             if sender.state == UIGestureRecognizer.State.ended { ///  Когда пользователь отпустил палец
                 
@@ -187,7 +186,7 @@ class ViewController: UIViewController {
                     UIView.animate(withDuration: 0.2, delay: 0) {
                         card.center = CGPoint(x: card.center.x + 150 , y: card.center.y + 100 )
                         card.alpha = 0
-                        self.currentAuthUser.likeArr.append(card.userID)
+                        self.currentAuthUser.likeArr.append(card.ID)
                         self.loadNewPeople(card: card)
                         
                     }
@@ -196,7 +195,7 @@ class ViewController: UIViewController {
                     UIView.animate(withDuration: 0.22, delay: 0) {
                         card.center = CGPoint(x: card.center.x - 150 , y: card.center.y + 100 )
                         card.alpha = 0
-                        self.currentAuthUser.disLikeArr.append(card.userID)
+                        self.currentAuthUser.disLikeArr.append(card.ID)
                         self.loadNewPeople(card: card)
                        
                     }
@@ -205,29 +204,22 @@ class ViewController: UIViewController {
                     UIView.animate(withDuration: 0.22, delay: 0) {
                         card.center = CGPoint(x: card.center.x , y: card.center.y - 600 )
                         card.alpha = 0
-                        self.currentAuthUser.superLikeArr.append(card.userID)
+                        self.currentAuthUser.superLikeArr.append(card.ID)
                         self.loadNewPeople(card: card)
-                      
                     }
                 }
                 
                 else { /// Если не ушла то возвращаем в центр
                     
                     UIView.animate(withDuration: 0.2, delay: 0) { /// Вызывает анимацию длительностью 0.3 секунды после анимации мы выставляем card view  на первоначальную позицию
-                        
                         card.center = self.center
                         card.transform = CGAffineTransform(rotationAngle: 0)
-                        card.likHeartImage.isHidden = true
-                        card.dislikeHeartImage.isHidden = true
-                        card.superLike.isHidden = true
-                        
+                        card.resetCard()
                     }
                 }
             }
         }
     }
-    
-    
 }
 
 //MARK: - Загрузка нового пользователя
@@ -237,91 +229,39 @@ extension ViewController {
     
     func loadNewPeople(card:CardView){
         
-        if usersArr.count != 0 {
-            if let ID = currentAuthUser.potentialPairs.firstIndex(where: { $0 == card.userID}) {
+        if usersArr.count > 0 {
+            if let ID = currentAuthUser.potentialPairs.firstIndex(where: { $0 == card.ID}) {
                 usersArr[ID].cleanPhotoUser()
                 usersArr.remove(at: ID)
                 currentAuthUser.potentialPairs.remove(at: ID)
             }
         }
         currentAuthUser.writingPairsInfrormation()
-        if stopCard == false {
+        
+        card.removeGestureRecognizer(panGesture)
+        card.removeGestureRecognizer(tapGesture)
+        currentCard = nextCard
+        
+        if currentCard?.ID != "Loading_Card" && currentCard?.ID != "Stop_Card" {
+            currentCard!.addGestureRecognizer(panGesture)
+            currentCard!.addGestureRecognizer(tapGesture)
+            nextCard = createCard(currentUserIDCard: currentCard!.ID)
+            view.addSubview(nextCard!)
+            view.sendSubviewToBack(nextCard!)
+        }
+        
+        indexCurrentImage = 0
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { /// Чем выше параметр тем выше шанс что карточка не удалиться и останется висеть в памяти надо подумать над этим
+            card.removeFromSuperview()
+        }
+        
+        if currentCard?.ID == "Stop_Card"  {
             
-            card.removeGestureRecognizer(panGesture)
-            card.removeGestureRecognizer(tapGesture)
-            
-            if card == honestCard {
-                
-                oddCard!.addGestureRecognizer(panGesture)
-                oddCard!.addGestureRecognizer(tapGesture)
-                honestCard = createCard(currentUserIDCard: oddCard?.userID)
-                currentCard = oddCard!
-               
-                view.addSubview(honestCard!)
-                view.sendSubviewToBack(honestCard!)
-                
-                
-            }else {
-                
-                honestCard!.addGestureRecognizer(panGesture)
-                honestCard!.addGestureRecognizer(tapGesture)
-                oddCard = createCard(currentUserIDCard: honestCard?.userID)
-                currentCard = honestCard!
-               
-                view.addSubview(oddCard!)
-                view.sendSubviewToBack(oddCard!)
-                
-                
-            }
-            
-            indexCurrentImage = 0
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { /// Чем выше параметр тем выше шанс что карточка не удалиться и останется висеть в памяти надо подумать над этим
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 card.removeFromSuperview()
             }
-        }
-        
-        else {
-            card.removeFromSuperview()
             buttonStackView.isHidden = true
         }
-    }
-    
-}
-
-
-    
-//MARK: - Логика сердец
-
-
-extension ViewController {
-    
-    func changeHeart(xFromCenter:CGFloat,currentCard: CardView,yFromCenter:CGFloat){ /// Функция обработки сердец
-        
-        
-        if xFromCenter > 25 { /// Если пользователь перетаскивает вправо то появляется зеленое сердечко
-            
-            currentCard.likHeartImage.tintColor = UIColor.green.withAlphaComponent(xFromCenter * 0.005)
-            currentCard.likHeartImage.isHidden = false
-            currentCard.dislikeHeartImage.isHidden = true
-            currentCard.superLike.isHidden = true
-            
-        }else if xFromCenter < -25 { /// Если влево красное
-            
-            currentCard.dislikeHeartImage.tintColor = UIColor.red.withAlphaComponent(abs(xFromCenter) * 0.005)
-            currentCard.dislikeHeartImage.isHidden = false
-            currentCard.likHeartImage.isHidden = true
-            currentCard.superLike.isHidden = true
-            
-        }else if yFromCenter < 0 {
-            
-            currentCard.superLike.alpha = abs(yFromCenter) * 0.005
-            currentCard.superLike.isHidden = false
-            currentCard.dislikeHeartImage.isHidden = true
-            currentCard.likHeartImage.isHidden = true
-            
-        }
-                
-        
     }
     
 }
@@ -353,10 +293,12 @@ extension ViewController {
             
             let card = cardModel.createCard(newUser: newUser)
             center = card.center
+            print("User ID Card - ", card.ID)
             return card
             
         }else if currentAuthUser.newUsersLoading {
             let card = cardModel.createLoadingUsersCard()
+            print("User ID Card - ", card.ID)
             return card
             
         }else{
@@ -433,17 +375,20 @@ extension ViewController {
             self.progressViewLoadUsers.backView.removeFromSuperview()
             self.tabBarController?.tabBar.isHidden = false
             self.buttonStackView.isHidden = false
-            
-            self.oddCard = self.createCard(currentUserIDCard: nil)
-            self.honestCard = self.createCard(currentUserIDCard: self.oddCard?.userID)
-            self.currentCard = self.oddCard
-            
-            self.oddCard!.addGestureRecognizer(self.panGesture)
-            self.oddCard!.addGestureRecognizer(self.tapGesture)
-            self.view.addSubview(self.honestCard!)
-            self.view.addSubview(self.oddCard!)
-            self.view.bringSubviewToFront(self.buttonStackView)
+            self.createStartCard()
         }
+    }
+    
+    func createStartCard(){
+        
+        self.currentCard = self.createCard(currentUserIDCard: nil)
+        self.nextCard = self.createCard(currentUserIDCard: self.currentCard!.ID)
+        
+        self.currentCard!.addGestureRecognizer(self.panGesture)
+        self.currentCard!.addGestureRecognizer(self.tapGesture)
+        self.view.addSubview(self.nextCard!)
+        self.view.addSubview(self.currentCard!)
+        self.view.bringSubviewToFront(self.buttonStackView)
     }
     
     func randomUserFromArray(currentUserID:String) -> User? {

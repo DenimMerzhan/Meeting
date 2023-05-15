@@ -18,7 +18,6 @@ struct CardModel {
     
     
     
-    
 //MARK: - Создание новой карты
     
     
@@ -72,8 +71,6 @@ struct CardModel {
        
         
         let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,imageUser: imageView,imageArr: newUser.imageArr,superLike: superLike, userID: newUser.ID)
-        
-        
         
         card.addSubview(imageView)
         imageView.addSubview(nameLabel)
@@ -213,9 +210,6 @@ struct CardModel {
             rotationAndPerspectiveTransform = CATransform3DRotate(rotationAndPerspectiveTransform, 0.15, 0.0, secondCornerY, 0.0)
             layer.transform = rotationAndPerspectiveTransform
         }
-
-        
-        
     }
     
 }
