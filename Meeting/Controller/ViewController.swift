@@ -37,15 +37,13 @@ class ViewController: UIViewController {
     var usersArr =  [User]() {
         didSet {
             
-//            print("Количество загруженных пользователей в архиве - \(usersArr.count)")
-            
-            if usersArr.count < 50 && currentAuthUser.couplesOver == false && currentAuthUser.newUsersLoading == false {
+            if usersArr.count < 50 && currentAuthUser.numberPotenialPairsOnServer > 1 && currentAuthUser.newUsersLoading == false {
                 print("Загрузка новых пользователей")
                 Task {
                     await loadNewUsers(numberRequsetedUsers: 15)
                 }
                 
-            }else if usersArr.count == 0 {
+            }else if usersArr.count == 0 && currentAuthUser.numberPotenialPairsOnServer == 0 {
                 print("Пользователи закончились")
                 currentAuthUser.writingPairsInfrormation()}
             
@@ -54,19 +52,26 @@ class ViewController: UIViewController {
                 createStartCard()
             }
             
-            if currentCard?.ID == "Loading_Card" && currentAuthUser.couplesOver {
+            if currentCard?.ID == "Loading_Card" && currentAuthUser.numberPotenialPairsOnServer == 0 {
                 currentCard?.removeFromSuperview()
                 createStartCard()
             }
         }
     }
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tabBarController?.tabBar.isHidden = true
-        buttonStackView.isHidden = true
+        print(self.tabBarController?.tabBar.frame)
+        print(self.view.frame)
         
+        cardModel.width = view.frame.width - 32
+        cardModel.height = view.frame.height - 236
+//        tabBarController?.tabBar.isHidden = true
+        
+        buttonStackView.isHidden = true
+    
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
             self.fireTimer()
         }
@@ -77,7 +82,7 @@ class ViewController: UIViewController {
         Task {
             
             if await loadCurrentUsersData() {
-                await loadNewUsers(numberRequsetedUsers: 3)
+                await loadNewUsers(numberRequsetedUsers: 1)
                 startSettings()
             }else{
                 print("Ошибка загрузки текущего пользователя")
@@ -149,14 +154,7 @@ class ViewController: UIViewController {
         
         currentImage.progressBar[indexCurrentImage].backgroundColor = .white
         currentImage.image = imageArr[indexCurrentImage]
-        
 }
-    
-    
-    
-    
-    
-    
     
 //MARK: -  Карта была нажата пальцем
 
@@ -320,16 +318,11 @@ extension ViewController {
         
         if let newUsersID = await currentAuthUser.loadNewPotenialPairs(countUser: numberRequsetedUsers) {
             
-            print("Количество только что загруженных полльзователей - \(newUsersID.count)")
-            if numberRequsetedUsers > newUsersID.count {
-                currentAuthUser.couplesOver = true
-            }
-            
             for ID in newUsersID {
                 
                 var newUser = User(ID: ID)
                 await newUser.loadMetaData()
-                
+
                 if let urlFilesArr = await FirebaseStorageModel().loadPhotoToFile(urlPhotoArr: newUser.urlPhotoArr, userID: ID,currentUser: false) {
                     newUser.loadPhotoFromDirectory(urlFileArr: urlFilesArr)
                     if ID == newUsersID.last {
@@ -337,10 +330,11 @@ extension ViewController {
                     }
                     usersArr.append(newUser)
                     currentAuthUser.potentialPairs.append(ID)
-                    progressViewLoadUsers.progressBar.progress += 0.02
-                }
+                    progressViewLoadUsers.progressBar.progress += 0.05
             }
         }
+            currentAuthUser.newUsersLoading = false
+    }
 }
     
 //MARK: -  Загрузка данных о текущем авторизованном пользователе
@@ -364,7 +358,6 @@ extension ViewController {
 
 extension ViewController {
     
-    
     func startSettings(){
         
         timer.invalidate()
@@ -372,8 +365,16 @@ extension ViewController {
        
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             
+            self.progressViewLoadUsers.progressBar.removeFromSuperview()
             self.progressViewLoadUsers.backView.removeFromSuperview()
-            self.tabBarController?.tabBar.isHidden = false
+
+            print(self.tabBarController?.tabBar.frame)
+//            self.tabBarController?.tabBar.barTintColor = .white
+//            self.tabBarController?.tabBar.clipsToBounds = true
+//            self.tabBarController?.tabBar.backgroundColor = .white
+//            self.tabBarController?.tabBar.isHidden = false
+         
+            
             self.buttonStackView.isHidden = false
             self.createStartCard()
         }
@@ -383,10 +384,11 @@ extension ViewController {
         
         self.currentCard = self.createCard(currentUserIDCard: nil)
         self.nextCard = self.createCard(currentUserIDCard: self.currentCard!.ID)
-        
-        self.currentCard!.addGestureRecognizer(self.panGesture)
-        self.currentCard!.addGestureRecognizer(self.tapGesture)
-        self.view.addSubview(self.nextCard!)
+        if currentCard?.ID != "Stop_Card" {
+            self.currentCard!.addGestureRecognizer(self.panGesture)
+            self.currentCard!.addGestureRecognizer(self.tapGesture)
+            self.view.addSubview(self.nextCard!)
+        }
         self.view.addSubview(self.currentCard!)
         self.view.bringSubviewToFront(self.buttonStackView)
     }
@@ -410,9 +412,7 @@ extension ViewController {
         UIView.animate(withDuration: 0.8, delay: 0) { [unowned self] in
             self.progressViewLoadUsers.progressBar.setProgress(progress + randomFloat, animated: true)
         }
-        
     }
-    
 }
 
 

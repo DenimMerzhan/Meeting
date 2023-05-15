@@ -15,29 +15,27 @@ struct CardModel {
     
     
     var usersArr = [User]()
-    
-    
+    var width = CGFloat()
+    var height = CGFloat()
     
 //MARK: - Создание новой карты
     
     
     func createCard(newUser: User) -> CardView {
         
-        
-        let frame =  CGRect(x: 16, y: 118, width: 361, height: 603)
-        
-        
+        let frame =  CGRect(x: 16, y: 118, width: width, height: height)
+        print(height)
         let nameLabel = UILabel() /// Имя
-        let point = CGPoint(x: 10, y: 480)
+        let point = CGPoint(x: 10, y: height - 130)
         nameLabel.text = newUser.name
-        nameLabel.font = .boldSystemFont(ofSize: 48)
+        nameLabel.font = .boldSystemFont(ofSize: 40)
         nameLabel.frame = CGRect(origin: point, size: nameLabel.sizeThatFits(CGSize(width: CGFloat.infinity, height: 48))) /// Расширяем рамку в зависимости от размера текста
         nameLabel.textColor = .white
         
         
-        let ageLabel = UILabel(frame: CGRect(x: nameLabel.frame.maxX + 10, y: 485, width: 100, height: 48.0)) /// Возраст, ставим по позиции x относительно имени
+        let ageLabel = UILabel(frame: CGRect(x: nameLabel.frame.maxX + 10, y: height - 130, width: 100, height: 48.0)) /// Возраст, ставим по позиции x относительно имени
         ageLabel.text = String(newUser.age)
-        ageLabel.font = .systemFont(ofSize: 48)
+        ageLabel.font = .systemFont(ofSize: 40)
         ageLabel.textColor = .white
         
         
@@ -55,20 +53,18 @@ struct CardModel {
         superLike.isHidden = true
         
         
-        let imageView = imageUserView(frame: CGRect(x: 0, y: 0, width: 361, height: 603),nameUser: nameLabel,age: ageLabel)
+        let imageView = imageUserView(frame: CGRect(x: 0, y: 0, width: width, height: height),nameUser: nameLabel,age: ageLabel)
         imageView.image = newUser.imageArr[0]
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true /// Ограничиваем фото в размерах
     
         
         let gradient = CAGradientLayer() ///  Градиент
-        gradient.frame = CGRect(x: 0, y: 400, width: 361, height: 203)
+        gradient.frame = CGRect(x: 0, y: height - 203, width: width, height: 203)
         gradient.locations = [0.0, 1.0]
         gradient.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]
         imageView.layer.insertSublayer(gradient, at: 0)
         
-        
-       
         
         let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,imageUser: imageView,imageArr: newUser.imageArr,superLike: superLike, userID: newUser.ID)
         
@@ -81,9 +77,6 @@ struct CardModel {
         
         let progressBar = createProgressBar(countPhoto: newUser.imageArr.count, image: imageView)
         imageView.progressBar = progressBar
-        
-        
-        
         
         return card
         
@@ -174,9 +167,6 @@ struct CardModel {
         
         return card
     }
-    
-    
-    
     
     
     

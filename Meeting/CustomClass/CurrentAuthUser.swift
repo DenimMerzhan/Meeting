@@ -26,7 +26,7 @@ class CurrentAuthUser {
     var disLikeArr = [String]()
     var superLikeArr = [String]()
     
-    var couplesOver = Bool()
+    var numberPotenialPairsOnServer = Int()
     var currentUserLoaded = Bool()
     
     var newUsersLoading = Bool()
@@ -38,8 +38,6 @@ class CurrentAuthUser {
     init(ID: String){
         self.ID = ID
     }
-    
-    
     
     //MARK: -  Загрузка метаданных о текущем авторизованном пользователе с FireStore
             
@@ -118,7 +116,6 @@ class CurrentAuthUser {
         let viewedUsers = likeArr + disLikeArr + superLikeArr + potentialPairs
         
         print(viewedUsers.count, "количество ограничений")
-        print("Текущие потенциальные пары - \(potentialPairs) ")
         do {
             let querySnapshot = try await collection.getDocuments()
             
@@ -136,6 +133,7 @@ class CurrentAuthUser {
                     break
                 }
             }
+            numberPotenialPairsOnServer = querySnapshot.count - newUsersID.count - viewedUsers.count - 1
             print("Общее количество пользователей - \(querySnapshot.count)")
         }catch{
             print("Ошибка загрузки ID пользователей - \(error)")

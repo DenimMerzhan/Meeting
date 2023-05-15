@@ -17,20 +17,19 @@ class ProfileViewController: UIViewController {
     
     var circularProgressBar = CircularProgressBarView(frame: .zero)
     var animateProgressToValue = Float(0)
+    
     let defaults = UserDefaults.standard
     var navViewController = ViewController()
     
     var currentAuthUser =   CurrentAuthUser(ID: "") {
         didSet {
             if currentAuthUser.currentUserLoaded {
-                nameAgeLabel.text = currentAuthUser.name + "  " + String(currentAuthUser.age)
+                nameAgeLabel.text = currentAuthUser.name + " " + String(currentAuthUser.age)
                 if currentAuthUser.imageArr.count != 0 {
                     profilePhoto.image = currentAuthUser.imageArr[0].image
                 }else{
                     profilePhoto.image = UIImage()
                 }
-            }else{
-                print("Now")
             }
         }
     }
