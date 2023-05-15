@@ -40,7 +40,6 @@ class SettingsPhotoViewController: UIViewController {
     
     @IBAction func donePressed(_ sender: UIButton) {
         defaults.set(Float(currentAuthUser.imageArr.count) / 9 , forKey: "ProfileFilingScale") /// Записываем данные о количествах фото текущего пользователя
-
         
         self.dismiss(animated: true)
     }

@@ -18,28 +18,33 @@ class ProfileViewController: UIViewController {
     var circularProgressBar = CircularProgressBarView(frame: .zero)
     var animateProgressToValue = Float(0)
     let defaults = UserDefaults.standard
+    var navViewController = ViewController()
     
-
-    var currentAuthUser:  CurrentAuthUser? {
+    var currentAuthUser =   CurrentAuthUser(ID: "") {
         didSet {
-            if currentAuthUser!.userLoaded {
-                nameAgeLabel.text = currentAuthUser!.name + "  " + String(currentAuthUser!.age)
-                profilePhoto.image = currentAuthUser!.imageArr[0].image
+            if currentAuthUser.currentUserLoaded {
+                nameAgeLabel.text = currentAuthUser.name + "  " + String(currentAuthUser.age)
+                if currentAuthUser.imageArr.count != 0 {
+                    profilePhoto.image = currentAuthUser.imageArr[0].image
+                }else{
+                    profilePhoto.image = UIImage()
+                }
             }else{
-                
+                print("Now")
             }
         }
     }
     
     override func viewDidAppear(_ animated: Bool) {
         profileUpdate()
+        currentAuthUser = navViewController.currentAuthUser /// Каждый раз обновляем currentAuthUser что бы срабатывал блок DidSet
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let navViewController = tabBarController?.viewControllers?[0] as? ViewController { /// Передаем ссылку на currentAuthUser
-            currentAuthUser = navViewController.currentAuthUser
+        if let navViewController = tabBarController?.viewControllers?[0] as? ViewController { /// Передаем ссылку на главный ViewController
+            self.navViewController = navViewController
         }
 
         startSettings(animateProgressToValue: animateProgressToValue)
@@ -48,10 +53,8 @@ class ProfileViewController: UIViewController {
     
     @IBAction func settingsPhotoPressed(_ sender: UIButton) {
         
-        guard (currentAuthUser != nil) else {return}
-        
-        if currentAuthUser!.userLoaded {
-            print(currentAuthUser!.imageArr.count)
+        if currentAuthUser.currentUserLoaded {
+            print(currentAuthUser.imageArr.count, "imageArr Current User")
             performSegue(withIdentifier: "settingsToPhotoSettings", sender: self)
         }
         
@@ -61,7 +64,7 @@ class ProfileViewController: UIViewController {
         
         guard segue.identifier == "settingsToPhotoSettings" else {return}
         guard let destination = segue.destination as? SettingsPhotoViewController else {return}
-        destination.currentAuthUser = currentAuthUser!
+        destination.currentAuthUser = currentAuthUser
         
     }
     

@@ -127,8 +127,30 @@ struct CardModel {
     }
     
     
+//MARK: -  Создание карты оповещения что идет загрузка пользователей
     
-    
+    func createLoadingUsersCard() -> CardView {
+        
+        let frame =  CGRect(x: 16, y: 118, width: 361, height: 603)
+        
+        let label = UILabel(frame: CGRect(x: 32, y: 170, width: 300, height: 200.0))
+        label.text = "Идет заугрзка новых пар для тебя..."
+        label.font = .boldSystemFont(ofSize: 30)
+        label.lineBreakMode = .byWordWrapping
+        label.numberOfLines = 4
+        
+        
+        let likeHeart = UIImageView(frame: CGRect(x: 0.0, y: 8.0, width: 106, height: 79))
+        let dislikeHeart = UIImageView(frame: CGRect(x: 234, y: 0.0, width: 127, height: 93))
+        let superLike = UIImageView(frame: CGRect(x: 117, y: 8, width: 150, height: 100))
+        
+        let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,imageUser: nil,imageArr: nil,superLike:superLike, userID: "Loading_Card")
+        
+        card.addSubview(label)
+        
+        return card
+        
+    }
     
     
 //MARK: - Создаение пустой карты
@@ -149,7 +171,7 @@ struct CardModel {
         let dislikeHeart = UIImageView(frame: CGRect(x: 234, y: 0.0, width: 127, height: 93))
         let superLike = UIImageView(frame: CGRect(x: 117, y: 8, width: 150, height: 100))
         
-        let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,imageUser: nil,imageArr: nil,superLike:superLike, userID: "")
+        let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,imageUser: nil,imageArr: nil,superLike:superLike, userID: "Stop_Card")
         
         card.addSubview(label)
         

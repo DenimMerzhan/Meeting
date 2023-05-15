@@ -27,7 +27,10 @@ class CurrentAuthUser {
     var superLikeArr = [String]()
     
     var couplesOver = Bool()
-    var userLoaded = Bool()
+    var currentUserLoaded = Bool()
+    
+    var newUsersLoading = Bool()
+    var potentialPairs = [String]()
     
     private let db = Firestore.firestore()
     private let storage = Storage.storage()
@@ -60,7 +63,6 @@ class CurrentAuthUser {
                         self.superLikeArr = superLikeArr
                     }
                     
-                    
                     for data in dataDoc {
                         if data.key.contains("photoImage") {
                             if let urlPhoto = data.value as? String {
@@ -80,7 +82,7 @@ class CurrentAuthUser {
         }
         
         if urlPhotoArr.count == 0 {
-            userLoaded = true /// Если фото у пользователя нету, то указываем что он загрузился
+            currentUserLoaded = true /// Если фото у пользователя нету, то указываем что он загрузился
         }
         return true
     }
@@ -106,6 +108,44 @@ class CurrentAuthUser {
         }
     }
     
+ //MARK: -  Загрузка потеницальных пар для текущего пользователя
+    
+    func loadNewPotenialPairs(countUser: Int) async -> [String]? {
+        var count = 0
+        let collection  = db.collection("Users")
+        var newUsersID = [String]()
+        
+        let viewedUsers = likeArr + disLikeArr + superLikeArr + potentialPairs
+        
+        print(viewedUsers.count, "количество ограничений")
+        print("Текущие потенциальные пары - \(potentialPairs) ")
+        do {
+            let querySnapshot = try await collection.getDocuments()
+            
+            for document in querySnapshot.documents {
+                
+                if document.documentID == ID { /// Если текущий пользователь пропускаем его добавление
+                   continue
+                }else if viewedUsers.contains(document.documentID) { /// Если кто то есть в архиве viewedUsers тоже пропускаем егго
+                    continue
+                }
+                
+                newUsersID.append(document.documentID)
+                count += 1
+                if count == countUser {
+                    break
+                }
+            }
+            print("Общее количество пользователей - \(querySnapshot.count)")
+        }catch{
+            print("Ошибка загрузки ID пользователей - \(error)")
+            return nil
+        }
+        return newUsersID
+    }
+    
+    
+    
 //MARK: -  Загрузка фото с директории
     
     func loadPhotoFromDirectory(urlFileArr: [URL]){
@@ -116,9 +156,11 @@ class CurrentAuthUser {
                 imageArr.append(CurrentUserImage(imageID: imageID,image: newImage))
 //                newImage = .remove
             }
-            userLoaded = true
+            currentUserLoaded = true
         }
     }
+    
+    
     
     
     //MARK: -  Загрузка фото на сервер
@@ -166,7 +208,7 @@ class CurrentAuthUser {
         }
     
     
-    //MARK: - Удаление фото с сервера
+//MARK: - Удаление фото с сервера Storage и Firestore
     
     func removePhotoFromServer(imageID:String){
         

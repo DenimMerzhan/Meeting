@@ -12,10 +12,6 @@ class ViewController: UIViewController {
     
     
     
-
-
-    
-    
     @IBOutlet weak var panGesture: UIPanGestureRecognizer!
     @IBOutlet weak var tapGesture: UITapGestureRecognizer!
     @IBOutlet weak var buttonStackView: UIStackView!
@@ -38,30 +34,15 @@ class ViewController: UIViewController {
     
     var timer = Timer()
     
-    var usersIDArr:  [String] {
-        get{
-            var newArr = [String]()
-            for user in usersArr {
-                newArr.append(user.ID)
-            }
-            return newArr
-        }set{
-            
-        }
-    }
-    
     var usersArr =  [User]() {
         didSet {
             
-            print("Количество пользователей в архиве - \(usersIDArr.count)")
+            print("Количество загруженных пользователей в архиве - \(usersArr.count)")
             
-            if usersArr.count < 15 && currentAuthUser.couplesOver == false {
-                
+            if usersArr.count < 50 && currentAuthUser.couplesOver == false && currentAuthUser.newUsersLoading == false {
                 print("Загрузка новых пользователей")
-                currentAuthUser.writingPairsInfrormation()
                 Task {
-                
-                    await loadNewUsers(numberRequsetedUsers: 15,nonSwipedUsers: usersIDArr)
+                    await loadNewUsers(numberRequsetedUsers: 15)
                 }
                 
             }else if usersArr.count == 0 {
@@ -88,7 +69,7 @@ class ViewController: UIViewController {
         Task {
             
             if await loadCurrentUsersData() {
-                await loadNewUsers(numberRequsetedUsers: 15)
+                await loadNewUsers(numberRequsetedUsers: 5)
                 startSettings()
             }else{
                 print("Ошибка загрузки текущего пользователя")
@@ -249,8 +230,6 @@ class ViewController: UIViewController {
     
 }
 
-
-
 //MARK: - Загрузка нового пользователя
 
 
@@ -259,12 +238,13 @@ extension ViewController {
     func loadNewPeople(card:CardView){
         
         if usersArr.count != 0 {
-            if let i = usersIDArr.firstIndex(where: { $0 == card.userID}) {
-                usersArr[i].cleanPhotoUser()
-                usersArr.remove(at: i)
+            if let ID = currentAuthUser.potentialPairs.firstIndex(where: { $0 == card.userID}) {
+                usersArr[ID].cleanPhotoUser()
+                usersArr.remove(at: ID)
+                currentAuthUser.potentialPairs.remove(at: ID)
             }
         }
-        
+        currentAuthUser.writingPairsInfrormation()
         if stopCard == false {
             
             card.removeGestureRecognizer(panGesture)
@@ -374,19 +354,17 @@ extension ViewController {
             let card = cardModel.createCard(newUser: newUser)
             center = card.center
             return card
-        }else {
+            
+        }else if currentAuthUser.newUsersLoading {
+            let card = cardModel.createLoadingUsersCard()
+            return card
+            
+        }else{
             stopCard = true
-            return createEmptyCard()
+            let card = cardModel.createEmptyCard()
+            return card
         }
-        
     }
-    func createEmptyCard() -> CardView {
-        
-        let card = cardModel.createEmptyCard()
-        
-        return card
-    }
-    
 }
 
 
@@ -394,32 +372,33 @@ extension ViewController {
 
 extension ViewController {
     
-    func loadNewUsers(numberRequsetedUsers: Int,nonSwipedUsers:[String] = [String]()) async{
+    func loadNewUsers(numberRequsetedUsers: Int) async{
         
-        var newUsersArr = [User]()
+        currentAuthUser.newUsersLoading = true
         
-        if let loadUsersIDArr = await FirebaseStorageModel().loadUsersID(countUser: numberRequsetedUsers,currentUser: currentAuthUser,nonSwipedUsers: nonSwipedUsers) {
+        if let newUsersID = await currentAuthUser.loadNewPotenialPairs(countUser: numberRequsetedUsers) {
             
-            print("Количество только что загруженных полльзователей - \(loadUsersIDArr.count)")
-            if numberRequsetedUsers > loadUsersIDArr.count {
+            print("Количество только что загруженных полльзователей - \(newUsersID.count)")
+            if numberRequsetedUsers > newUsersID.count {
                 currentAuthUser.couplesOver = true
             }
             
-            for ID in loadUsersIDArr {
+            for ID in newUsersID {
                 
                 var newUser = User(ID: ID)
                 await newUser.loadMetaData()
                 
                 if let urlFilesArr = await FirebaseStorageModel().loadPhotoToFile(urlPhotoArr: newUser.urlPhotoArr, userID: ID,currentUser: false) {
                     newUser.loadPhotoFromDirectory(urlFileArr: urlFilesArr)
-                    newUsersArr.append(newUser)
+                    if ID == newUsersID.last {
+                        currentAuthUser.newUsersLoading = false
+                    }
+                    usersArr.append(newUser)
+                    currentAuthUser.potentialPairs.append(ID)
                     progressViewLoadUsers.progressBar.progress += 0.02
                 }
-                
             }
-            
-            usersArr = usersArr +  newUsersArr
-    }
+        }
 }
     
 //MARK: -  Загрузка данных о текущем авторизованном пользователе
@@ -449,7 +428,7 @@ extension ViewController {
         timer.invalidate()
         progressViewLoadUsers.progressBar.setProgress(1, animated: true)
        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             
             self.progressViewLoadUsers.backView.removeFromSuperview()
             self.tabBarController?.tabBar.isHidden = false
