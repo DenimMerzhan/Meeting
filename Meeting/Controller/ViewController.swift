@@ -14,9 +14,8 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var panGesture: UIPanGestureRecognizer!
     @IBOutlet weak var tapGesture: UITapGestureRecognizer!
-    @IBOutlet weak var buttonStackView: UIStackView!
     
-    @IBOutlet weak var preferencesButton: UIButton!
+    @IBOutlet weak var stackViewButton: UIStackView!
     
     var indexCurrentImage = 0
     
@@ -62,15 +61,12 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        print(self.tabBarController?.tabBar.frame)
-        print(self.view.frame)
-        
+    
         cardModel.width = view.frame.width - 32
         cardModel.height = view.frame.height - 236
-//        tabBarController?.tabBar.isHidden = true
         
-        buttonStackView.isHidden = true
+        tabBarController?.tabBar.isHidden = true
+        stackViewButton.isHidden = true
     
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
             self.fireTimer()
@@ -91,9 +87,6 @@ class ViewController: UIViewController {
 
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        preferencesButton.titleLabel?.isHidden = true
-    }
     
     
     
@@ -258,7 +251,7 @@ extension ViewController {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 card.removeFromSuperview()
             }
-            buttonStackView.isHidden = true
+            stackViewButton.isHidden = true
         }
     }
     
@@ -367,30 +360,30 @@ extension ViewController {
             
             self.progressViewLoadUsers.progressBar.removeFromSuperview()
             self.progressViewLoadUsers.backView.removeFromSuperview()
-
-            print(self.tabBarController?.tabBar.frame)
-//            self.tabBarController?.tabBar.barTintColor = .white
-//            self.tabBarController?.tabBar.clipsToBounds = true
-//            self.tabBarController?.tabBar.backgroundColor = .white
-//            self.tabBarController?.tabBar.isHidden = false
-         
             
-            self.buttonStackView.isHidden = false
+            self.tabBarController?.tabBar.barTintColor = .white
+            self.tabBarController?.tabBar.clipsToBounds = true
+            self.tabBarController?.tabBar.backgroundColor = .white
+            self.tabBarController?.tabBar.isHidden = false
+    
             self.createStartCard()
         }
     }
     
     func createStartCard(){
         
-        self.currentCard = self.createCard(currentUserIDCard: nil)
-        self.nextCard = self.createCard(currentUserIDCard: self.currentCard!.ID)
+        currentCard = self.createCard(currentUserIDCard: nil)
+        nextCard = self.createCard(currentUserIDCard: self.currentCard!.ID)
+        stackViewButton.isHidden = false
+        
         if currentCard?.ID != "Stop_Card" {
             self.currentCard!.addGestureRecognizer(self.panGesture)
             self.currentCard!.addGestureRecognizer(self.tapGesture)
             self.view.addSubview(self.nextCard!)
         }
         self.view.addSubview(self.currentCard!)
-        self.view.bringSubviewToFront(self.buttonStackView)
+        self.view.bringSubviewToFront(self.stackViewButton)
+        
     }
     
     func randomUserFromArray(currentUserID:String) -> User? {

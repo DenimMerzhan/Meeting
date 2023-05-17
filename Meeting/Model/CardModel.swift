@@ -24,7 +24,7 @@ struct CardModel {
     func createCard(newUser: User) -> CardView {
         
         let frame =  CGRect(x: 16, y: 118, width: width, height: height)
-        print(height)
+       
         let nameLabel = UILabel() /// Имя
         let point = CGPoint(x: 10, y: height - 130)
         nameLabel.text = newUser.name
@@ -121,7 +121,7 @@ struct CardModel {
     
     func createLoadingUsersCard() -> CardView {
         
-        let frame =  CGRect(x: 16, y: 118, width: 361, height: 603)
+        let frame =  CGRect(x: 16, y: 118, width: width, height: height)
         
         let label = UILabel(frame: CGRect(x: 32, y: 170, width: 300, height: 200.0))
         label.text = "Идет заугрзка новых пар для тебя..."
@@ -148,7 +148,7 @@ struct CardModel {
     
     func createEmptyCard() -> CardView {
         
-        let frame =  CGRect(x: 16, y: 118, width: 361, height: 603)
+        let frame =  CGRect(x: 16, y: 118, width: width, height: height)
         
         let label = UILabel(frame: CGRect(x: 32, y: 170, width: 300, height: 200.0))
         label.text = "Пары закончились :("
