@@ -68,7 +68,7 @@ class ViewController: UIViewController {
         tabBarController?.tabBar.isHidden = true
         stackViewButton.isHidden = true
     
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+        timer = Timer.scheduledTimer(withTimeInterval: 3, repeats: true) { timer in
             self.fireTimer()
         }
         
@@ -221,12 +221,13 @@ extension ViewController {
     func loadNewPeople(card:CardView){
         
         if usersArr.count > 0 {
-            if let ID = currentAuthUser.potentialPairs.firstIndex(where: { $0 == card.ID}) {
-                usersArr[ID].cleanPhotoUser()
+            if let ID = usersArr.firstIndex(where: { $0.ID == card.ID}) {
+                usersArr[ID].cleanPhotoUser() /// Удаляем папку с фото с  директории пользователя
                 usersArr.remove(at: ID)
-                currentAuthUser.potentialPairs.remove(at: ID)
             }
         }
+        
+        
         currentAuthUser.writingPairsInfrormation()
         
         card.removeGestureRecognizer(panGesture)
@@ -309,7 +310,9 @@ extension ViewController {
         
         currentAuthUser.newUsersLoading = true
         
-        if let newUsersID = await currentAuthUser.loadNewPotenialPairs(countUser: numberRequsetedUsers) {
+
+        
+        if let newUsersID = await currentAuthUser.loadNewPotenialPairs(countUser: numberRequsetedUsers,usersArr: usersArr) {
             
             for ID in newUsersID {
                 
@@ -322,7 +325,6 @@ extension ViewController {
                         currentAuthUser.newUsersLoading = false
                     }
                     usersArr.append(newUser)
-                    currentAuthUser.potentialPairs.append(ID)
                     progressViewLoadUsers.progressBar.progress += 0.05
             }
         }

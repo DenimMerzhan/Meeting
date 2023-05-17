@@ -30,7 +30,6 @@ class CurrentAuthUser {
     var currentUserLoaded = Bool()
     
     var newUsersLoading = Bool()
-    var potentialPairs = [String]()
     
     private let db = Firestore.firestore()
     private let storage = Storage.storage()
@@ -108,12 +107,19 @@ class CurrentAuthUser {
     
  //MARK: -  Загрузка потеницальных пар для текущего пользователя
     
-    func loadNewPotenialPairs(countUser: Int) async -> [String]? {
+    func loadNewPotenialPairs(countUser: Int,usersArr: [User]) async -> [String]? {
         var count = 0
         let collection  = db.collection("Users")
         var newUsersID = [String]()
         
-        let viewedUsers = likeArr + disLikeArr + superLikeArr + potentialPairs
+        
+        var nonSwipedArr = [String]()
+        
+        for user in usersArr {
+            nonSwipedArr.append(user.ID)
+        }
+        
+        let viewedUsers = likeArr + disLikeArr + superLikeArr + nonSwipedArr
         
         print(viewedUsers.count, "количество ограничений")
         do {
