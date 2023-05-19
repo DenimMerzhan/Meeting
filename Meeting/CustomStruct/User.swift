@@ -73,6 +73,9 @@ struct User {
         }
     }
     
+    
+//MARK: -  Удаление фото пользователя с директории
+    
     func cleanPhotoUser(){
         
         let userLibary = fileManager.urls(for: .documentDirectory, in: .userDomainMask) /// Стандартная библиотека пользователя

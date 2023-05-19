@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import AudioToolbox
 
 
 class CardView: UIView {
@@ -19,7 +20,7 @@ class CardView: UIView {
     var dislikeImage = UIImageView()
     var superLikeImage = UIImageView()
     
-    init(frame: CGRect, heartLikeImage: UIImageView = UIImageView(), heartDislikeImage: UIImageView = UIImageView(),imageUser: imageUserView?,imageArr: [UIImage]?,superLike: UIImageView,userID: String) {
+    init(frame: CGRect, heartLikeImage: UIImageView = UIImageView(), heartDislikeImage: UIImageView = UIImageView(),imageUser: ImageUserView?,imageArr: [UIImage]?,superLike: UIImageView,userID: String) {
         
         self.likImage = heartLikeImage
         self.dislikeImage = heartDislikeImage
@@ -72,15 +73,45 @@ class CardView: UIView {
         }
     }
     
-    deinit {
-//        print("Объект CardView уничтожен")
-    }
+//MARK: - Когда пользователь тапнул по фото обновляет фото и строку прогресса
+    
+    func refreshPhoto(_ sender: UITapGestureRecognizer,indexCurrentImage: Int) -> Int? {
+
+        let coordinates = sender.location(in: self).x
+        guard let currentImage = imageUserView as? ImageUserView else {return nil }
+        guard let imageArr = self.imageArr else {return nil}
+        var index = indexCurrentImage
+        
+        if coordinates > 220 && indexCurrentImage < imageArr.count - 1 {
+            index += 1
+            currentImage.progressBar[index-1].backgroundColor = .gray
+        }else if  coordinates < 180 && indexCurrentImage > 0  {
+            index -= 1
+            currentImage.progressBar[index+1].backgroundColor = .gray
+        }else if indexCurrentImage == 0 || indexCurrentImage == imageArr.count - 1 {
+            self.backgroundColor = .white
+            CardModel().createAnimate(indexImage: index, currentCard: self)
+           
+        }
+        
+        AudioServicesPlayAlertSoundWithCompletion(SystemSoundID(1161)) { /// Cоздаем звук при Тапе
+        }
+        
+        currentImage.progressBar[index].backgroundColor = .white
+        currentImage.image = imageArr[index]
+        
+        return index
+}
+    
+//    deinit {
+//        print("Объект CardView \(ID) уничтожен")
+//    }
     
 }   
 
 
 
-class imageUserView: UIImageView {
+class ImageUserView: UIImageView {
     
     var nameUser = UILabel()
     var age = UILabel()

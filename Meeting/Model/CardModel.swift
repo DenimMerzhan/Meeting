@@ -53,7 +53,7 @@ struct CardModel {
         superLike.isHidden = true
         
         
-        let imageView = imageUserView(frame: CGRect(x: 0, y: 0, width: width, height: height),nameUser: nameLabel,age: ageLabel)
+        let imageView = ImageUserView(frame: CGRect(x: 0, y: 0, width: width, height: height),nameUser: nameLabel,age: ageLabel)
         imageView.image = newUser.imageArr[0]
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true /// Ограничиваем фото в размерах
@@ -87,7 +87,7 @@ struct CardModel {
     
 //MARK: - Создание ProgressBar
     
-    func createProgressBar(countPhoto: Int,image: imageUserView) -> [UIView] { /// Создаем кучу одинаковых View
+    func createProgressBar(countPhoto: Int,image: ImageUserView) -> [UIView] { /// Создаем кучу одинаковых View
         
         var viewArr = [UIView]()
         let mostWidth = (image.frame.size.width - 5 - CGFloat(countPhoto * 7)) / CGFloat(countPhoto) /// Расчитываем длинну каждой полоски

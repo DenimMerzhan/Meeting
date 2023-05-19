@@ -24,8 +24,8 @@ class ViewController: UIViewController {
     
   
     var currentCard: CardView?
-    var nextCard: CardView?
-    
+    var nextCard = CardModel().createEmptyCard()
+        
     var cardModel = CardModel()
     var currentAuthUser = CurrentAuthUser(ID: "+79817550000")
     
@@ -36,23 +36,24 @@ class ViewController: UIViewController {
     var usersArr =  [User]() {
         didSet {
             
-            if usersArr.count < 50 && currentAuthUser.numberPotenialPairsOnServer > 1 && currentAuthUser.newUsersLoading == false {
+            print("usersArr.count - \(usersArr.count)")
+            
+            if usersArr.count < 50 && currentAuthUser.numberPotenialPairsOnServer > 0 && currentAuthUser.newUsersLoading == false {
                 print("Загрузка новых пользователей")
                 Task {
                     await loadNewUsers(numberRequsetedUsers: 15)
                 }
                 
-            }else if usersArr.count == 0 && currentAuthUser.numberPotenialPairsOnServer == 0 {
-                print("Пользователи закончились")
-                currentAuthUser.writingPairsInfrormation()}
-            
-            if currentCard?.ID == "Loading_Card" && usersArr.count > 3{
-                currentCard?.removeFromSuperview()
-                createStartCard()
             }
-            
-            if currentCard?.ID == "Loading_Card" && currentAuthUser.numberPotenialPairsOnServer == 0 {
+            if currentCard?.ID == "Loading_Card" && usersArr.count > 3 {
+                print("Wow")
                 currentCard?.removeFromSuperview()
+                nextCard.removeFromSuperview()
+                createStartCard()
+            }else if currentCard?.ID == "Loading_Card" && usersArr.count > 0 && currentAuthUser.newUsersLoading == false {
+                print("Sheet")
+                currentCard?.removeFromSuperview()
+                nextCard.removeFromSuperview()
                 createStartCard()
             }
         }
@@ -61,12 +62,6 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-    
-        cardModel.width = view.frame.width - 32
-        cardModel.height = view.frame.height - 236
-        
-        tabBarController?.tabBar.isHidden = true
-        stackViewButton.isHidden = true
     
         timer = Timer.scheduledTimer(withTimeInterval: 3, repeats: true) { timer in
             self.fireTimer()
@@ -78,7 +73,7 @@ class ViewController: UIViewController {
         Task {
             
             if await loadCurrentUsersData() {
-                await loadNewUsers(numberRequsetedUsers: 1)
+                await loadNewUsers(numberRequsetedUsers: 2)
                 startSettings()
             }else{
                 print("Ошибка загрузки текущего пользователя")
@@ -116,6 +111,7 @@ class ViewController: UIViewController {
             self.currentCard!.transform = CGAffineTransform(rotationAngle: abs(differenceX) * 0.002)
             self.currentCard!.alpha = 0
             self.loadNewPeople(card: self.currentCard!)
+           
         }
         
     }
@@ -124,29 +120,9 @@ class ViewController: UIViewController {
     
     
     @IBAction func cardTap(_ sender: UITapGestureRecognizer) {
-
-        
-        let coordinates = sender.location(in: currentCard!).x
-        let currentImage = currentCard!.imageUserView as! imageUserView
-        let imageArr = currentCard!.imageArr!
-
-        if coordinates > 220 && indexCurrentImage < imageArr.count - 1 {
-            indexCurrentImage += 1
-            currentImage.progressBar[indexCurrentImage-1].backgroundColor = .gray
-        }else if  coordinates < 180 && indexCurrentImage > 0  {
-            indexCurrentImage -= 1
-            currentImage.progressBar[indexCurrentImage+1].backgroundColor = .gray
-        }else if indexCurrentImage == 0 || indexCurrentImage == imageArr.count - 1 {
-            currentCard?.backgroundColor = .white
-            cardModel.createAnimate(indexImage: indexCurrentImage, currentCard: currentCard!)
-           
+        if let index =  currentCard!.refreshPhoto(sender, indexCurrentImage: indexCurrentImage) {
+            indexCurrentImage = index
         }
-        
-        AudioServicesPlayAlertSoundWithCompletion(SystemSoundID(1161)) { /// Cоздаем звук при Тапе
-        }
-        
-        currentImage.progressBar[indexCurrentImage].backgroundColor = .white
-        currentImage.image = imageArr[indexCurrentImage]
 }
     
 //MARK: -  Карта была нажата пальцем
@@ -162,8 +138,6 @@ class ViewController: UIViewController {
             let yFromCenter = card.center.y - view.center.y
             
             card.changeHeart(xFromCenter: xFromCenter, yFromCenter: yFromCenter)
-            
-            
             card.center = CGPoint(x: view.center.x + point.x , y: view.center.y + point.y ) /// Перемящем View взависимости от движения пальца
             card.transform = CGAffineTransform(rotationAngle: abs(xFromCenter) * 0.002) /// Поворачиваем View, внутри  rotationAngle радианты а не градусы
             
@@ -220,27 +194,26 @@ extension ViewController {
     
     func loadNewPeople(card:CardView){
         
-        if usersArr.count > 0 {
-            if let ID = usersArr.firstIndex(where: { $0.ID == card.ID}) {
-                usersArr[ID].cleanPhotoUser() /// Удаляем папку с фото с  директории пользователя
-                usersArr.remove(at: ID)
-            }
-        }
-        
         
         currentAuthUser.writingPairsInfrormation()
         
         card.removeGestureRecognizer(panGesture)
         card.removeGestureRecognizer(tapGesture)
+        
         currentCard = nextCard
         
-        if currentCard?.ID != "Loading_Card" && currentCard?.ID != "Stop_Card" {
-            currentCard!.addGestureRecognizer(panGesture)
-            currentCard!.addGestureRecognizer(tapGesture)
-            nextCard = createCard(currentUserIDCard: currentCard!.ID)
-            view.addSubview(nextCard!)
-            view.sendSubviewToBack(nextCard!)
+        if usersArr.count > 0 {
+            usersArr[0].cleanPhotoUser() /// Удаляем папку с фото с  директории пользователя
+            usersArr.removeFirst()
         }
+        nextCard = createNextCard()
+        
+        currentCard!.addGestureRecognizer(panGesture)
+        currentCard!.addGestureRecognizer(tapGesture)
+        
+        view.addSubview(nextCard)
+        view.sendSubviewToBack(nextCard)
+        
         
         indexCurrentImage = 0
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { /// Чем выше параметр тем выше шанс что карточка не удалиться и останется висеть в памяти надо подумать над этим
@@ -248,59 +221,39 @@ extension ViewController {
         }
         
         if currentCard?.ID == "Stop_Card"  {
-            
+
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 card.removeFromSuperview()
             }
+            currentCard?.removeGestureRecognizer(panGesture)
+            currentCard?.removeGestureRecognizer(tapGesture)
             stackViewButton.isHidden = true
         }
     }
     
 }
-
-
 //MARK: - Создание нового CardView
 
 
 extension ViewController {
     
-    
-    func createDataCard(currentUserIDCard: String?) -> User? {
+    func createNextCard() -> CardView {
         
-        if  usersArr.count > 1 {
-            var newUser = usersArr.randomElement()
-            if let currentUserID = currentUserIDCard {
-                newUser = randomUserFromArray(currentUserID: currentUserID)
-            }
-            return (newUser)
-        }else {
-            return nil
+        if usersArr.count > 1 {
+            return  cardModel.createCard(newUser: usersArr[1])
         }
-        
-    }
-    
-    func createCard(currentUserIDCard:String?) -> CardView {
-        
-        if let newUser = createDataCard(currentUserIDCard: currentUserIDCard) {
-            
-            let card = cardModel.createCard(newUser: newUser)
-            center = card.center
-            print("User ID Card - ", card.ID)
-            return card
-            
-        }else if currentAuthUser.newUsersLoading {
-            let card = cardModel.createLoadingUsersCard()
-            print("User ID Card - ", card.ID)
-            return card
-            
-        }else{
-            stopCard = true
-            let card = cardModel.createEmptyCard()
-            return card
+        else if usersArr.count < 2 && currentAuthUser.newUsersLoading {
+            return  cardModel.createLoadingUsersCard()
+        }
+        else if usersArr.count < 2 && currentAuthUser.numberPotenialPairsOnServer == 0 {
+            return cardModel.createEmptyCard()
+        }
+        else {
+            return cardModel.createEmptyCard()
         }
     }
+    
 }
-
 
 //MARK: -  Загрузка новых пользователей
 
@@ -309,9 +262,7 @@ extension ViewController {
     func loadNewUsers(numberRequsetedUsers: Int) async{
         
         currentAuthUser.newUsersLoading = true
-        
-
-        
+                
         if let newUsersID = await currentAuthUser.loadNewPotenialPairs(countUser: numberRequsetedUsers,usersArr: usersArr) {
             
             for ID in newUsersID {
@@ -331,7 +282,6 @@ extension ViewController {
             currentAuthUser.newUsersLoading = false
     }
 }
-    
 //MARK: -  Загрузка данных о текущем авторизованном пользователе
     
     func loadCurrentUsersData() async -> Bool {
@@ -348,12 +298,14 @@ extension ViewController {
         }
     }
 }
-
 //MARK: -  Дополнительные расширения
 
 extension ViewController {
     
     func startSettings(){
+        
+        cardModel.width = view.frame.width - 32
+        cardModel.height = view.frame.height - 236
         
         timer.invalidate()
         progressViewLoadUsers.progressBar.setProgress(1, animated: true)
@@ -368,34 +320,28 @@ extension ViewController {
             self.tabBarController?.tabBar.backgroundColor = .white
             self.tabBarController?.tabBar.isHidden = false
     
-            self.createStartCard()
+            if self.usersArr.count > 0 {
+                self.createStartCard()
+            }else {
+                self.currentCard = self.cardModel.createEmptyCard()
+                self.view.addSubview(self.currentCard!)
+            }
         }
     }
     
     func createStartCard(){
         
-        currentCard = self.createCard(currentUserIDCard: nil)
-        nextCard = self.createCard(currentUserIDCard: self.currentCard!.ID)
-        stackViewButton.isHidden = false
+        currentCard = cardModel.createCard(newUser: usersArr[0])
+        center = currentCard!.center
+        currentCard!.addGestureRecognizer(self.panGesture)
+        currentCard!.addGestureRecognizer(self.tapGesture)
         
-        if currentCard?.ID != "Stop_Card" {
-            self.currentCard!.addGestureRecognizer(self.panGesture)
-            self.currentCard!.addGestureRecognizer(self.tapGesture)
-            self.view.addSubview(self.nextCard!)
-        }
+        nextCard = createNextCard()
+        view.addSubview(nextCard)
         self.view.addSubview(self.currentCard!)
         self.view.bringSubviewToFront(self.stackViewButton)
         
-    }
-    
-    func randomUserFromArray(currentUserID:String) -> User? {
-        
-        var newUser = usersArr.randomElement()
-        
-        if currentUserID == newUser?.ID {
-            newUser = randomUserFromArray(currentUserID: currentUserID)
-        }
-        return newUser
+        stackViewButton.isHidden = false
     }
  
     func fireTimer(){

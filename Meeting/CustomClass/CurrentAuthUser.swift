@@ -54,11 +54,9 @@ class CurrentAuthUser {
                     self.name = name
                     self.age = age
                     
-                    if let likeArr = dataDoc["LikeArr"] as? [String], let disLikeArr = dataDoc["DisLikeArr"] as? [String], let superLikeArr = dataDoc["SuperLikeArr"] as? [String]  {
-                        self.likeArr = likeArr
-                        self.disLikeArr = disLikeArr
-                        self.superLikeArr = superLikeArr
-                    }
+                    if let likeArr = dataDoc["LikeArr"] as? [String] {self.likeArr = likeArr}
+                    if let disLikeArr = dataDoc["DisLikeArr"] as? [String] {self.disLikeArr = disLikeArr}
+                    if let superLikeArr = dataDoc["SuperLikeArr"] as? [String] {self.superLikeArr = superLikeArr}
                     
                     for data in dataDoc {
                         if data.key.contains("photoImage") {
@@ -140,7 +138,7 @@ class CurrentAuthUser {
                 }
             }
             numberPotenialPairsOnServer = querySnapshot.count - newUsersID.count - viewedUsers.count - 1
-            print("Общее количество пользователей - \(querySnapshot.count)")
+            print("Количество потенциальных пар на сервере - \(numberPotenialPairsOnServer)")
         }catch{
             print("Ошибка загрузки ID пользователей - \(error)")
             return nil
