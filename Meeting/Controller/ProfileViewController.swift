@@ -27,8 +27,6 @@ class ProfileViewController: UIViewController {
                 nameAgeLabel.text = currentAuthUser.name + " " + String(currentAuthUser.age)
                 if currentAuthUser.imageArr.count != 0 {
                     profilePhoto.image = currentAuthUser.imageArr[0].image
-                }else{
-                    profilePhoto.image = UIImage()
                 }
             }
         }
@@ -76,6 +74,10 @@ class ProfileViewController: UIViewController {
 private extension ProfileViewController {
         
     func startSettings(animateProgressToValue: Float){
+        
+        view.bringSubviewToFront(nameAgeLabel) /// В Iphone 4 этот лейбл скрывается т.к не помещяеся в элемент MostView поэтому он всегда будет на переднем плане
+        fillingScaleProfile.center.x = profilePhoto.center.x
+        fillingScaleProfile.center.y = profilePhoto.frame.maxY - 5
         
         let changePhotoLayer = changePhotoButton.layer
         let filingScaleLayer = fillingScaleProfile.layer
