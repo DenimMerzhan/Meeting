@@ -15,7 +15,7 @@ class ProfileViewController: UIViewController {
     
     @IBOutlet weak var nameAgeLabel: UILabel!
     
-    var circularProgressBar = CircularProgressBarView(frame: .zero)
+    var circularProgressBar = CircularProgressBarView(frame: CGRect(x: 0, y: 0, width: 180, height: 180))
     var animateProgressToValue = Float(0)
     
     let defaults = UserDefaults.standard
@@ -27,14 +27,21 @@ class ProfileViewController: UIViewController {
                 nameAgeLabel.text = currentAuthUser.name + " " + String(currentAuthUser.age)
                 if currentAuthUser.imageArr.count != 0 {
                     profilePhoto.image = currentAuthUser.imageArr[0].image
+                    print("Wow")
                 }
             }
         }
     }
     
     override func viewDidAppear(_ animated: Bool) {
+       
+        
         profileUpdate()
+        print(profilePhoto.frame, "PhotoFrame")
+        
         currentAuthUser = navViewController.currentAuthUser /// Каждый раз обновляем currentAuthUser что бы срабатывал блок DidSet
+        print(circularProgressBar.center, "CurculatCenter")
+        print(circularProgressBar.frame, "FrameCurcular")
     }
     
     override func viewDidLoad() {
@@ -76,8 +83,9 @@ private extension ProfileViewController {
     func startSettings(animateProgressToValue: Float){
         
         view.bringSubviewToFront(nameAgeLabel) /// В Iphone 4 этот лейбл скрывается т.к не помещяеся в элемент MostView поэтому он всегда будет на переднем плане
-        fillingScaleProfile.center.x = profilePhoto.center.x
-        fillingScaleProfile.center.y = profilePhoto.frame.maxY - 5
+        
+        fillingScaleProfile.frame.origin.x = profilePhoto.frame.origin.x
+        fillingScaleProfile.frame.origin.y = profilePhoto.frame.maxY - 7
         
         let changePhotoLayer = changePhotoButton.layer
         let filingScaleLayer = fillingScaleProfile.layer
@@ -85,15 +93,13 @@ private extension ProfileViewController {
         profilePhoto.layer.cornerRadius = profilePhoto.frame.size.width / 2
         profilePhoto.clipsToBounds = true
         
-        circularProgressBar.center = profilePhoto.center
-        circularProgressBar.createCircularPath(radius: 98) /// Создаем прогресс бар
-        circularProgressBar.progressAnimation(duration: 2,toValue: animateProgressToValue)
-        view.addSubview(circularProgressBar)
+
         
         changePhotoLayer.cornerRadius = changePhotoButton.frame.size.width / 2 /// Делаем круглым наш карандаш
         changePhotoButton.clipsToBounds = true
         
-        filingScaleLayer.cornerRadius = 15 /// Делаем закругленные края у шкалы заполнения профиля
+        filingScaleLayer.cornerRadius = 12 /// Делаем закругленные края у шкалы заполнения профиля
+        filingScaleLayer.masksToBounds = true
         fillingScaleProfile.clipsToBounds = true /// Обрезаем до краев что бы тени не выходили за них
         
         changePhotoLayer.shadowColor = UIColor.black.cgColor /// Добавляем тень
@@ -105,7 +111,6 @@ private extension ProfileViewController {
         filingScaleLayer.shadowOffset = .zero
         filingScaleLayer.shadowOpacity = 1
         filingScaleLayer.shadowRadius = 10
-        
         view.bringSubviewToFront(fillingScaleProfile)
         view.bringSubviewToFront(changePhotoButton)
     }
@@ -114,10 +119,26 @@ private extension ProfileViewController {
     
     func profileUpdate(){ /// Обновления шкалы заполненности профиля
         
+        fillingScaleProfile.frame.origin.x = profilePhoto.frame.origin.x /// Делаем шкалу профиля ровно под фото профиля
+        fillingScaleProfile.frame.origin.y = profilePhoto.frame.maxY - 7
+        
+        changePhotoButton.center.x = profilePhoto.frame.maxX - 25
+        changePhotoButton.center.y = profilePhoto.frame.origin.y + 15
+        
+        circularProgressBar.center = profilePhoto.center
+        
+        circularProgressBar.createCircularPath(radius: profilePhoto.frame.width / 2  + 8) /// Создаем прогресс бар
+        circularProgressBar.progressAnimation(duration: 2,toValue: animateProgressToValue)
+        circularProgressBar.backgroundColor = .red
+        view.addSubview(circularProgressBar)
+        
+        view.bringSubviewToFront(circularProgressBar)
+        
         changePhotoButton.titleLabel?.text = ""
         
         let oldValue = animateProgressToValue
         animateProgressToValue = defaults.float(forKey: "ProfileFilingScale")
+       
         
         if oldValue != animateProgressToValue { /// Если значения разные то обновляем шкалу заполненности
             

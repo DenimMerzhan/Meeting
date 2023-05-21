@@ -197,7 +197,7 @@
                                                 </constraints>
                                             </imageView>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="ccc" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="M7k-t4-R0P">
-                                                <rect key="frame" x="125" y="292.33333333333337" width="125" height="38.333333333333314"/>
+                                                <rect key="frame" x="125" y="277.33333333333337" width="125" height="38.333333333333314"/>
                                                 <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="32"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
@@ -217,7 +217,7 @@
                                                 </connections>
                                             </button>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2FS-Qe-uXV">
-                                                <rect key="frame" x="25" y="266" width="173" height="22"/>
+                                                <rect key="frame" x="98" y="265" width="180" height="22"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <color key="backgroundColor" name="MainAppColor"/>
                                                 <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
@@ -227,7 +227,7 @@
                                         </subviews>
                                         <color key="backgroundColor" systemColor="systemBrownColor"/>
                                         <constraints>
-                                            <constraint firstItem="M7k-t4-R0P" firstAttribute="top" secondItem="lFT-3Z-kJV" secondAttribute="bottom" constant="35" id="Fs4-cu-3fT"/>
+                                            <constraint firstItem="M7k-t4-R0P" firstAttribute="top" secondItem="lFT-3Z-kJV" secondAttribute="bottom" constant="20" id="Fs4-cu-3fT"/>
                                             <constraint firstItem="lFT-3Z-kJV" firstAttribute="centerX" secondItem="nwR-m1-hIX" secondAttribute="centerX" id="Hjz-ti-63U"/>
                                             <constraint firstAttribute="height" constant="500" id="Xn3-7Y-AZK"/>
                                             <constraint firstItem="lFT-3Z-kJV" firstAttribute="centerY" secondItem="nwR-m1-hIX" secondAttribute="centerY" id="Y7z-Q9-nYO"/>
@@ -281,7 +281,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lrK-ip-phe" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2478.6259541984732" y="-230.98591549295776"/>
+            <point key="canvasLocation" x="2477.5999999999999" y="-231.2807881773399"/>
         </scene>
         <!--Settings Photo View Controller-->
         <scene sceneID="LpA-l0-EQL">
