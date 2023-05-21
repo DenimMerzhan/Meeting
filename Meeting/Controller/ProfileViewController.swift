@@ -13,9 +13,11 @@ class ProfileViewController: UIViewController {
     @IBOutlet weak var changePhotoButton: UIButton!
     @IBOutlet weak var fillingScaleProfile: UILabel!
     
+    @IBOutlet weak var mostStackView: UIView!
+    
     @IBOutlet weak var nameAgeLabel: UILabel!
     
-    var circularProgressBar = CircularProgressBarView(frame: CGRect(x: 0, y: 0, width: 180, height: 180))
+    var circularProgressBar = CircularProgressBarView(frame: .zero)
     var animateProgressToValue = Float(0)
     
     let defaults = UserDefaults.standard
@@ -29,6 +31,7 @@ class ProfileViewController: UIViewController {
                     profilePhoto.image = currentAuthUser.imageArr[0].image
                     print("Wow")
                 }
+                animateProgressToValue = Float(currentAuthUser.imageArr.count) / 9
             }
         }
     }
@@ -93,7 +96,10 @@ private extension ProfileViewController {
         profilePhoto.layer.cornerRadius = profilePhoto.frame.size.width / 2
         profilePhoto.clipsToBounds = true
         
-
+        circularProgressBar.createCircularPath(radius: profilePhoto.frame.width / 2  + 8) /// Создаем прогресс бар
+        circularProgressBar.progressAnimation(duration: 2,toValue: animateProgressToValue)
+        circularProgressBar.backgroundColor = .red
+        mostStackView.addSubview(circularProgressBar)
         
         changePhotoLayer.cornerRadius = changePhotoButton.frame.size.width / 2 /// Делаем круглым наш карандаш
         changePhotoButton.clipsToBounds = true
@@ -111,8 +117,9 @@ private extension ProfileViewController {
         filingScaleLayer.shadowOffset = .zero
         filingScaleLayer.shadowOpacity = 1
         filingScaleLayer.shadowRadius = 10
-        view.bringSubviewToFront(fillingScaleProfile)
-        view.bringSubviewToFront(changePhotoButton)
+        
+        mostStackView.bringSubviewToFront(fillingScaleProfile)
+        mostStackView.bringSubviewToFront(changePhotoButton)
     }
     
 //MARK: -  Обновление шкалы профиля
@@ -127,27 +134,16 @@ private extension ProfileViewController {
         
         circularProgressBar.center = profilePhoto.center
         
-        circularProgressBar.createCircularPath(radius: profilePhoto.frame.width / 2  + 8) /// Создаем прогресс бар
-        circularProgressBar.progressAnimation(duration: 2,toValue: animateProgressToValue)
-        circularProgressBar.backgroundColor = .red
-        view.addSubview(circularProgressBar)
-        
-        view.bringSubviewToFront(circularProgressBar)
-        
         changePhotoButton.titleLabel?.text = ""
         
-        let oldValue = animateProgressToValue
-        animateProgressToValue = defaults.float(forKey: "ProfileFilingScale")
-       
+        var newStatus = animateProgressToValue * 100
+        if newStatus > 100 {newStatus = 100}
+        fillingScaleProfile.text = String(format: "%.0f", newStatus)  + "% ЗАПОЛНЕНО"
         
-        if oldValue != animateProgressToValue { /// Если значения разные то обновляем шкалу заполненности
+        circularProgressBar.progressAnimation(duration: Double(animateProgressToValue) * 5, toValue: animateProgressToValue - 0.1)
             
-            circularProgressBar.progressAnimation(duration: Double(animateProgressToValue) * 5, toValue: animateProgressToValue - 0.1)
             
-            var newStatus = animateProgressToValue * 100
-            if newStatus > 100 {newStatus = 100}
-            fillingScaleProfile.text = String(format: "%.0f", newStatus)  + "% ЗАПОЛНЕНО"
-        }
+        
     }
     
 }
