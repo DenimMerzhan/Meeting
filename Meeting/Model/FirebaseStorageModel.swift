@@ -18,15 +18,16 @@ struct FirebaseStorageModel {
     private let storage = Storage.storage()
     
     private let fileManager = FileManager.default
+    private let defaults = UserDefaults.standard
     
     init(userID: String = String()) {
         self.currentUserID = userID
     }
     
-
     
-
-//MARK: - Загрузка фото с сервера в память устройства
+    
+    
+    //MARK: - Загрузка фото с сервера в память устройства
     
     func loadPhotoToFile(urlPhotoArr: [String],userID: String,currentUser: Bool) async -> [URL]? {
         
@@ -35,7 +36,7 @@ struct FirebaseStorageModel {
             return nil
         }
         let userLibary = fileManager.urls(for: .documentDirectory, in: .userDomainMask) /// Стандартная библиотека пользователя
-    
+        
         var newFolder = userLibary[0]
         
         if currentUser {
@@ -43,7 +44,6 @@ struct FirebaseStorageModel {
         }else{
             newFolder = newFolder.appendingPathComponent("OtherUsersPhoto/\(userID)")
         }
-        
         
         if checkDirectoryExist(directory: newFolder) == false { /// Если директории нет создаем эту папку
             try! fileManager.createDirectory(at: newFolder, withIntermediateDirectories: true)
@@ -64,44 +64,7 @@ struct FirebaseStorageModel {
         return urlFileArr
     }
     
-    
-//MARK: - Загрузка определленого количества ID пользователей
-    
-    func loadUsersID(countUser: Int,currentUser:CurrentAuthUser,nonSwipedUsers: [String] = [String]()) async -> [String]? {
-        var count = 0
-        let collection  = db.collection("Users")
-        var userIDArr = [String]()
-        
-        let viewedUsers = currentUser.likeArr + currentUser.disLikeArr + currentUser.superLikeArr + nonSwipedUsers
-        print(viewedUsers.count, "количество ограничений")
-        do {
-            let querySnapshot = try await collection.getDocuments()
-            
-            for document in querySnapshot.documents {
-                
-                if document.documentID == currentUser.ID { /// Если текущий пользователь пропускаем его добавление
-                   continue
-                }else if viewedUsers.contains(document.documentID) {
-                    continue
-                }
-                
-                userIDArr.append(document.documentID)
-                count += 1
-                if count == countUser {
-                    break
-                }
-            }
-            print("Общее количество пользователей - \(querySnapshot.count)")
-        }catch{
-            print("Ошибка загрузки ID пользователей - \(error)")
-            return nil
-        }
-        
-        return userIDArr
-    }
 }
-
-
 
 //MARK: -  Проверки существует ли директория
 

@@ -13,33 +13,39 @@ class ProfileViewController: UIViewController {
     @IBOutlet weak var changePhotoButton: UIButton!
     @IBOutlet weak var fillingScaleProfile: UILabel!
     
+    @IBOutlet weak var mostStackView: UIView!
+    
     @IBOutlet weak var nameAgeLabel: UILabel!
     
     var circularProgressBar = CircularProgressBarView(frame: .zero)
     var animateProgressToValue = Float(0)
-    let defaults = UserDefaults.standard
     
-
-    var currentAuthUser:  CurrentAuthUser? {
+    let defaults = UserDefaults.standard
+    var navViewController = ViewController()
+    
+    var currentAuthUser =   CurrentAuthUser(ID: "") {
         didSet {
-            if currentAuthUser!.userLoaded {
-                nameAgeLabel.text = currentAuthUser!.name + "  " + String(currentAuthUser!.age)
-                profilePhoto.image = currentAuthUser!.imageArr[0].image
-            }else{
-                
+            if currentAuthUser.currentUserLoaded {
+                nameAgeLabel.text = currentAuthUser.name + " " + String(currentAuthUser.age)
+                if currentAuthUser.imageArr.count != 0 {
+                    profilePhoto.image = currentAuthUser.imageArr[0].image
+                    print("Wow")
+                }
+                animateProgressToValue = Float(currentAuthUser.imageArr.count) / 9
             }
         }
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        currentAuthUser = navViewController.currentAuthUser /// Каждый раз обновляем currentAuthUser что бы срабатывал блок DidSet
         profileUpdate()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let navViewController = tabBarController?.viewControllers?[0] as? ViewController { /// Передаем ссылку на currentAuthUser
-            currentAuthUser = navViewController.currentAuthUser
+        if let navViewController = tabBarController?.viewControllers?[0] as? ViewController { /// Передаем ссылку на главный ViewController
+            self.navViewController = navViewController
         }
 
         startSettings(animateProgressToValue: animateProgressToValue)
@@ -48,10 +54,8 @@ class ProfileViewController: UIViewController {
     
     @IBAction func settingsPhotoPressed(_ sender: UIButton) {
         
-        guard (currentAuthUser != nil) else {return}
-        
-        if currentAuthUser!.userLoaded {
-            print(currentAuthUser!.imageArr.count)
+        if currentAuthUser.currentUserLoaded {
+            print(currentAuthUser.imageArr.count, "imageArr Current User")
             performSegue(withIdentifier: "settingsToPhotoSettings", sender: self)
         }
         
@@ -61,7 +65,7 @@ class ProfileViewController: UIViewController {
         
         guard segue.identifier == "settingsToPhotoSettings" else {return}
         guard let destination = segue.destination as? SettingsPhotoViewController else {return}
-        destination.currentAuthUser = currentAuthUser!
+        destination.currentAuthUser = currentAuthUser
         
     }
     
@@ -75,21 +79,28 @@ private extension ProfileViewController {
         
     func startSettings(animateProgressToValue: Float){
         
+        nameAgeLabel.lineBreakMode = .byWordWrapping
+        nameAgeLabel.numberOfLines = 3
+        
+        fillingScaleProfile.frame.origin.x = profilePhoto.frame.origin.x
+        fillingScaleProfile.frame.origin.y = profilePhoto.frame.maxY - 7
+        
         let changePhotoLayer = changePhotoButton.layer
         let filingScaleLayer = fillingScaleProfile.layer
         
         profilePhoto.layer.cornerRadius = profilePhoto.frame.size.width / 2
         profilePhoto.clipsToBounds = true
         
-        circularProgressBar.center = profilePhoto.center
-        circularProgressBar.createCircularPath(radius: 98) /// Создаем прогресс бар
+        circularProgressBar.createCircularPath(radius: profilePhoto.frame.width / 2  + 8) /// Создаем прогресс бар
         circularProgressBar.progressAnimation(duration: 2,toValue: animateProgressToValue)
-        view.addSubview(circularProgressBar)
+        circularProgressBar.backgroundColor = .red
+        mostStackView.addSubview(circularProgressBar)
         
         changePhotoLayer.cornerRadius = changePhotoButton.frame.size.width / 2 /// Делаем круглым наш карандаш
         changePhotoButton.clipsToBounds = true
         
-        filingScaleLayer.cornerRadius = 15 /// Делаем закругленные края у шкалы заполнения профиля
+        filingScaleLayer.cornerRadius = 12 /// Делаем закругленные края у шкалы заполнения профиля
+        filingScaleLayer.masksToBounds = true
         fillingScaleProfile.clipsToBounds = true /// Обрезаем до краев что бы тени не выходили за них
         
         changePhotoLayer.shadowColor = UIColor.black.cgColor /// Добавляем тень
@@ -102,27 +113,29 @@ private extension ProfileViewController {
         filingScaleLayer.shadowOpacity = 1
         filingScaleLayer.shadowRadius = 10
         
-        view.bringSubviewToFront(fillingScaleProfile)
-        view.bringSubviewToFront(changePhotoButton)
+        mostStackView.bringSubviewToFront(fillingScaleProfile)
+        mostStackView.bringSubviewToFront(changePhotoButton)
     }
     
 //MARK: -  Обновление шкалы профиля
     
     func profileUpdate(){ /// Обновления шкалы заполненности профиля
         
+        fillingScaleProfile.frame.origin.x = profilePhoto.frame.origin.x /// Делаем шкалу профиля ровно под фото профиля
+        fillingScaleProfile.frame.origin.y = profilePhoto.frame.maxY - 7
+        
+        changePhotoButton.center.x = profilePhoto.frame.maxX - 25
+        changePhotoButton.center.y = profilePhoto.frame.origin.y + 15
+        
+        circularProgressBar.center = profilePhoto.center
+        
         changePhotoButton.titleLabel?.text = ""
         
-        let oldValue = animateProgressToValue
-        animateProgressToValue = defaults.float(forKey: "ProfileFilingScale")
+        var newStatus = animateProgressToValue * 100
+        if newStatus > 100 {newStatus = 100}
+        fillingScaleProfile.text = String(format: "%.0f", newStatus)  + "% ЗАПОЛНЕНО"
         
-        if oldValue != animateProgressToValue { /// Если значения разные то обновляем шкалу заполненности
-            
-            circularProgressBar.progressAnimation(duration: Double(animateProgressToValue) * 5, toValue: animateProgressToValue - 0.1)
-            
-            var newStatus = animateProgressToValue * 100
-            if newStatus > 100 {newStatus = 100}
-            fillingScaleProfile.text = String(format: "%.0f", newStatus)  + "% ЗАПОЛНЕНО"
-        }
+        circularProgressBar.progressAnimation(duration: Double(animateProgressToValue) * 8, toValue: animateProgressToValue - 0.1)
     }
     
 }

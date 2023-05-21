@@ -39,7 +39,7 @@ class CircularProgressBarView: UIView {
         layer.addSublayer(circleLayer)
         
         progressLayer.path = circularPath.cgPath
-        progressLayer.fillColor = UIColor.clear.cgColor
+        progressLayer.fillColor = UIColor.clear.cgColor /// Цвет внутри круга
         progressLayer.lineCap = .round
         progressLayer.lineWidth = 7
         progressLayer.strokeEnd = 0

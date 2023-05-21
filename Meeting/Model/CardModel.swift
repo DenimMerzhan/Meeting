@@ -15,30 +15,27 @@ struct CardModel {
     
     
     var usersArr = [User]()
-    
-    
-    
+    var width = CGFloat()
+    var height = CGFloat()
     
 //MARK: - Создание новой карты
     
     
     func createCard(newUser: User) -> CardView {
         
-        
-        let frame =  CGRect(x: 16, y: 118, width: 361, height: 603)
-        
-        
+        let frame =  CGRect(x: 16, y: 118, width: width, height: height)
+       
         let nameLabel = UILabel() /// Имя
-        let point = CGPoint(x: 10, y: 480)
+        let point = CGPoint(x: 10, y: height - 130)
         nameLabel.text = newUser.name
-        nameLabel.font = .boldSystemFont(ofSize: 48)
+        nameLabel.font = .boldSystemFont(ofSize: 40)
         nameLabel.frame = CGRect(origin: point, size: nameLabel.sizeThatFits(CGSize(width: CGFloat.infinity, height: 48))) /// Расширяем рамку в зависимости от размера текста
         nameLabel.textColor = .white
         
         
-        let ageLabel = UILabel(frame: CGRect(x: nameLabel.frame.maxX + 10, y: 485, width: 100, height: 48.0)) /// Возраст, ставим по позиции x относительно имени
+        let ageLabel = UILabel(frame: CGRect(x: nameLabel.frame.maxX + 10, y: height - 130, width: 100, height: 48.0)) /// Возраст, ставим по позиции x относительно имени
         ageLabel.text = String(newUser.age)
-        ageLabel.font = .systemFont(ofSize: 48)
+        ageLabel.font = .systemFont(ofSize: 40)
         ageLabel.textColor = .white
         
         
@@ -56,24 +53,20 @@ struct CardModel {
         superLike.isHidden = true
         
         
-        let imageView = imageUserView(frame: CGRect(x: 0, y: 0, width: 361, height: 603),nameUser: nameLabel,age: ageLabel)
+        let imageView = ImageUserView(frame: CGRect(x: 0, y: 0, width: width, height: height),nameUser: nameLabel,age: ageLabel)
         imageView.image = newUser.imageArr[0]
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true /// Ограничиваем фото в размерах
     
         
         let gradient = CAGradientLayer() ///  Градиент
-        gradient.frame = CGRect(x: 0, y: 400, width: 361, height: 203)
+        gradient.frame = CGRect(x: 0, y: height - 203, width: width, height: 203)
         gradient.locations = [0.0, 1.0]
         gradient.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]
         imageView.layer.insertSublayer(gradient, at: 0)
         
         
-       
-        
         let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,imageUser: imageView,imageArr: newUser.imageArr,superLike: superLike, userID: newUser.ID)
-        
-        
         
         card.addSubview(imageView)
         imageView.addSubview(nameLabel)
@@ -85,9 +78,6 @@ struct CardModel {
         let progressBar = createProgressBar(countPhoto: newUser.imageArr.count, image: imageView)
         imageView.progressBar = progressBar
         
-        
-        
-        
         return card
         
         
@@ -97,7 +87,7 @@ struct CardModel {
     
 //MARK: - Создание ProgressBar
     
-    func createProgressBar(countPhoto: Int,image: imageUserView) -> [UIView] { /// Создаем кучу одинаковых View
+    func createProgressBar(countPhoto: Int,image: ImageUserView) -> [UIView] { /// Создаем кучу одинаковых View
         
         var viewArr = [UIView]()
         let mostWidth = (image.frame.size.width - 5 - CGFloat(countPhoto * 7)) / CGFloat(countPhoto) /// Расчитываем длинну каждой полоски
@@ -127,8 +117,31 @@ struct CardModel {
     }
     
     
+//MARK: -  Создание карты оповещения что идет загрузка пользователей
     
-    
+    func createLoadingUsersCard() -> CardView {
+        
+        let frame =  CGRect(x: 16, y: 118, width: width, height: height)
+        
+        let label = UILabel(frame: CGRect(x: 32, y: 170, width: 300, height: 200.0))
+        label.center = CGPoint(x: width / 2, y: height / 2)
+        label.text = "Идет заугрзка новых пар для тебя..."
+        label.font = .boldSystemFont(ofSize: 30)
+        label.lineBreakMode = .byWordWrapping
+        label.numberOfLines = 4
+        
+        
+        let likeHeart = UIImageView(frame: CGRect(x: 0.0, y: 8.0, width: 106, height: 79))
+        let dislikeHeart = UIImageView(frame: CGRect(x: 234, y: 0.0, width: 127, height: 93))
+        let superLike = UIImageView(frame: CGRect(x: 117, y: 8, width: 150, height: 100))
+        
+        let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,imageUser: nil,imageArr: nil,superLike:superLike, userID: "Loading_Card")
+        
+        card.addSubview(label)
+        
+        return card
+        
+    }
     
     
 //MARK: - Создаение пустой карты
@@ -136,9 +149,10 @@ struct CardModel {
     
     func createEmptyCard() -> CardView {
         
-        let frame =  CGRect(x: 16, y: 118, width: 361, height: 603)
+        let frame =  CGRect(x: 16, y: 118, width: width, height: height)
         
         let label = UILabel(frame: CGRect(x: 32, y: 170, width: 300, height: 200.0))
+        label.center = CGPoint(x: width / 2, y: height / 2 )
         label.text = "Пары закончились :("
         label.font = .boldSystemFont(ofSize: 30)
         label.lineBreakMode = .byWordWrapping
@@ -149,15 +163,12 @@ struct CardModel {
         let dislikeHeart = UIImageView(frame: CGRect(x: 234, y: 0.0, width: 127, height: 93))
         let superLike = UIImageView(frame: CGRect(x: 117, y: 8, width: 150, height: 100))
         
-        let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,imageUser: nil,imageArr: nil,superLike:superLike, userID: "")
+        let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,imageUser: nil,imageArr: nil,superLike:superLike, userID: "Stop_Card")
         
         card.addSubview(label)
         
         return card
     }
-    
-    
-    
     
     
     
@@ -191,9 +202,6 @@ struct CardModel {
             rotationAndPerspectiveTransform = CATransform3DRotate(rotationAndPerspectiveTransform, 0.15, 0.0, secondCornerY, 0.0)
             layer.transform = rotationAndPerspectiveTransform
         }
-
-        
-        
     }
     
 }

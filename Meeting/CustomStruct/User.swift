@@ -28,7 +28,7 @@ struct User {
     
     
     
-//MARK: - Загрузка метаданных о пользователе
+//MARK: - Загрузка метаданных о пользователе с сервера
     
     mutating func loadMetaData() async {
         
@@ -72,6 +72,9 @@ struct User {
             }
         }
     }
+    
+    
+//MARK: -  Удаление фото пользователя с директории
     
     func cleanPhotoUser(){
         

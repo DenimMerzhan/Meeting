@@ -26,8 +26,10 @@ class CurrentAuthUser {
     var disLikeArr = [String]()
     var superLikeArr = [String]()
     
-    var couplesOver = Bool()
-    var userLoaded = Bool()
+    var numberPotenialPairsOnServer = Int()
+    var currentUserLoaded = Bool()
+    
+    var newUsersLoading = Bool()
     
     private let db = Firestore.firestore()
     private let storage = Storage.storage()
@@ -35,8 +37,6 @@ class CurrentAuthUser {
     init(ID: String){
         self.ID = ID
     }
-    
-    
     
     //MARK: -  Загрузка метаданных о текущем авторизованном пользователе с FireStore
             
@@ -54,12 +54,9 @@ class CurrentAuthUser {
                     self.name = name
                     self.age = age
                     
-                    if let likeArr = dataDoc["LikeArr"] as? [String], let disLikeArr = dataDoc["DisLikeArr"] as? [String], let superLikeArr = dataDoc["SuperLikeArr"] as? [String]  {
-                        self.likeArr = likeArr
-                        self.disLikeArr = disLikeArr
-                        self.superLikeArr = superLikeArr
-                    }
-                    
+                    if let likeArr = dataDoc["LikeArr"] as? [String] {self.likeArr = likeArr}
+                    if let disLikeArr = dataDoc["DisLikeArr"] as? [String] {self.disLikeArr = disLikeArr}
+                    if let superLikeArr = dataDoc["SuperLikeArr"] as? [String] {self.superLikeArr = superLikeArr}
                     
                     for data in dataDoc {
                         if data.key.contains("photoImage") {
@@ -80,7 +77,7 @@ class CurrentAuthUser {
         }
         
         if urlPhotoArr.count == 0 {
-            userLoaded = true /// Если фото у пользователя нету, то указываем что он загрузился
+            currentUserLoaded = true /// Если фото у пользователя нету, то указываем что он загрузился
         }
         return true
     }
@@ -106,6 +103,51 @@ class CurrentAuthUser {
         }
     }
     
+ //MARK: -  Загрузка потеницальных пар для текущего пользователя
+    
+    func loadNewPotenialPairs(countUser: Int,usersArr: [User]) async -> [String]? {
+        var count = 0
+        let collection  = db.collection("Users")
+        var newUsersID = [String]()
+        
+        
+        var nonSwipedArr = [String]()
+        
+        for user in usersArr {
+            nonSwipedArr.append(user.ID)
+        }
+        
+        let viewedUsers = likeArr + disLikeArr + superLikeArr + nonSwipedArr
+        
+        print(viewedUsers.count, "количество ограничений")
+        do {
+            let querySnapshot = try await collection.getDocuments()
+            
+            for document in querySnapshot.documents {
+                
+                if document.documentID == ID { /// Если текущий пользователь пропускаем его добавление
+                   continue
+                }else if viewedUsers.contains(document.documentID) { /// Если кто то есть в архиве viewedUsers тоже пропускаем егго
+                    continue
+                }
+                
+                newUsersID.append(document.documentID)
+                count += 1
+                if count == countUser {
+                    break
+                }
+            }
+            numberPotenialPairsOnServer = querySnapshot.count - newUsersID.count - viewedUsers.count - 1
+            print("Количество потенциальных пар на сервере - \(numberPotenialPairsOnServer)")
+        }catch{
+            print("Ошибка загрузки ID пользователей - \(error)")
+            return nil
+        }
+        return newUsersID
+    }
+    
+    
+    
 //MARK: -  Загрузка фото с директории
     
     func loadPhotoFromDirectory(urlFileArr: [URL]){
@@ -116,9 +158,11 @@ class CurrentAuthUser {
                 imageArr.append(CurrentUserImage(imageID: imageID,image: newImage))
 //                newImage = .remove
             }
-            userLoaded = true
+            currentUserLoaded = true
         }
     }
+    
+    
     
     
     //MARK: -  Загрузка фото на сервер
@@ -166,7 +210,7 @@ class CurrentAuthUser {
         }
     
     
-    //MARK: - Удаление фото с сервера
+//MARK: - Удаление фото с сервера Storage и Firestore
     
     func removePhotoFromServer(imageID:String){
         

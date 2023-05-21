@@ -63,13 +63,13 @@ struct CreateButton {
 
 extension CreateButton {
     
-    func createProgressBarLoadPhoto() -> (progressBar : UIProgressView,backView: UIView, checkMark: UIImageView) {
+    func createProgressBarLoadPhoto(width: CGFloat) -> (progressBar : UIProgressView,backView: UIView, checkMark: UIImageView) {
         
-        let backView = UIView(frame: CGRect(x: 20, y: 50, width: 350, height: 50))
+        let backView = UIView(frame: CGRect(x: 20, y: 50, width: width, height: 50))
         backView.backgroundColor = UIColor(named: "LoadPhotoColor")
         backView.layer.cornerRadius = 10
         
-        let checkMarkImage = UIImageView(frame: CGRect(x: 290, y: 10, width: 50, height: 20))
+        let checkMarkImage = UIImageView(frame: CGRect(x: width - 50, y: 10, width: 50, height: 20))
         checkMarkImage.image = UIImage(systemName: "checkmark")
         checkMarkImage.contentMode = .scaleAspectFit
         checkMarkImage.tintColor = .white
@@ -84,7 +84,7 @@ extension CreateButton {
         backView.addSubview(label)
         
         
-        let progressBar = UIProgressView(frame: CGRect(x: 25, y: 35, width: 300, height: 30))
+        let progressBar = UIProgressView(frame: CGRect(x: 25, y: 35, width: width - 60, height: 30))
         backView.addSubview(progressBar)
         progressBar.progressViewStyle = .bar
         progressBar.progressTintColor = UIColor(named: "MainAppColor")
@@ -94,14 +94,15 @@ extension CreateButton {
         return (progressBar,backView,checkMarkImage)
     }
     
+//MARK: Прогресс Бар для Загрузки пользователей
     
-    func createProgressLoadUsersStartForLaunch() -> (backView: UIView,progressBar: UIProgressView){
+    func createProgressLoadUsersStartForLaunch(width:CGFloat) -> (backView: UIView,progressBar: UIProgressView,label: UILabel){
         
         let backView = UIView(frame: CGRect(x: 20, y: 50, width: 350, height: 50))
         backView.backgroundColor = UIColor(named: "LoadPhotoColor")
         backView.layer.cornerRadius = 10
         
-        let progressBar = UIProgressView(frame: CGRect(x: 25, y: 25, width: 300, height: 100))
+        let progressBar = UIProgressView(frame: CGRect(x: 25, y: 25, width: 300, height: 10))
         backView.addSubview(progressBar)
         progressBar.progressViewStyle = .bar
         progressBar.progressTintColor = UIColor(named: "MainAppColor")
@@ -110,7 +111,23 @@ extension CreateButton {
         
         backView.addSubview(progressBar)
         
-        return (backView,progressBar)
+        let label = createLabelUsersLaunch(width: width)
+        
+        return (backView,progressBar,label)
+    }
+    
+    func createLabelUsersLaunch(width:CGFloat) -> UILabel {
+        
+        let label = UILabel(frame: CGRect(x: 0, y: 0, width: width, height: 40))
+        label.text = "Идет загрузка пользователей..."
+        label.adjustsFontSizeToFitWidth = true /// Подстраиваем шрифт под размер рамки
+        label.minimumScaleFactor = 0.1 /// Наимаеньший множитель для текущего шрифта т.е 35 * 0.1 
+        label.textAlignment = .center
+        label.font = .boldSystemFont(ofSize: 50)
+        label.textColor = .black
+        
+        
+        return label
     }
     
 }

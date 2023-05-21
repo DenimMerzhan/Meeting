@@ -41,7 +41,7 @@ struct Test {
             let imageID = "photoImage" + dataUser.nameUser + randomString(length: 5)
             
             let imagesRef = storage.reference().child("UsersPhoto").child(dataUser.nameUser).child(imageID) /// Создаем ссылку на файл
-            guard let imageData = image.jpegData(compressionQuality: 0.2) else { /// Преобразуем в Jpeg c сжатием
+            guard let imageData = image.jpegData(compressionQuality: 0.0) else { /// Преобразуем в Jpeg c сжатием
                 return
             }
             let metaData = StorageMetadata()
