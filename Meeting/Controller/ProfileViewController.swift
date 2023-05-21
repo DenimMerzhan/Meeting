@@ -38,13 +38,10 @@ class ProfileViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
        
-        
+
         profileUpdate()
-        print(profilePhoto.frame, "PhotoFrame")
-        
+     
         currentAuthUser = navViewController.currentAuthUser /// Каждый раз обновляем currentAuthUser что бы срабатывал блок DidSet
-        print(circularProgressBar.center, "CurculatCenter")
-        print(circularProgressBar.frame, "FrameCurcular")
     }
     
     override func viewDidLoad() {
@@ -85,7 +82,8 @@ private extension ProfileViewController {
         
     func startSettings(animateProgressToValue: Float){
         
-        view.bringSubviewToFront(nameAgeLabel) /// В Iphone 4 этот лейбл скрывается т.к не помещяеся в элемент MostView поэтому он всегда будет на переднем плане
+        nameAgeLabel.lineBreakMode = .byWordWrapping
+        nameAgeLabel.numberOfLines = 3
         
         fillingScaleProfile.frame.origin.x = profilePhoto.frame.origin.x
         fillingScaleProfile.frame.origin.y = profilePhoto.frame.maxY - 7
@@ -141,9 +139,6 @@ private extension ProfileViewController {
         fillingScaleProfile.text = String(format: "%.0f", newStatus)  + "% ЗАПОЛНЕНО"
         
         circularProgressBar.progressAnimation(duration: Double(animateProgressToValue) * 5, toValue: animateProgressToValue - 0.1)
-            
-            
-        
     }
     
 }
