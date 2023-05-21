@@ -37,11 +37,8 @@ class ProfileViewController: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-       
-
-        profileUpdate()
-     
         currentAuthUser = navViewController.currentAuthUser /// Каждый раз обновляем currentAuthUser что бы срабатывал блок DidSet
+        profileUpdate()
     }
     
     override func viewDidLoad() {
@@ -138,7 +135,7 @@ private extension ProfileViewController {
         if newStatus > 100 {newStatus = 100}
         fillingScaleProfile.text = String(format: "%.0f", newStatus)  + "% ЗАПОЛНЕНО"
         
-        circularProgressBar.progressAnimation(duration: Double(animateProgressToValue) * 5, toValue: animateProgressToValue - 0.1)
+        circularProgressBar.progressAnimation(duration: Double(animateProgressToValue) * 8, toValue: animateProgressToValue - 0.1)
     }
     
 }

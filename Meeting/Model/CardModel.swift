@@ -124,6 +124,7 @@ struct CardModel {
         let frame =  CGRect(x: 16, y: 118, width: width, height: height)
         
         let label = UILabel(frame: CGRect(x: 32, y: 170, width: 300, height: 200.0))
+        label.center = CGPoint(x: width / 2, y: height / 2)
         label.text = "Идет заугрзка новых пар для тебя..."
         label.font = .boldSystemFont(ofSize: 30)
         label.lineBreakMode = .byWordWrapping
@@ -151,6 +152,7 @@ struct CardModel {
         let frame =  CGRect(x: 16, y: 118, width: width, height: height)
         
         let label = UILabel(frame: CGRect(x: 32, y: 170, width: 300, height: 200.0))
+        label.center = CGPoint(x: width / 2, y: height / 2 )
         label.text = "Пары закончились :("
         label.font = .boldSystemFont(ofSize: 30)
         label.lineBreakMode = .byWordWrapping

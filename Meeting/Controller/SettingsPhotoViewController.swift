@@ -183,7 +183,7 @@ extension SettingsPhotoViewController {
 
     func uploadDataToServer(image: UIImage){
         doneButton.isHidden = true
-        let progressView = CreateButton().createProgressBarLoadPhoto()
+        let progressView = CreateButton().createProgressBarLoadPhoto(width: view.frame.width - 40)
         view.addSubview(progressView.backView)
         
         UIView.animate(withDuration: 4, delay: 0.2) {

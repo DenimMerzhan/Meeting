@@ -29,7 +29,7 @@ class ViewController: UIViewController {
     var cardModel = CardModel()
     var currentAuthUser = CurrentAuthUser(ID: "+79817550000")
     
-    var progressViewLoadUsers = CreateButton().createProgressLoadUsersStartForLaunch()
+    var progressViewLoadUsers = CreateButton().createProgressLoadUsersStartForLaunch(width: 0)
     
     var timer = Timer()
     
@@ -67,8 +67,13 @@ class ViewController: UIViewController {
             self.fireTimer()
         }
         
-        view.addSubview(progressViewLoadUsers.backView)
+        
         progressViewLoadUsers.backView.center = view.center
+        progressViewLoadUsers.label = CreateButton().createProgressLoadUsersStartForLaunch(width: view.frame.width - 40).label
+        progressViewLoadUsers.label.center = CGPoint(x: view.center.x, y: view.center.y - 70)
+        view.addSubview(progressViewLoadUsers.backView)
+        view.addSubview(progressViewLoadUsers.label)
+        
         
         Task {
             
@@ -313,6 +318,7 @@ extension ViewController {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             
             self.progressViewLoadUsers.progressBar.removeFromSuperview()
+            self.progressViewLoadUsers.label.removeFromSuperview()
             self.progressViewLoadUsers.backView.removeFromSuperview()
             
             self.tabBarController?.tabBar.barTintColor = .white
