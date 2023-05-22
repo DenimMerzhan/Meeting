@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ChatCellTableViewCell: UITableViewCell {
+class ChatCell: UITableViewCell {
 
     
     @IBOutlet weak var avatarUser: UIImageView!
@@ -16,8 +16,8 @@ class ChatCellTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        avatarUser.layer.cornerRadius = 10
-        avatarUser.layer.masksToBounds = true
+//        avatarUser.layer.cornerRadius = 10
+//        avatarUser.layer.masksToBounds = true
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
