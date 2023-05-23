@@ -3,7 +3,7 @@ import UIKit
 
 class ChatCellView: UIView {
     
-    let avatar = UIImageView(frame: CGRect(x: 10, y: 10, width: 80, height: 80))
+    let avatar = UIImageView(frame: CGRect(x: 10, y: 15, width: 80, height: 80))
     let nameLabel =  UILabel()
     let commentLabel =  UILabel()
     private let bottomLine = UIView()
@@ -16,8 +16,8 @@ class ChatCellView: UIView {
         
         super.layoutSubviews()
         
-        avatar.frame.size.height = 80
-        avatar.frame.size.width = 80
+        avatar.frame.size.height = 70
+        avatar.frame.size.width = 70
         
         nameLabel.frame = CGRect(x: avatar.frame.maxX + 5, y: 25, width: 200, height: 30)
         
@@ -27,7 +27,7 @@ class ChatCellView: UIView {
         avatar.layer.cornerRadius = avatar.frame.width / 2
         avatar.clipsToBounds = true
         
-        nameLabel.font = .boldSystemFont(ofSize: 30)
+        nameLabel.font = .boldSystemFont(ofSize: 25)
         commentLabel.font = .systemFont(ofSize: 12)
         commentLabel.textColor = .gray
         

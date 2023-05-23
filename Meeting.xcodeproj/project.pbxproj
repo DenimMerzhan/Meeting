@@ -16,6 +16,7 @@
 		CF069DAC29EC2D3E005ED378 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CF069DAA29EC2D3E005ED378 /* LaunchScreen.storyboard */; };
 		CF1DC80829F0D46C001E2EAD /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1DC80729F0D46C001E2EAD /* CardView.swift */; };
 		CF1DC80A29F0DFC3001E2EAD /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1DC80929F0DFC3001E2EAD /* User.swift */; };
+		CF51A8F82A1CC57900BC3265 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF51A8F72A1CC57900BC3265 /* Message.swift */; };
 		CF59A22C2A1B53B300954CCE /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF59A22B2A1B53B300954CCE /* ChatViewController.swift */; };
 		CF5E4ABB2A1BA0B8003CCC79 /* ChatViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5E4ABA2A1BA0B8003CCC79 /* ChatViewCell.swift */; };
 		CF7D03092A0B80330028E7EB /* CurrentAuthUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7D03082A0B80330028E7EB /* CurrentAuthUser.swift */; };
@@ -46,6 +47,7 @@
 		CF069DAD29EC2D3E005ED378 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CF1DC80729F0D46C001E2EAD /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		CF1DC80929F0DFC3001E2EAD /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		CF51A8F72A1CC57900BC3265 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		CF59A22B2A1B53B300954CCE /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		CF5E4ABA2A1BA0B8003CCC79 /* ChatViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewCell.swift; sourceTree = "<group>"; };
 		CF7D03082A0B80330028E7EB /* CurrentAuthUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentAuthUser.swift; sourceTree = "<group>"; };
@@ -145,6 +147,7 @@
 			children = (
 				CF1DC80929F0DFC3001E2EAD /* User.swift */,
 				CFD689212A0E5EB0003EB21A /* CurrentUserImage.swift */,
+				CF51A8F72A1CC57900BC3265 /* Message.swift */,
 			);
 			path = CustomStruct;
 			sourceTree = "<group>";
@@ -318,6 +321,7 @@
 				CF1DC80829F0D46C001E2EAD /* CardView.swift in Sources */,
 				CF7D03092A0B80330028E7EB /* CurrentAuthUser.swift in Sources */,
 				CFCD0F9C2A0A887E00C17AFC /* TestFile.swift in Sources */,
+				CF51A8F82A1CC57900BC3265 /* Message.swift in Sources */,
 				CFD689222A0E5EB0003EB21A /* CurrentUserImage.swift in Sources */,
 				CF807F0929FFF57800D5ACD1 /* CollectionPhotoCell.swift in Sources */,
 				CF069DA029EC2D3D005ED378 /* AppDelegate.swift in Sources */,

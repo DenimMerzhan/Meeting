@@ -16,8 +16,11 @@ struct User {
     var name = String()
     var age = Int()
     
+    var avatar = UIImage()
     var imageArr = [UIImage]()
     var urlPhotoArr = [String]()
+    
+    var chatArr = [message]()
     
     private let db = Firestore.firestore()
     private let fileManager = FileManager.default

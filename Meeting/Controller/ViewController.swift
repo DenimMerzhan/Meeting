@@ -79,12 +79,12 @@ class ViewController: UIViewController {
             
             startSettings()
             
-//            if await loadCurrentUsersData() {
+            if await loadCurrentUsersData() {
 //                await loadNewUsers(numberRequsetedUsers: 2)
 //                startSettings()
-//            }else{
-//                print("Ошибка загрузки текущего пользователя")
-//            }
+            }else{
+                print("Ошибка загрузки текущего пользователя")
+            }
         }
 
     }
