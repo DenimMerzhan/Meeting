@@ -6,13 +6,27 @@ class ChatCellView: UIView {
     let avatar = UIImageView(frame: CGRect(x: 10, y: 15, width: 80, height: 80))
     let ID: String
     
+    var mostCenterX = CGFloat()
     let nameLabel =  UILabel()
     let commentLabel =  UILabel()
     
+    private var loweringCoefficient: CGFloat = 1 {
+        didSet {
+            if loweringCoefficient == 0 {
+                loweringCoefficient = 1
+            }
+        }
+    }
     
+    private var prepareDeleteUser = Bool()
     private let bottomLine = UIView()
+    private var scrollEnd = true
     
-    let tap = UITapGestureRecognizer()
+    weak var scrollView = UIScrollView()
+    
+    
+    let tapGesture = UITapGestureRecognizer()
+    let panGesture = UIPanGestureRecognizer()
     
     init(x: CGFloat,y: CGFloat,width: CGFloat,ID: String) {
         self.ID = ID
@@ -23,7 +37,14 @@ class ChatCellView: UIView {
         
         super.layoutSubviews()
         
-        self.addGestureRecognizer(tap)
+        scrollView?.delegate = self
+        
+        self.addGestureRecognizer(tapGesture)
+        self.addGestureRecognizer(panGesture)
+        
+        panGesture.delegate = self
+        
+        panGesture.addTarget(self, action: #selector(viewDrags(_:)))
         
         avatar.frame.size.height = 70
         avatar.frame.size.width = 70
@@ -58,4 +79,74 @@ class ChatCellView: UIView {
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
     
+    @objc func viewDrags(_ sender: UIPanGestureRecognizer){
+        
+        let point = sender.translation(in: self)
+        
+        if scrollEnd == false {return}
+        
+        if point.x < 0 && prepareDeleteUser == false {
+            
+            self.center.x = self.center.x + (point.x / loweringCoefficient)
+            loweringCoefficient += 3
+            
+            if sender.state == .ended && abs(point.x) > 20 {
+                UIView.animate(withDuration: 0.2, delay: 0) {
+                    self.center.x = self.mostCenterX - 70
+                    self.prepareDeleteUser = true
+                    self.loweringCoefficient = 0
+                }
+            }else if sender.state == .ended {
+                self.center.x = self.mostCenterX
+                self.loweringCoefficient = 0
+            }
+            
+        }else if prepareDeleteUser {
+            
+            if point.x > 0 {
+                
+                if frame.maxX < frame.width {
+                    self.center.x = self.center.x + (point.x / 20)
+                }
+                
+                if sender.state == .ended {
+                UIView.animate(withDuration: 0.3, delay: 0) {
+                    self.center.x = self.mostCenterX
+                    self.prepareDeleteUser = false
+                    self.loweringCoefficient = 1
+                }
+                    
+                    
+            }
+        }
+    }
+}
+    
+}
+
+
+
+//MARK: -  Разрешаем совместное использование Pangesture и ScrollView
+
+extension ChatCellView: UIGestureRecognizerDelegate {
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool { /// Спрашивает должен ли PanGesture распозновать жесты вместе с другими распознователями
+        return true
+    }
+    
+    
+}
+
+//MARK: -  Отслеживание началось ли прокрутка ScrollView
+
+extension ChatCellView: UIScrollViewDelegate {
+    
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        scrollEnd = false
+    }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        scrollEnd = true
+        print("Now")
+    }
 }

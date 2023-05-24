@@ -9,7 +9,9 @@ import UIKit
 
 class ChatViewController: UIViewController {
 
-    @IBOutlet weak var mostScrollView: UIView!
+    
+    @IBOutlet weak var verticalScrollView: UIScrollView!
+    @IBOutlet weak var mostViewScrolling: UIView!
     @IBOutlet weak var meetingLabel: UILabel!
     @IBOutlet weak var heightMostScrollView: NSLayoutConstraint!
     
@@ -29,8 +31,8 @@ class ChatViewController: UIViewController {
         get {
             if userPairs.count > 0 {
                 let width = CGFloat(potenitalChatCellArr.count * 115) + 15
-                if width < mostScrollView.frame.width {
-                    return mostScrollView.frame.width + 50
+                if width < mostViewScrolling.frame.width {
+                    return mostViewScrolling.frame.width + 50
                 }else {
                     return width
                 }
@@ -83,7 +85,7 @@ class ChatViewController: UIViewController {
         heightMostScrollView.constant = calculateHeightMostScrollView /// Обновляем константу вертикального ScrollView  в зависимости от количества чатов
         view.layoutIfNeeded()
         
-        mostScrollView.addSubview(horizontalScrollView)
+        mostViewScrolling.addSubview(horizontalScrollView)
         horizontalScrollView.addSubview(contenView)
         contenView.addSubview(stackView)
         
@@ -112,19 +114,21 @@ extension ChatViewController {
             if user.chatArr.count > 0 { /// Если у текущего пользователя был чат с новым пользователем
                 
                 if chatCellArr.count > 0 {
-                    chatCell.frame = CGRect(x: 10, y:chatCellArr.last!.frame.maxY + 10 , width: view.frame.width, height: chatCell.frame.height)
+                    chatCell.frame = CGRect(x: 10, y:chatCellArr.last!.frame.maxY + 10 , width: view.frame.width - 10, height: chatCell.frame.height)
                 }else {
-                    chatCell.frame = CGRect(x: 10, y: horizontalScrollView.frame.maxY + 50, width: view.frame.width, height: chatCell.frame.height)
+                    chatCell.frame = CGRect(x: 10, y: horizontalScrollView.frame.maxY + 50, width: view.frame.width - 10, height: chatCell.frame.height)
                 }
-                
+                chatCell.mostCenterX = chatCell.center.x
                 chatCell.avatar.image = UIImage(named: "KatyaS")
                 chatCell.nameLabel.text = "Алиса"
                 chatCell.commentLabel.text = user.chatArr.last?.body /// Последнее сообщение от нее
+                chatCell.scrollView = verticalScrollView
                 
-                chatCell.tap.addTarget(self, action: #selector(handleTap(_:)))
+                chatCell.tapGesture.addTarget(self, action: #selector(handleTap(_:)))
+                
                 
                 chatCellArr.append(chatCell)
-                mostScrollView.addSubview(chatCell)
+                mostViewScrolling.addSubview(chatCell)
                 
             }
         }
@@ -230,16 +234,16 @@ extension ChatViewController {
     
     @objc func handleTap(_ sender:UITapGestureRecognizer){
         
-        if let currentView = sender.view as? ChatCellView {
-            selectedUserID = currentView.ID
-            performSegue(withIdentifier: "goToChat", sender: self)
-        }else if let currentView = sender.view as? PotentialChatCell {
-            guard let id = currentView.ID else {return}
-            selectedUserID = id
-            performSegue(withIdentifier: "goToChat", sender: self)
-        }else {
-            return
-        }
+//        if let currentView = sender.view as? ChatCellView {
+//            selectedUserID = currentView.ID
+//            performSegue(withIdentifier: "goToChat", sender: self)
+//        }else if let currentView = sender.view as? PotentialChatCell {
+//            guard let id = currentView.ID else {return}
+//            selectedUserID = id
+//            performSegue(withIdentifier: "goToChat", sender: self)
+//        }else {
+//            return
+//        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -252,26 +256,9 @@ extension ChatViewController {
 
 
 
-//func shuffleArray(){
-//    print("Начата перемешка массива")
-//
-//    if potenitalChatCellArr.count == 0 {return}
-//
-//    for i in 0...potenitalChatCellArr.count - 1 {
-//        print("index - ", i)
-//        print("Счетик архив", potenitalChatCellArr.count)
-//
-//        if potenitalChatCellArr[i].avatar != nil {
-//
-//            let element = potenitalChatCellArr.remove(at: i)
-//            stackView.removeArrangedSubview(element)
-//            print("Yeah")
-//            potenitalChatCellArr.insert(element, at: 0)
-//            stackView.addArrangedSubview(element)
-//
-//            print("Счетчик архива после изменения - \(potenitalChatCellArr.count)")
-//        }
-//
-//    }
-//    print(potenitalChatCellArr)
-//}
+
+
+
+
+
+

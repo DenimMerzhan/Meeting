@@ -206,7 +206,8 @@
                     <connections>
                         <outlet property="heightMostScrollView" destination="3Nm-cA-YAy" id="6y7-Uk-Sd5"/>
                         <outlet property="meetingLabel" destination="bsX-Nb-TiW" id="Q3f-Uv-Xps"/>
-                        <outlet property="mostScrollView" destination="Bkm-ki-GZ0" id="pns-Of-yjk"/>
+                        <outlet property="mostViewScrolling" destination="Bkm-ki-GZ0" id="pns-Of-yjk"/>
+                        <outlet property="verticalScrollView" destination="XQX-og-ehf" id="Xr1-zo-JZf"/>
                         <segue destination="yHA-e7-o3S" kind="presentation" identifier="goToChat" modalPresentationStyle="fullScreen" id="Yh2-2j-Ke2"/>
                     </connections>
                 </viewController>
