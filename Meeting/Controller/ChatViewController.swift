@@ -15,7 +15,7 @@ class ChatViewController: UIViewController {
     
     private var userPairs = [User]()
     var chatCellArr = [ChatCellView]()
-    
+    var selectedUserID = String()
     
     var potenitalChatCellArr = [PotentialChatCell](){
         didSet {
@@ -103,23 +103,29 @@ extension ChatViewController {
     
     func createChatViewCell()  {
         
-        var chatCell = ChatCellView(x: 0, y: 0, width: 0)
+        
         
         for user in userPairs {
+            
+            let chatCell = ChatCellView(x: 0, y: 0, width: 0,ID: user.ID)
             
             if user.chatArr.count > 0 { /// Если у текущего пользователя был чат с новым пользователем
                 
                 if chatCellArr.count > 0 {
-                    chatCell = ChatCellView(x: 10, y:chatCellArr.last!.frame.maxY + 10 , width: view.frame.width)
+                    chatCell.frame = CGRect(x: 10, y:chatCellArr.last!.frame.maxY + 10 , width: view.frame.width, height: chatCell.frame.height)
                 }else {
-                    chatCell = ChatCellView(x: 10, y: horizontalScrollView.frame.maxY + 50, width: view.frame.width)
+                    chatCell.frame = CGRect(x: 10, y: horizontalScrollView.frame.maxY + 50, width: view.frame.width, height: chatCell.frame.height)
                 }
                 
                 chatCell.avatar.image = UIImage(named: "KatyaS")
                 chatCell.nameLabel.text = "Алиса"
                 chatCell.commentLabel.text = user.chatArr.last?.body /// Последнее сообщение от нее
+                
+                chatCell.tap.addTarget(self, action: #selector(handleTap(_:)))
+                
                 chatCellArr.append(chatCell)
                 mostScrollView.addSubview(chatCell)
+                
             }
         }
     }
@@ -155,7 +161,7 @@ extension ChatViewController {
         for user in userPairs { /// Если чата не было
             
             if user.chatArr.count == 0 {
-                let potentialChatCell = PotentialChatCell(frame: CGRect(x: 0, y: 0, width: 105, height: 155), avatar: user.avatar, name: user.name)
+                let potentialChatCell = PotentialChatCell(frame: CGRect(x: 0, y: 0, width: 105, height: 155), avatar: user.avatar, name: user.name,ID: user.ID)
                 potenitalChatCellArr.append(potentialChatCell)
                 stackView.addArrangedSubview(potentialChatCell)
             }
@@ -171,7 +177,7 @@ extension ChatViewController {
     
     func LoadUsersPairs(){
         
-        for i in 0...8 {
+        for _ in 0...8 {
             
             var newUser = User(ID: "Катя" + String(Int.random(in: 1000...1000000)))
             
@@ -185,7 +191,7 @@ extension ChatViewController {
             userPairs.append(newUser)
         }
         
-        for i in 0...2 {
+        for _ in 0...2 {
             
             var newUser = User(ID: "Катя" + String(Int.random(in: 1000...1000000)))
         
@@ -208,8 +214,8 @@ extension ChatViewController {
     func creatEmptyPotentialCell(){
         
         if potenitalChatCellArr.count < 4 {
-            for i in 0...4 - potenitalChatCellArr.count - 1 {
-                let cell = PotentialChatCell(frame: CGRect(x: 0, y: 0, width: 105, height: 155), avatar: nil, name: nil)
+            for _ in 0...4 - potenitalChatCellArr.count - 1 {
+                let cell = PotentialChatCell(frame: CGRect(x: 0, y: 0, width: 105, height: 155), avatar: nil, name: nil,ID: nil)
                 potenitalChatCellArr.append(cell)
                 stackView.addArrangedSubview(cell)
             }
@@ -218,31 +224,54 @@ extension ChatViewController {
 }
 
 
-//MARK: - Пермешка массива
+//MARK: - Переход в контроллер чата с пользователем
 
 extension ChatViewController {
     
-    func shuffleArray(){
-        print("Начата перемешка массива")
+    @objc func handleTap(_ sender:UITapGestureRecognizer){
         
-        if potenitalChatCellArr.count == 0 {return}
-        
-        for i in 0...potenitalChatCellArr.count - 1 {
-            print("index - ", i)
-            print("Счетик архив", potenitalChatCellArr.count)
-            
-            if potenitalChatCellArr[i].avatar != nil {
-                
-                let element = potenitalChatCellArr.remove(at: i)
-                stackView.removeArrangedSubview(element)
-                print("Yeah")
-                potenitalChatCellArr.insert(element, at: 0)
-                stackView.addArrangedSubview(element)
-                
-                print("Счетчик архива после изменения - \(potenitalChatCellArr.count)")
-            }
-            
+        if let currentView = sender.view as? ChatCellView {
+            selectedUserID = currentView.ID
+            performSegue(withIdentifier: "goToChat", sender: self)
+        }else if let currentView = sender.view as? PotentialChatCell {
+            guard let id = currentView.ID else {return}
+            selectedUserID = id
+            performSegue(withIdentifier: "goToChat", sender: self)
+        }else {
+            return
         }
-        print(potenitalChatCellArr)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard let destanationVC = segue.destination as? ChatUserController else  {return}
+        destanationVC.userID = selectedUserID
     }
 }
+
+
+
+
+
+//func shuffleArray(){
+//    print("Начата перемешка массива")
+//
+//    if potenitalChatCellArr.count == 0 {return}
+//
+//    for i in 0...potenitalChatCellArr.count - 1 {
+//        print("index - ", i)
+//        print("Счетик архив", potenitalChatCellArr.count)
+//
+//        if potenitalChatCellArr[i].avatar != nil {
+//
+//            let element = potenitalChatCellArr.remove(at: i)
+//            stackView.removeArrangedSubview(element)
+//            print("Yeah")
+//            potenitalChatCellArr.insert(element, at: 0)
+//            stackView.addArrangedSubview(element)
+//
+//            print("Счетчик архива после изменения - \(potenitalChatCellArr.count)")
+//        }
+//
+//    }
+//    print(potenitalChatCellArr)
+//}

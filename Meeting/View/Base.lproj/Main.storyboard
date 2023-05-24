@@ -113,7 +113,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="-440.93023255813955" y="-230.47210300429185"/>
+            <point key="canvasLocation" x="-2252" y="-231"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="cMK-HR-3nX">
@@ -135,6 +135,21 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BBc-wt-NZm" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="105" y="639"/>
+        </scene>
+        <!--ChatUserController-->
+        <scene sceneID="CQv-eA-6dh">
+            <objects>
+                <viewController title="ChatUserController" id="yHA-e7-o3S" customClass="ChatUserController" customModule="Meeting" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="lfM-Ck-SYL">
+                        <rect key="frame" x="0.0" y="0.0" width="430" height="932"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="tCo-6Q-166"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="5YV-Go-N28" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="136" y="-1018"/>
         </scene>
         <!--Chat View Controller-->
         <scene sceneID="n1x-ky-8O3">
@@ -192,11 +207,12 @@
                         <outlet property="heightMostScrollView" destination="3Nm-cA-YAy" id="6y7-Uk-Sd5"/>
                         <outlet property="meetingLabel" destination="bsX-Nb-TiW" id="Q3f-Uv-Xps"/>
                         <outlet property="mostScrollView" destination="Bkm-ki-GZ0" id="pns-Of-yjk"/>
+                        <segue destination="yHA-e7-o3S" kind="presentation" identifier="goToChat" modalPresentationStyle="fullScreen" id="Yh2-2j-Ke2"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vV9-Cx-Zz3" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="402.89855072463769" y="-231.02678571428569"/>
+            <point key="canvasLocation" x="105" y="-232"/>
         </scene>
         <!--Profile View Controller-->
         <scene sceneID="o0t-gl-C3U">
@@ -332,7 +348,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lrK-ip-phe" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2477.5999999999999" y="-231.2807881773399"/>
+            <point key="canvasLocation" x="2732" y="-231"/>
         </scene>
         <!--Settings Photo View Controller-->
         <scene sceneID="LpA-l0-EQL">
@@ -438,7 +454,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Koi-h7-AxS" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3481.679389312977" y="-875.35211267605644"/>
+            <point key="canvasLocation" x="4014" y="-874"/>
         </scene>
     </scenes>
     <resources>
