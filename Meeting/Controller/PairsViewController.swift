@@ -8,7 +8,7 @@
 import UIKit
 import AudioToolbox
 
-class ViewController: UIViewController {
+class PairsViewController: UIViewController {
     
     
     
@@ -197,7 +197,7 @@ class ViewController: UIViewController {
 //MARK: - Загрузка нового пользователя
 
 
-extension ViewController {
+extension PairsViewController {
     
     func loadNewPeople(card:CardView){
         
@@ -242,7 +242,7 @@ extension ViewController {
 //MARK: - Создание нового CardView
 
 
-extension ViewController {
+extension PairsViewController {
     
     func createNextCard() -> CardView {
         
@@ -264,7 +264,7 @@ extension ViewController {
 
 //MARK: -  Загрузка новых пользователей
 
-extension ViewController {
+extension PairsViewController {
     
     func loadNewUsers(numberRequsetedUsers: Int) async{
         
@@ -307,7 +307,7 @@ extension ViewController {
 }
 //MARK: -  Дополнительные расширения
 
-extension ViewController {
+extension PairsViewController {
     
     func startSettings(){
         
