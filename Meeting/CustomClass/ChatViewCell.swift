@@ -4,9 +4,13 @@ import UIKit
 class ChatCellView: UIView {
     
     let avatar = UIImageView(frame: CGRect(x: 10, y: 15, width: 80, height: 80))
+    
     let nameLabel =  UILabel()
     let commentLabel =  UILabel()
+    
     private let bottomLine = UIView()
+    
+    let tap = UITapGestureRecognizer()
     
     init(x: CGFloat,y: CGFloat,width: CGFloat) {
         super.init(frame: CGRect(x: x, y: y, width: width, height: 100))
@@ -15,6 +19,9 @@ class ChatCellView: UIView {
     override func layoutSubviews() {
         
         super.layoutSubviews()
+        
+        self.addGestureRecognizer(tap)
+        tap.addTarget(self, action: #selector(self.handleTap(_:)))
         
         avatar.frame.size.height = 70
         avatar.frame.size.width = 70
@@ -38,11 +45,7 @@ class ChatCellView: UIView {
         bottomLine.clipsToBounds = true
         bottomLine.alpha = 0.3
         
-        
-        
         self.backgroundColor = .clear
-        
-        
         
         self.addSubview(avatar)
         self.addSubview(nameLabel)
@@ -51,5 +54,12 @@ class ChatCellView: UIView {
     }
     
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+ 
+    
+    @objc func handleTap(_ sender:UITapGestureRecognizer? = nil){
+        if sender == nil {return}
+        
+        print("Yeah")
+    }
     
 }

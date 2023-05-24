@@ -16,10 +16,24 @@ class ChatViewController: UIViewController {
     private var userPairs = [User]()
     var chatCellArr = [ChatCellView]()
     
+    
+    var potenitalChatCellArr = [PotentialChatCell](){
+        didSet {
+            if potenitalChatCellArr.count > 4 { /// Если есть хотя бы 4 фото, то убираем пустые ячейки
+                potenitalChatCellArr.removeAll(where: {$0.avatar == nil })
+            }
+        }
+    }
+    
     private var widthHorizontalScrollview: CGFloat {
         get {
             if userPairs.count > 0 {
-                return CGFloat((userPairs.count - chatCellArr.count ) * 115) + 35
+                let width = CGFloat(potenitalChatCellArr.count * 115) + 15
+                if width < mostScrollView.frame.width {
+                    return mostScrollView.frame.width + 50
+                }else {
+                    return width
+                }
             }else {
                 return 115
             }
@@ -29,7 +43,7 @@ class ChatViewController: UIViewController {
     private var calculateHeightMostScrollView: CGFloat {
         get {
             if chatCellArr.count > 0 {
-                return CGFloat(chatCellArr.count * 110) + horizontalScrollView.frame.height + 50 + 25
+                return CGFloat(chatCellArr.count * 110) + horizontalScrollView.frame.height + 50 + 35
             }else {
                 return 110
             }
@@ -40,7 +54,7 @@ class ChatViewController: UIViewController {
         
         let scrollView = UIScrollView()
         scrollView.backgroundColor = .clear
-        scrollView.frame = CGRect(x: 10, y: 50, width: mostScrollView.frame.width, height: 155)
+        scrollView.frame = CGRect(x: 10, y: 60, width: view.frame.width, height: 155)
         scrollView.contentSize = CGSize(width: widthHorizontalScrollview, height: 155)
         return scrollView
     }()
@@ -64,24 +78,19 @@ class ChatViewController: UIViewController {
         super.viewDidLoad()
         
         LoadUsersPairs()
-        print(widthHorizontalScrollview)
-        print(view.frame)
+        createChatViewCell()
+        
+        heightMostScrollView.constant = calculateHeightMostScrollView /// Обновляем константу вертикального ScrollView  в зависимости от количества чатов
+        view.layoutIfNeeded()
         
         mostScrollView.addSubview(horizontalScrollView)
-        print(horizontalScrollView.frame.width)
-        
         horizontalScrollView.addSubview(contenView)
         contenView.addSubview(stackView)
         
         createContentHorizontalScrollView()
         setupContentViewContstains()
-        
-        createChatViewCell()
-        heightMostScrollView.constant = calculateHeightMostScrollView
-        view.layoutIfNeeded()
+        horizontalScrollView.contentSize.width = widthHorizontalScrollview
     }
-    
-
 }
 
 
@@ -108,7 +117,7 @@ extension ChatViewController {
                 
                 chatCell.avatar.image = UIImage(named: "KatyaS")
                 chatCell.nameLabel.text = "Алиса"
-                chatCell.commentLabel.text = user.chatArr.last(where: {$0.sender == user.ID})?.body /// Последнее сообщение от нее
+                chatCell.commentLabel.text = user.chatArr.last?.body /// Последнее сообщение от нее
                 chatCellArr.append(chatCell)
                 mostScrollView.addSubview(chatCell)
             }
@@ -138,41 +147,23 @@ extension ChatViewController {
         
     }
     
-//MARK: -  Создание изображений пар которых пользователей не лайкнул в Горизонтальном ScrollView
+    
+//MARK: -  Создание PotentialChatCell
     
     private func createContentHorizontalScrollView(){
         
         for user in userPairs { /// Если чата не было
             
             if user.chatArr.count == 0 {
-                let viewUser = UIView(frame: CGRect(x: 0, y: 0, width: 105, height: 155))
-                let imageUser = UIImageView(frame: CGRect(x: 0, y: 0, width: viewUser.frame.width, height: viewUser.frame.height - 25))
-                let label = UILabel(frame: CGRect(x: 0, y: viewUser.frame.maxY - 20, width: viewUser.frame.width, height: 20))
-                
-                
-                imageUser.image = user.avatar
-                imageUser.contentMode = .scaleAspectFill
-                imageUser.layer.cornerRadius = 10
-                imageUser.clipsToBounds = true
-                
-                label.text = user.name
-                label.center.x = 50
-                label.textAlignment = .center
-                label.font = .boldSystemFont(ofSize: 20)
-                label.minimumScaleFactor = 0.5
-                label.adjustsFontSizeToFitWidth = true
-                label.textColor = .black
-                
-                viewUser.addSubview(imageUser)
-                viewUser.addSubview(label)
-                
-                stackView.addArrangedSubview(viewUser)
+                let potentialChatCell = PotentialChatCell(frame: CGRect(x: 0, y: 0, width: 105, height: 155), avatar: user.avatar, name: user.name)
+                potenitalChatCellArr.append(potentialChatCell)
+                stackView.addArrangedSubview(potentialChatCell)
             }
         }
-        
+        creatEmptyPotentialCell()
     }
-    
 }
+
 
 //MARK: - Загрузка аватаров пользователей
 
@@ -180,19 +171,78 @@ extension ChatViewController {
     
     func LoadUsersPairs(){
         
-        for i in 0...12 {
+        for i in 0...8 {
             
             var newUser = User(ID: "Катя" + String(Int.random(in: 1000...1000000)))
             
-            if Bool.random() {
+         
                 newUser.chatArr.append(message(sender: newUser.ID, body: "Привет,все хорошо?"))
-            }
+            
             newUser.name = newUser.ID
             newUser.avatar = UIImage(named: "KatyaS")!
             newUser.age = Int.random(in: 18...35)
             
             userPairs.append(newUser)
         }
+        
+        for i in 0...2 {
+            
+            var newUser = User(ID: "Катя" + String(Int.random(in: 1000...1000000)))
+        
+            newUser.name = newUser.ID
+            newUser.avatar = UIImage(named: "KatyaS")!
+            newUser.age = Int.random(in: 18...35)
+            
+            userPairs.append(newUser)
+        }
+
     }
     
+}
+
+
+//MARK: -  Создание пустых ячеек если потенциальных пар меньше чем 4
+
+extension ChatViewController {
+    
+    func creatEmptyPotentialCell(){
+        
+        if potenitalChatCellArr.count < 4 {
+            for i in 0...4 - potenitalChatCellArr.count - 1 {
+                let cell = PotentialChatCell(frame: CGRect(x: 0, y: 0, width: 105, height: 155), avatar: nil, name: nil)
+                potenitalChatCellArr.append(cell)
+                stackView.addArrangedSubview(cell)
+            }
+        }
+    }
+}
+
+
+//MARK: - Пермешка массива
+
+extension ChatViewController {
+    
+    func shuffleArray(){
+        print("Начата перемешка массива")
+        
+        if potenitalChatCellArr.count == 0 {return}
+        
+        for i in 0...potenitalChatCellArr.count - 1 {
+            print("index - ", i)
+            print("Счетик архив", potenitalChatCellArr.count)
+            
+            if potenitalChatCellArr[i].avatar != nil {
+                
+                let element = potenitalChatCellArr.remove(at: i)
+                stackView.removeArrangedSubview(element)
+                print("Yeah")
+                potenitalChatCellArr.insert(element, at: 0)
+                stackView.addArrangedSubview(element)
+                
+                print("Счетчик архива после изменения - \(potenitalChatCellArr.count)")
+            }
+            
+        }
+        print(potenitalChatCellArr)
+    }
 }
