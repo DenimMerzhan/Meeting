@@ -83,7 +83,14 @@ class ChatCellView: UIView {
         
         let point = sender.translation(in: self)
         
-        if scrollEnd == false {return}
+        if sender.state == .began { /// Если это первое касание
+            let startX = sender.location(in: self) /// Позиация первого касания
+            if startX.x < frame.maxX * 0.75  { /// Если далеко от левого края то завершаем отрабатывать жест
+                print("Yeah")
+                sender.state = .ended
+            }
+        }
+        
         
         if point.x < 0 && prepareDeleteUser == false {
             
@@ -105,9 +112,9 @@ class ChatCellView: UIView {
             
             if point.x > 0 {
                 
-                if frame.maxX < frame.width {
-                    self.center.x = self.center.x + (point.x / 20)
-                }
+                
+                self.center.x = self.center.x + (point.x / 20)
+                loweringCoefficient += 3
                 
                 if sender.state == .ended {
                 UIView.animate(withDuration: 0.3, delay: 0) {
@@ -134,7 +141,13 @@ extension ChatCellView: UIGestureRecognizerDelegate {
         return true
     }
     
-    
+//    override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+//        if scrollEnd {
+//            return true
+//        }else {
+//            return false
+//        }
+//    }
 }
 
 //MARK: -  Отслеживание началось ли прокрутка ScrollView
@@ -143,10 +156,15 @@ extension ChatCellView: UIScrollViewDelegate {
     
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         scrollEnd = false
+        tapGesture.isEnabled = true
+        print("False")
     }
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         scrollEnd = true
-        print("Now")
+        tapGesture.isEnabled = false
+        print("True")
     }
+    
+    
 }
