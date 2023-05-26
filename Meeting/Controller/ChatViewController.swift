@@ -122,7 +122,7 @@ extension ChatViewController {
                     indentY = horizontalScrollView.frame.maxY + 50
                 }
                 
-                let chatCell = ChatCellView(frame: CGRect(x: 10, y: indentY, width: view.frame.width - 10, height: 110), ID: user.ID)
+                let chatCell = ChatCellView(frame: CGRect(x: 10, y: indentY, width: view.frame.width - 10, height: 100), ID: user.ID)
                 
                 chatCell.avatar.image = UIImage(named: "KatyaS")
                 chatCell.nameLabel.text = "Алиса"

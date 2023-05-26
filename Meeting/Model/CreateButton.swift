@@ -20,7 +20,7 @@ struct CreateButton {
         button.layer.shadowRadius = 10
         
         button.backgroundColor = UIColor(named: "MainAppColor")
-        button.setImage(UIImage(named: "Plus"), for: .normal)
+        button.setImage(UIImage(named: "AddPhoto"), for: .normal)
         button.tintColor = UIColor.white
 
         return button
