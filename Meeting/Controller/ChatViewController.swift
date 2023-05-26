@@ -58,7 +58,7 @@ class ChatViewController: UIViewController {
         scrollView.backgroundColor = .clear
         scrollView.frame = CGRect(x: 10, y: 60, width: view.frame.width, height: 155)
         scrollView.contentSize = CGSize(width: widthHorizontalScrollview, height: 155)
-        scrollView.horizontalScrollIndicatorInsets = false
+        scrollView.showsHorizontalScrollIndicator = false
         return scrollView
     }()
     
@@ -80,7 +80,7 @@ class ChatViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        verticalScrollView.verticalScrollIndicatorInsets = false
+        verticalScrollView.showsVerticalScrollIndicator = false
         
         LoadUsersPairs()
         createChatViewCell()
@@ -112,23 +112,24 @@ extension ChatViewController {
         
         for user in userPairs {
             
-            let chatCell = ChatCellView(x: 0, y: 0, width: 0,ID: user.ID)
+            var indentY = CGFloat()
             
             if user.chatArr.count > 0 { /// Если у текущего пользователя был чат с новым пользователем
                 
                 if chatCellArr.count > 0 {
-                    chatCell.frame = CGRect(x: 10, y:chatCellArr.last!.frame.maxY + 10 , width: view.frame.width - 10, height: chatCell.frame.height)
+                    indentY = chatCellArr.last!.frame.maxY
                 }else {
-                    chatCell.frame = CGRect(x: 10, y: horizontalScrollView.frame.maxY + 50, width: view.frame.width - 10, height: chatCell.frame.height)
+                    indentY = horizontalScrollView.frame.maxY + 50
                 }
-                chatCell.mostCenterX = chatCell.center.x
+                
+                let chatCell = ChatCellView(frame: CGRect(x: 10, y: indentY, width: view.frame.width - 10, height: 110), ID: user.ID)
+                
                 chatCell.avatar.image = UIImage(named: "KatyaS")
                 chatCell.nameLabel.text = "Алиса"
                 chatCell.commentLabel.text = user.chatArr.last?.body /// Последнее сообщение от нее
                 chatCell.scrollView = verticalScrollView
                 
                 chatCell.tapGesture.addTarget(self, action: #selector(handleTap(_:)))
-                
                 
                 chatCellArr.append(chatCell)
                 mostViewScrolling.addSubview(chatCell)
