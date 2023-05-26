@@ -58,6 +58,7 @@ class ChatViewController: UIViewController {
         scrollView.backgroundColor = .clear
         scrollView.frame = CGRect(x: 10, y: 60, width: view.frame.width, height: 155)
         scrollView.contentSize = CGSize(width: widthHorizontalScrollview, height: 155)
+        scrollView.horizontalScrollIndicatorInsets = false
         return scrollView
     }()
     
@@ -78,6 +79,8 @@ class ChatViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        verticalScrollView.verticalScrollIndicatorInsets = false
         
         LoadUsersPairs()
         createChatViewCell()

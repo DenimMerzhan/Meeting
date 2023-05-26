@@ -84,10 +84,12 @@ class ChatCellView: UIView {
         let point = sender.translation(in: self)
         
         if sender.state == .began { /// Если это первое касание
+           
             let startX = sender.location(in: self) /// Позиация первого касания
             if startX.x < frame.maxX * 0.75  { /// Если далеко от левого края то завершаем отрабатывать жест
-                print("Yeah")
                 sender.state = .ended
+            }else {
+                scrollView?.isScrollEnabled = false /// Если пользователь решил удалить чат, то останавливаем прокрутку
             }
         }
         
@@ -127,6 +129,10 @@ class ChatCellView: UIView {
             }
         }
     }
+        
+        if sender.state == .ended { /// Каждый раз когда действие закончилось включаем прокрутку
+            scrollView?.isScrollEnabled = true
+        }
 }
     
 }
@@ -140,31 +146,21 @@ extension ChatCellView: UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool { /// Спрашивает должен ли PanGesture распозновать жесты вместе с другими распознователями
         return true
     }
-    
-//    override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-//        if scrollEnd {
-//            return true
-//        }else {
-//            return false
-//        }
-//    }
 }
 
 //MARK: -  Отслеживание началось ли прокрутка ScrollView
 
 extension ChatCellView: UIScrollViewDelegate {
-    
-    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        scrollEnd = false
-        tapGesture.isEnabled = true
-        print("False")
-    }
-    
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        scrollEnd = true
-        tapGesture.isEnabled = false
-        print("True")
-    }
-    
-    
+
+//    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+//        scrollEnd = false
+//        print("False")
+//    }
+//
+//    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+//        scrollEnd = true
+//        print("True")
+//    }
+
+
 }
