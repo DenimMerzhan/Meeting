@@ -11,15 +11,19 @@ class ChatCellView: UIView {
     let commentLabel =  UILabel()
     
 
-    var deleteView = UIView()
-    var banView = UIView()
+    var deleteView = changeView(frame: .zero, buttonImage: UIImage(named: "DeleteChatUser")!, text: "УДАЛИТЬ ИЗ ПАР", color: UIColor(named: "DeleteChatColor")!)
+    
+    var banView = changeView(frame: .zero, buttonImage: UIImage(named: "BanImage")!, text: "Пожаловаться", color: UIColor(named: "BanUserColor")!)
+    
     
     var widthChangeView = CGFloat (){
         didSet {
             banView.frame.origin.x = chatView.frame.maxX
-            banView.frame.size.width = widthChangeView / 2
+            banView.width = widthChangeView / 2
+            
             deleteView.frame.origin.x = banView.frame.maxX
-            deleteView.frame.size.width = widthChangeView / 2
+            deleteView.width = widthChangeView / 2
+        
         }
     }
     
@@ -53,7 +57,7 @@ class ChatCellView: UIView {
     @objc func viewDrags(_ sender: UIPanGestureRecognizer){
         
         let point = sender.translation(in: chatView)
-        
+      
         if sender.state == .began { /// Если это первое касание
            
             let startX = sender.location(in: chatView) /// Позиация первого касания
@@ -88,7 +92,7 @@ class ChatCellView: UIView {
             
         }else if prepareDeleteUser {
             
-            if point.x > 0 {
+            if point.x > 0 || point.x == 0 {
                 
                 
                 chatView.center.x = chatView.center.x + (point.x / 20)
@@ -126,9 +130,11 @@ extension ChatCellView {
         chatView.frame.size.width = frame.width
         chatView.frame.size.height = frame.height
        
-        deleteView = createChangeView()
-        banView = createBanView()
-
+        deleteView.frame.size.height = frame.height
+        deleteView.setupView()
+        banView.frame.size.height = frame.height
+        banView.setupView()
+        
         panGesture.delegate = self
         panGesture.addTarget(self, action: #selector(viewDrags(_:)))
         
@@ -161,16 +167,13 @@ extension ChatCellView {
         chatView.addSubview(bottomLine)
         
         self.addSubview(chatView)
-        self.addSubview(banView)
         self.addSubview(deleteView)
+        self.addSubview(banView)
+        
         
     }
     
 }
-
-
-
-
 
 
 
@@ -186,47 +189,65 @@ extension ChatCellView: UIGestureRecognizerDelegate {
 
 
 
-//MARK: - Создание кнопок удаления и пожаловаться
-
-extension ChatCellView {
-    
-    private func createChangeView() -> UIView {
-        
-        let view = UIView(frame: CGRect(x: banView.frame.maxX, y: 0, width: 0, height: frame.height))
-        view.backgroundColor = UIColor(named: "DeleteChatColor")
-        
-        
-        let x = Int(view.center.x)
-        let y = Int(view.frame.height / 2 - 35)
-        let button = UIButton(frame: CGRect(x: x, y: y, width: 30, height: 30))
-        button.imageView?.image = UIImage(named: "DeleteChatUser")
-        button.imageView?.contentMode = .scaleAspectFill
-        button.backgroundColor = .white
-        
-        
-//        let label = UILabel(frame: CGRect(x: x, y: y + 10, width: 50, height: Int(frame.height) / 2 - 5))
-//        label.text = "УДАЛИТЬ ИЗ ПАР"
-        
-        view.addSubview(button)
-        
-        return view
-    }
-    
-    private func createBanView() -> UIView {
-        let view = UIView(frame: CGRect(x: chatView.frame.maxX, y:0 , width: 0, height: frame.height))
-        view.backgroundColor = UIColor(named: "BanUserColor")
-        
-        return view
-        
-    }
-    
-}
-
+//MARK: -  Класс СhangeView - боковое меню для удаления пары, либо для того что бы на нее пожаловаться
 
 class changeView: UIView {
     
-    let view = UIView()
     let button = UIButton()
     let label = UILabel()
+    
+    var width = CGFloat() {
+        didSet {
+            
+            self.frame.size.width = width
+            
+            button.center.x = width / 2
+            label.center.x = width / 2
+            
+            button.isHidden = false
+            label.isHidden = false
+        }
+    }
+
+    
+    init(frame: CGRect,buttonImage: UIImage,text: String,color:UIColor) {
+        
+        super.init(frame: frame)
+        
+        self.label.text = text
+        self.button.setImage(buttonImage, for: .normal)
+        self.backgroundColor = color
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func setupView(){
+        
+        button.imageView?.contentMode = .scaleAspectFill
+        button.imageView?.tintColor = .white
+        button.frame = CGRect(x: 0, y: 10, width: Int(frame.height / 2 - 10), height: Int(frame.height / 2 - 10))
+    
+        
+        label.frame = CGRect(x: 0, y: 50, width: 60, height: 0)
+        label.textColor = .white
+        label.lineBreakMode = .byWordWrapping
+        label.numberOfLines = 2
+        label.font = .boldSystemFont(ofSize: 10)
+        label.textAlignment = .center
+       
+        let height = label.systemLayoutSizeFitting(CGSize(width: width, height: UIView.layoutFittingCompressedSize.height), withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel).height /// Рассчитываем высоту текста, что бы он влезал ровно по ее краям
+        
+        label.frame.size.height = height * 2 /// Т.к у нас 2 строки значит высота в 2 раза больше
+  
+        
+        label.isHidden = true
+        button.isHidden = true
+        
+        self.addSubview(label)
+        self.addSubview(button)
+        
+    }
     
 }
