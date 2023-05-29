@@ -96,11 +96,10 @@ class ChatViewController: UIViewController {
         createContentHorizontalScrollView()
         setupContentViewContstains()
         horizontalScrollView.contentSize.width = widthHorizontalScrollview
+        
         print(stackView.frame)
     }
 }
-
-
 
 
 
@@ -122,6 +121,12 @@ extension ChatViewController {
                 chatCell.scrollView = verticalScrollView
                 
                 chatCell.tapGesture.addTarget(self, action: #selector(handleTap(_:)))
+                
+                let action = UIAction { [weak self] UIAction in
+                    self?.deleteChat(ID: user.ID)
+                }
+                
+                chatCell.deleteView.button.addAction(action, for: .touchUpInside)
                 
                 chatCellArr.append(chatCell)
                 verticalStackView.addArrangedSubview(chatCell)
@@ -166,6 +171,17 @@ extension ChatViewController {
         }
         creatEmptyPotentialCell()
     }
+    
+    func creatEmptyPotentialCell(){
+        
+        if potenitalChatCellArr.count < 4 {
+            for _ in 0...4 - potenitalChatCellArr.count - 1 {
+                let cell = PotentialChatCell(frame: CGRect(x: 0, y: 0, width: 105, height: 155), avatar: nil, name: nil,ID: nil)
+                potenitalChatCellArr.append(cell)
+                stackView.addArrangedSubview(cell)
+            }
+        }
+    }
 }
 
 
@@ -204,30 +220,12 @@ extension ChatViewController {
     
 }
 
-
-//MARK: -  Создание пустых ячеек если потенциальных пар меньше чем 4
-
-extension ChatViewController {
-    
-    func creatEmptyPotentialCell(){
-        
-        if potenitalChatCellArr.count < 4 {
-            for _ in 0...4 - potenitalChatCellArr.count - 1 {
-                let cell = PotentialChatCell(frame: CGRect(x: 0, y: 0, width: 105, height: 155), avatar: nil, name: nil,ID: nil)
-                potenitalChatCellArr.append(cell)
-                stackView.addArrangedSubview(cell)
-            }
-        }
-    }
-}
-
-
 //MARK: - Переход в контроллер чата с пользователем
 
 extension ChatViewController {
     
     @objc func handleTap(_ sender:UITapGestureRecognizer){
-        print("Yeah")
+        
 //        if let currentView = sender.view as? ChatCellView {
 //            selectedUserID = currentView.ID
 //            performSegue(withIdentifier: "goToChat", sender: self)
@@ -247,7 +245,20 @@ extension ChatViewController {
 }
 
 
+//MARK: -  Удаление чата
 
+extension ChatViewController {
+    
+    func deleteChat(ID:String){
+        guard let index = chatCellArr.firstIndex(where: {$0.ID == ID}) else {return}
+        chatCellArr[index].removeFromSuperview()
+        chatCellArr.remove(at: index)
+        
+        heightMostScrollView.constant = calculateHeightMostScrollView /// Обновляем константу вертикального ScrollView  в зависимости от количества чатов
+        view.layoutIfNeeded()
+    }
+    
+}
 
 
 
