@@ -25,8 +25,7 @@ class ChatUserController: UIViewController {
         
         tableView.register(UINib(nibName: "CurrentChatCell", bundle: nil), forCellReuseIdentifier: "currentChatCell")
        
-        tableView.estimatedRowHeight = 70
-        tableView.rowHeight = UITableView.automaticDimension
+        tableView.rowHeight = 80
     }
     
 
