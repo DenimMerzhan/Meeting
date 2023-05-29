@@ -126,7 +126,8 @@ class ChatCellView: UIView {
 extension ChatCellView {
     
     private func setupView(viewFrame:CGRect){
-        
+        self.backgroundColor = .blue
+        chatView.backgroundColor = .red
         chatView.frame.size.width = frame.width
         chatView.frame.size.height = frame.height
        
@@ -163,9 +164,9 @@ extension ChatCellView {
         chatView.addSubview(nameLabel)
         chatView.addSubview(commentLabel)
         chatView.addGestureRecognizer(panGesture)
-        chatView.addGestureRecognizer(tapGesture)
         chatView.addSubview(bottomLine)
         
+        self.addGestureRecognizer(tapGesture)
         self.addSubview(chatView)
         self.addSubview(deleteView)
         self.addSubview(banView)
