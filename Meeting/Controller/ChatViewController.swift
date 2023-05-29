@@ -10,6 +10,7 @@ import UIKit
 class ChatViewController: UIViewController {
 
     
+    @IBOutlet weak var verticalStackView: UIStackView!
     @IBOutlet weak var verticalScrollView: UIScrollView!
     @IBOutlet weak var mostViewScrolling: UIView!
     @IBOutlet weak var meetingLabel: UILabel!
@@ -45,9 +46,9 @@ class ChatViewController: UIViewController {
     private var calculateHeightMostScrollView: CGFloat {
         get {
             if chatCellArr.count > 0 {
-                return CGFloat(chatCellArr.count * 110) + horizontalScrollView.frame.height + 50 + 35
+                return CGFloat(chatCellArr.count * 100) + horizontalScrollView.frame.height + 60
             }else {
-                return 110
+                return 100  + horizontalScrollView.frame.height + 60
             }
         }
     }
@@ -95,6 +96,7 @@ class ChatViewController: UIViewController {
         createContentHorizontalScrollView()
         setupContentViewContstains()
         horizontalScrollView.contentSize.width = widthHorizontalScrollview
+        print(stackView.frame)
     }
 }
 
@@ -108,21 +110,11 @@ extension ChatViewController {
     
     func createChatViewCell()  {
         
-        
-        
         for user in userPairs {
-            
-            var indentY = CGFloat()
             
             if user.chatArr.count > 0 { /// Если у текущего пользователя был чат с новым пользователем
                 
-                if chatCellArr.count > 0 {
-                    indentY = chatCellArr.last!.frame.maxY
-                }else {
-                    indentY = horizontalScrollView.frame.maxY + 50
-                }
-                
-                let chatCell = ChatCellView(frame: CGRect(x: 10, y: indentY, width: view.frame.width - 10, height: 100), ID: user.ID)
+                let chatCell = ChatCellView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 100), ID: user.ID)
                 
                 chatCell.avatar.image = UIImage(named: "KatyaS")
                 chatCell.nameLabel.text = "Алиса"
@@ -132,8 +124,7 @@ extension ChatViewController {
                 chatCell.tapGesture.addTarget(self, action: #selector(handleTap(_:)))
                 
                 chatCellArr.append(chatCell)
-                mostViewScrolling.addSubview(chatCell)
-                
+                verticalStackView.addArrangedSubview(chatCell)
             }
         }
     }
@@ -158,7 +149,6 @@ extension ChatViewController {
                 view.heightAnchor.constraint(equalToConstant: 155)
             ])
         }
-        
     }
     
     
@@ -237,7 +227,7 @@ extension ChatViewController {
 extension ChatViewController {
     
     @objc func handleTap(_ sender:UITapGestureRecognizer){
-        
+        print("Yeah")
 //        if let currentView = sender.view as? ChatCellView {
 //            selectedUserID = currentView.ID
 //            performSegue(withIdentifier: "goToChat", sender: self)

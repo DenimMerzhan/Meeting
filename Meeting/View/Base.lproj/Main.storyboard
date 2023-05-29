@@ -173,9 +173,18 @@
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Bkm-ki-GZ0">
                                         <rect key="frame" x="0.0" y="0.0" width="430" height="1000"/>
+                                        <subviews>
+                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="LOS-Ip-El0" userLabel="VerticalStackView">
+                                                <rect key="frame" x="0.0" y="215" width="430" height="785"/>
+                                            </stackView>
+                                        </subviews>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="1000" id="3Nm-cA-YAy"/>
+                                            <constraint firstAttribute="trailing" secondItem="LOS-Ip-El0" secondAttribute="trailing" id="Mv0-Wg-ibl"/>
+                                            <constraint firstAttribute="bottom" secondItem="LOS-Ip-El0" secondAttribute="bottom" id="RxJ-8R-q3d"/>
+                                            <constraint firstItem="LOS-Ip-El0" firstAttribute="leading" secondItem="Bkm-ki-GZ0" secondAttribute="leading" id="XeJ-9t-kDH"/>
+                                            <constraint firstItem="LOS-Ip-El0" firstAttribute="top" secondItem="Bkm-ki-GZ0" secondAttribute="top" constant="215" id="t5Y-kW-ZSY"/>
                                         </constraints>
                                     </view>
                                 </subviews>
@@ -208,12 +217,13 @@
                         <outlet property="meetingLabel" destination="bsX-Nb-TiW" id="Q3f-Uv-Xps"/>
                         <outlet property="mostViewScrolling" destination="Bkm-ki-GZ0" id="pns-Of-yjk"/>
                         <outlet property="verticalScrollView" destination="XQX-og-ehf" id="Xr1-zo-JZf"/>
+                        <outlet property="verticalStackView" destination="LOS-Ip-El0" id="SjC-UL-Ntd"/>
                         <segue destination="yHA-e7-o3S" kind="presentation" identifier="goToChat" modalPresentationStyle="fullScreen" id="Yh2-2j-Ke2"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vV9-Cx-Zz3" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="105" y="-232"/>
+            <point key="canvasLocation" x="104.65116279069767" y="-232.40343347639487"/>
         </scene>
         <!--Profile View Controller-->
         <scene sceneID="o0t-gl-C3U">

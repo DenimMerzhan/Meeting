@@ -126,7 +126,7 @@ class ChatCellView: UIView {
 extension ChatCellView {
     
     private func setupView(viewFrame:CGRect){
-       
+        
         chatView.frame.size.width = frame.width
         chatView.frame.size.height = frame.height
        
@@ -169,7 +169,6 @@ extension ChatCellView {
         self.addSubview(chatView)
         self.addSubview(deleteView)
         self.addSubview(banView)
-        
         
     }
     
@@ -241,7 +240,6 @@ class changeView: UIView {
         
         label.frame.size.height = height * 2 /// Т.к у нас 2 строки значит высота в 2 раза больше
   
-        
         label.isHidden = true
         button.isHidden = true
         
