@@ -96,7 +96,6 @@ class ChatViewController: UIViewController {
         setupContentViewContstains()
         horizontalScrollView.contentSize.width = widthHorizontalScrollview
         
-        print(horizontalStackView.frame)
     }
 }
 

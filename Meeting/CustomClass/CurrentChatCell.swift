@@ -10,13 +10,18 @@ import UIKit
 class CurrentChatCell: UITableViewCell {
 
 
-    @IBOutlet weak var messageLabel: UILabel!
-    @IBOutlet weak var messageView: UIView!
     @IBOutlet weak var avatar: UIImageView!
     
+    @IBOutlet weak var messageView: UIView!
+    @IBOutlet weak var messageLabel: UILabel!
+    @IBOutlet weak var leftMessageViewConstrains: NSLayoutConstraint!
+    @IBOutlet weak var rightMessageViewConstrains: NSLayoutConstraint!
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        frame.size.width = UIScreen.main.bounds.width ///  Обновляем ширину ячейки в зависимости от ширины экрана
+        layoutIfNeeded()
+        
         avatar.layer.cornerRadius = avatar.frame.width / 2
         avatar.clipsToBounds = true
         messageView.layer.cornerRadius = messageView.frame.height /  5
