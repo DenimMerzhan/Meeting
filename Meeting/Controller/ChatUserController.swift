@@ -25,7 +25,6 @@ class ChatUserController: UIViewController {
         
         tableView.register(UINib(nibName: "CurrentChatCell", bundle: nil), forCellReuseIdentifier: "currentChatCell")
        
-        tableView.rowHeight = 80
     }
     
 
@@ -41,8 +40,18 @@ extension ChatUserController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "currentChatCell", for: indexPath) as! CurrentChatCell
         
-        cell.textLabel?.text = chatArr[indexPath.row].body
-        
+        if chatArr[indexPath.row].sender == userID {
+            cell.messageLabel.textAlignment = .right
+            cell.avatar.image = UIImage()
+            cell.messageView.backgroundColor = UIColor(named: "CurrentUserMessageColor")
+            cell.messageLabel.textColor = .white
+        }else {
+            cell.messageLabel.textAlignment = .left
+            cell.messageView.backgroundColor = UIColor(named: "GrayColor")
+            
+        }
+        cell.messageLabel.text = chatArr[indexPath.row].body
+        cell.messageView.frame.size.width = 20
        
         return cell
     }

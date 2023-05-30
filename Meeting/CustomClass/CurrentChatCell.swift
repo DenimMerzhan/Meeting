@@ -9,14 +9,17 @@ import UIKit
 
 class CurrentChatCell: UITableViewCell {
 
-    @IBOutlet weak var avatarUser: UIImageView!
-    @IBOutlet weak var message: UILabel!
+
+    @IBOutlet weak var messageLabel: UILabel!
+    @IBOutlet weak var messageView: UIView!
+    @IBOutlet weak var avatar: UIImageView!
+    
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        avatarUser.layer.cornerRadius = avatarUser.frame.width / 2
-        avatarUser.clipsToBounds = true
-        message.layer.cornerRadius = message.frame.height /  5
+        avatar.layer.cornerRadius = avatar.frame.width / 2
+        avatar.clipsToBounds = true
+        messageView.layer.cornerRadius = messageView.frame.height /  5
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
