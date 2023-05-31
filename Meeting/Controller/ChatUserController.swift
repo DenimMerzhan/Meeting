@@ -54,16 +54,21 @@ extension ChatUserController: UITableViewDataSource {
         
         if id == currentUserID {
             
+            cell.heartLikeView.removeFromSuperview()
+            cell.rightConstrainsToSuperView.isActive = true /// Дополнительная константа которая говорит что MessageView будт на расстояние от SuperView на 5 пунктов
+            
             cell.messageLabel.textAlignment = .right
             cell.avatar.image = UIImage()
             cell.messageView.backgroundColor = UIColor(named: "CurrentUserMessageColor")
             cell.messageLabel.textColor = .white
             
             let width = cell.messageLabel.intrinsicContentSize.width
+            print(width)
+            print(cell.messageLabel.frame.width)
             
             if width < cell.messageLabel.frame.width {
-                let newLeftConstant = cell.messageLabel.frame.width - width /// Получаем новую разницу между mesage view и avatar
-                cell.leftMessageViewConstrains.constant += newLeftConstant
+                let newLeftConstant = cell.messageLabel.frame.width - width/// Получаем новую разницу между mesage view и avatar
+                cell.leftMessageViewConstrains.constant += newLeftConstant + 30
             }
             
             
@@ -71,7 +76,6 @@ extension ChatUserController: UITableViewDataSource {
             
             cell.messageLabel.textAlignment = .left
             cell.messageView.backgroundColor = UIColor(named: "GrayColor")
-            
             
             let width = cell.messageLabel.intrinsicContentSize.width
             
@@ -87,7 +91,7 @@ extension ChatUserController: UITableViewDataSource {
             cell.bottomMessageViewConstrains.constant = 0
         }
         
-        print("Now")
+   
         return cell
     }
     

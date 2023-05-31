@@ -16,9 +16,14 @@ class CurrentChatCell: UITableViewCell {
     @IBOutlet weak var messageLabel: UILabel!
     @IBOutlet weak var leftMessageViewConstrains: NSLayoutConstraint!
     @IBOutlet weak var rightMessageViewConstrains: NSLayoutConstraint!
+    @IBOutlet weak var likeButton: UIImageView!
     @IBOutlet weak var bottomMessageViewConstrains: NSLayoutConstraint!
+    @IBOutlet weak var heartLikeView: UIView!
     
-//    var maskedCornes = CACornerMask() {
+    
+    @IBOutlet weak var rightConstrainsToSuperView: NSLayoutConstraint!
+    
+    //    var maskedCornes = CACornerMask() {
 //        didSet {
 //
 //        }
@@ -32,6 +37,7 @@ class CurrentChatCell: UITableViewCell {
         avatar.layer.cornerRadius = avatar.frame.width / 2
         avatar.clipsToBounds = true
         messageView.layer.cornerRadius = messageView.frame.height /  5
+        likeButton.alpha = 0.4
         
     }
 

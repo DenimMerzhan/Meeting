@@ -145,7 +145,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="aeX-Zf-T0m">
-                                <rect key="frame" x="0.0" y="149" width="430" height="644"/>
+                                <rect key="frame" x="0.0" y="129" width="430" height="664"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </tableView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="a0I-Om-icB" userLabel="MessageView">
@@ -186,7 +186,7 @@
                         <viewLayoutGuide key="safeArea" id="tCo-6Q-166"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="aeX-Zf-T0m" firstAttribute="top" secondItem="tCo-6Q-166" secondAttribute="top" constant="90" id="93Z-6D-Mhe"/>
+                            <constraint firstItem="aeX-Zf-T0m" firstAttribute="top" secondItem="tCo-6Q-166" secondAttribute="top" constant="70" id="93Z-6D-Mhe"/>
                             <constraint firstItem="aeX-Zf-T0m" firstAttribute="leading" secondItem="tCo-6Q-166" secondAttribute="leading" id="EQP-Jm-SJN"/>
                             <constraint firstItem="a0I-Om-icB" firstAttribute="top" secondItem="aeX-Zf-T0m" secondAttribute="bottom" id="FO7-3w-FRc"/>
                             <constraint firstItem="a0I-Om-icB" firstAttribute="leading" secondItem="tCo-6Q-166" secondAttribute="leading" id="LIg-dl-4GB"/>

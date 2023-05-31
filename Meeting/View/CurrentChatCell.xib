@@ -25,15 +25,16 @@
                         </constraints>
                     </imageView>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eia-YY-een" userLabel="MessageView">
-                        <rect key="frame" x="55" y="5" width="260" height="81"/>
+                        <rect key="frame" x="55" y="5" width="230" height="81"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Текст" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="85p-00-vj1">
-                                <rect key="frame" x="10" y="10" width="240" height="61"/>
+                                <rect key="frame" x="10" y="10" width="210" height="61"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
+                        <color key="backgroundColor" red="0.98431372640000003" green="0.90196073060000004" blue="0.48235297199999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         <constraints>
                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="45" id="AM9-lt-eQF"/>
                             <constraint firstAttribute="trailing" secondItem="85p-00-vj1" secondAttribute="trailing" constant="10" id="Km0-hh-YnL"/>
@@ -42,29 +43,60 @@
                             <constraint firstItem="85p-00-vj1" firstAttribute="top" secondItem="eia-YY-een" secondAttribute="top" constant="10" id="rtE-KW-J5M"/>
                         </constraints>
                     </view>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DIB-4y-zOs" userLabel="heartLikeView">
+                        <rect key="frame" x="290" y="0.0" width="25" height="91"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" restorationIdentifier="d" image="likeMessage" translatesAutoresizingMaskIntoConstraints="NO" id="ys2-Gf-DEw" userLabel="likeButton">
+                                <rect key="frame" x="0.0" y="33" width="25" height="25"/>
+                                <color key="tintColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="25" id="KS1-NW-aEk"/>
+                                    <constraint firstAttribute="width" constant="25" id="qJu-xT-dTN"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="ys2-Gf-DEw" firstAttribute="centerY" secondItem="DIB-4y-zOs" secondAttribute="centerY" id="TOv-oF-Zgw"/>
+                            <constraint firstItem="ys2-Gf-DEw" firstAttribute="centerX" secondItem="DIB-4y-zOs" secondAttribute="centerX" id="bfP-i6-WBW"/>
+                            <constraint firstAttribute="width" constant="25" id="mvX-my-ZbU"/>
+                        </constraints>
+                    </view>
                 </subviews>
                 <constraints>
                     <constraint firstItem="eia-YY-een" firstAttribute="leading" secondItem="9dQ-Gc-3Ax" secondAttribute="trailing" constant="5" id="03I-MB-vtq"/>
+                    <constraint firstItem="DIB-4y-zOs" firstAttribute="leading" secondItem="eia-YY-een" secondAttribute="trailing" constant="5" id="12l-tU-bzo"/>
                     <constraint firstItem="eia-YY-een" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="5" id="Arl-Ym-D9y"/>
-                    <constraint firstAttribute="trailing" secondItem="eia-YY-een" secondAttribute="trailing" constant="5" id="FLv-U6-2B3"/>
                     <constraint firstAttribute="bottom" secondItem="9dQ-Gc-3Ax" secondAttribute="bottom" constant="5" id="G8j-hD-JxQ"/>
+                    <constraint firstAttribute="trailing" secondItem="eia-YY-een" secondAttribute="trailing" constant="5" identifier="rightConstrainsToSuperView" id="UW6-LJ-IfN"/>
+                    <constraint firstAttribute="bottom" secondItem="DIB-4y-zOs" secondAttribute="bottom" id="V7y-7m-iE6"/>
                     <constraint firstItem="9dQ-Gc-3Ax" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="5" id="X3k-y8-sZR"/>
+                    <constraint firstItem="DIB-4y-zOs" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="fpf-J9-Be2"/>
                     <constraint firstAttribute="bottom" secondItem="eia-YY-een" secondAttribute="bottom" constant="5" id="mah-81-fzk"/>
+                    <constraint firstAttribute="trailing" secondItem="DIB-4y-zOs" secondAttribute="trailing" constant="5" id="voz-Wr-3Ps"/>
                 </constraints>
+                <variation key="default">
+                    <mask key="constraints">
+                        <exclude reference="UW6-LJ-IfN"/>
+                    </mask>
+                </variation>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
                 <outlet property="avatar" destination="9dQ-Gc-3Ax" id="QKP-tn-c4i"/>
                 <outlet property="bottomMessageViewConstrains" destination="mah-81-fzk" id="cWi-8n-Yv7"/>
+                <outlet property="heartLikeView" destination="DIB-4y-zOs" id="sDc-Fi-E2k"/>
                 <outlet property="leftMessageViewConstrains" destination="03I-MB-vtq" id="3ju-tw-hVz"/>
+                <outlet property="likeButton" destination="ys2-Gf-DEw" id="2xn-Ly-q8O"/>
                 <outlet property="messageLabel" destination="85p-00-vj1" id="lBB-nY-I6W"/>
                 <outlet property="messageView" destination="eia-YY-een" id="olw-q3-LDB"/>
-                <outlet property="rightMessageViewConstrains" destination="FLv-U6-2B3" id="MyL-2g-4Uf"/>
+                <outlet property="rightConstrainsToSuperView" destination="UW6-LJ-IfN" id="rLl-tn-ivT"/>
+                <outlet property="rightMessageViewConstrains" destination="12l-tU-bzo" id="Y0P-YD-Bzg"/>
             </connections>
-            <point key="canvasLocation" x="-154.19847328244273" y="45.422535211267608"/>
+            <point key="canvasLocation" x="-155.07246376811597" y="45.200892857142854"/>
         </tableViewCell>
     </objects>
     <resources>
         <image name="2" width="1388" height="1852"/>
+        <image name="likeMessage" width="262.5" height="237.5"/>
     </resources>
 </document>
