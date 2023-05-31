@@ -22,16 +22,20 @@ class PairsViewController: UIViewController {
     var stopCard = false
     var center = CGPoint()
     
-  
     var currentCard: CardView?
     var nextCard = CardModel().createEmptyCard()
         
     var cardModel = CardModel()
-    var currentAuthUser = CurrentAuthUser(ID: "+79817550000")
+    var currentAuthUser = CurrentAuthUser(ID: "5TJFG62E5i")
     
     var progressViewLoadUsers = CreateButton().createProgressLoadUsersStartForLaunch(width: 0)
-    
     var timer = Timer()
+    
+    var matchArr = [String](){
+        didSet {
+            print(matchArr.count)
+        }
+    }
     
     var usersArr =  [User]() {
         didSet {
@@ -77,11 +81,9 @@ class PairsViewController: UIViewController {
         
         Task {
             
-            startSettings()
-            
             if await loadCurrentUsersData() {
-//                await loadNewUsers(numberRequsetedUsers: 2)
-//                startSettings()
+                await loadNewUsers(numberRequsetedUsers: 2)
+                startSettings()
             }else{
                 print("Ошибка загрузки текущего пользователя")
             }
@@ -105,9 +107,11 @@ class PairsViewController: UIViewController {
             currentAuthUser.disLikeArr.append(userID)
         }else if sender.restorationIdentifier == "SuperLike" {
             currentAuthUser.superLikeArr.append(userID)
+            checkMatch(ID: userID)
             differenceY = -600
         }else if sender.restorationIdentifier == "Like" {
             currentAuthUser.likeArr.append(userID)
+            checkMatch(ID: userID)
             differenceX = 200
         }
         
@@ -159,6 +163,7 @@ class PairsViewController: UIViewController {
                         card.center = CGPoint(x: card.center.x + 150 , y: card.center.y + 100 )
                         card.alpha = 0
                         self.currentAuthUser.likeArr.append(card.ID)
+                        self.checkMatch(ID: card.ID)
                         self.loadNewPeople(card: card)
                         
                     }
@@ -177,6 +182,7 @@ class PairsViewController: UIViewController {
                         card.center = CGPoint(x: card.center.x , y: card.center.y - 600 )
                         card.alpha = 0
                         self.currentAuthUser.superLikeArr.append(card.ID)
+                        self.checkMatch(ID: card.ID)
                         self.loadNewPeople(card: card)
                     }
                 }
@@ -200,7 +206,6 @@ class PairsViewController: UIViewController {
 extension PairsViewController {
     
     func loadNewPeople(card:CardView){
-        
         
         currentAuthUser.writingPairsInfrormation()
         
@@ -365,3 +370,18 @@ extension PairsViewController {
 }
 
 
+
+//MARK:  - Делегат который передает ID пользователя который совпал
+
+extension PairsViewController  {
+    
+    func checkMatch(ID: String) {
+        Task {
+            let match = await currentAuthUser.checkMatch(potetnialPairID: ID)
+            if match {
+                print("Match")
+            }
+        }
+    }
+    
+}

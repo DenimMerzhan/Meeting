@@ -23,6 +23,7 @@ class CurrentAuthUser {
     var imageArr = [CurrentUserImage]()
     
     var likeArr = [String]()
+    
     var disLikeArr = [String]()
     var superLikeArr = [String]()
     
@@ -88,7 +89,6 @@ class CurrentAuthUser {
     
     func writingPairsInfrormation(){
         
-        
         let documenRef = db.collection("Users").document(ID)
     
         documenRef.setData([
@@ -99,7 +99,6 @@ class CurrentAuthUser {
             if let error = err {
                 print("Ошибка записи данных о парах пользователя - \(error)")
             }
-            
         }
     }
     
@@ -156,7 +155,6 @@ class CurrentAuthUser {
             if let newImage = UIImage(contentsOfFile: url.path) {
                 let imageID = url.lastPathComponent
                 imageArr.append(CurrentUserImage(imageID: imageID,image: newImage))
-//                newImage = .remove
             }
             currentUserLoaded = true
         }
@@ -229,6 +227,35 @@ class CurrentAuthUser {
             if let error = err {print( "Ошибка удаления фото с Firestore \(error)")}
         }
     }
+}
+
+
+//MARK: -  Поиск пар для пользователя
+
+extension CurrentAuthUser {
+    
+    func checkMatch(potetnialPairID:String) async -> Bool {
+        
+        let documenRef = db.collection("Users").document(potetnialPairID)
+        
+        do {
+            
+            guard let document = try await documenRef.getDocument().data() else {return false}
+            
+            if let likeArr = document["LikeArr"] as? [String], let superLikeArr = document["SuperLikeArr"] as? [String] {
+                
+                if likeArr.contains(ID) || superLikeArr.contains(ID) {
+                    return true
+                }
+            }
+        }
+        
+        catch {
+            print("Ошибка поиска пары для пользователя - \(error)")
+        }
+        return false
+    }
+    
 }
 
 
