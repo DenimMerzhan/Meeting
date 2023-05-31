@@ -23,12 +23,6 @@ class CurrentChatCell: UITableViewCell {
     
     @IBOutlet weak var rightConstrainsToSuperView: NSLayoutConstraint!
     
-    //    var maskedCornes = CACornerMask() {
-//        didSet {
-//
-//        }
-//    }
-    
     override func awakeFromNib() {
         super.awakeFromNib()
         frame.size.width = UIScreen.main.bounds.width ///  Обновляем ширину ячейки в зависимости от ширины экрана

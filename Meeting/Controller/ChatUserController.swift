@@ -11,6 +11,10 @@ class ChatUserController: UIViewController {
     
     
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var topElementView: UIView!
+    @IBOutlet weak var avatarUser: UIImageView!
+    @IBOutlet weak var nameUser: UILabel!
+    @IBOutlet weak var textField: UITextField!
     
     var currentUserID = String()
     var selectedUser = User(ID: "+79817550000")
@@ -19,9 +23,27 @@ class ChatUserController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self
-//        tableView.delegate = self
-        
         tableView.separatorStyle = .none
+        
+        avatarUser.layer.cornerRadius = avatarUser.frame.width / 2
+        avatarUser.clipsToBounds = true
+        topElementView.layer.shadowColor = UIColor.black.cgColor
+        topElementView.layer.shadowOpacity = 0.1
+        topElementView.layer.shadowOffset = CGSize(width: 0, height: 1)
+        topElementView.layer.shadowRadius = 1
+        
+        textField.layer.cornerRadius = textField.frame.height / 2
+        textField.backgroundColor = UIColor(named: "PlaceHolderChatColor")
+        textField.layer.borderWidth = 0.2
+        textField.layer.borderColor = UIColor.gray.cgColor
+        textField.layer.masksToBounds = true
+        
+        let attributes = [
+            NSAttributedString.Key.foregroundColor: UIColor.gray,
+            NSAttributedString.Key.font : UIFont.systemFont(ofSize: 15)
+        ]
+        textField.attributedPlaceholder = NSAttributedString(string: "Сообщение",attributes: attributes)
+        
         
         chatArr.append(message(sender: selectedUser.ID, body: "Привет как ты у тебя все хорошо, а то не слышно не видно не страшно не бащно аууууу?"))
         chatArr.append(message(sender: currentUserID, body: "Я ок, а ты как?"))
@@ -34,6 +56,11 @@ class ChatUserController: UIViewController {
         
         tableView.register(UINib(nibName: "CurrentChatCell", bundle: nil), forCellReuseIdentifier: "currentChatCell")
      
+    }
+    
+    
+    @IBAction func exitButtonPressed(_ sender: Any) {
+        self.dismiss(animated: true)
     }
     
 
