@@ -12,7 +12,8 @@ class ChatUserController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     
-    var userID = String()
+    var currentUserID = String()
+    var selectedUser = User(ID: "+79817550000")
     var chatArr = [message]()
     
     override func viewDidLoad() {
@@ -22,10 +23,14 @@ class ChatUserController: UIViewController {
         
         tableView.separatorStyle = .none
         
-        chatArr.append(message(sender: "Vika22", body: "Привет как ты у тебя все хорошо, а то не слышно не видно не страшно не бащно аууууу?"))
-        chatArr.append(message(sender: userID, body: "Я ок, а ты как?"))
-        chatArr.append(message(sender: "Vika22", body: "Я тоже"))
-        chatArr.append(message(sender: "Vika22", body: "Что будем делать?"))
+        chatArr.append(message(sender: selectedUser.ID, body: "Привет как ты у тебя все хорошо, а то не слышно не видно не страшно не бащно аууууу?"))
+        chatArr.append(message(sender: currentUserID, body: "Я ок, а ты как?"))
+        chatArr.append(message(sender: selectedUser.ID, body: "Я тоже"))
+        chatArr.append(message(sender: selectedUser.ID, body: "Что будем делать?"))
+        chatArr.append(message(sender: currentUserID, body: "Привет как ты у тебя все хорошо, а то не слышно не видно не страшно не бащно аууууу?"))
+        chatArr.append(message(sender: currentUserID, body: "Я ок, а ты как?"))
+        chatArr.append(message(sender: currentUserID, body: "Я тоже"))
+        chatArr.append(message(sender: selectedUser.ID, body: "Что будем делать?"))
         
         tableView.register(UINib(nibName: "CurrentChatCell", bundle: nil), forCellReuseIdentifier: "currentChatCell")
      
@@ -45,8 +50,9 @@ extension ChatUserController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "currentChatCell", for: indexPath) as! CurrentChatCell
         
         cell.messageLabel.text = chatArr[indexPath.row].body
+        let id = chatArr[indexPath.row].sender
         
-        if chatArr[indexPath.row].sender == userID {
+        if id == currentUserID {
             
             cell.messageLabel.textAlignment = .right
             cell.avatar.image = UIImage()
@@ -60,9 +66,12 @@ extension ChatUserController: UITableViewDataSource {
                 cell.leftMessageViewConstrains.constant += newLeftConstant
             }
             
+            
         }else {
+            
             cell.messageLabel.textAlignment = .left
             cell.messageView.backgroundColor = UIColor(named: "GrayColor")
+            
             
             let width = cell.messageLabel.intrinsicContentSize.width
             
@@ -71,19 +80,15 @@ extension ChatUserController: UITableViewDataSource {
                 cell.rightMessageViewConstrains.constant += newLeftConstant
             }
         }
+        
+        
+        if indexPath.row + 1 < chatArr.count && chatArr[indexPath.row + 1].sender == id {
+            cell.avatar.image = UIImage()
+            cell.bottomMessageViewConstrains.constant = 0
+        }
+        
+        print("Now")
         return cell
     }
     
 }
-
-
-//extension ChatUserController: UITableViewDelegate {
-//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        let widthMessageView = view.frame.size.width - 55
-//        let label = UILabel(frame: .zero)
-//        let height = label.systemLayoutSizeFitting(CGSize(width: widthMessageView, height: UIView.layoutFittingCompressedSize.height), withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel).height /// Рассчитываем высоту текста, что бы он влезал ровно по ее краям
-//        print(height)
-//        return 55
-//    }
-//
-//}

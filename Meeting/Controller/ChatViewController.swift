@@ -17,7 +17,7 @@ class ChatViewController: UIViewController {
     @IBOutlet weak var heightMostScrollView: NSLayoutConstraint!
     
     private var userPairs = [User]()
-    var selectedUserID = String()
+    var selectedUser: User?
     
     var chatCellArr = [ChatCellView]() {
         didSet {
@@ -224,13 +224,15 @@ extension ChatViewController {
     @objc func handleTap(_ sender:UITapGestureRecognizer){
         
         if let currentView = sender.view as? ChatCellView {
-            selectedUserID = currentView.ID
+            let user = userPairs.first(where: {$0.ID == currentView.ID})
+            selectedUser = user
             performSegue(withIdentifier: "goToChat", sender: self)
         }
         
         else if let currentView = sender.view as? PotentialChatCell {
             guard let id = currentView.ID else {return}
-            selectedUserID = id
+            let user = userPairs.first(where: {$0.ID == id})
+            selectedUser = user
             performSegue(withIdentifier: "goToChat", sender: self)
         }else {
             return
@@ -239,7 +241,8 @@ extension ChatViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let destanationVC = segue.destination as? ChatUserController else  {return}
-        destanationVC.userID = selectedUserID
+        guard let user = selectedUser else {return}
+        destanationVC.selectedUser = user
     }
 }
 

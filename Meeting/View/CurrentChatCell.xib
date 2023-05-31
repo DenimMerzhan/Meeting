@@ -35,6 +35,7 @@
                             </label>
                         </subviews>
                         <constraints>
+                            <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="45" id="AM9-lt-eQF"/>
                             <constraint firstAttribute="trailing" secondItem="85p-00-vj1" secondAttribute="trailing" constant="10" id="Km0-hh-YnL"/>
                             <constraint firstAttribute="bottom" secondItem="85p-00-vj1" secondAttribute="bottom" constant="10" id="VK8-FV-MVM"/>
                             <constraint firstItem="85p-00-vj1" firstAttribute="leading" secondItem="eia-YY-een" secondAttribute="leading" constant="10" id="fnx-Dn-vAb"/>
@@ -54,6 +55,7 @@
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
                 <outlet property="avatar" destination="9dQ-Gc-3Ax" id="QKP-tn-c4i"/>
+                <outlet property="bottomMessageViewConstrains" destination="mah-81-fzk" id="cWi-8n-Yv7"/>
                 <outlet property="leftMessageViewConstrains" destination="03I-MB-vtq" id="3ju-tw-hVz"/>
                 <outlet property="messageLabel" destination="85p-00-vj1" id="lBB-nY-I6W"/>
                 <outlet property="messageView" destination="eia-YY-een" id="olw-q3-LDB"/>
