@@ -14,26 +14,25 @@ import AudioToolbox
 struct CardModel {
     
     
-    var usersArr = [User]()
-    var width = CGFloat()
-    var height = CGFloat()
+    var frame = CGRect(x: 16, y: 118, width: UIScreen.main.bounds.width - 32, height: UIScreen.main.bounds.height - 236)
+    
     
 //MARK: - Создание новой карты
     
     
     func createCard(newUser: User) -> CardView {
         
-        let frame =  CGRect(x: 16, y: 118, width: width, height: height)
+        let frame =  CGRect(x: frame.origin.x, y: frame.origin.y, width: frame.width, height: frame.height)
        
         let nameLabel = UILabel() /// Имя
-        let point = CGPoint(x: 10, y: height - 130)
+        let point = CGPoint(x: 10, y: frame.height - 130)
         nameLabel.text = newUser.name
         nameLabel.font = .boldSystemFont(ofSize: 40)
         nameLabel.frame = CGRect(origin: point, size: nameLabel.sizeThatFits(CGSize(width: CGFloat.infinity, height: 48))) /// Расширяем рамку в зависимости от размера текста
         nameLabel.textColor = .white
         
         
-        let ageLabel = UILabel(frame: CGRect(x: nameLabel.frame.maxX + 10, y: height - 130, width: 100, height: 48.0)) /// Возраст, ставим по позиции x относительно имени
+        let ageLabel = UILabel(frame: CGRect(x: nameLabel.frame.maxX + 10, y: frame.height - 130, width: 100, height: 48.0)) /// Возраст, ставим по позиции x относительно имени
         ageLabel.text = String(newUser.age)
         ageLabel.font = .systemFont(ofSize: 40)
         ageLabel.textColor = .white
@@ -53,14 +52,14 @@ struct CardModel {
         superLike.isHidden = true
         
         
-        let imageView = ImageUserView(frame: CGRect(x: 0, y: 0, width: width, height: height),nameUser: nameLabel,age: ageLabel)
+        let imageView = ImageUserView(frame: CGRect(x: 0, y: 0, width: frame.width, height: frame.height),nameUser: nameLabel,age: ageLabel)
         imageView.image = newUser.imageArr[0]
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true /// Ограничиваем фото в размерах
     
         
         let gradient = CAGradientLayer() ///  Градиент
-        gradient.frame = CGRect(x: 0, y: height - 203, width: width, height: 203)
+        gradient.frame = CGRect(x: 0, y: frame.height - 203, width: frame.width, height: 203)
         gradient.locations = [0.0, 1.0]
         gradient.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]
         imageView.layer.insertSublayer(gradient, at: 0)
@@ -121,10 +120,10 @@ struct CardModel {
     
     func createLoadingUsersCard() -> CardView {
         
-        let frame =  CGRect(x: 16, y: 118, width: width, height: height)
+        let frame =  CGRect(x: frame.origin.x, y: frame.origin.y, width: frame.width, height: frame.height)
         
         let label = UILabel(frame: CGRect(x: 32, y: 170, width: 300, height: 200.0))
-        label.center = CGPoint(x: width / 2, y: height / 2)
+        label.center = CGPoint(x: frame.width / 2, y: frame.height / 2)
         label.text = "Идет заугрзка новых пар для тебя..."
         label.font = .boldSystemFont(ofSize: 30)
         label.lineBreakMode = .byWordWrapping
@@ -149,10 +148,10 @@ struct CardModel {
     
     func createEmptyCard() -> CardView {
         
-        let frame =  CGRect(x: 16, y: 118, width: width, height: height)
+        let frame =  CGRect(x: frame.origin.x, y: frame.origin.y, width: frame.width, height: frame.height)
         
         let label = UILabel(frame: CGRect(x: 32, y: 170, width: 300, height: 200.0))
-        label.center = CGPoint(x: width / 2, y: height / 2 )
+        label.center = CGPoint(x: frame.width / 2, y: frame.height / 2 )
         label.text = "Пары закончились :("
         label.font = .boldSystemFont(ofSize: 30)
         label.lineBreakMode = .byWordWrapping

@@ -21,6 +21,7 @@
 		CF59A22C2A1B53B300954CCE /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF59A22B2A1B53B300954CCE /* ChatViewController.swift */; };
 		CF5E4ABB2A1BA0B8003CCC79 /* ChatCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5E4ABA2A1BA0B8003CCC79 /* ChatCellView.swift */; };
 		CF65ED7D2A277DFD00820D6B /* matchDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF65ED7C2A277DFD00820D6B /* matchDelegate.swift */; };
+		CF65ED802A2789AC00820D6B /* MatchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF65ED7F2A2789AC00820D6B /* MatchController.swift */; };
 		CF7D03092A0B80330028E7EB /* CurrentAuthUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7D03082A0B80330028E7EB /* CurrentAuthUser.swift */; };
 		CF807F0929FFF57800D5ACD1 /* CollectionPhotoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF807F0829FFF57800D5ACD1 /* CollectionPhotoCell.swift */; };
 		CF933C302A0CD65C0015E99B /* CustomError.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF933C2F2A0CD65C0015E99B /* CustomError.swift */; };
@@ -58,6 +59,7 @@
 		CF59A22B2A1B53B300954CCE /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		CF5E4ABA2A1BA0B8003CCC79 /* ChatCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCellView.swift; sourceTree = "<group>"; };
 		CF65ED7C2A277DFD00820D6B /* matchDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = matchDelegate.swift; sourceTree = "<group>"; };
+		CF65ED7F2A2789AC00820D6B /* MatchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchController.swift; sourceTree = "<group>"; };
 		CF7D03082A0B80330028E7EB /* CurrentAuthUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentAuthUser.swift; sourceTree = "<group>"; };
 		CF807F0829FFF57800D5ACD1 /* CollectionPhotoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionPhotoCell.swift; sourceTree = "<group>"; };
 		CF933C2F2A0CD65C0015E99B /* CustomError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomError.swift; sourceTree = "<group>"; };
@@ -192,6 +194,7 @@
 				CF9AF8D92A1DF1AD00E9F07E /* ChatUserController.swift */,
 				CFC6D2FD29FE403000A712BA /* ProfileViewController.swift */,
 				CFD1CAE629FEABB6009AE9A7 /* SettingsPhotoViewController.swift */,
+				CF65ED7F2A2789AC00820D6B /* MatchController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -359,6 +362,7 @@
 				CF1DC80A29F0DFC3001E2EAD /* User.swift in Sources */,
 				CFC6D30029FE43B100A712BA /* CircularProgressBarView.swift in Sources */,
 				CF069DA229EC2D3D005ED378 /* SceneDelegate.swift in Sources */,
+				CF65ED802A2789AC00820D6B /* MatchController.swift in Sources */,
 				CFFD03E029F9003B000732AC /* CardModel.swift in Sources */,
 				CFC6D2FE29FE403000A712BA /* ProfileViewController.swift in Sources */,
 				CFD1CAE729FEABB6009AE9A7 /* SettingsPhotoViewController.swift in Sources */,

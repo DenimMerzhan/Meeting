@@ -58,7 +58,7 @@ struct FirebaseStorageModel {
                     urlFileArr.append(url)
                 }
             }catch{
-                print(error)
+                print("Ошибка записи фото в директорию пользователя - \(error)")
             }
         }
         return urlFileArr

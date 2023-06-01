@@ -152,6 +152,7 @@ class CurrentAuthUser {
     func loadPhotoFromDirectory(urlFileArr: [URL]){
         
         for url in urlFileArr {
+            
             if let newImage = UIImage(contentsOfFile: url.path) {
                 let imageID = url.lastPathComponent
                 imageArr.append(CurrentUserImage(imageID: imageID,image: newImage))

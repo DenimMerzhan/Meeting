@@ -110,6 +110,7 @@ class CardView: UIView {
 }   
 
 
+//MARK: -  Кастомный ImageUserView
 
 class ImageUserView: UIImageView {
     
@@ -135,3 +136,4 @@ class ImageUserView: UIImageView {
 //        print("Объект imageUserView уничтожен")
     }
 }
+

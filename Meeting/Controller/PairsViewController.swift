@@ -31,9 +31,19 @@ class PairsViewController: UIViewController {
     var progressViewLoadUsers = CreateButton().createProgressLoadUsersStartForLaunch(width: 0)
     var timer = Timer()
     
+    var matchID = String()
+    
     var matchArr = [String](){
         didSet {
             print(matchArr.count)
+        }
+    }
+    
+    var basketUser = [User](){
+        didSet {
+            if basketUser.count > 10 {
+                basketUser.removeFirst()
+            }
         }
     }
     
@@ -50,12 +60,12 @@ class PairsViewController: UIViewController {
                 
             }
             if currentCard?.ID == "Loading_Card" && usersArr.count > 3 {
-                print("Wow")
+               
                 currentCard?.removeFromSuperview()
                 nextCard.removeFromSuperview()
                 createStartCard()
             }else if currentCard?.ID == "Loading_Card" && usersArr.count > 0 && currentAuthUser.newUsersLoading == false {
-                print("Sheet")
+               
                 currentCard?.removeFromSuperview()
                 nextCard.removeFromSuperview()
                 createStartCard()
@@ -82,7 +92,7 @@ class PairsViewController: UIViewController {
         Task {
             
             if await loadCurrentUsersData() {
-                await loadNewUsers(numberRequsetedUsers: 2)
+                await loadNewUsers(numberRequsetedUsers: 1)
                 startSettings()
             }else{
                 print("Ошибка загрузки текущего пользователя")
@@ -215,6 +225,7 @@ extension PairsViewController {
         currentCard = nextCard
         
         if usersArr.count > 0 {
+            basketUser.append(usersArr[0])
             usersArr[0].cleanPhotoUser() /// Удаляем папку с фото с  директории пользователя
             usersArr.removeFirst()
         }
@@ -316,9 +327,6 @@ extension PairsViewController {
     
     func startSettings(){
         
-        cardModel.width = view.frame.width - 32
-        cardModel.height = view.frame.height - 236
-        
         timer.invalidate()
         progressViewLoadUsers.progressBar.setProgress(1, animated: true)
        
@@ -379,9 +387,17 @@ extension PairsViewController  {
         Task {
             let match = await currentAuthUser.checkMatch(potetnialPairID: ID)
             if match {
-                print("Match")
+                matchID = ID
+                performSegue(withIdentifier: "goToMatch", sender: self)
             }
         }
     }
     
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard let destanationVC = segue.destination as? MatchController else {return}
+        guard let newMatch = basketUser.first(where: {$0.ID == matchID }) else {return}
+        destanationVC.newMatch = newMatch
+    }
 }
+
