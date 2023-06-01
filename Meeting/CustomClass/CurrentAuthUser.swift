@@ -19,6 +19,16 @@ class CurrentAuthUser {
     var name = String()
     var age = Int()
     
+    var avatar: UIImage {
+        get {
+            if imageArr.count > 1 {
+                return imageArr[0].image
+            }else {
+                return UIImage()
+            }
+        }
+    }
+    
     var urlPhotoArr = [String]()
     var imageArr = [CurrentUserImage]()
     

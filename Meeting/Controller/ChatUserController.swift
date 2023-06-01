@@ -16,9 +16,8 @@ class ChatUserController: UIViewController {
     @IBOutlet weak var nameUser: UILabel!
     @IBOutlet weak var textField: UITextField!
     
-    var currentUserID = String()
-    var selectedUser = User(ID: "+79817550000")
-    var chatArr = [message]()
+    var currentAuthUser: CurrentAuthUser?
+    var selectedUser: User?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,19 +42,12 @@ class ChatUserController: UIViewController {
             NSAttributedString.Key.font : UIFont.systemFont(ofSize: 15)
         ]
         textField.attributedPlaceholder = NSAttributedString(string: "Сообщение",attributes: attributes)
-        
-        
-        chatArr.append(message(sender: selectedUser.ID, body: "Привет как ты у тебя все хорошо, а то не слышно не видно не страшно не бащно аууууу?"))
-        chatArr.append(message(sender: currentUserID, body: "Я ок, а ты как?"))
-        chatArr.append(message(sender: selectedUser.ID, body: "Я тоже"))
-        chatArr.append(message(sender: selectedUser.ID, body: "Что будем делать?"))
-        chatArr.append(message(sender: currentUserID, body: "Привет как ты у тебя все хорошо, а то не слышно не видно не страшно не бащно аууууу?"))
-        chatArr.append(message(sender: currentUserID, body: "Я ок, а ты как?"))
-        chatArr.append(message(sender: currentUserID, body: "Я тоже"))
-        chatArr.append(message(sender: selectedUser.ID, body: "Что будем делать?"))
-        
-        tableView.register(UINib(nibName: "CurrentChatCell", bundle: nil), forCellReuseIdentifier: "currentChatCell")
      
+        
+        if let avatar = selectedUser?.avatar, let name = selectedUser?.name {
+            avatarUser.image = avatar
+            nameUser.text = name
+        }
     }
     
     
@@ -67,31 +59,39 @@ class ChatUserController: UIViewController {
 }
 
 
+
+
+//MARK: - UITableViewDataSource
+
 extension ChatUserController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return chatArr.count
+        guard let authUser = currentAuthUser else {return 0}
+        return authUser.chatArr.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "currentChatCell", for: indexPath) as! CurrentChatCell
         
+        guard let authUser = currentAuthUser else {return cell}
+        guard let chatUser = selectedUser else  {return cell}
+        guard let indexMessages = authUser.chatArr.firstIndex(where: {$0.ID == chatUser.ID}) else {return cell}
+        let chatArr = authUser.chatArr[indexMessages].messages
+        
         cell.messageLabel.text = chatArr[indexPath.row].body
         let id = chatArr[indexPath.row].sender
         
-        if id == currentUserID {
+        if id == authUser.ID {
             
             cell.heartLikeView.removeFromSuperview()
             cell.rightConstrainsToSuperView.isActive = true /// Дополнительная константа которая говорит что MessageView будт на расстояние от SuperView на 5 пунктов
             
             cell.messageLabel.textAlignment = .right
-            cell.avatar.image = UIImage()
+            cell.avatar.image = authUser.avatar
             cell.messageView.backgroundColor = UIColor(named: "CurrentUserMessageColor")
             cell.messageLabel.textColor = .white
             
             let width = cell.messageLabel.intrinsicContentSize.width
-            print(width)
-            print(cell.messageLabel.frame.width)
             
             if width < cell.messageLabel.frame.width {
                 let newLeftConstant = cell.messageLabel.frame.width - width/// Получаем новую разницу между mesage view и avatar
@@ -103,6 +103,7 @@ extension ChatUserController: UITableViewDataSource {
             
             cell.messageLabel.textAlignment = .left
             cell.messageView.backgroundColor = UIColor(named: "GrayColor")
+            cell.avatar.image = chatUser.avatar
             
             let width = cell.messageLabel.intrinsicContentSize.width
             

@@ -204,9 +204,7 @@ extension ChatViewController {
         }
         
         else if let currentView = sender.view as? PotentialChatCell {
-            print("1")
             guard let id = currentView.ID else {return}
-            print("2")
             let user = authUser.matchArr.first(where: {$0.ID == id})
             selectedUser = user
             performSegue(withIdentifier: "goToChat", sender: self)
@@ -217,9 +215,7 @@ extension ChatViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let destanationVC = segue.destination as? ChatUserController else  {return}
-        print("3")
         guard let user = selectedUser else {return}
-        print("4")
         destanationVC.selectedUser = user
     }
 }
