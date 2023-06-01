@@ -16,11 +16,18 @@ struct User {
     var name = String()
     var age = Int()
     
-    var avatar = UIImage()
+    var avatar: UIImage {
+        get {
+            if imageArr.count > 0 {
+                return imageArr[0]
+            }else {
+                return UIImage()
+            }
+        }
+    }
+    
     var imageArr = [UIImage]()
     var urlPhotoArr = [String]()
-    
-    var chatArr = [message]()
     
     private let db = Firestore.firestore()
     private let fileManager = FileManager.default
@@ -71,7 +78,6 @@ struct User {
         for url in urlFileArr {
             if let newImage = UIImage(contentsOfFile: url.path) {
                 imageArr.append(newImage)
-//                newImage = .remove
             }
         }
     }

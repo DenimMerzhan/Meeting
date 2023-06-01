@@ -7,7 +7,18 @@
 
 import Foundation
 
+struct chat {
+    
+    let ID: String
+    var messages =  [message]()
+    
+    init(ID: String) {
+        self.ID = ID
+    }
+}
+
 struct message {
     var sender: String
     var body: String
 }
+

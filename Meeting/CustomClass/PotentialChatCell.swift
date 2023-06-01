@@ -14,7 +14,7 @@ class PotentialChatCell: UIView {
     var name: String?
     var ID: String?
     
-    let tap = UITapGestureRecognizer()
+    let tapGesture = UITapGestureRecognizer()
     
     init(frame:CGRect,avatar:UIImage?,name:String?,ID: String?) {
         self.avatar = avatar
@@ -29,7 +29,7 @@ class PotentialChatCell: UIView {
     
     override func layoutSubviews() {
         
-        self.addGestureRecognizer(tap)
+        self.addGestureRecognizer(tapGesture)
         
         self.backgroundColor = .clear
         

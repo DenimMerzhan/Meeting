@@ -22,8 +22,10 @@ class CurrentAuthUser {
     var urlPhotoArr = [String]()
     var imageArr = [CurrentUserImage]()
     
-    var likeArr = [String]()
+    var matchArr = [User]()
+    var chatArr = [chat]()
     
+    var likeArr = [String]()
     var disLikeArr = [String]()
     var superLikeArr = [String]()
     
@@ -59,7 +61,15 @@ class CurrentAuthUser {
                     if let disLikeArr = dataDoc["DisLikeArr"] as? [String] {self.disLikeArr = disLikeArr}
                     if let superLikeArr = dataDoc["SuperLikeArr"] as? [String] {self.superLikeArr = superLikeArr}
                     
-                    for data in dataDoc {
+                    
+                    
+                    if let matchArr = dataDoc["MatchArr"] as? [String] { /// Загрузка MatchArr
+                        for ID in matchArr {
+                            await loadMatchUser(ID: ID)
+                        }
+                    }
+                    
+                    for data in dataDoc { /// Загрузка ссылок на фото в Storage
                         if data.key.contains("photoImage") {
                             if let urlPhoto = data.value as? String {
                                 self.urlPhotoArr.append(urlPhoto)
@@ -80,6 +90,8 @@ class CurrentAuthUser {
         if urlPhotoArr.count == 0 {
             currentUserLoaded = true /// Если фото у пользователя нету, то указываем что он загрузился
         }
+        loadChats() /// Загружаем чаты пользователя
+       
         return true
     }
 
@@ -171,7 +183,7 @@ class CurrentAuthUser {
             let imageID = "photoImage" + "".randomString(length: 5)
             
             let imagesRef = storage.reference().child("UsersPhoto").child(ID).child(imageID) /// Создаем ссылку на файл
-            guard let imageData = image.jpegData(compressionQuality: 0.4) else { /// Преобразуем в Jpeg c сжатием
+            guard let imageData = image.jpegData(compressionQuality: 0.0) else { /// Преобразуем в Jpeg c сжатием
                 return false
             }
             
@@ -246,6 +258,7 @@ extension CurrentAuthUser {
             if let likeArr = document["LikeArr"] as? [String], let superLikeArr = document["SuperLikeArr"] as? [String] {
                 
                 if likeArr.contains(ID) || superLikeArr.contains(ID) {
+                    writeMatch(potetnialPairID: potetnialPairID)
                     return true
                 }
             }
@@ -257,7 +270,72 @@ extension CurrentAuthUser {
         return false
     }
     
+    
+//MARK: - Запись в архив Match
+    
+    private func writeMatch(potetnialPairID:String){
+        
+        let currentUserRef = db.collection("Users").document(ID)
+        let matchUserRef = db.collection("Users").document(potetnialPairID)
+        
+        let matchIDArr = [potetnialPairID]
+        
+        currentUserRef.setData(["MatchArr" : matchIDArr],merge: true) { Error in
+            if let err = Error {
+                print("Ошибка записи в MatchArr - \(err)")
+            }
+        }
+        
+        matchUserRef.setData(["MatchArr" : matchIDArr],merge: true) { Error in
+            if let err = Error {
+                print("Ошибка записи в MatchArr - \(err)")
+            }
+        }
+    }
+    
 }
 
+
+//MARK: -  Загрузка чатов  и MatchUser
+
+extension CurrentAuthUser {
+    
+    func loadChats(){
+        
+        for matchUser in matchArr {
+            let chatsRef = db.collection("Users").document(ID).collection("Chats").document(matchUser.ID).collection("Messages")
+            
+            chatArr.append(chat(ID: matchUser.ID))
+            let endIndex = chatArr.endIndex
+            chatsRef.getDocuments { docSnap, err in
+                if let document = docSnap {
+                    for doc in document.documents {
+                        if let sender = doc.data()["sender"] as? String ,let body = doc.data()["body"] as? String{
+                            self.chatArr[endIndex].messages.append(message(sender: sender, body: body))
+                        }
+                    }
+                }else {
+                    guard let error = err else {return}
+                    print("Ошибка загрузки чатов - \(error)")
+                }
+            }
+        }
+    }
+    
+
+    func loadMatchUser(ID:String) async {
+        
+        var matchUser = User(ID: ID)
+        await matchUser.loadMetaData()
+        guard let avatarUrl = matchUser.urlPhotoArr.last else {return}
+        if let fileAvatar = await FirebaseStorageModel().loadPhotoToFile(urlPhotoArr: [avatarUrl], userID: matchUser.ID, currentUser: false) {
+            matchUser.loadPhotoFromDirectory(urlFileArr: fileAvatar)
+        }else {
+            return
+        }
+        self.matchArr.append(matchUser)
+    }
+
+}
 
 

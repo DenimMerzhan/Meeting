@@ -16,8 +16,9 @@ class ChatViewController: UIViewController {
     @IBOutlet weak var meetingLabel: UILabel!
     @IBOutlet weak var heightMostScrollView: NSLayoutConstraint!
     
-    private var userPairs = [User]()
+    
     var selectedUser: User?
+    var currentAuthUser: CurrentAuthUser?
     
     var chatCellArr = [ChatCellView]() {
         didSet {
@@ -45,7 +46,7 @@ class ChatViewController: UIViewController {
     
     private var widthHorizontalScrollview: CGFloat {
         get {
-            if userPairs.count > 0 {
+            if potenitalChatCellArr.count > 0 {
                 let width = CGFloat(potenitalChatCellArr.count * 115) + 15
                 if width < mostViewScrolling.frame.width {
                     return mostViewScrolling.frame.width + 50
@@ -85,14 +86,15 @@ class ChatViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        LoadUsersPairs()
+        let vc = self.tabBarController?.viewControllers![0] as! PairsViewController
+        currentAuthUser = vc.currentAuthUser
+        
         createChatViewCell()
         
         mostViewScrolling.addSubview(horizontalScrollView)
         horizontalScrollView.addSubview(contenView)
         contenView.addSubview(horizontalStackView)
         
-        createContentHorizontalScrollView()
         setupContentViewContstains()
         horizontalScrollView.contentSize.width = widthHorizontalScrollview
         
@@ -101,33 +103,51 @@ class ChatViewController: UIViewController {
 
 
 
-//MARK: -  Создание ячеек чатов пользователя
+//MARK: -  Создание ячеек чатов пользователя и потенциальных чатов
 
 extension ChatViewController {
     
     func createChatViewCell()  {
         
-        for user in userPairs {
+        guard let authUser = currentAuthUser else {return}
+        
+        if authUser.matchArr.count == 0 {
+            creatEmptyPotentialCell()
+            return
+        }
+        
+        for chat in authUser.chatArr {
             
-            if user.chatArr.count > 0 { /// Если у текущего пользователя был чат с новым пользователем
+            guard let user = authUser.matchArr.first(where: {$0.ID == chat.ID}) else {return}
+            
+            if chat.messages.count > 0 { /// Если у текущего пользователя был чат с новым пользователем
                 
-                let chatCell = ChatCellView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 100), ID: user.ID)
+                let chatCell = ChatCellView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 100), ID: chat.ID)
                 
-                chatCell.avatar.image = UIImage(named: "KatyaS")
-                chatCell.nameLabel.text = "Алиса"
-                chatCell.commentLabel.text = user.chatArr.last?.body /// Последнее сообщение от нее
+                chatCell.avatar.image = user.avatar
+                chatCell.nameLabel.text = user.name
+                chatCell.commentLabel.text = chat.messages.last?.body /// Последнее сообщение от нее
                 chatCell.scrollView = verticalScrollView
+                
                 chatCell.tapGesture.addTarget(self, action: #selector(handleTap(_:)))
                 
                 let action = UIAction { [weak self] UIAction in
-                    self?.deleteChat(ID: user.ID)
+                    self?.deleteChat(ID: chat.ID)
                 }
                 
                 chatCell.deleteView.button.addAction(action, for: .touchUpInside)
                 
                 chatCellArr.append(chatCell)
                 verticalStackView.addArrangedSubview(chatCell)
+            }else {
+                
+                let potentialChatCell = PotentialChatCell(frame: CGRect(x: 0, y: 0, width: 105, height: 155), avatar: user.avatar, name: user.name,ID: user.ID)
+                potentialChatCell.tapGesture.addTarget(self, action: #selector(handleTap(_:)))
+                potenitalChatCellArr.append(potentialChatCell)
+                horizontalStackView.addArrangedSubview(potentialChatCell)
             }
+            
+            creatEmptyPotentialCell()
         }
     }
 }
@@ -154,20 +174,7 @@ extension ChatViewController {
     }
     
     
-//MARK: -  Создание PotentialChatCell
-    
-    private func createContentHorizontalScrollView(){
-        
-        for user in userPairs { /// Если чата не было
-            
-            if user.chatArr.count == 0 {
-                let potentialChatCell = PotentialChatCell(frame: CGRect(x: 0, y: 0, width: 105, height: 155), avatar: user.avatar, name: user.name,ID: user.ID)
-                potenitalChatCellArr.append(potentialChatCell)
-                horizontalStackView.addArrangedSubview(potentialChatCell)
-            }
-        }
-        creatEmptyPotentialCell()
-    }
+//MARK: -  Создание EmptyChatCell
     
     func creatEmptyPotentialCell(){
         
@@ -182,56 +189,25 @@ extension ChatViewController {
 }
 
 
-//MARK: - Загрузка аватаров пользователей
-
-extension ChatViewController {
-    
-    func LoadUsersPairs(){
-        
-        for _ in 0...8 {
-            
-            var newUser = User(ID: "Катя" + String(Int.random(in: 1000...1000000)))
-            
-         
-                newUser.chatArr.append(message(sender: newUser.ID, body: "Привет,все хорошо?"))
-            
-            newUser.name = newUser.ID
-            newUser.avatar = UIImage(named: "KatyaS")!
-            newUser.age = Int.random(in: 18...35)
-            
-            userPairs.append(newUser)
-        }
-        
-        for _ in 0...2 {
-            
-            var newUser = User(ID: "Катя" + String(Int.random(in: 1000...1000000)))
-        
-            newUser.name = newUser.ID
-            newUser.avatar = UIImage(named: "KatyaS")!
-            newUser.age = Int.random(in: 18...35)
-            
-            userPairs.append(newUser)
-        }
-
-    }
-    
-}
-
 //MARK: - Переход в контроллер чата с пользователем
 
 extension ChatViewController {
     
     @objc func handleTap(_ sender:UITapGestureRecognizer){
         
+        guard let authUser = currentAuthUser else {return}
+        
         if let currentView = sender.view as? ChatCellView {
-            let user = userPairs.first(where: {$0.ID == currentView.ID})
+            let user = authUser.matchArr.first(where: {$0.ID == currentView.ID})
             selectedUser = user
             performSegue(withIdentifier: "goToChat", sender: self)
         }
         
         else if let currentView = sender.view as? PotentialChatCell {
+            print("1")
             guard let id = currentView.ID else {return}
-            let user = userPairs.first(where: {$0.ID == id})
+            print("2")
+            let user = authUser.matchArr.first(where: {$0.ID == id})
             selectedUser = user
             performSegue(withIdentifier: "goToChat", sender: self)
         }else {
@@ -241,7 +217,9 @@ extension ChatViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let destanationVC = segue.destination as? ChatUserController else  {return}
+        print("3")
         guard let user = selectedUser else {return}
+        print("4")
         destanationVC.selectedUser = user
     }
 }

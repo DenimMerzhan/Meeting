@@ -33,12 +33,6 @@ class PairsViewController: UIViewController {
     
     var matchID = String()
     
-    var matchArr = [String](){
-        didSet {
-            print(matchArr.count)
-        }
-    }
-    
     var basketUser = [User](){
         didSet {
             if basketUser.count > 10 {
@@ -92,7 +86,7 @@ class PairsViewController: UIViewController {
         Task {
             
             if await loadCurrentUsersData() {
-                await loadNewUsers(numberRequsetedUsers: 1)
+                await loadNewUsers(numberRequsetedUsers: 2)
                 startSettings()
             }else{
                 print("Ошибка загрузки текущего пользователя")
@@ -216,6 +210,7 @@ class PairsViewController: UIViewController {
 extension PairsViewController {
     
     func loadNewPeople(card:CardView){
+        
         
         currentAuthUser.writingPairsInfrormation()
         
@@ -379,7 +374,7 @@ extension PairsViewController {
 
 
 
-//MARK:  - Делегат который передает ID пользователя который совпал
+//MARK:  - Когда слуичилось
 
 extension PairsViewController  {
     
@@ -397,6 +392,7 @@ extension PairsViewController  {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let destanationVC = segue.destination as? MatchController else {return}
         guard let newMatch = basketUser.first(where: {$0.ID == matchID }) else {return}
+        currentAuthUser.matchArr.append(newMatch)
         destanationVC.newMatch = newMatch
     }
 }

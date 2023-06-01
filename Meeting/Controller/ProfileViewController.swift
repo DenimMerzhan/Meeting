@@ -21,7 +21,6 @@ class ProfileViewController: UIViewController {
     var animateProgressToValue = Float(0)
     
     let defaults = UserDefaults.standard
-    var navViewController = PairsViewController()
     
     var currentAuthUser =   CurrentAuthUser(ID: "") {
         didSet {
@@ -37,17 +36,13 @@ class ProfileViewController: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        currentAuthUser = navViewController.currentAuthUser /// Каждый раз обновляем currentAuthUser что бы срабатывал блок DidSet
+        guard let vc = self.tabBarController?.viewControllers?[0] as? PairsViewController else {return}
+        currentAuthUser = vc.currentAuthUser
         profileUpdate()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        if let navViewController = tabBarController?.viewControllers?[0] as? PairsViewController { /// Передаем ссылку на главный ViewController
-            self.navViewController = navViewController
-        }
-
         startSettings(animateProgressToValue: animateProgressToValue)
     }
     
