@@ -6,10 +6,11 @@
 //
 
 import Foundation
+import UIKit
 
 
-protocol matchDelegate {
+protocol passDataDelegate {
     
-    func getMadtchID(ID: String?)
+    func goToMatchVC(matchController:UIViewController?,matchUser: User)
     
 }

@@ -35,6 +35,9 @@
                                             <fontDescription key="titleFontDescription" type="boldSystem" pointSize="18"/>
                                             <color key="baseForegroundColor" red="0.50588238240000005" green="0.76862752440000004" blue="0.87450981139999995" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                         </buttonConfiguration>
+                                        <connections>
+                                            <action selector="sendPressed:" destination="adh-7Q-Imu" eventType="touchUpInside" id="OtN-cc-2QW"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                                 <constraints>
@@ -192,6 +195,7 @@
                         <outlet property="stackViewButton" destination="A8p-e0-Aue" id="LEh-By-IJS"/>
                         <outlet property="tapGesture" destination="2Ma-FL-cJ8" id="sLp-Dn-Prh"/>
                         <segue destination="adh-7Q-Imu" kind="presentation" identifier="goToMatch" modalPresentationStyle="fullScreen" id="I3L-eO-Ae0"/>
+                        <segue destination="yHA-e7-o3S" kind="presentation" identifier="swipeToChat" id="YX4-DE-Y59"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -232,17 +236,17 @@
         <!--ChatUserController-->
         <scene sceneID="CQv-eA-6dh">
             <objects>
-                <viewController title="ChatUserController" id="yHA-e7-o3S" customClass="ChatUserController" customModule="Meeting" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ChatUserController" title="ChatUserController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="yHA-e7-o3S" customClass="ChatUserController" customModule="Meeting" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="lfM-Ck-SYL">
-                        <rect key="frame" x="0.0" y="0.0" width="430" height="932"/>
+                        <rect key="frame" x="0.0" y="0.0" width="430" height="863"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="aeX-Zf-T0m">
-                                <rect key="frame" x="0.0" y="149" width="430" height="644"/>
+                                <rect key="frame" x="0.0" y="149" width="430" height="609"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </tableView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="a0I-Om-icB" userLabel="MessageView">
-                                <rect key="frame" x="0.0" y="793" width="430" height="80"/>
+                                <rect key="frame" x="0.0" y="758" width="430" height="80"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yhG-21-Pr1">
                                         <rect key="frame" x="374" y="30" width="51" height="40"/>
@@ -279,14 +283,14 @@
                                 <rect key="frame" x="0.0" y="59" width="430" height="85"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="1" translatesAutoresizingMaskIntoConstraints="NO" id="FHP-2u-TBt">
-                                        <rect key="frame" x="197.66666666666663" y="25" width="35" height="35"/>
+                                        <rect key="frame" x="197.66666666666666" y="25" width="35" height="35"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="35" id="OCy-Nb-2Az"/>
                                             <constraint firstAttribute="height" constant="35" id="pPP-Dg-EBN"/>
                                         </constraints>
                                     </imageView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HYi-8d-61K">
-                                        <rect key="frame" x="199.66666666666663" y="62" width="31" height="23"/>
+                                        <rect key="frame" x="199.66666666666666" y="62" width="31" height="23"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -357,7 +361,7 @@
         <!--Chat View Controller-->
         <scene sceneID="n1x-ky-8O3">
             <objects>
-                <viewController id="4xi-CV-6E3" customClass="ChatViewController" customModule="Meeting" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ChatViewController" id="4xi-CV-6E3" customClass="ChatViewController" customModule="Meeting" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="bn1-rL-0Qt">
                         <rect key="frame" x="0.0" y="0.0" width="430" height="932"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -671,6 +675,9 @@
             <point key="canvasLocation" x="4014" y="-874"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="YX4-DE-Y59"/>
+    </inferredMetricsTieBreakers>
     <resources>
         <image name="1" width="1718" height="2160"/>
         <image name="714022-removebg-preview" width="50" height="46.333332061767578"/>

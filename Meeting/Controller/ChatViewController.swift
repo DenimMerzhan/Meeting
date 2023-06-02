@@ -39,8 +39,6 @@ class ChatViewController: UIViewController {
             if potenitalChatCellArr.count > 4 { /// Если есть хотя бы 4 фото, то убираем пустые ячейки
                 potenitalChatCellArr.removeAll(where: {$0.avatar == nil })
             }
-            
-            
         }
     }
     
@@ -86,18 +84,19 @@ class ChatViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let vc = self.tabBarController?.viewControllers![0] as! PairsViewController
-        currentAuthUser = vc.currentAuthUser
-        
-        createChatViewCell()
-        
+        if let vc = self.tabBarController?.viewControllers![0] as? PairsViewController {
+            currentAuthUser = vc.currentAuthUser
+        }
         mostViewScrolling.addSubview(horizontalScrollView)
         horizontalScrollView.addSubview(contenView)
         contenView.addSubview(horizontalStackView)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
         
+        createChatViewCell()
         setupContentViewContstains()
         horizontalScrollView.contentSize.width = widthHorizontalScrollview
-        
     }
 }
 
@@ -109,13 +108,15 @@ extension ChatViewController {
     
     func createChatViewCell()  {
         
+        cleanChatCell()
+        
         guard let authUser = currentAuthUser else {return}
         
         if authUser.matchArr.count == 0 {
             creatEmptyPotentialCell()
             return
         }
-        
+    
         for chat in authUser.chatArr {
             
             guard let user = authUser.matchArr.first(where: {$0.ID == chat.ID}) else {return}
@@ -139,18 +140,59 @@ extension ChatViewController {
                 
                 chatCellArr.append(chatCell)
                 verticalStackView.addArrangedSubview(chatCell)
-            }else {
-                
+            }
+        }
+        createPotentialChatt()
+        creatEmptyPotentialCell()
+    }
+    
+//MARK: -  Создание EmptyChatCell
+    
+    func createPotentialChatt(){
+        
+        guard let authUser = currentAuthUser else {return}
+        print(authUser.matchArr.count, " -  Count")
+        for user in authUser.matchArr {
+            
+            guard let chatUser = currentAuthUser?.chatArr.first(where: {$0.ID == user.ID }) else {return}
+            
+            if chatUser.messages.count == 0 {
                 let potentialChatCell = PotentialChatCell(frame: CGRect(x: 0, y: 0, width: 105, height: 155), avatar: user.avatar, name: user.name,ID: user.ID)
                 potentialChatCell.tapGesture.addTarget(self, action: #selector(handleTap(_:)))
                 potenitalChatCellArr.append(potentialChatCell)
                 horizontalStackView.addArrangedSubview(potentialChatCell)
             }
             
-            creatEmptyPotentialCell()
         }
     }
+    
+    //MARK: -  Создание EmptyChatCell
+        
+        func creatEmptyPotentialCell(){
+            
+            if potenitalChatCellArr.count < 4 {
+                for _ in 0...4 - potenitalChatCellArr.count - 1 {
+                    let cell = PotentialChatCell(frame: CGRect(x: 0, y: 0, width: 105, height: 155), avatar: nil, name: nil,ID: nil)
+                    potenitalChatCellArr.append(cell)
+                    horizontalStackView.addArrangedSubview(cell)
+                }
+            }
+        }
+    
+    func cleanChatCell(){
+        
+        for view in chatCellArr {
+            view.removeFromSuperview()
+        }
+        for view in potenitalChatCellArr {
+            view.removeFromSuperview()
+        }
+        
+        chatCellArr.removeAll()
+        potenitalChatCellArr.removeAll()
+    }
 }
+
 
 //MARK: -  Настройка Горизонтального ScrollView
 
@@ -174,18 +216,7 @@ extension ChatViewController {
     }
     
     
-//MARK: -  Создание EmptyChatCell
-    
-    func creatEmptyPotentialCell(){
-        
-        if potenitalChatCellArr.count < 4 {
-            for _ in 0...4 - potenitalChatCellArr.count - 1 {
-                let cell = PotentialChatCell(frame: CGRect(x: 0, y: 0, width: 105, height: 155), avatar: nil, name: nil,ID: nil)
-                potenitalChatCellArr.append(cell)
-                horizontalStackView.addArrangedSubview(cell)
-            }
-        }
-    }
+
 }
 
 
@@ -233,8 +264,14 @@ extension ChatViewController {
     
 }
 
+//MARK: -  Переход с MatchController в ChatUserController
 
-
+extension ChatViewController: passDataDelegate {
+    func goToMatchVC( matchController: UIViewController?, matchUser: User) {
+        selectedUser = matchUser
+        performSegue(withIdentifier: "goToChat", sender: self)
+    }
+}
 
 
 

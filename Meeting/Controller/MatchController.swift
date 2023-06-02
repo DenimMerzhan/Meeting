@@ -12,6 +12,9 @@ class MatchController: UIViewController {
     
     @IBOutlet var tapGesture: UITapGestureRecognizer!
     
+    
+    var delegate: passDataDelegate?
+    
     var newMatch: User? {
         didSet {
             guard let user = newMatch else {return}
@@ -53,9 +56,19 @@ class MatchController: UIViewController {
     }
     
     
+    
+    @IBAction func sendPressed(_ sender: UIButton) {
+        self.dismiss(animated: false, completion: nil)
+        guard let user = newMatch else {return}
+        delegate?.goToMatchVC(matchController: self,matchUser: user)
+    }
+    
     func changePostionProgressBar(progressBar:[UIView],y: CGFloat){
         for view in progressBar {
             view.frame.origin.y = y
         }
+    }
+    deinit {
+        print("MatchController уничтожен")
     }
 }

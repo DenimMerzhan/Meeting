@@ -26,7 +26,7 @@ class PairsViewController: UIViewController {
     var nextCard = CardModel().createEmptyCard()
         
     var cardModel = CardModel()
-    var currentAuthUser = CurrentAuthUser(ID: "5TJFG62E5i")
+    var currentAuthUser = CurrentAuthUser(ID: "82KqIldcFx")
     
     var progressViewLoadUsers = CreateButton().createProgressLoadUsersStartForLaunch(width: 0)
     var timer = Timer()
@@ -68,9 +68,11 @@ class PairsViewController: UIViewController {
     }
     
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-    
+        
+        
         timer = Timer.scheduledTimer(withTimeInterval: 3, repeats: true) { timer in
             self.fireTimer()
         }
@@ -96,7 +98,9 @@ class PairsViewController: UIViewController {
     }
     
     
-    
+    override func viewDidAppear(_ animated: Bool) {
+        
+    }
     
 //MARK: -  Одна из кнопок лайка была нажата
     
@@ -393,7 +397,20 @@ extension PairsViewController  {
         guard let destanationVC = segue.destination as? MatchController else {return}
         guard let newMatch = basketUser.first(where: {$0.ID == matchID }) else {return}
         currentAuthUser.matchArr.append(newMatch)
+        currentAuthUser.chatArr.append(chat(ID: newMatch.ID))
         destanationVC.newMatch = newMatch
+        destanationVC.delegate = self
     }
 }
+//MARK: - Переход с MATCH Сontroller с помощью делегата
 
+extension PairsViewController: passDataDelegate {
+    func goToMatchVC( matchController: UIViewController?,matchUser:User) {
+     
+        guard let vc = self.tabBarController?.viewControllers![1] as? ChatViewController else {return}
+        guard let matchVC = matchController as? MatchController else {return}
+        matchVC.delegate = vc
+        matchVC.delegate?.goToMatchVC(matchController: nil, matchUser: matchUser)
+        tabBarController?.selectedIndex = 1
+    }
+}
