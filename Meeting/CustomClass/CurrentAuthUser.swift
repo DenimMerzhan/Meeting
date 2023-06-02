@@ -32,6 +32,16 @@ class CurrentAuthUser {
     var urlPhotoArr = [String]()
     var imageArr = [CurrentUserImage]()
     
+    private var matchArrID: [String] {
+        get {
+            var currentMatchArr = [String]()
+            for user in matchArr {
+                currentMatchArr.append(user.ID)
+            }
+            return currentMatchArr
+        }
+    }
+    
     var matchArr = [User]()
     var chatArr = [chat]()
     
@@ -285,21 +295,32 @@ extension CurrentAuthUser {
     
     private func writeMatch(potetnialPairID:String){
         
-        let currentUserRef = db.collection("Users").document(ID)
-        let matchUserRef = db.collection("Users").document(potetnialPairID)
-        
-        let matchIDArr = [potetnialPairID]
-        
-        currentUserRef.setData(["MatchArr" : matchIDArr],merge: true) { Error in
-            if let err = Error {
-                print("Ошибка записи в MatchArr - \(err)")
+        Task {
+            
+            let currentUserRef = db.collection("Users").document(ID)
+            let matchUserRef = db.collection("Users").document(potetnialPairID)
+            
+            do {
+                guard let pairData = try await matchUserRef.getDocument().data() else {return}
+                guard var pairMatchArr = pairData["MatchArr"] as? [String] else {return}
+                pairMatchArr.append(ID)
+                
+                matchUserRef.setData(["MatchArr" : pairMatchArr],merge: true) { Error in
+                    if let err = Error {
+                        print("Ошибка записи в MatchArr - \(err)")
+                    }
+                }
+            }catch {
+                print("Ошибка загрузки MatchArr другого пользователя")
             }
-        }
-        
-        matchUserRef.setData(["MatchArr" : matchIDArr],merge: true) { Error in
-            if let err = Error {
-                print("Ошибка записи в MatchArr - \(err)")
+            
+            currentUserRef.setData(["MatchArr" : matchArrID],merge: true) { Error in
+                if let err = Error {
+                    print("Ошибка записи в MatchArr - \(err)")
+                }
             }
+            
+
         }
     }
     

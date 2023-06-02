@@ -68,7 +68,4 @@ class MatchController: UIViewController {
             view.frame.origin.y = y
         }
     }
-    deinit {
-        print("MatchController уничтожен")
-    }
 }

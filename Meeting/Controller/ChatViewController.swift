@@ -39,21 +39,8 @@ class ChatViewController: UIViewController {
             if potenitalChatCellArr.count > 4 { /// Если есть хотя бы 4 фото, то убираем пустые ячейки
                 potenitalChatCellArr.removeAll(where: {$0.avatar == nil })
             }
-        }
-    }
-    
-    private var widthHorizontalScrollview: CGFloat {
-        get {
-            if potenitalChatCellArr.count > 0 {
-                let width = CGFloat(potenitalChatCellArr.count * 115) + 15
-                if width < mostViewScrolling.frame.width {
-                    return mostViewScrolling.frame.width + 50
-                }else {
-                    return width
-                }
-            }else {
-                return 115
-            }
+            contenView.frame.size.width = widthHorizontalScrollview()
+            horizontalScrollView.contentSize.width = widthHorizontalScrollview()
         }
     }
     
@@ -61,7 +48,7 @@ class ChatViewController: UIViewController {
         let scrollView = UIScrollView()
         scrollView.backgroundColor = .clear
         scrollView.frame = CGRect(x: 10, y: 60, width: view.frame.width, height: 155)
-        scrollView.contentSize = CGSize(width: widthHorizontalScrollview, height: 155)
+        scrollView.contentSize = CGSize(width: widthHorizontalScrollview(), height: 155)
         scrollView.showsHorizontalScrollIndicator = false
         return scrollView
     }()
@@ -69,7 +56,7 @@ class ChatViewController: UIViewController {
     private lazy var contenView: UIView = {
         let contentView = UIView()
         contentView.backgroundColor = .clear
-        contentView.frame.size = CGSize(width: widthHorizontalScrollview, height: 155)
+        contentView.frame.size = CGSize(width: widthHorizontalScrollview(), height: 155)
         return contentView
     }()
     
@@ -96,7 +83,6 @@ class ChatViewController: UIViewController {
         
         createChatViewCell()
         setupContentViewContstains()
-        horizontalScrollView.contentSize.width = widthHorizontalScrollview
     }
 }
 
@@ -142,6 +128,7 @@ extension ChatViewController {
                 verticalStackView.addArrangedSubview(chatCell)
             }
         }
+        
         createPotentialChatt()
         creatEmptyPotentialCell()
     }
@@ -158,6 +145,7 @@ extension ChatViewController {
             
             if chatUser.messages.count == 0 {
                 let potentialChatCell = PotentialChatCell(frame: CGRect(x: 0, y: 0, width: 105, height: 155), avatar: user.avatar, name: user.name,ID: user.ID)
+                print("1")
                 potentialChatCell.tapGesture.addTarget(self, action: #selector(handleTap(_:)))
                 potenitalChatCellArr.append(potentialChatCell)
                 horizontalStackView.addArrangedSubview(potentialChatCell)
@@ -179,6 +167,9 @@ extension ChatViewController {
             }
         }
     
+    
+//MARK: -   Очистка ячеек
+    
     func cleanChatCell(){
         
         for view in chatCellArr {
@@ -192,6 +183,7 @@ extension ChatViewController {
         potenitalChatCellArr.removeAll()
     }
 }
+
 
 
 //MARK: -  Настройка Горизонтального ScrollView
@@ -214,9 +206,6 @@ extension ChatViewController {
             ])
         }
     }
-    
-    
-
 }
 
 
@@ -225,7 +214,7 @@ extension ChatViewController {
 extension ChatViewController {
     
     @objc func handleTap(_ sender:UITapGestureRecognizer){
-        
+        print("HandleTap")
         guard let authUser = currentAuthUser else {return}
         
         if let currentView = sender.view as? ChatCellView {
@@ -273,6 +262,23 @@ extension ChatViewController: passDataDelegate {
     }
 }
 
+extension ChatViewController {
+    
+    func widthHorizontalScrollview() -> CGFloat {
+        
+        if potenitalChatCellArr.count > 0 {
+            let width = CGFloat(potenitalChatCellArr.count * 115) + 15
+            if width < mostViewScrolling.frame.width {
+                return mostViewScrolling.frame.width + 50
+            }else {
+                return width
+            }
+        }else {
+            return 115
+        }
+        
+    }
+}
 
 
 

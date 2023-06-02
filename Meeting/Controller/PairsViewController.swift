@@ -44,7 +44,7 @@ class PairsViewController: UIViewController {
     var usersArr =  [User]() {
         didSet {
             
-            print("usersArr.count - \(usersArr.count)")
+//            print("usersArr.count - \(usersArr.count)")
             
             if usersArr.count < 50 && currentAuthUser.numberPotenialPairsOnServer > 0 && currentAuthUser.newUsersLoading == false {
                 print("Загрузка новых пользователей")
