@@ -61,6 +61,7 @@ class ChatViewController: UIViewController {
         if let vc = self.tabBarController?.viewControllers![0] as? PairsViewController {
             currentAuthUser = vc.currentAuthUser
         }
+        
         mostViewScrolling.addSubview(horizontalScrollView)
         horizontalScrollView.addSubview(contenView)
         contenView.addSubview(horizontalStackView)
@@ -76,8 +77,6 @@ class ChatViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         createChatViewCell()
         setupContentViewContstains()
-        
-        
     }
 }
 
@@ -95,32 +94,6 @@ extension ChatViewController {
             creatEmptyPotentialCell()
             return
         }
-    
-//        for chat in authUser.chatArr {
-//
-//            guard let user = authUser.matchArr.first(where: {$0.ID == chat.ID}) else {return}
-//
-//            if chat.messages.count > 0 { /// Если у текущего пользователя был чат с новым пользователем
-//
-//                let chatCell = ChatCellView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 100), ID: chat.ID)
-//
-//                chatCell.avatar.image = user.avatar
-//                chatCell.nameLabel.text = user.name
-//                chatCell.commentLabel.text = chat.messages.last?.body /// Последнее сообщение от нее
-//                chatCell.scrollView = verticalScrollView
-//
-//                chatCell.tapGesture.addTarget(self, action: #selector(handleTap(_:)))
-//
-//                let action = UIAction { [weak self] UIAction in
-//                    self?.deleteChat(ID: chat.ID)
-//                }
-//
-//                chatCell.deleteView.button.addAction(action, for: .touchUpInside)
-//
-//                chatCellArr.append(chatCell)
-//                verticalStackView.addArrangedSubview(chatCell)
-//            }
-//        }
         
         createPotentialChatt()
         creatEmptyPotentialCell()
@@ -139,7 +112,6 @@ extension ChatViewController {
             if chatUser.messages.count == 0 {
                 let potentialChatCell = PotentialChatCell(frame: CGRect(x: 0, y: 0, width: 105, height: 155), avatar: user.avatar, name: user.name,ID: user.ID)
                 
-                potentialChatCell.tapGesture.addTarget(self, action: #selector(handleTap(_:)))
                 potenitalChatCellArr.append(potentialChatCell)
                 horizontalStackView.addArrangedSubview(potentialChatCell)
             }
@@ -186,53 +158,62 @@ extension ChatViewController {
 }
 
 
+//MARK: - TableViewDataSource and Delegate
 
-extension ChatViewController: UITableViewDataSource {
+extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let height = CGFloat(10 * 100) + 260
+        guard let authUser = currentAuthUser else {return 0}
         
-        if height > 0 {
-            heightMostScrollView.constant = height /// Обновляем константу вертикального ScrollView  в зависимости от количества чатов
-        }else {
-            heightMostScrollView.constant = 100 + 260
-        }
+        let height = CGFloat(authUser.matchArr.count * 100) + 280
+        
+        heightMostScrollView.constant = height /// Обновляем константу вертикального ScrollView  в зависимости от количества чатов
+        
         view.layoutIfNeeded()
         
-        return 10
+        return authUser.matchArr.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChatCell", for: indexPath) as! ChatCell
+        
+        guard let authUser = currentAuthUser else {return cell}
+        let pairUser = authUser.matchArr[indexPath.row]
+        guard let chat = currentAuthUser?.chatArr.first(where: {$0.ID == pairUser.ID }) else {return cell}
+        
+        cell.scrollView = verticalScrollView
+        
+        cell.avatar.image = pairUser.avatar
+        cell.nameLabel.text = pairUser.name
+        cell.commentLabel.text = chat.messages.last?.body /// Последнее сообщение от нее
+        
+        let action = UIAction { [weak self] UIAction in
+            authUser.matchArr.remove(at: indexPath.row)
+            self?.tableView.reloadData()
+        }
+
+        cell.deleteView.button.addAction(action, for: .touchUpInside)
         return cell
     }
     
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let authUser = currentAuthUser else {return}
+        selectedUser = authUser.matchArr[indexPath.row]
+        performSegue(withIdentifier: "goToChat", sender: self)
+    }
+    
 }
+
+
+
+
+
+
 
 //MARK: - Переход в контроллер чата с пользователем
 
 extension ChatViewController {
-    
-    @objc func handleTap(_ sender:UITapGestureRecognizer){
-        print("HandleTap")
-        guard let authUser = currentAuthUser else {return}
-        
-        if let currentView = sender.view as? ChatCellView {
-            let user = authUser.matchArr.first(where: {$0.ID == currentView.ID})
-            selectedUser = user
-            performSegue(withIdentifier: "goToChat", sender: self)
-        }
-        
-        else if let currentView = sender.view as? PotentialChatCell {
-            guard let id = currentView.ID else {return}
-            let user = authUser.matchArr.first(where: {$0.ID == id})
-            selectedUser = user
-            performSegue(withIdentifier: "goToChat", sender: self)
-        }else {
-            return
-        }
-    }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let destanationVC = segue.destination as? ChatUserController else  {return}
@@ -241,18 +222,6 @@ extension ChatViewController {
     }
 }
 
-
-//MARK: -  Удаление чата
-
-extension ChatViewController {
-    
-//    func deleteChat(ID:String){
-//        guard let index = chatCellArr.firstIndex(where: {$0.ID == ID}) else {return}
-//        chatCellArr[index].removeFromSuperview()
-//        chatCellArr.remove(at: index)
-//    }
-    
-}
 
 //MARK: -  Переход с MatchController в ChatUserController
 
