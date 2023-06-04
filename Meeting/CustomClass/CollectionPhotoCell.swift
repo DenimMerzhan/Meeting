@@ -19,8 +19,6 @@ class CollectionPhotoCell: UICollectionViewCell {
         
         dottedBorder = createDottedLine()
         contentView.layer.addSublayer(dottedBorder)
-        
-        
     }
     
     required init?(coder: NSCoder) {
