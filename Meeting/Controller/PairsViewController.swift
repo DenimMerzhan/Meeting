@@ -88,7 +88,7 @@ class PairsViewController: UIViewController {
         Task {
             
             if await loadCurrentUsersData() {
-                await loadNewUsers(numberRequsetedUsers: 2)
+//                await loadNewUsers(numberRequsetedUsers: 2)
                 startSettings()
             }else{
                 print("Ошибка загрузки текущего пользователя")

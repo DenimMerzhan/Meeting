@@ -17,7 +17,9 @@ class ChatCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+        avatar.layer.cornerRadius = avatar.frame.width / 2
+        avatar.clipsToBounds = true
+        nameLabel.textColor = .gray
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

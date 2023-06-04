@@ -65,7 +65,10 @@ class ChatViewController: UIViewController {
         horizontalScrollView.addSubview(contenView)
         contenView.addSubview(horizontalStackView)
         
-        tableView.register(UINib(nibName: "Main", bundle: nil), forCellReuseIdentifier: "ChatCell")
+        tableView.register(UINib(nibName: "TableViewCell", bundle: nil), forCellReuseIdentifier: "ChatCell")
+        tableView.rowHeight = 100
+        tableView.separatorStyle = .none
+        tableView.isScrollEnabled = false
         tableView.dataSource = self
     }
     
@@ -187,7 +190,7 @@ extension ChatViewController {
 extension ChatViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let height = CGFloat(100 * 100) + 260
+        let height = CGFloat(10 * 100) + 260
         
         if height > 0 {
             heightMostScrollView.constant = height /// Обновляем константу вертикального ScrollView  в зависимости от количества чатов
