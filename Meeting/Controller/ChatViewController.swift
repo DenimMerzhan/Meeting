@@ -10,7 +10,8 @@ import UIKit
 class ChatViewController: UIViewController {
 
     
-    @IBOutlet weak var verticalStackView: UIStackView!
+    
+    @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var verticalScrollView: UIScrollView!
     @IBOutlet weak var mostViewScrolling: UIView!
     @IBOutlet weak var meetingLabel: UILabel!
@@ -19,20 +20,6 @@ class ChatViewController: UIViewController {
     
     var selectedUser: User?
     var currentAuthUser: CurrentAuthUser?
-    
-    var chatCellArr = [ChatCellView]() {
-        didSet {
-            let height = CGFloat(chatCellArr.count * 100) + 260
-            
-            if height > 0 {
-                heightMostScrollView.constant = height /// Обновляем константу вертикального ScrollView  в зависимости от количества чатов
-            }else {
-                heightMostScrollView.constant = 100 + 260
-            }
-            view.layoutIfNeeded()
-        }
-    }
-    
 
     var potenitalChatCellArr = [PotentialChatCell](){
         didSet {
@@ -77,12 +64,17 @@ class ChatViewController: UIViewController {
         mostViewScrolling.addSubview(horizontalScrollView)
         horizontalScrollView.addSubview(contenView)
         contenView.addSubview(horizontalStackView)
+        
+        tableView.register(UINib(nibName: "Main", bundle: nil), forCellReuseIdentifier: "ChatCell")
+        tableView.dataSource = self
     }
     
+    
     override func viewDidAppear(_ animated: Bool) {
-        
         createChatViewCell()
         setupContentViewContstains()
+        
+        
     }
 }
 
@@ -94,8 +86,6 @@ extension ChatViewController {
     
     func createChatViewCell()  {
         
-        cleanChatCell()
-        
         guard let authUser = currentAuthUser else {return}
         
         if authUser.matchArr.count == 0 {
@@ -103,31 +93,31 @@ extension ChatViewController {
             return
         }
     
-        for chat in authUser.chatArr {
-            
-            guard let user = authUser.matchArr.first(where: {$0.ID == chat.ID}) else {return}
-            
-            if chat.messages.count > 0 { /// Если у текущего пользователя был чат с новым пользователем
-                
-                let chatCell = ChatCellView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 100), ID: chat.ID)
-                
-                chatCell.avatar.image = user.avatar
-                chatCell.nameLabel.text = user.name
-                chatCell.commentLabel.text = chat.messages.last?.body /// Последнее сообщение от нее
-                chatCell.scrollView = verticalScrollView
-                
-                chatCell.tapGesture.addTarget(self, action: #selector(handleTap(_:)))
-                
-                let action = UIAction { [weak self] UIAction in
-                    self?.deleteChat(ID: chat.ID)
-                }
-                
-                chatCell.deleteView.button.addAction(action, for: .touchUpInside)
-                
-                chatCellArr.append(chatCell)
-                verticalStackView.addArrangedSubview(chatCell)
-            }
-        }
+//        for chat in authUser.chatArr {
+//
+//            guard let user = authUser.matchArr.first(where: {$0.ID == chat.ID}) else {return}
+//
+//            if chat.messages.count > 0 { /// Если у текущего пользователя был чат с новым пользователем
+//
+//                let chatCell = ChatCellView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 100), ID: chat.ID)
+//
+//                chatCell.avatar.image = user.avatar
+//                chatCell.nameLabel.text = user.name
+//                chatCell.commentLabel.text = chat.messages.last?.body /// Последнее сообщение от нее
+//                chatCell.scrollView = verticalScrollView
+//
+//                chatCell.tapGesture.addTarget(self, action: #selector(handleTap(_:)))
+//
+//                let action = UIAction { [weak self] UIAction in
+//                    self?.deleteChat(ID: chat.ID)
+//                }
+//
+//                chatCell.deleteView.button.addAction(action, for: .touchUpInside)
+//
+//                chatCellArr.append(chatCell)
+//                verticalStackView.addArrangedSubview(chatCell)
+//            }
+//        }
         
         createPotentialChatt()
         creatEmptyPotentialCell()
@@ -145,7 +135,7 @@ extension ChatViewController {
             
             if chatUser.messages.count == 0 {
                 let potentialChatCell = PotentialChatCell(frame: CGRect(x: 0, y: 0, width: 105, height: 155), avatar: user.avatar, name: user.name,ID: user.ID)
-                print("1")
+                
                 potentialChatCell.tapGesture.addTarget(self, action: #selector(handleTap(_:)))
                 potenitalChatCellArr.append(potentialChatCell)
                 horizontalStackView.addArrangedSubview(potentialChatCell)
@@ -166,22 +156,6 @@ extension ChatViewController {
                 }
             }
         }
-    
-    
-//MARK: -   Очистка ячеек
-    
-    func cleanChatCell(){
-        
-        for view in chatCellArr {
-            view.removeFromSuperview()
-        }
-        for view in potenitalChatCellArr {
-            view.removeFromSuperview()
-        }
-        
-        chatCellArr.removeAll()
-        potenitalChatCellArr.removeAll()
-    }
 }
 
 
@@ -208,6 +182,30 @@ extension ChatViewController {
     }
 }
 
+
+
+extension ChatViewController: UITableViewDataSource {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        let height = CGFloat(100 * 100) + 260
+        
+        if height > 0 {
+            heightMostScrollView.constant = height /// Обновляем константу вертикального ScrollView  в зависимости от количества чатов
+        }else {
+            heightMostScrollView.constant = 100 + 260
+        }
+        view.layoutIfNeeded()
+        
+        return 10
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "ChatCell", for: indexPath) as! ChatCell
+        return cell
+    }
+    
+    
+}
 
 //MARK: - Переход в контроллер чата с пользователем
 
@@ -245,11 +243,11 @@ extension ChatViewController {
 
 extension ChatViewController {
     
-    func deleteChat(ID:String){
-        guard let index = chatCellArr.firstIndex(where: {$0.ID == ID}) else {return}
-        chatCellArr[index].removeFromSuperview()
-        chatCellArr.remove(at: index)
-    }
+//    func deleteChat(ID:String){
+//        guard let index = chatCellArr.firstIndex(where: {$0.ID == ID}) else {return}
+//        chatCellArr[index].removeFromSuperview()
+//        chatCellArr.remove(at: index)
+//    }
     
 }
 

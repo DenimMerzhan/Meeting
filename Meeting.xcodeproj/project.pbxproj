@@ -24,6 +24,8 @@
 		CF65ED802A2789AC00820D6B /* MatchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF65ED7F2A2789AC00820D6B /* MatchController.swift */; };
 		CF7D03092A0B80330028E7EB /* CurrentAuthUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7D03082A0B80330028E7EB /* CurrentAuthUser.swift */; };
 		CF807F0929FFF57800D5ACD1 /* CollectionPhotoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF807F0829FFF57800D5ACD1 /* CollectionPhotoCell.swift */; };
+		CF8F6C0E2A2C7A32004E62D0 /* ChatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8F6C0C2A2C7A32004E62D0 /* ChatCell.swift */; };
+		CF8F6C0F2A2C7A32004E62D0 /* TableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8F6C0D2A2C7A32004E62D0 /* TableViewCell.xib */; };
 		CF933C302A0CD65C0015E99B /* CustomError.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF933C2F2A0CD65C0015E99B /* CustomError.swift */; };
 		CF9AF8DA2A1DF1AD00E9F07E /* ChatUserController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9AF8D92A1DF1AD00E9F07E /* ChatUserController.swift */; };
 		CF9F4FC42A1F33D100191A29 /* CustomScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9F4FC32A1F33D100191A29 /* CustomScrollView.swift */; };
@@ -62,6 +64,8 @@
 		CF65ED7F2A2789AC00820D6B /* MatchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchController.swift; sourceTree = "<group>"; };
 		CF7D03082A0B80330028E7EB /* CurrentAuthUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentAuthUser.swift; sourceTree = "<group>"; };
 		CF807F0829FFF57800D5ACD1 /* CollectionPhotoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionPhotoCell.swift; sourceTree = "<group>"; };
+		CF8F6C0C2A2C7A32004E62D0 /* ChatCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCell.swift; sourceTree = "<group>"; };
+		CF8F6C0D2A2C7A32004E62D0 /* TableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TableViewCell.xib; sourceTree = "<group>"; };
 		CF933C2F2A0CD65C0015E99B /* CustomError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomError.swift; sourceTree = "<group>"; };
 		CF9AF8D92A1DF1AD00E9F07E /* ChatUserController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatUserController.swift; sourceTree = "<group>"; };
 		CF9F4FC32A1F33D100191A29 /* CustomScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomScrollView.swift; sourceTree = "<group>"; };
@@ -157,6 +161,7 @@
 			isa = PBXGroup;
 			children = (
 				CFA470E62A24DE6C005E3549 /* CurrentChatCell.swift */,
+				CF8F6C0C2A2C7A32004E62D0 /* ChatCell.swift */,
 				CF5E4ABA2A1BA0B8003CCC79 /* ChatCellView.swift */,
 				CF7D03082A0B80330028E7EB /* CurrentAuthUser.swift */,
 				CFC6D2FF29FE43B100A712BA /* CircularProgressBarView.swift */,
@@ -214,6 +219,7 @@
 			children = (
 				CF069DA529EC2D3E005ED378 /* Main.storyboard */,
 				CFA470E72A24DE6C005E3549 /* CurrentChatCell.xib */,
+				CF8F6C0D2A2C7A32004E62D0 /* TableViewCell.xib */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -288,6 +294,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF069DAC29EC2D3E005ED378 /* LaunchScreen.storyboard in Resources */,
+				CF8F6C0F2A2C7A32004E62D0 /* TableViewCell.xib in Resources */,
 				CFA140D92A00D61A00DD384B /* GoogleService-Info.plist in Resources */,
 				CF069DA929EC2D3E005ED378 /* Assets.xcassets in Resources */,
 				CF069DA729EC2D3E005ED378 /* Main.storyboard in Resources */,
@@ -357,6 +364,7 @@
 				CF9F4FC42A1F33D100191A29 /* CustomScrollView.swift in Sources */,
 				CFA470E82A24DE6C005E3549 /* CurrentChatCell.swift in Sources */,
 				CFD689222A0E5EB0003EB21A /* CurrentUserImage.swift in Sources */,
+				CF8F6C0E2A2C7A32004E62D0 /* ChatCell.swift in Sources */,
 				CF807F0929FFF57800D5ACD1 /* CollectionPhotoCell.swift in Sources */,
 				CF069DA029EC2D3D005ED378 /* AppDelegate.swift in Sources */,
 				CF1DC80A29F0DFC3001E2EAD /* User.swift in Sources */,

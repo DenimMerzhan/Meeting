@@ -238,15 +238,15 @@
             <objects>
                 <viewController storyboardIdentifier="ChatUserController" title="ChatUserController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="yHA-e7-o3S" customClass="ChatUserController" customModule="Meeting" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="lfM-Ck-SYL">
-                        <rect key="frame" x="0.0" y="0.0" width="430" height="863"/>
+                        <rect key="frame" x="0.0" y="0.0" width="430" height="932"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="aeX-Zf-T0m">
-                                <rect key="frame" x="0.0" y="149" width="430" height="609"/>
+                                <rect key="frame" x="0.0" y="149" width="430" height="644"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </tableView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="a0I-Om-icB" userLabel="MessageView">
-                                <rect key="frame" x="0.0" y="758" width="430" height="80"/>
+                                <rect key="frame" x="0.0" y="793" width="430" height="80"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yhG-21-Pr1">
                                         <rect key="frame" x="374" y="30" width="51" height="40"/>
@@ -381,17 +381,18 @@
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Bkm-ki-GZ0">
                                         <rect key="frame" x="0.0" y="0.0" width="430" height="1000"/>
                                         <subviews>
-                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="LOS-Ip-El0" userLabel="VerticalStackView">
-                                                <rect key="frame" x="0.0" y="260" width="430" height="740"/>
-                                            </stackView>
+                                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="Ko2-JE-axe">
+                                                <rect key="frame" x="0.0" y="0.0" width="430" height="1000"/>
+                                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                            </tableView>
                                         </subviews>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="1000" id="3Nm-cA-YAy"/>
-                                            <constraint firstAttribute="trailing" secondItem="LOS-Ip-El0" secondAttribute="trailing" id="Mv0-Wg-ibl"/>
-                                            <constraint firstAttribute="bottom" secondItem="LOS-Ip-El0" secondAttribute="bottom" id="RxJ-8R-q3d"/>
-                                            <constraint firstItem="LOS-Ip-El0" firstAttribute="leading" secondItem="Bkm-ki-GZ0" secondAttribute="leading" id="XeJ-9t-kDH"/>
-                                            <constraint firstItem="LOS-Ip-El0" firstAttribute="top" secondItem="Bkm-ki-GZ0" secondAttribute="top" constant="260" id="t5Y-kW-ZSY"/>
+                                            <constraint firstAttribute="bottom" secondItem="Ko2-JE-axe" secondAttribute="bottom" id="HNG-nV-HqQ"/>
+                                            <constraint firstItem="Ko2-JE-axe" firstAttribute="leading" secondItem="Bkm-ki-GZ0" secondAttribute="leading" id="HPL-ds-XlQ"/>
+                                            <constraint firstAttribute="trailing" secondItem="Ko2-JE-axe" secondAttribute="trailing" id="eJG-TO-dAZ"/>
+                                            <constraint firstItem="Ko2-JE-axe" firstAttribute="top" secondItem="Bkm-ki-GZ0" secondAttribute="top" id="nZl-Az-5sN"/>
                                         </constraints>
                                     </view>
                                 </subviews>
@@ -423,8 +424,8 @@
                         <outlet property="heightMostScrollView" destination="3Nm-cA-YAy" id="6y7-Uk-Sd5"/>
                         <outlet property="meetingLabel" destination="bsX-Nb-TiW" id="Q3f-Uv-Xps"/>
                         <outlet property="mostViewScrolling" destination="Bkm-ki-GZ0" id="pns-Of-yjk"/>
+                        <outlet property="tableView" destination="Ko2-JE-axe" id="cEk-j5-6MY"/>
                         <outlet property="verticalScrollView" destination="XQX-og-ehf" id="Xr1-zo-JZf"/>
-                        <outlet property="verticalStackView" destination="LOS-Ip-El0" id="SjC-UL-Ntd"/>
                         <segue destination="yHA-e7-o3S" kind="presentation" identifier="goToChat" modalPresentationStyle="fullScreen" id="Yh2-2j-Ke2"/>
                     </connections>
                 </viewController>
@@ -676,7 +677,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="YX4-DE-Y59"/>
+        <segue reference="Yh2-2j-Ke2"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="1" width="1718" height="2160"/>
