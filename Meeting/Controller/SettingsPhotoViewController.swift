@@ -34,7 +34,7 @@ class SettingsPhotoViewController: UIViewController {
         imagePicker.sourceType = .photoLibrary
 
         
-        collectionPhotoView.register(CollectionPhotoCell.self, forCellWithReuseIdentifier: CollectionPhotoCell.identifier)
+        collectionPhotoView.register(SettingsPhotoCell.self, forCellWithReuseIdentifier: SettingsPhotoCell.identifier)
     }
     
     
@@ -62,7 +62,7 @@ extension SettingsPhotoViewController : UICollectionViewDataSource, UICollection
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionPhotoCell.identifier, for: indexPath) as! CollectionPhotoCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SettingsPhotoCell.identifier, for: indexPath) as! SettingsPhotoCell
         cell.layer.cornerRadius = 10
         cell.layer.masksToBounds = true
         
@@ -146,7 +146,7 @@ extension SettingsPhotoViewController {
     }
     
     
-    func createDeleteButton(x: CGFloat, y: CGFloat,index: Int,cell:CollectionPhotoCell) -> UIButton {
+    func createDeleteButton(x: CGFloat, y: CGFloat,index: Int,cell:SettingsPhotoCell) -> UIButton {
         let buttonDelete = CreateButton().createDeleteButtonPhotoSetings(x: x, y: y)
         
         let action = UIAction { [unowned self] action in

@@ -20,14 +20,17 @@ class ChatViewController: UIViewController {
     
     var selectedUser: User?
     var currentAuthUser: CurrentAuthUser?
-
-    var potenitalChatCellArr = [PotentialChatCell](){
+    let layout:UICollectionViewFlowLayout = UICollectionViewFlowLayout.init()
+    
+    private var widthHorizontalScrollview = CGFloat() {
         didSet {
-            if potenitalChatCellArr.count > 4 { /// Если есть хотя бы 4 фото, то убираем пустые ячейки
-                potenitalChatCellArr.removeAll(where: {$0.avatar == nil })
+            if widthHorizontalScrollview < mostViewScrolling.frame.width {
+                contenView.frame.size.width = mostViewScrolling.frame.width + 50
+                horizontalScrollView.contentSize.width = mostViewScrolling.frame.width + 50
+            }else {
+                contenView.frame.size.width = widthHorizontalScrollview
+                horizontalScrollView.contentSize.width = widthHorizontalScrollview
             }
-            contenView.frame.size.width = widthHorizontalScrollview()
-            horizontalScrollView.contentSize.width = widthHorizontalScrollview()
         }
     }
     
@@ -35,7 +38,7 @@ class ChatViewController: UIViewController {
         let scrollView = UIScrollView()
         scrollView.backgroundColor = .clear
         scrollView.frame = CGRect(x: 10, y: 60, width: view.frame.width, height: 155)
-        scrollView.contentSize = CGSize(width: widthHorizontalScrollview(), height: 155)
+        scrollView.contentSize = CGSize(width: widthHorizontalScrollview, height: 155)
         scrollView.showsHorizontalScrollIndicator = false
         return scrollView
     }()
@@ -43,17 +46,11 @@ class ChatViewController: UIViewController {
     private lazy var contenView: UIView = {
         let contentView = UIView()
         contentView.backgroundColor = .clear
-        contentView.frame.size = CGSize(width: widthHorizontalScrollview(), height: 155)
+        contentView.frame.size = CGSize(width: widthHorizontalScrollview, height: 155)
         return contentView
     }()
     
-    private let horizontalStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.alignment = .center
-        stackView.spacing = 10
-        return stackView
-    }()
+    var collectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: 200, height: 155), collectionViewLayout: UICollectionViewFlowLayout.init())
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -62,22 +59,35 @@ class ChatViewController: UIViewController {
             currentAuthUser = vc.currentAuthUser
         }
         
-        mostViewScrolling.addSubview(horizontalScrollView)
-        horizontalScrollView.addSubview(contenView)
-        contenView.addSubview(horizontalStackView)
+  
+        
         
         tableView.register(UINib(nibName: "TableViewCell", bundle: nil), forCellReuseIdentifier: "ChatCell")
         tableView.rowHeight = 100
         tableView.separatorStyle = .none
         tableView.isScrollEnabled = false
         tableView.dataSource = self
+        
+        collectionView.dataSource = self
+        collectionView.backgroundColor = .red
+        layout.scrollDirection = .horizontal
+        
+        mostViewScrolling.addSubview(horizontalScrollView)
+        horizontalScrollView.addSubview(contenView)
+        contenView.addSubview(collectionView)
+        
+        
+        collectionView.register(UINib(nibName: "PotentialChatCell", bundle: nil), forCellWithReuseIdentifier: "potentialChatCell")
+        
+        contenView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            collectionView.rightAnchor.constraint(equalTo: contenView.rightAnchor),
+            collectionView.topAnchor.constraint(equalTo: contenView.topAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: contenView.bottomAnchor),
+            
+        ])
     }
     
-    
-    override func viewDidAppear(_ animated: Bool) {
-        createChatViewCell()
-        setupContentViewContstains()
-    }
 }
 
 
@@ -86,76 +96,76 @@ class ChatViewController: UIViewController {
 
 extension ChatViewController {
     
-    func createChatViewCell()  {
-        
-        guard let authUser = currentAuthUser else {return}
-        
-        if authUser.matchArr.count == 0 {
-            creatEmptyPotentialCell()
-            return
-        }
-        
-        createPotentialChatt()
-        creatEmptyPotentialCell()
-    }
+//    func createChatViewCell()  {
+//
+//        guard let authUser = currentAuthUser else {return}
+//
+//        if authUser.matchArr.count == 0 {
+//            creatEmptyPotentialCell()
+//            return
+//        }
+//
+//        createPotentialChatt()
+//        creatEmptyPotentialCell()
+//    }
     
 //MARK: -  Создание EmptyChatCell
     
-    func createPotentialChatt(){
-        
-        guard let authUser = currentAuthUser else {return}
-        print(authUser.matchArr.count, " -  Count")
-        for user in authUser.matchArr {
-            
-            guard let chatUser = currentAuthUser?.chatArr.first(where: {$0.ID == user.ID }) else {return}
-            
-            if chatUser.messages.count == 0 {
-                let potentialChatCell = PotentialChatCell(frame: CGRect(x: 0, y: 0, width: 105, height: 155), avatar: user.avatar, name: user.name,ID: user.ID)
-                
-                potenitalChatCellArr.append(potentialChatCell)
-                horizontalStackView.addArrangedSubview(potentialChatCell)
-            }
-            
-        }
-    }
+//    func createPotentialChatt(){
+//
+//        guard let authUser = currentAuthUser else {return}
+//        print(authUser.matchArr.count, " -  Count")
+//        for user in authUser.matchArr {
+//
+//            guard let chatUser = currentAuthUser?.chatArr.first(where: {$0.ID == user.ID }) else {return}
+//
+//            if chatUser.messages.count == 0 {
+//                let potentialChatCell = CustomPotenial(frame: CGRect(x: 0, y: 0, width: 105, height: 155), avatar: user.avatar, name: user.name,ID: user.ID)
+//
+//                potenitalChatCellArr.append(potentialChatCell)
+//                horizontalStackView.addArrangedSubview(potentialChatCell)
+//            }
+//
+//        }
+//    }
     
     //MARK: -  Создание EmptyChatCell
         
-        func creatEmptyPotentialCell(){
-            
-            if potenitalChatCellArr.count < 4 {
-                for _ in 0...4 - potenitalChatCellArr.count - 1 {
-                    let cell = PotentialChatCell(frame: CGRect(x: 0, y: 0, width: 105, height: 155), avatar: nil, name: nil,ID: nil)
-                    potenitalChatCellArr.append(cell)
-                    horizontalStackView.addArrangedSubview(cell)
-                }
-            }
-        }
+//        func creatEmptyPotentialCell(){
+//
+//            if potenitalChatCellArr.count < 4 {
+//                for _ in 0...4 - potenitalChatCellArr.count - 1 {
+//                    let cell = CustomPotenial(frame: CGRect(x: 0, y: 0, width: 105, height: 155), avatar: nil, name: nil,ID: nil)
+//                    potenitalChatCellArr.append(cell)
+//                    horizontalStackView.addArrangedSubview(cell)
+//                }
+//            }
+//        }
 }
 
 
 
-//MARK: -  Настройка Горизонтального ScrollView
-
-extension ChatViewController {
-    
-    private func setupContentViewContstains(){
-        
-        horizontalStackView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            horizontalStackView.topAnchor.constraint(equalTo: contenView.topAnchor),
-            horizontalStackView.bottomAnchor.constraint(equalTo: contenView.bottomAnchor),
-            horizontalStackView.leftAnchor.constraint(equalTo: contenView.leftAnchor)
-        ])
-        
-        for view in horizontalStackView.arrangedSubviews {
-            NSLayoutConstraint.activate([
-                view.widthAnchor.constraint(equalToConstant: 105),
-                view.heightAnchor.constraint(equalToConstant: 155)
-            ])
-        }
-    }
-}
+////MARK: -  Настройка Горизонтального ScrollView
+//
+//extension ChatViewController {
+//
+//    private func setupContentViewContstains(){
+//
+//        horizontalStackView.translatesAutoresizingMaskIntoConstraints = false
+//        NSLayoutConstraint.activate([
+//            horizontalStackView.topAnchor.constraint(equalTo: contenView.topAnchor),
+//            horizontalStackView.bottomAnchor.constraint(equalTo: contenView.bottomAnchor),
+//            horizontalStackView.leftAnchor.constraint(equalTo: contenView.leftAnchor)
+//        ])
+//
+//        for view in horizontalStackView.arrangedSubviews {
+//            NSLayoutConstraint.activate([
+//                view.widthAnchor.constraint(equalToConstant: 105),
+//                view.heightAnchor.constraint(equalToConstant: 155)
+//            ])
+//        }
+//    }
+//}
 
 
 //MARK: - TableViewDataSource and Delegate
@@ -207,6 +217,29 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
 
 
 
+//MARK: - UICollectionViewDataSource
+
+extension ChatViewController: UICollectionViewDataSource {
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        var count = 10
+        print("Yeah")
+//        guard let authUser = currentAuthUser else {return 0}
+//        for chat in authUser.chatArr {
+//            if chat.messages.count > 0 {
+//                count += 1
+//            }
+//        }
+        widthHorizontalScrollview = CGFloat(count * 115) + 15
+        return count
+    }
+    
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "potentialChatCell", for: indexPath) as! PotentialChatCell
+        return cell
+    }
+}
 
 
 
@@ -229,24 +262,6 @@ extension ChatViewController: passDataDelegate {
     func goToMatchVC( matchController: UIViewController?, matchUser: User) {
         selectedUser = matchUser
         performSegue(withIdentifier: "goToChat", sender: self)
-    }
-}
-
-extension ChatViewController {
-    
-    func widthHorizontalScrollview() -> CGFloat {
-        
-        if potenitalChatCellArr.count > 0 {
-            let width = CGFloat(potenitalChatCellArr.count * 115) + 15
-            if width < mostViewScrolling.frame.width {
-                return mostViewScrolling.frame.width + 50
-            }else {
-                return width
-            }
-        }else {
-            return 115
-        }
-        
     }
 }
 
