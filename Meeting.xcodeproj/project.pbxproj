@@ -17,7 +17,6 @@
 		CF1DC80829F0D46C001E2EAD /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1DC80729F0D46C001E2EAD /* CardView.swift */; };
 		CF1DC80A29F0DFC3001E2EAD /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1DC80929F0DFC3001E2EAD /* User.swift */; };
 		CF51A8F82A1CC57900BC3265 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF51A8F72A1CC57900BC3265 /* Message.swift */; };
-		CF51A8FA2A1CF3B300BC3265 /* CustomPotenial.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF51A8F92A1CF3B300BC3265 /* CustomPotenial.swift */; };
 		CF59A22C2A1B53B300954CCE /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF59A22B2A1B53B300954CCE /* ChatViewController.swift */; };
 		CF65ED7D2A277DFD00820D6B /* matchDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF65ED7C2A277DFD00820D6B /* matchDelegate.swift */; };
 		CF65ED802A2789AC00820D6B /* MatchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF65ED7F2A2789AC00820D6B /* MatchController.swift */; };
@@ -57,7 +56,6 @@
 		CF1DC80729F0D46C001E2EAD /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		CF1DC80929F0DFC3001E2EAD /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		CF51A8F72A1CC57900BC3265 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
-		CF51A8F92A1CF3B300BC3265 /* CustomPotenial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPotenial.swift; sourceTree = "<group>"; };
 		CF59A22B2A1B53B300954CCE /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		CF65ED7C2A277DFD00820D6B /* matchDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = matchDelegate.swift; sourceTree = "<group>"; };
 		CF65ED7F2A2789AC00820D6B /* MatchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchController.swift; sourceTree = "<group>"; };
@@ -160,14 +158,13 @@
 		CFA140DA2A00E21600DD384B /* CustomClass */ = {
 			isa = PBXGroup;
 			children = (
-				CFA470E62A24DE6C005E3549 /* CurrentChatCell.swift */,
+				CF8F6C142A2CC85F004E62D0 /* PotentialChatCell.swift */,
 				CF8F6C0C2A2C7A32004E62D0 /* ChatCell.swift */,
+				CFA470E62A24DE6C005E3549 /* CurrentChatCell.swift */,
+				CF807F0829FFF57800D5ACD1 /* SettingsPhotoCell.swift */,
 				CF7D03082A0B80330028E7EB /* CurrentAuthUser.swift */,
 				CFC6D2FF29FE43B100A712BA /* CircularProgressBarView.swift */,
 				CF1DC80729F0D46C001E2EAD /* CardView.swift */,
-				CF807F0829FFF57800D5ACD1 /* SettingsPhotoCell.swift */,
-				CF51A8F92A1CF3B300BC3265 /* CustomPotenial.swift */,
-				CF8F6C142A2CC85F004E62D0 /* PotentialChatCell.swift */,
 			);
 			path = CustomClass;
 			sourceTree = "<group>";
@@ -358,7 +355,6 @@
 				CF1DC80829F0D46C001E2EAD /* CardView.swift in Sources */,
 				CF9AF8DA2A1DF1AD00E9F07E /* ChatUserController.swift in Sources */,
 				CF7D03092A0B80330028E7EB /* CurrentAuthUser.swift in Sources */,
-				CF51A8FA2A1CF3B300BC3265 /* CustomPotenial.swift in Sources */,
 				CFCD0F9C2A0A887E00C17AFC /* TestFile.swift in Sources */,
 				CF51A8F82A1CC57900BC3265 /* Message.swift in Sources */,
 				CFA470E82A24DE6C005E3549 /* CurrentChatCell.swift in Sources */,

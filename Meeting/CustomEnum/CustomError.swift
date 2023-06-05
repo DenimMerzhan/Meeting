@@ -13,6 +13,7 @@ enum erorrMeeting: Error {
     case fewUsers(code:Int)
     case missingUserPhoto
     case errorLoadPhoto(code: Error)
+    case messageNotSent(code: Error)
 }
 
 extension erorrMeeting: CustomStringConvertible {
@@ -25,6 +26,9 @@ extension erorrMeeting: CustomStringConvertible {
             return "Фото пользователя отсуствует"
         case .errorLoadPhoto(code: let code):
             return "Ошибка загрузки данных изображения с FirebaseStorage \(code)"
+        case .messageNotSent(code: let code):
+            return "Ошибка отправки сообщения \(code)"
         }
     }
 }
+

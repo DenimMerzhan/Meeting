@@ -28,7 +28,6 @@ class ProfileViewController: UIViewController {
                 nameAgeLabel.text = currentAuthUser.name + " " + String(currentAuthUser.age)
                 if currentAuthUser.imageArr.count != 0 {
                     profilePhoto.image = currentAuthUser.imageArr[0].image
-                    print("Wow")
                 }
                 animateProgressToValue = Float(currentAuthUser.imageArr.count) / 9
             }

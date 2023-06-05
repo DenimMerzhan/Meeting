@@ -335,14 +335,16 @@ extension CurrentAuthUser {
         
         for matchUser in matchArr {
             let chatsRef = db.collection("Users").document(ID).collection("Chats").document(matchUser.ID).collection("Messages")
-            
+        
             chatArr.append(chat(ID: matchUser.ID))
-            let endIndex = chatArr.endIndex
-            chatsRef.getDocuments { docSnap, err in
+            
+            chatsRef.getDocuments { [weak self] docSnap, err in
                 if let document = docSnap {
                     for doc in document.documents {
-                        if let sender = doc.data()["sender"] as? String ,let body = doc.data()["body"] as? String{
-                            self.chatArr[endIndex].messages.append(message(sender: sender, body: body))
+                        if let sender = doc.data()["Sender"] as? String ,let body = doc.data()["Body"] as? String{
+                            
+                            guard let index = self?.chatArr.firstIndex(where: {$0.ID == matchUser.ID }) else {continue}
+                            self?.chatArr[index].messages.append(message(sender: sender, body: body))
                         }
                     }
                 }else {
@@ -370,3 +372,24 @@ extension CurrentAuthUser {
 }
 
 
+//MARK:  - Отправка сообщения
+
+extension CurrentAuthUser {
+    
+    func sendMessageToServer(pairUserID: String,body:String) -> Error? {
+        
+        var errorSend: erorrMeeting?
+        
+        let chatRef = db.collection("Users").document(ID).collection("Chats").document(pairUserID).collection("Messages")
+        chatRef.addDocument(data: [
+            "Sender": ID,
+            "Body": body,
+            "Date": Date().timeIntervalSince1970
+        ]) { err in
+            if let error = err {
+                return  errorSend = erorrMeeting.messageNotSent(code: error)
+            }
+        }
+        return nil
+    }
+}

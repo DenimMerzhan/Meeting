@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseFirestore
 
 class ChatUserController: UIViewController {
     
@@ -16,13 +17,15 @@ class ChatUserController: UIViewController {
     @IBOutlet weak var nameUser: UILabel!
     @IBOutlet weak var textField: UITextField!
     
-    var currentAuthUser: CurrentAuthUser?
-    var selectedUser: User?
+    var currentAuthUser = CurrentAuthUser(ID: "")
+    var selectedUser = User(ID: "")
     
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self
         tableView.separatorStyle = .none
+        tableView.register(UINib(nibName: "CurrentChatCell", bundle: nil), forCellReuseIdentifier: "currentChatCell")
+        
         
         avatarUser.layer.cornerRadius = avatarUser.frame.width / 2
         avatarUser.clipsToBounds = true
@@ -43,11 +46,8 @@ class ChatUserController: UIViewController {
         ]
         textField.attributedPlaceholder = NSAttributedString(string: "Сообщение",attributes: attributes)
      
-        
-        if let avatar = selectedUser?.avatar, let name = selectedUser?.name {
-            avatarUser.image = avatar
-            nameUser.text = name
-        }
+        avatarUser.image = selectedUser.avatar
+        nameUser.text = selectedUser.name
     }
     
     
@@ -55,39 +55,47 @@ class ChatUserController: UIViewController {
         self.dismiss(animated: true)
     }
     
-
+    @IBAction func sendPressed(_ sender: UIButton) {
+        
+        guard let body = textField.text else {return}
+    
+        textField.text = ""
+        
+        if let error = currentAuthUser.sendMessageToServer(pairUserID: selectedUser.ID, body: body) {
+            print("Ошибка отправки сообщения - \(error)")
+        }else {
+            tableView.reloadData()
+            
+        }
+        
+    }
+    
 }
-
-
-
 
 //MARK: - UITableViewDataSource
 
 extension ChatUserController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let authUser = currentAuthUser else {return 0}
-        return authUser.chatArr.count
+        guard let chatArr = currentAuthUser.chatArr.first(where: {$0.ID == selectedUser.ID })?.messages else {return 0}
+        return chatArr.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "currentChatCell", for: indexPath) as! CurrentChatCell
         
-        guard let authUser = currentAuthUser else {return cell}
-        guard let chatUser = selectedUser else  {return cell}
-        guard let indexMessages = authUser.chatArr.firstIndex(where: {$0.ID == chatUser.ID}) else {return cell}
-        let chatArr = authUser.chatArr[indexMessages].messages
+        guard let chatArr = currentAuthUser.chatArr.first(where: {$0.ID == selectedUser.ID })?.messages else {return cell}
         
         cell.messageLabel.text = chatArr[indexPath.row].body
         let id = chatArr[indexPath.row].sender
         
-        if id == authUser.ID {
+        if id == currentAuthUser.ID {
             
             cell.heartLikeView.removeFromSuperview()
             cell.rightConstrainsToSuperView.isActive = true /// Дополнительная константа которая говорит что MessageView будт на расстояние от SuperView на 5 пунктов
             
             cell.messageLabel.textAlignment = .right
-            cell.avatar.image = authUser.avatar
+            cell.avatar.image = currentAuthUser.avatar
             cell.messageView.backgroundColor = UIColor(named: "CurrentUserMessageColor")
             cell.messageLabel.textColor = .white
             
@@ -103,7 +111,7 @@ extension ChatUserController: UITableViewDataSource {
             
             cell.messageLabel.textAlignment = .left
             cell.messageView.backgroundColor = UIColor(named: "GrayColor")
-            cell.avatar.image = chatUser.avatar
+            cell.avatar.image = selectedUser.avatar
             
             let width = cell.messageLabel.intrinsicContentSize.width
             
@@ -124,3 +132,36 @@ extension ChatUserController: UITableViewDataSource {
     }
     
 }
+
+////MARK: -  Отслеживание изменений на сервере
+//
+//extension ChatUserController {
+//
+//    func loadMessage(){
+//        print("Shet")
+//
+//        guard let indexChat = currentAuthUser.chatArr.firstIndex(where: {$0.ID == selectedUser.ID}) else {return}
+//
+//        let db = Firestore.firestore()
+//        let refChat = db.collection("Users").document(currentAuthUser.ID).collection("Chats").document(selectedUser.ID).collection("Messages")
+//        refChat.order(by: "Date").addSnapshotListener { [weak self] QuerySnapshot, err in
+//
+//            if let error = err {print("Ошибка считывания сообщения с сервера - \(error)")}
+//
+//            guard let document = QuerySnapshot else {return}
+//            self?.currentAuthUser.chatArr[indexChat].messages.removeAll()
+//
+//            for data in document.documents {
+//                if let body = data["Body"] as? String, let sender = data["Sender"] as? String {
+//                    self?.currentAuthUser.chatArr[indexChat].messages.append(message(sender: sender, body: body))
+//                }
+//            }
+//
+//            self?.tableView.reloadData()
+//            let count = self?.currentAuthUser.chatArr[indexChat].messages.count ?? 1
+//            let indexPath = IndexPath(row: count - 1, section: 0)
+//            self?.tableView.scrollToRow(at: indexPath, at: .top, animated: false)
+//        }
+//    }
+//
+//}

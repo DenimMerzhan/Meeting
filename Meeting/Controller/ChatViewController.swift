@@ -61,6 +61,7 @@ class ChatViewController: UIViewController {
         tableView.separatorStyle = .none
         tableView.isScrollEnabled = false
         tableView.dataSource = self
+        tableView.delegate = self
         
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -79,7 +80,6 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
         let height = CGFloat(chatArr.count * 100) + 330
         heightMostScrollView.constant = height /// Обновляем константу вертикального ScrollView  в зависимости от количества чатов
         view.layoutIfNeeded()
-        
         return chatArr.count
     }
     
@@ -103,15 +103,18 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
             authUser.matchArr.remove(at: indexUser)
             self?.tableView.reloadData()
         }
-
+        
         cell.deleteView.button.addAction(action, for: .touchUpInside)
         return cell
     }
     
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let id = chatArr[indexPath.row].ID
         guard let authUser = currentAuthUser else {return}
-        selectedUser = authUser.matchArr[indexPath.row]
+        guard let matchUser = authUser.matchArr.first(where: {$0.ID == id}) else {return}
+        selectedUser = matchUser
+        tableView.deselectRow(at: indexPath, animated: true)
         performSegue(withIdentifier: "goToChat", sender: self)
     }
     
@@ -165,7 +168,10 @@ extension ChatViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let destanationVC = segue.destination as? ChatUserController else  {return}
         guard let user = selectedUser else {return}
+        guard let authUser = currentAuthUser else {return}
         destanationVC.selectedUser = user
+        destanationVC.currentAuthUser = authUser
+        
     }
 }
 
