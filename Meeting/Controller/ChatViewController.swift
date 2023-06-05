@@ -11,6 +11,7 @@ class ChatViewController: UIViewController {
 
     
     
+    @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var verticalScrollView: UIScrollView!
     @IBOutlet weak var mostViewScrolling: UIView!
@@ -20,47 +21,13 @@ class ChatViewController: UIViewController {
     
     var selectedUser: User?
     var currentAuthUser: CurrentAuthUser?
-    let layout:UICollectionViewFlowLayout = UICollectionViewFlowLayout.init()
-    
-    private var widthHorizontalScrollview = CGFloat() {
-        didSet {
-            if widthHorizontalScrollview < mostViewScrolling.frame.width {
-                contenView.frame.size.width = mostViewScrolling.frame.width + 50
-                horizontalScrollView.contentSize.width = mostViewScrolling.frame.width + 50
-            }else {
-                contenView.frame.size.width = widthHorizontalScrollview
-                horizontalScrollView.contentSize.width = widthHorizontalScrollview
-            }
-        }
-    }
-    
-    private lazy var horizontalScrollView: UIScrollView =  {
-        let scrollView = UIScrollView()
-        scrollView.backgroundColor = .clear
-        scrollView.frame = CGRect(x: 10, y: 60, width: view.frame.width, height: 155)
-        scrollView.contentSize = CGSize(width: widthHorizontalScrollview, height: 155)
-        scrollView.showsHorizontalScrollIndicator = false
-        return scrollView
-    }()
-    
-    private lazy var contenView: UIView = {
-        let contentView = UIView()
-        contentView.backgroundColor = .clear
-        contentView.frame.size = CGSize(width: widthHorizontalScrollview, height: 155)
-        return contentView
-    }()
-    
-    var collectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: 200, height: 155), collectionViewLayout: UICollectionViewFlowLayout.init())
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
         if let vc = self.tabBarController?.viewControllers![0] as? PairsViewController {
             currentAuthUser = vc.currentAuthUser
         }
-        
-  
-        
         
         tableView.register(UINib(nibName: "TableViewCell", bundle: nil), forCellReuseIdentifier: "ChatCell")
         tableView.rowHeight = 100
@@ -69,23 +36,7 @@ class ChatViewController: UIViewController {
         tableView.dataSource = self
         
         collectionView.dataSource = self
-        collectionView.backgroundColor = .red
-        layout.scrollDirection = .horizontal
-        
-        mostViewScrolling.addSubview(horizontalScrollView)
-        horizontalScrollView.addSubview(contenView)
-        contenView.addSubview(collectionView)
-        
-        
         collectionView.register(UINib(nibName: "PotentialChatCell", bundle: nil), forCellWithReuseIdentifier: "potentialChatCell")
-        
-        contenView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            collectionView.rightAnchor.constraint(equalTo: contenView.rightAnchor),
-            collectionView.topAnchor.constraint(equalTo: contenView.topAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: contenView.bottomAnchor),
-            
-        ])
     }
     
 }
@@ -175,7 +126,7 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard let authUser = currentAuthUser else {return 0}
         
-        let height = CGFloat(authUser.matchArr.count * 100) + 280
+        let height = CGFloat(authUser.matchArr.count * 100) + 330
         
         heightMostScrollView.constant = height /// Обновляем константу вертикального ScrollView  в зависимости от количества чатов
         
@@ -219,7 +170,7 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
 
 //MARK: - UICollectionViewDataSource
 
-extension ChatViewController: UICollectionViewDataSource {
+extension ChatViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         var count = 10
@@ -230,7 +181,6 @@ extension ChatViewController: UICollectionViewDataSource {
 //                count += 1
 //            }
 //        }
-        widthHorizontalScrollview = CGFloat(count * 115) + 15
         return count
     }
     
@@ -238,6 +188,10 @@ extension ChatViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "potentialChatCell", for: indexPath) as! PotentialChatCell
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 105, height: 155)
     }
 }
 

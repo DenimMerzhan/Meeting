@@ -22,14 +22,14 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="100"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="1" translatesAutoresizingMaskIntoConstraints="NO" id="44z-Ap-fHh">
-                                <rect key="frame" x="5" y="15" width="70" height="70"/>
+                                <rect key="frame" x="0.0" y="15" width="70" height="70"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="70" id="MWC-wp-AtZ"/>
                                     <constraint firstAttribute="width" constant="70" id="nuC-U8-lhC"/>
                                 </constraints>
                             </imageView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Tg7-0n-zzY" userLabel="LabelView">
-                                <rect key="frame" x="80" y="15" width="240" height="70"/>
+                                <rect key="frame" x="75" y="15" width="245" height="70"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Катя" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3pG-fJ-JpY" userLabel="Name">
                                         <rect key="frame" x="0.0" y="10" width="57.333333333333336" height="30"/>
@@ -73,7 +73,7 @@
                             <constraint firstAttribute="bottom" secondItem="9BS-9O-Hbk" secondAttribute="bottom" id="Mp1-NR-xQX"/>
                             <constraint firstItem="Tg7-0n-zzY" firstAttribute="top" secondItem="1QJ-29-Ibl" secondAttribute="top" constant="15" id="QMp-dM-83v"/>
                             <constraint firstAttribute="trailing" secondItem="Tg7-0n-zzY" secondAttribute="trailing" id="St0-pT-AfU"/>
-                            <constraint firstItem="44z-Ap-fHh" firstAttribute="leading" secondItem="1QJ-29-Ibl" secondAttribute="leading" constant="5" id="duj-hr-rNK"/>
+                            <constraint firstItem="44z-Ap-fHh" firstAttribute="leading" secondItem="1QJ-29-Ibl" secondAttribute="leading" id="duj-hr-rNK"/>
                             <constraint firstItem="44z-Ap-fHh" firstAttribute="top" secondItem="1QJ-29-Ibl" secondAttribute="top" constant="15" id="idb-9Y-yUT"/>
                             <constraint firstAttribute="trailing" secondItem="9BS-9O-Hbk" secondAttribute="trailing" id="jrC-Um-ZAK"/>
                             <constraint firstItem="Tg7-0n-zzY" firstAttribute="leading" secondItem="44z-Ap-fHh" secondAttribute="trailing" constant="5" id="lsd-ef-vVV"/>

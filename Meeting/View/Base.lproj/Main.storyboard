@@ -8,6 +8,7 @@
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="collection view cell content view" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -381,8 +382,32 @@
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Bkm-ki-GZ0">
                                         <rect key="frame" x="0.0" y="0.0" width="430" height="1000"/>
                                         <subviews>
+                                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="2kT-Rh-9l3">
+                                                <rect key="frame" x="15" y="70" width="415" height="155"/>
+                                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="155" id="cjJ-e2-j2d"/>
+                                                </constraints>
+                                                <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="5" minimumInteritemSpacing="5" id="Zev-Pi-MIu">
+                                                    <size key="itemSize" width="105" height="155"/>
+                                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                                </collectionViewFlowLayout>
+                                                <cells>
+                                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="kN6-5P-5qB">
+                                                        <rect key="frame" x="0.0" y="0.0" width="105" height="155"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="qs3-Xd-NE9">
+                                                            <rect key="frame" x="0.0" y="0.0" width="105" height="155"/>
+                                                            <autoresizingMask key="autoresizingMask"/>
+                                                        </collectionViewCellContentView>
+                                                        <size key="customSize" width="105" height="155"/>
+                                                    </collectionViewCell>
+                                                </cells>
+                                            </collectionView>
                                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="Ko2-JE-axe">
-                                                <rect key="frame" x="0.0" y="280" width="430" height="720"/>
+                                                <rect key="frame" x="15" y="325" width="415" height="675"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                             </tableView>
                                         </subviews>
@@ -390,9 +415,12 @@
                                         <constraints>
                                             <constraint firstAttribute="height" constant="1000" id="3Nm-cA-YAy"/>
                                             <constraint firstAttribute="bottom" secondItem="Ko2-JE-axe" secondAttribute="bottom" id="HNG-nV-HqQ"/>
-                                            <constraint firstItem="Ko2-JE-axe" firstAttribute="leading" secondItem="Bkm-ki-GZ0" secondAttribute="leading" id="HPL-ds-XlQ"/>
+                                            <constraint firstItem="Ko2-JE-axe" firstAttribute="leading" secondItem="Bkm-ki-GZ0" secondAttribute="leading" constant="15" id="HPL-ds-XlQ"/>
+                                            <constraint firstAttribute="trailing" secondItem="2kT-Rh-9l3" secondAttribute="trailing" id="M6H-SJ-lOW"/>
+                                            <constraint firstItem="2kT-Rh-9l3" firstAttribute="leading" secondItem="Bkm-ki-GZ0" secondAttribute="leading" constant="15" id="Vpc-h0-q6w"/>
+                                            <constraint firstItem="2kT-Rh-9l3" firstAttribute="top" secondItem="Bkm-ki-GZ0" secondAttribute="top" constant="70" id="aTf-Gm-mrL"/>
                                             <constraint firstAttribute="trailing" secondItem="Ko2-JE-axe" secondAttribute="trailing" id="eJG-TO-dAZ"/>
-                                            <constraint firstItem="Ko2-JE-axe" firstAttribute="top" secondItem="Bkm-ki-GZ0" secondAttribute="top" constant="280" id="nZl-Az-5sN"/>
+                                            <constraint firstItem="Ko2-JE-axe" firstAttribute="top" secondItem="2kT-Rh-9l3" secondAttribute="bottom" constant="100" id="nZl-Az-5sN"/>
                                         </constraints>
                                     </view>
                                 </subviews>
@@ -421,6 +449,7 @@
                     <toolbarItems/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="collectionView" destination="2kT-Rh-9l3" id="sFg-ie-Rfq"/>
                         <outlet property="heightMostScrollView" destination="3Nm-cA-YAy" id="6y7-Uk-Sd5"/>
                         <outlet property="meetingLabel" destination="bsX-Nb-TiW" id="Q3f-Uv-Xps"/>
                         <outlet property="mostViewScrolling" destination="Bkm-ki-GZ0" id="pns-Of-yjk"/>
