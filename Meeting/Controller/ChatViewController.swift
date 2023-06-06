@@ -26,26 +26,13 @@ class ChatViewController: UIViewController {
         get {
             var potentialArr = [User]()
             guard let authUser = currentAuthUser else {return [User]()}
-            for chat in authUser.chatArr {
-                if chat.messages.count == 0 {
-                    guard let user = authUser.matchArr.first(where: {$0.ID == chat.ID }) else {continue}
+            
+            for user in authUser.matchArr {
+                if  authUser.chatArr.first(where: {$0.ID.contains(user.ID)}) == nil {
                     potentialArr.append(user)
                 }
             }
             return potentialArr
-        }
-    }
-    
-    var chatArr: [Chat] {
-        get {
-            var chatArr = [Chat]()
-            guard let authUser = currentAuthUser else {return [Chat]()}
-            for chat in authUser.chatArr {
-                if chat.messages.count > 0 {
-                    chatArr.append(chat)
-                }
-            }
-            return chatArr
         }
     }
     
@@ -77,18 +64,21 @@ class ChatViewController: UIViewController {
 extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let height = CGFloat(chatArr.count * 100) + 330
+        guard let autUser = currentAuthUser else {return 0 }
+        let height = CGFloat(autUser.chatArr.count * 100) + 330
         heightMostScrollView.constant = height /// Обновляем константу вертикального ScrollView  в зависимости от количества чатов
         view.layoutIfNeeded()
-        return chatArr.count
+        return autUser.chatArr.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChatCell", for: indexPath) as! ChatCell
         
-        let chat = chatArr[indexPath.row]
+        
         guard let authUser = currentAuthUser else {return cell}
-        guard let pairUser = authUser.matchArr.first(where: {$0.ID == chat.ID}) else {return cell}
+        let chat = authUser.chatArr[indexPath.row]
+        guard let pairUser = authUser.matchArr.first(where: {chat.ID.contains($0.ID)}) else {return cell}
+       
         
         cell.scrollView = verticalScrollView
         cell.avatar.image = pairUser.avatar
@@ -96,10 +86,9 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
         cell.commentLabel.text = chat.messages.last?.body /// Последнее сообщение в чате
         
         let action = UIAction { [weak self] UIAction in
-            guard let indexChat = authUser.chatArr.firstIndex(where: {$0.ID == chat.ID}) else {return}
-            guard let indexUser = authUser.matchArr.firstIndex(where: {$0.ID == chat.ID}) else {return}
+            guard let indexUser = authUser.matchArr.firstIndex(where: {chat.ID.contains($0.ID)}) else {return}
             
-            authUser.chatArr.remove(at: indexChat)
+            authUser.chatArr.remove(at: indexPath.row)
             authUser.matchArr.remove(at: indexUser)
             self?.tableView.reloadData()
         }
@@ -110,9 +99,11 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
     
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let id = chatArr[indexPath.row].ID
+        
         guard let authUser = currentAuthUser else {return}
-        guard let matchUser = authUser.matchArr.first(where: {$0.ID == id}) else {return}
+        let id = authUser.chatArr[indexPath.row].ID
+        guard let matchUser = authUser.matchArr.first(where: {id.contains($0.ID)}) else {return}
+        
         selectedUser = matchUser
         tableView.deselectRow(at: indexPath, animated: true)
         performSegue(withIdentifier: "goToChat", sender: self)

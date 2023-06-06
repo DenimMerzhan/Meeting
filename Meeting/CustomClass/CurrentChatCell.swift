@@ -31,7 +31,7 @@ class CurrentChatCell: UITableViewCell {
         avatar.layer.cornerRadius = avatar.frame.width / 2
         avatar.clipsToBounds = true
         messageView.layer.cornerRadius = messageView.frame.height /  5
-        likeButton.alpha = 0.4
+        likeButton.alpha = 0.2
         
     }
 

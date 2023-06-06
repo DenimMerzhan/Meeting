@@ -26,7 +26,7 @@ class PairsViewController: UIViewController {
     var nextCard = CardModel().createEmptyCard()
         
     var cardModel = CardModel()
-    var currentAuthUser = CurrentAuthUser(ID:"5TJFG62E5i")
+    var currentAuthUser = CurrentAuthUser(ID:"+79817550000")
     
     var progressViewLoadUsers = CreateButton().createProgressLoadUsersStartForLaunch(width: 0)
     var timer = Timer()
@@ -88,7 +88,7 @@ class PairsViewController: UIViewController {
         Task {
             
             if await loadCurrentUsersData() {
-//                await loadNewUsers(numberRequsetedUsers: 2)
+//                await loadNewUsers(numberRequsetedUsers: 1)
                 startSettings()
             }else{
                 print("Ошибка загрузки текущего пользователя")
@@ -397,7 +397,6 @@ extension PairsViewController  {
         guard let destanationVC = segue.destination as? MatchController else {return}
         guard let newMatch = basketUser.first(where: {$0.ID == matchID }) else {return}
         currentAuthUser.matchArr.append(newMatch)
-        currentAuthUser.chatArr.append(Chat(ID: newMatch.ID))
         destanationVC.newMatch = newMatch
         destanationVC.delegate = self
     }

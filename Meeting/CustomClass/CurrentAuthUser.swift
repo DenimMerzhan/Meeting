@@ -86,11 +86,8 @@ class CurrentAuthUser {
                     if let matchArr = dataDoc["MatchArr"] as? [String] { /// Загрузка MatchArr и чатов
                         for matchID in matchArr {
                             await loadMatchUser(ID: matchID)
-                            
-                            if let chat = await loadChats(chatID: ID + "\\" + (matchID)) {
-                                chatArr.append(chat)
-                            }else {
-                                guard let chat = await loadChats(chatID: matchID + "\\" + (ID)) else {continue}
+                                                        
+                            if let chat = await loadChats(pairUserID: matchID) {
                                 chatArr.append(chat)
                             }
                         }
@@ -117,7 +114,6 @@ class CurrentAuthUser {
         if urlPhotoArr.count == 0 {
             currentUserLoaded = true /// Если фото у пользователя нету, то указываем что он загрузился
         }
-        print(chatArr.count)
         return true
     }
 
@@ -302,16 +298,18 @@ extension CurrentAuthUser {
     private func writeMatch(potetnialPairID:String){
         
         Task {
-            
+            var matchArrPairUser = [String]()
             let currentUserRef = db.collection("Users").document(ID)
             let matchUserRef = db.collection("Users").document(potetnialPairID)
             
             do {
                 guard let pairData = try await matchUserRef.getDocument().data() else {return}
-                guard var pairMatchArr = pairData["MatchArr"] as? [String] else {return}
-                pairMatchArr.append(ID)
+                if let arrPair = pairData["MatchArr"] as? [String] {
+                    matchArrPairUser = arrPair
+                }
+                matchArrPairUser.append(ID)
                 
-                matchUserRef.setData(["MatchArr" : pairMatchArr],merge: true) { Error in
+                matchUserRef.setData(["MatchArr" : matchArrPairUser],merge: true) { Error in
                     if let err = Error {
                         print("Ошибка записи в MatchArr - \(err)")
                     }
@@ -326,7 +324,12 @@ extension CurrentAuthUser {
                 }
             }
             
-
+            db.collection("Chats").document(ID + "\\" + potetnialPairID).collection("Messages").document("Test").setData(["Test" : 0]) { Error in
+                if let err = Error {
+                    print("Ошибка создания тестового чата - \(err)")
+                }
+            }
+            
         }
     }
     
@@ -337,13 +340,21 @@ extension CurrentAuthUser {
 
 extension CurrentAuthUser {
     
-    func loadChats(chatID: String) async -> Chat? {
+    func loadChats(pairUserID: String) async -> Chat? {
         
-        if await checkDocExist(chatID: chatID) == false {return nil}
+        var chatID = String()
         
-        let messagesRef = db.collection("Chats").document(chatID).collection("Messages")
+        if ID > pairUserID {
+            chatID = ID + "\\" + pairUserID
+        }else {
+            chatID = pairUserID + "\\" + ID
+        }
+        
+        let messagesRef = db.collection("Chats").document(chatID).collection("Messages").order(by: "Date")
         do {
             let snapShot = try await messagesRef.getDocuments()
+            if snapShot.isEmpty {return nil}
+            
             var chat = Chat(ID: chatID)
             for doc in snapShot.documents {
                 if let sender = doc.data()["Sender"] as? String, let body = doc.data()["Body"] as? String {
@@ -354,22 +365,6 @@ extension CurrentAuthUser {
         }catch {
          print("Ошибка получения чата - \(error)")
             return nil
-        }
-    }
-    
-    private func checkDocExist(chatID: String) async -> Bool{
-        
-        let chatsRef = db.collection("Chats").document(chatID)
-        do{
-            let doc = try await chatsRef.getDocument()
-            if doc.exists {
-                return true
-            }else {
-                return false
-            }
-        }catch{
-            print("Ошибка получения чата - \(error)")
-            return false
         }
     }
     
@@ -400,10 +395,17 @@ extension CurrentAuthUser {
 extension CurrentAuthUser {
     
     func sendMessageToServer(pairUserID: String,body:String) -> Error? {
+        var chatID = String()
+        
+        if ID > pairUserID {
+            chatID = ID + "\\" + pairUserID
+        }else {
+            chatID = pairUserID + "\\" + ID
+        }
         
         var errorSend: erorrMeeting?
         
-        let chatRef = db.collection("Users").document(ID).collection("Chats").document(pairUserID).collection("Messages")
+        let chatRef = db.collection("Chats").document(chatID).collection("Messages")
         chatRef.addDocument(data: [
             "Sender": ID,
             "Body": body,
