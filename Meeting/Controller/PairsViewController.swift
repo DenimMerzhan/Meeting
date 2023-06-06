@@ -397,7 +397,7 @@ extension PairsViewController  {
         guard let destanationVC = segue.destination as? MatchController else {return}
         guard let newMatch = basketUser.first(where: {$0.ID == matchID }) else {return}
         currentAuthUser.matchArr.append(newMatch)
-        currentAuthUser.chatArr.append(chat(ID: newMatch.ID))
+        currentAuthUser.chatArr.append(Chat(ID: newMatch.ID))
         destanationVC.newMatch = newMatch
         destanationVC.delegate = self
     }

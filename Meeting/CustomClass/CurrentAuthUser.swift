@@ -43,7 +43,7 @@ class CurrentAuthUser {
     }
     
     var matchArr = [User]()
-    var chatArr = [chat]()
+    var chatArr = [Chat]()
     
     var likeArr = [String]()
     var disLikeArr = [String]()
@@ -83,9 +83,16 @@ class CurrentAuthUser {
                     
                     
                     
-                    if let matchArr = dataDoc["MatchArr"] as? [String] { /// Загрузка MatchArr
-                        for ID in matchArr {
-                            await loadMatchUser(ID: ID)
+                    if let matchArr = dataDoc["MatchArr"] as? [String] { /// Загрузка MatchArr и чатов
+                        for matchID in matchArr {
+                            await loadMatchUser(ID: matchID)
+                            
+                            if let chat = await loadChats(chatID: ID + "\\" + (matchID)) {
+                                chatArr.append(chat)
+                            }else {
+                                guard let chat = await loadChats(chatID: matchID + "\\" + (ID)) else {continue}
+                                chatArr.append(chat)
+                            }
                         }
                     }
                     
@@ -110,8 +117,7 @@ class CurrentAuthUser {
         if urlPhotoArr.count == 0 {
             currentUserLoaded = true /// Если фото у пользователя нету, то указываем что он загрузился
         }
-        loadChats() /// Загружаем чаты пользователя
-       
+        print(chatArr.count)
         return true
     }
 
@@ -327,35 +333,50 @@ extension CurrentAuthUser {
 }
 
 
-//MARK: -  Загрузка чатов  и MatchUser
+//MARK: -  Загрузка чатов
 
 extension CurrentAuthUser {
     
-    func loadChats(){
+    func loadChats(chatID: String) async -> Chat? {
         
-        for matchUser in matchArr {
-            let chatsRef = db.collection("Users").document(ID).collection("Chats").document(matchUser.ID).collection("Messages")
+        if await checkDocExist(chatID: chatID) == false {return nil}
         
-            chatArr.append(chat(ID: matchUser.ID))
-            
-            chatsRef.getDocuments { [weak self] docSnap, err in
-                if let document = docSnap {
-                    for doc in document.documents {
-                        if let sender = doc.data()["Sender"] as? String ,let body = doc.data()["Body"] as? String{
-                            
-                            guard let index = self?.chatArr.firstIndex(where: {$0.ID == matchUser.ID }) else {continue}
-                            self?.chatArr[index].messages.append(message(sender: sender, body: body))
-                        }
-                    }
-                }else {
-                    guard let error = err else {return}
-                    print("Ошибка загрузки чатов - \(error)")
+        let messagesRef = db.collection("Chats").document(chatID).collection("Messages")
+        do {
+            let snapShot = try await messagesRef.getDocuments()
+            var chat = Chat(ID: chatID)
+            for doc in snapShot.documents {
+                if let sender = doc.data()["Sender"] as? String, let body = doc.data()["Body"] as? String {
+                    chat.messages.append(message(sender: sender, body: body))
                 }
             }
+            return chat
+        }catch {
+         print("Ошибка получения чата - \(error)")
+            return nil
         }
     }
     
-
+    private func checkDocExist(chatID: String) async -> Bool{
+        
+        let chatsRef = db.collection("Chats").document(chatID)
+        do{
+            let doc = try await chatsRef.getDocument()
+            if doc.exists {
+                return true
+            }else {
+                return false
+            }
+        }catch{
+            print("Ошибка получения чата - \(error)")
+            return false
+        }
+    }
+    
+    
+    
+//MARK: -  Загрузка MatchUser
+    
     func loadMatchUser(ID:String) async {
         
         var matchUser = User(ID: ID)
@@ -370,6 +391,8 @@ extension CurrentAuthUser {
     }
 
 }
+
+
 
 
 //MARK:  - Отправка сообщения

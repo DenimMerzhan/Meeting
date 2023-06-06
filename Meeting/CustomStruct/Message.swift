@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct chat {
+struct Chat {
     
     let ID: String
     var messages =  [message]()

@@ -36,10 +36,10 @@ class ChatViewController: UIViewController {
         }
     }
     
-    var chatArr: [chat] {
+    var chatArr: [Chat] {
         get {
-            var chatArr = [chat]()
-            guard let authUser = currentAuthUser else {return [chat]()}
+            var chatArr = [Chat]()
+            guard let authUser = currentAuthUser else {return [Chat]()}
             for chat in authUser.chatArr {
                 if chat.messages.count > 0 {
                     chatArr.append(chat)
