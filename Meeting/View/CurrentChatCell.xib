@@ -17,7 +17,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="320" height="91"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="2" translatesAutoresizingMaskIntoConstraints="NO" id="9dQ-Gc-3Ax">
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="9dQ-Gc-3Ax">
                         <rect key="frame" x="5" y="41" width="45" height="45"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="45" id="aki-44-a8g"/>
@@ -96,7 +96,6 @@
         </tableViewCell>
     </objects>
     <resources>
-        <image name="2" width="1388" height="1852"/>
         <image name="likeMessage" width="262.5" height="237.5"/>
     </resources>
 </document>

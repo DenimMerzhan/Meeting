@@ -26,7 +26,7 @@ class PairsViewController: UIViewController {
     var nextCard = CardModel().createEmptyCard()
         
     var cardModel = CardModel()
-    var currentAuthUser = CurrentAuthUser(ID: "82KqIldcFx")
+    var currentAuthUser = CurrentAuthUser(ID:"5TJFG62E5i")
     
     var progressViewLoadUsers = CreateButton().createProgressLoadUsersStartForLaunch(width: 0)
     var timer = Timer()

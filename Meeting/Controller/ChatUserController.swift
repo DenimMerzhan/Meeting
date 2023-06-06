@@ -20,6 +20,8 @@ class ChatUserController: UIViewController {
     var currentAuthUser = CurrentAuthUser(ID: "")
     var selectedUser = User(ID: "")
     
+    let widthMessagView = UIScreen.main.bounds.width - 90 /// 45 - ширина аватара, 25 - ширина сердечка справа, 20 - отуступы от краев и от друг друга
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self
@@ -64,10 +66,9 @@ class ChatUserController: UIViewController {
         if let error = currentAuthUser.sendMessageToServer(pairUserID: selectedUser.ID, body: body) {
             print("Ошибка отправки сообщения - \(error)")
         }else {
-            tableView.reloadData()
-            
+            loadMessage()
+            print("ReloadData")
         }
-        
     }
     
 }
@@ -89,21 +90,32 @@ extension ChatUserController: UITableViewDataSource {
         cell.messageLabel.text = chatArr[indexPath.row].body
         let id = chatArr[indexPath.row].sender
         
+        let label = UILabel() /// Лейбл с постоянной высотой 45 и шириной что бы всегда расчитывать одну и ту же идеальную ширину текста для ячейки
+        
+        label.text = cell.messageLabel.text
+        label.font = cell.messageLabel.font
+        label.frame.size.width = widthMessagView - 20
+        label.frame.size.height = 45
+        
         if id == currentAuthUser.ID {
             
             cell.heartLikeView.removeFromSuperview()
+            cell.avatar.image = UIImage(named: "KatyaS")
             cell.rightConstrainsToSuperView.isActive = true /// Дополнительная константа которая говорит что MessageView будт на расстояние от SuperView на 5 пунктов
             
             cell.messageLabel.textAlignment = .right
-            cell.avatar.image = currentAuthUser.avatar
             cell.messageView.backgroundColor = UIColor(named: "CurrentUserMessageColor")
             cell.messageLabel.textColor = .white
             
-            let width = cell.messageLabel.intrinsicContentSize.width
+            let width = label.intrinsicContentSize.width
+            print("Width - ", width)
             
-            if width < cell.messageLabel.frame.width {
-                let newLeftConstant = cell.messageLabel.frame.width - width/// Получаем новую разницу между mesage view и avatar
-                cell.leftMessageViewConstrains.constant += newLeftConstant + 30
+            
+            if width < widthMessagView {
+                let newLeftConstant = widthMessagView - width - 20/// Получаем новую разницу между mesage view и avatar
+                cell.leftMessageViewConstrains.constant = newLeftConstant + 5 + 30
+            }else {
+                cell.leftMessageViewConstrains.constant = 5
             }
             
             
@@ -113,11 +125,11 @@ extension ChatUserController: UITableViewDataSource {
             cell.messageView.backgroundColor = UIColor(named: "GrayColor")
             cell.avatar.image = selectedUser.avatar
             
-            let width = cell.messageLabel.intrinsicContentSize.width
+            let width = label.intrinsicContentSize.width
             
-            if width < cell.messageLabel.frame.width {
-                let newLeftConstant = cell.messageLabel.frame.width - width
-                cell.rightMessageViewConstrains.constant += newLeftConstant
+            if width < widthMessagView {
+                let newRightConstrains = widthMessagView - width - 20
+                cell.rightMessageViewConstrains.constant = newRightConstrains + 5
             }
         }
         
@@ -133,35 +145,37 @@ extension ChatUserController: UITableViewDataSource {
     
 }
 
-////MARK: -  Отслеживание изменений на сервере
-//
-//extension ChatUserController {
-//
-//    func loadMessage(){
-//        print("Shet")
-//
-//        guard let indexChat = currentAuthUser.chatArr.firstIndex(where: {$0.ID == selectedUser.ID}) else {return}
-//
-//        let db = Firestore.firestore()
-//        let refChat = db.collection("Users").document(currentAuthUser.ID).collection("Chats").document(selectedUser.ID).collection("Messages")
-//        refChat.order(by: "Date").addSnapshotListener { [weak self] QuerySnapshot, err in
-//
-//            if let error = err {print("Ошибка считывания сообщения с сервера - \(error)")}
-//
-//            guard let document = QuerySnapshot else {return}
-//            self?.currentAuthUser.chatArr[indexChat].messages.removeAll()
-//
-//            for data in document.documents {
-//                if let body = data["Body"] as? String, let sender = data["Sender"] as? String {
-//                    self?.currentAuthUser.chatArr[indexChat].messages.append(message(sender: sender, body: body))
-//                }
-//            }
-//
-//            self?.tableView.reloadData()
-//            let count = self?.currentAuthUser.chatArr[indexChat].messages.count ?? 1
-//            let indexPath = IndexPath(row: count - 1, section: 0)
-//            self?.tableView.scrollToRow(at: indexPath, at: .top, animated: false)
-//        }
-//    }
-//
-//}
+//MARK: -  Отслеживание изменений на сервере
+
+extension ChatUserController {
+
+    func loadMessage(){
+        print("Shet")
+
+        guard let indexChat = currentAuthUser.chatArr.firstIndex(where: {$0.ID == selectedUser.ID}) else {return}
+
+        let db = Firestore.firestore()
+        let refChat = db.collection("Users").document(currentAuthUser.ID).collection("Chats").document(selectedUser.ID).collection("Messages")
+        refChat.order(by: "Date").addSnapshotListener { [weak self] QuerySnapshot, err in
+
+            if let error = err {print("Ошибка считывания сообщения с сервера - \(error)")}
+
+            guard let document = QuerySnapshot else {return}
+            self?.currentAuthUser.chatArr[indexChat].messages.removeAll()
+
+            for data in document.documents {
+                if let body = data["Body"] as? String, let sender = data["Sender"] as? String {
+                    self?.currentAuthUser.chatArr[indexChat].messages.append(message(sender: sender, body: body))
+                }
+            }
+
+            DispatchQueue.main.async {
+                self?.tableView.reloadData()
+                let count = self?.currentAuthUser.chatArr[indexChat].messages.count ?? 1
+                let indexPath = IndexPath(row: count - 1, section: 0)
+                self?.tableView.scrollToRow(at: indexPath, at: .top, animated: false)
+            }
+        }
+    }
+
+}
