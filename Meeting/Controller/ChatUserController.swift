@@ -39,10 +39,7 @@ class ChatUserController: UIViewController {
         
         avatarUser.layer.cornerRadius = avatarUser.frame.width / 2
         avatarUser.clipsToBounds = true
-        topElementView.layer.shadowColor = UIColor.black.cgColor
-        topElementView.layer.shadowOpacity = 0.1
-        topElementView.layer.shadowOffset = CGSize(width: 0, height: 1)
-        topElementView.layer.shadowRadius = 1
+        topElementView.addBottomShadow()
         
         textField.layer.cornerRadius = textField.frame.height / 2
         textField.backgroundColor = UIColor(named: "PlaceHolderChatColor")
@@ -58,6 +55,8 @@ class ChatUserController: UIViewController {
      
         avatarUser.image = selectedUser.avatar
         nameUser.text = selectedUser.name
+        
+        loadMessage()
     }
     
     
@@ -70,7 +69,8 @@ class ChatUserController: UIViewController {
         guard let body = textField.text else {return}
     
         textField.text = ""
-       print("ReloadData")
+        print("ReloadData")
+        
         if let error = currentAuthUser.sendMessageToServer(pairUserID: selectedUser.ID, body: body){
             print("Ошибка отправки сообщения - \(error)")
         }else {
@@ -101,6 +101,7 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
         let cell = tableView.dequeueReusableCell(withIdentifier: "currentChatCell", for: indexPath) as! CurrentChatCell
         
         cell.messageLabel.text = chatArr[indexPath.row].body
+        print(indexPath.row)
         let id = chatArr[indexPath.row].sender
         
         let label = UILabel() /// Лейбл с постоянной высотой 45 и шириной что бы всегда расчитывать одну и ту же идеальную ширину текста для ячейки
@@ -111,8 +112,9 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
         label.frame.size.height = 45
         
         if id == currentAuthUser.ID {
-            print(id)
-            cell.heartLikeView.removeFromSuperview()
+            
+            cell.heartLikeView.isHidden = true
+            cell.rightMessageViewConstrains.isActive = false
             cell.avatar.image = UIImage()
             cell.rightConstrainsToSuperView.isActive = true /// Дополнительная константа которая говорит что MessageView будт на расстояние от SuperView на 5 пунктов
             
@@ -131,16 +133,18 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
             
             
         }else {
-            print(id)
             cell.messageLabel.textAlignment = .left
             cell.messageView.backgroundColor = UIColor(named: "GrayColor")
             cell.avatar.image = selectedUser.avatar
+            cell.messageLabel.textColor = .black
             
             let width = label.intrinsicContentSize.width
             
             if width < widthMessagView {
                 let newRightConstrains = widthMessagView - width - 20
                 cell.rightMessageViewConstrains.constant = newRightConstrains + 5
+            }else {
+                cell.rightMessageViewConstrains.constant = 5
             }
         }
         
@@ -193,4 +197,20 @@ extension ChatUserController {
         }
     }
 
+}
+
+
+
+extension UIView {
+func addBottomShadow() {
+    layer.masksToBounds = false
+    layer.shadowRadius = 4
+    layer.shadowOpacity = 0.3
+    layer.shadowColor = UIColor.gray.cgColor
+    layer.shadowOffset = CGSize(width: 0 , height: 2)
+    layer.shadowPath = UIBezierPath(rect: CGRect(x: 0,
+                                                 y: 0,
+                                                 width: bounds.width,
+                                                 height: layer.shadowRadius)).cgPath
+}
 }

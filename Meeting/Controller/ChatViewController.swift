@@ -55,6 +55,10 @@ class ChatViewController: UIViewController {
         collectionView.register(UINib(nibName: "PotentialChatCell", bundle: nil), forCellWithReuseIdentifier: "potentialChatCell")
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        tableView.reloadData()
+        collectionView.reloadData()
+    }
 }
 
 

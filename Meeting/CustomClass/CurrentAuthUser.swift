@@ -350,7 +350,7 @@ extension CurrentAuthUser {
             chatID = pairUserID + "\\" + ID
         }
         
-        let messagesRef = db.collection("Chats").document(chatID).collection("Messages").order(by: "Date")
+        let messagesRef = db.collection("Chats").document(chatID).collection("Messages").order(by:"Date")
         do {
             let snapShot = try await messagesRef.getDocuments()
             if snapShot.isEmpty {return nil}
@@ -386,8 +386,6 @@ extension CurrentAuthUser {
     }
 
 }
-
-
 
 
 //MARK:  - Отправка сообщения

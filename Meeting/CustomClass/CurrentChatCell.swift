@@ -34,11 +34,23 @@ class CurrentChatCell: UITableViewCell {
         likeButton.alpha = 0.2
         
     }
-
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
+        
         // Configure the view for the selected state
+    }
+    
+    override func prepareForReuse() { /// Подготовка перед повторным использованием
+        
+        heartLikeView.isHidden = false
+        rightConstrainsToSuperView.isActive = false
+        
+        rightMessageViewConstrains.constant = 5
+        rightConstrainsToSuperView.constant = 5
+        leftMessageViewConstrains.constant = 5
+        
+        rightMessageViewConstrains.isActive = true
     }
     
 }
