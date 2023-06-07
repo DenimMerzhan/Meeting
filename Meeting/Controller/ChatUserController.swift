@@ -31,11 +31,59 @@ class ChatUserController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupSetings()
+    }
+    
+    
+    @IBAction func exitButtonPressed(_ sender: Any) {
+        self.dismiss(animated: true)
+    }
+    
+    @IBAction func sendPressed(_ sender: UIButton) {
+        
+        guard let body = textField.text else {return}
+        
+        textField.text = ""
+        
+        if let error = currentAuthUser.sendMessageToServer(pairUserID: selectedUser.ID, body: body){
+            print("Ошибка отправки сообщения - \(error)")
+        }else {
+            if currentAuthUser.chatArr.firstIndex(where: {$0.ID.contains(selectedUser.ID)}) != nil {
+                loadMessage()
+            }else { /// Если чата не существует, значит это первое сообщение
+                Task {
+                    if let chat = await currentAuthUser.loadChats(pairUserID: selectedUser.ID) {
+                        currentAuthUser.chatArr.append(chat)
+                        loadMessage()
+                    }
+                }
+            }
+        }
+    }
+    
+    @objc func userReturnedToChat(){ /// Когда пользователь снова открывает приложение, мы снова загружаем чаты
+        loadMessage()
+    }
+        
+    deinit {
+        print("Denit")
+        NotificationCenter.default.removeObserver(self,name: Notification.Name("sceneWillEnterForeground"), object: nil)
+    }
+}
+
+
+//MARK: -  Стартовые настройки
+
+extension ChatUserController {
+    
+    func setupSetings(){
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(userReturnedToChat), name: Notification.Name(rawValue: "sceneWillEnterForeground"), object: nil)
+        
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.separatorStyle = .none
+//        tableView.separatorStyle = .none
         tableView.register(UINib(nibName: "CurrentChatCell", bundle: nil), forCellReuseIdentifier: "currentChatCell")
-        
         
         avatarUser.layer.cornerRadius = avatarUser.frame.width / 2
         avatarUser.clipsToBounds = true
@@ -52,41 +100,12 @@ class ChatUserController: UIViewController {
             NSAttributedString.Key.font : UIFont.systemFont(ofSize: 15)
         ]
         textField.attributedPlaceholder = NSAttributedString(string: "Сообщение",attributes: attributes)
-     
+        
         avatarUser.image = selectedUser.avatar
         nameUser.text = selectedUser.name
         
         loadMessage()
     }
-    
-    
-    @IBAction func exitButtonPressed(_ sender: Any) {
-        self.dismiss(animated: true)
-    }
-    
-    @IBAction func sendPressed(_ sender: UIButton) {
-        
-        guard let body = textField.text else {return}
-    
-        textField.text = ""
-        print("ReloadData")
-        
-        if let error = currentAuthUser.sendMessageToServer(pairUserID: selectedUser.ID, body: body){
-            print("Ошибка отправки сообщения - \(error)")
-        }else {
-            if let indexChat = currentAuthUser.chatArr.firstIndex(where: {$0.ID.contains(selectedUser.ID)}) {
-                loadMessage()
-            }else { /// Если чата не существует, значит это первое сообщение
-                Task {
-                    if let chat = await currentAuthUser.loadChats(pairUserID: selectedUser.ID) {
-                        currentAuthUser.chatArr.append(chat)
-                        loadMessage()
-                    }
-                }
-            }
-        }
-    }
-    
 }
 
 //MARK: - UITableViewDataSource
@@ -101,7 +120,8 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
         let cell = tableView.dequeueReusableCell(withIdentifier: "currentChatCell", for: indexPath) as! CurrentChatCell
         
         cell.messageLabel.text = chatArr[indexPath.row].body
-        print(indexPath.row)
+        cell.selectionStyle = .none
+        
         let id = chatArr[indexPath.row].sender
         
         let label = UILabel() /// Лейбл с постоянной высотой 45 и шириной что бы всегда расчитывать одну и ту же идеальную ширину текста для ячейки
@@ -123,7 +143,7 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
             cell.messageLabel.textColor = .white
             
             let width = label.intrinsicContentSize.width
-           
+            
             if width < widthMessagView {
                 let newLeftConstant = widthMessagView - width - 20/// Получаем новую разницу между mesage view и avatar
                 cell.leftMessageViewConstrains.constant = newLeftConstant + 5 + 30
@@ -152,9 +172,10 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
         if indexPath.row + 1 < chatArr.count && chatArr[indexPath.row + 1].sender == id {
             cell.avatar.image = UIImage()
             cell.bottomMessageViewConstrains.constant = 0
+        }else {
+            cell.bottomMessageViewConstrains.constant = 5
         }
         
-   
         return cell
     }
     
@@ -167,27 +188,28 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
 //MARK: -  Отслеживание изменений на сервере
 
 extension ChatUserController {
-
+    
     func loadMessage(){
         
+        print("LoadMessage")
+        
         guard let indexChat = currentAuthUser.chatArr.firstIndex(where: {$0.ID.contains(selectedUser.ID)}) else  {return}
-
+        
         let db = Firestore.firestore()
-        let refChat = db.collection("Chats").document(currentAuthUser.chatArr[indexChat].ID).collection("Messages")
-        refChat.order(by: "Date").addSnapshotListener { [weak self] QuerySnapshot, err in
-
-            if let error = err {print("Ошибка считывания сообщения с сервера - \(error)")}
-
+        let listener = db.collection("Chats").document(currentAuthUser.chatArr[indexChat].ID).collection("Messages").order(by: "Date").addSnapshotListener { [weak self] QuerySnapshot, err in
+            
+            if let error = err {print("Ошибка прослушивания снимков с сервера - \(error)")}
+            
             guard let document = QuerySnapshot else {return}
             self?.currentAuthUser.chatArr[indexChat].messages.removeAll()
             
-
+            
             for data in document.documents {
                 if let body = data["Body"] as? String, let sender = data["Sender"] as? String {
                     self?.currentAuthUser.chatArr[indexChat].messages.append(message(sender: sender, body: body))
                 }
             }
-
+            
             DispatchQueue.main.async {
                 self?.tableView.reloadData()
                 let count = self?.currentAuthUser.chatArr[indexChat].messages.count ?? 1
@@ -196,21 +218,24 @@ extension ChatUserController {
             }
         }
     }
-
+    
 }
 
 
+
+
+//MARK: -  Тень для TopView
 
 extension UIView {
-func addBottomShadow() {
-    layer.masksToBounds = false
-    layer.shadowRadius = 4
-    layer.shadowOpacity = 0.3
-    layer.shadowColor = UIColor.gray.cgColor
-    layer.shadowOffset = CGSize(width: 0 , height: 2)
-    layer.shadowPath = UIBezierPath(rect: CGRect(x: 0,
-                                                 y: 0,
-                                                 width: bounds.width,
-                                                 height: layer.shadowRadius)).cgPath
-}
+    func addBottomShadow() {
+        layer.masksToBounds = false
+        layer.shadowRadius = 4
+        layer.shadowOpacity = 0.3
+        layer.shadowColor = UIColor.gray.cgColor
+        layer.shadowOffset = CGSize(width: 0 , height: 0.5)
+        layer.shadowPath = UIBezierPath(rect: CGRect(x: 0,
+                                                     y: bounds.maxY - layer.shadowRadius,
+                                                     width: bounds.width,
+                                                     height: layer.shadowRadius)).cgPath
+    }
 }

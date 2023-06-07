@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseFirestore
 
 class ChatViewController: UIViewController {
 
@@ -21,6 +22,7 @@ class ChatViewController: UIViewController {
     
     var selectedUser: User?
     var currentAuthUser: CurrentAuthUser?
+    var listenerArr =  [ListenerRegistration]()
     
     var potentialChatArr: [User] {
         get {
@@ -43,6 +45,8 @@ class ChatViewController: UIViewController {
             currentAuthUser = vc.currentAuthUser
         }
         
+        addListeners()
+        
         tableView.register(UINib(nibName: "TableViewCell", bundle: nil), forCellReuseIdentifier: "ChatCell")
         tableView.rowHeight = 100
         tableView.separatorStyle = .none
@@ -56,7 +60,6 @@ class ChatViewController: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        tableView.reloadData()
         collectionView.reloadData()
     }
 }
@@ -181,5 +184,32 @@ extension ChatViewController: passDataDelegate {
 }
 
 
+//MARK: -  Добавление прослушивателей
+
+extension ChatViewController {
+    
+    func addListeners(){
+        let db = Firestore.firestore()
+        guard let authUser = currentAuthUser else {return}
+        
+        for indexChat in 0...authUser.chatArr.count - 1 {
+            let listener = db.collection("Chats").document(authUser.chatArr[indexChat].ID).collection("Messages").order(by: "Date").addSnapshotListener { QuerySnapshot, Error in
+                if let err = Error { print("Ошибка прослушивания снимков чата - \(err)")}
+                guard let data = QuerySnapshot?.documents.last else {return}
+                if let sender = data["Sender"] as? String, let body = data["Body"] as? String,let date = data["Date"] as? Double {
+                    authUser.chatArr[indexChat].messages.append(message(sender: sender, body: body))
+                    authUser.chatArr[indexChat].dateLastMessage = date
+                }
+            }
+        }
+        DispatchQueue.main.async {
+            let newArr = authUser.chatArr.sorted(by: {$0.dateLastMessage ?? 0 < $1.dateLastMessage ?? 0 })
+            authUser.chatArr = newArr
+            print(authUser.chatArr)
+            
+            self.tableView.reloadData()
+        }
+    }
+}
 
 

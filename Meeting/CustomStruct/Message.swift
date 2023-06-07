@@ -11,6 +11,7 @@ struct Chat {
     
     let ID: String
     var messages =  [message]()
+    var dateLastMessage: Double?
     
     init(ID: String) {
         self.ID = ID
