@@ -19,6 +19,7 @@ class ChatUserController: UIViewController {
     
     var currentAuthUser = CurrentAuthUser(ID: "")
     var selectedUser = User(ID: "")
+    var listener: ListenerRegistration?
     
     var chatArr: [message] {
         get {
@@ -67,6 +68,7 @@ class ChatUserController: UIViewController {
         
     deinit {
         print("Denit")
+        listener?.remove() /// Удаляем прослушивателя
         NotificationCenter.default.removeObserver(self,name: Notification.Name("sceneWillEnterForeground"), object: nil)
     }
 }
@@ -105,6 +107,11 @@ extension ChatUserController {
         nameUser.text = selectedUser.name
         
         loadMessage()
+        
+        if let chatIndex = currentAuthUser.chatArr.firstIndex(where: {$0.ID.contains(selectedUser.ID)}) {
+            currentAuthUser.chatArr[chatIndex].lastUnreadMessage = nil
+        } /// После того как пользователь прочитал сообщения обнуляем последнее не прочитанное сообщение
+        
     }
 }
 
@@ -120,7 +127,7 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
         let cell = tableView.dequeueReusableCell(withIdentifier: "currentChatCell", for: indexPath) as! CurrentChatCell
         
         cell.messageLabel.text = chatArr[indexPath.row].body
-//        cell.selectionStyle = .none
+        cell.selectionStyle = .none
         
         let id = chatArr[indexPath.row].sender
         
@@ -191,24 +198,27 @@ extension ChatUserController {
     
     func loadMessage(){
         
-        print("LoadMessage")
-        
         guard let indexChat = currentAuthUser.chatArr.firstIndex(where: {$0.ID.contains(selectedUser.ID)}) else  {return}
         
+        let indexChatOnServer = currentAuthUser.chatArr[indexChat].ID
+        
         let db = Firestore.firestore()
-        let listener = db.collection("Chats").document(currentAuthUser.chatArr[indexChat].ID).collection("Messages").order(by: "Date").addSnapshotListener { [weak self] QuerySnapshot, err in
+        let listener = db.collection("Chats").document(indexChatOnServer).collection("Messages").order(by: "Date").addSnapshotListener { [weak self] QuerySnapshot, err in
             
             if let error = err {print("Ошибка прослушивания снимков с сервера - \(error)")}
             
+            print("LoadMessage")
+            
             guard let document = QuerySnapshot else {return}
             self?.currentAuthUser.chatArr[indexChat].messages.removeAll()
-            
             
             for data in document.documents {
                 if let body = data["Body"] as? String, let sender = data["Sender"] as? String {
                     self?.currentAuthUser.chatArr[indexChat].messages.append(message(sender: sender, body: body))
                 }
             }
+            
+            db.collection("Chats").document(indexChatOnServer).setData([(self?.currentAuthUser.ID ?? "") + "DateOfLastMessageRead" : Date().timeIntervalSince1970])
             
             DispatchQueue.main.async {
                 self?.tableView.reloadData()
@@ -217,6 +227,7 @@ extension ChatUserController {
                 self?.tableView.scrollToRow(at: indexPath, at: .top, animated: false)
             }
         }
+        self.listener = listener
     }
     
 }
@@ -237,3 +248,4 @@ extension UIView {
                                                      height: layer.shadowRadius)).cgPath
     }
 }
+

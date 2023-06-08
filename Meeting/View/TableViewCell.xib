@@ -4,6 +4,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -41,8 +42,8 @@
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZrW-HW-PeO" userLabel="Comment">
-                                        <rect key="frame" x="0.0" y="45" width="0.0" height="15"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Что то на русском" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZrW-HW-PeO" userLabel="Comment">
+                                        <rect key="frame" x="0.0" y="45" width="108.33333333333333" height="15"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="15" id="Aaz-b3-qct"/>
                                         </constraints>
@@ -50,11 +51,33 @@
                                         <color key="textColor" systemColor="systemGray2Color"/>
                                         <nil key="highlightedColor"/>
                                     </label>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eF6-EJ-yX7" userLabel="CountUnreadMessageView">
+                                        <rect key="frame" x="215" y="22.666666666666664" width="25" height="25"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="10" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9zF-ZA-lRO" userLabel="CountUnreadMessageLabel">
+                                                <rect key="frame" x="2" y="2" width="21" height="21"/>
+                                                <fontDescription key="fontDescription" name="Kefa-Regular" family="Kefa" pointSize="10"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                        <color key="backgroundColor" name="GrayColor"/>
+                                        <constraints>
+                                            <constraint firstItem="9zF-ZA-lRO" firstAttribute="leading" secondItem="eF6-EJ-yX7" secondAttribute="leading" constant="2" id="UJ6-HD-7VQ"/>
+                                            <constraint firstItem="9zF-ZA-lRO" firstAttribute="top" secondItem="eF6-EJ-yX7" secondAttribute="top" constant="2" id="Uy6-fk-1Tj"/>
+                                            <constraint firstAttribute="width" constant="25" id="n3v-Xk-qvY"/>
+                                            <constraint firstAttribute="trailing" secondItem="9zF-ZA-lRO" secondAttribute="trailing" constant="2" id="rzb-fi-JNu"/>
+                                            <constraint firstAttribute="bottom" secondItem="9zF-ZA-lRO" secondAttribute="bottom" constant="2" id="xc3-pG-1N7"/>
+                                        </constraints>
+                                    </view>
                                 </subviews>
                                 <constraints>
                                     <constraint firstItem="3pG-fJ-JpY" firstAttribute="top" secondItem="Tg7-0n-zzY" secondAttribute="top" constant="10" id="Np4-1j-6SW"/>
+                                    <constraint firstItem="eF6-EJ-yX7" firstAttribute="top" secondItem="Tg7-0n-zzY" secondAttribute="top" constant="22.5" id="VbP-8O-lcs"/>
                                     <constraint firstItem="3pG-fJ-JpY" firstAttribute="leading" secondItem="Tg7-0n-zzY" secondAttribute="leading" id="XGn-yS-Bcm"/>
                                     <constraint firstItem="ZrW-HW-PeO" firstAttribute="leading" secondItem="Tg7-0n-zzY" secondAttribute="leading" id="aZp-9N-lg5"/>
+                                    <constraint firstAttribute="trailing" secondItem="eF6-EJ-yX7" secondAttribute="trailing" constant="5" id="ktT-Io-1yB"/>
+                                    <constraint firstAttribute="bottom" secondItem="eF6-EJ-yX7" secondAttribute="bottom" constant="22.5" id="pU9-X6-0Xy"/>
                                     <constraint firstAttribute="height" constant="70" id="sp2-Oj-zFf"/>
                                     <constraint firstItem="ZrW-HW-PeO" firstAttribute="top" secondItem="3pG-fJ-JpY" secondAttribute="bottom" constant="5" id="v7f-s2-5Wa"/>
                                 </constraints>
@@ -93,6 +116,8 @@
                 <outlet property="avatar" destination="44z-Ap-fHh" id="tvq-FL-lsg"/>
                 <outlet property="chatView" destination="1QJ-29-Ibl" id="mDH-Tq-1li"/>
                 <outlet property="commentLabel" destination="ZrW-HW-PeO" id="c0P-hK-lNu"/>
+                <outlet property="countUnreadMessageLabel" destination="9zF-ZA-lRO" id="E1Y-fE-Nm4"/>
+                <outlet property="countUnreadMessageView" destination="eF6-EJ-yX7" id="hC4-x6-yHg"/>
                 <outlet property="nameLabel" destination="3pG-fJ-JpY" id="RoT-tk-alb"/>
             </connections>
             <point key="canvasLocation" x="56.488549618320612" y="8.0985915492957758"/>
@@ -100,6 +125,9 @@
     </objects>
     <resources>
         <image name="1" width="1718" height="2160"/>
+        <namedColor name="GrayColor">
+            <color red="0.94099998474121094" green="0.94499999284744263" blue="0.95300000905990601" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+        </namedColor>
         <systemColor name="opaqueSeparatorColor">
             <color red="0.77647058823529413" green="0.77647058823529413" blue="0.78431372549019607" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>

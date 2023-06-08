@@ -81,8 +81,6 @@ class CurrentAuthUser {
                     if let disLikeArr = dataDoc["DisLikeArr"] as? [String] {self.disLikeArr = disLikeArr}
                     if let superLikeArr = dataDoc["SuperLikeArr"] as? [String] {self.superLikeArr = superLikeArr}
                     
-                    
-                    
                     if let matchArr = dataDoc["MatchArr"] as? [String] { /// Загрузка MatchArr и чатов
                         for matchID in matchArr {
                             await loadMatchUser(ID: matchID)

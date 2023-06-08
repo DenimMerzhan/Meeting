@@ -16,6 +16,9 @@ class ChatCell: UITableViewCell {
     @IBOutlet weak var chatView: UIView!
     
     
+    @IBOutlet weak var countUnreadMessageView: UIView!
+    @IBOutlet weak var countUnreadMessageLabel: UILabel!
+    
     
     var deleteView = changeView(frame: .zero, buttonImage: UIImage(named: "DeleteChatUser")!, text: "УДАЛИТЬ ИЗ ПАР", color: UIColor(named: "DeleteChatColor")!)
     
@@ -48,6 +51,11 @@ class ChatCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        
+        countUnreadMessageView.layer.cornerRadius = countUnreadMessageView.frame.width / 2
+        countUnreadMessageView.clipsToBounds = true
+        countUnreadMessageView.alpha = 0.6
+        
         avatar.layer.cornerRadius = avatar.frame.width / 2
         avatar.clipsToBounds = true
         commentLabel.textColor = .gray
@@ -72,6 +80,9 @@ class ChatCell: UITableViewCell {
     }
     
 
+    override func prepareForReuse() {
+        countUnreadMessageView.isHidden = true
+    }
     
 //MARK: - ViewDrags
     

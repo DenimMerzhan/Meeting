@@ -61,6 +61,7 @@ class ChatViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         collectionView.reloadData()
+        tableView.reloadData()
     }
 }
 
@@ -87,10 +88,18 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
         guard let pairUser = authUser.matchArr.first(where: {chat.ID.contains($0.ID)}) else {return cell}
        
         
+        if let lastUnreadMessage = chat.lastUnreadMessage {
+            cell.countUnreadMessageView.isHidden = false
+            cell.countUnreadMessageLabel.text = String(chat.numberUnreadMessges)
+            cell.commentLabel.text = lastUnreadMessage
+        }else {
+            cell.commentLabel.text = chat.messages.last?.body /// Последнее сообщение в чате
+        }
+        
         cell.scrollView = verticalScrollView
         cell.avatar.image = pairUser.avatar
         cell.nameLabel.text = pairUser.name
-        cell.commentLabel.text = chat.messages.last?.body /// Последнее сообщение в чате
+        
         
         let action = UIAction { [weak self] UIAction in
             guard let indexUser = authUser.matchArr.firstIndex(where: {chat.ID.contains($0.ID)}) else {return}
@@ -193,22 +202,23 @@ extension ChatViewController {
         guard let authUser = currentAuthUser else {return}
         print("StatrListen")
         
-        
         for indexChat in 0...authUser.chatArr.count - 1 {
-            _ = db.collection("Chats").document(authUser.chatArr[indexChat].ID).collection("Messages").order(by:"Date").addSnapshotListener { QuerySnapshot, Error in
+            let listener = db.collection("Chats").document(authUser.chatArr[indexChat].ID).collection("Messages").order(by:"Date").addSnapshotListener { querySnapshot, Error in
                 
                 if let err = Error { print("Ошибка прослушивания снимков чата - \(err)")}
                 
-                guard let documents = QuerySnapshot?.documents else {return}
+                guard let documents = querySnapshot?.documents else {return}
                 guard let lastDoc = documents.last else {return}
-                
-                if documents.count > authUser.chatArr.count {
+            
+                if documents.count > authUser.chatArr[indexChat].messages.count {
                     if let body = lastDoc["Body"] as? String {
                         authUser.chatArr[indexChat].lastUnreadMessage = body
-                        authUser.chatArr[indexChat].numberUnreadMessges = documents.count - authUser.chatArr.count
+                        authUser.chatArr[indexChat].numberUnreadMessges = documents.count - authUser.chatArr[indexChat].messages.count
                     }
+                }else {
+                    authUser.chatArr[indexChat].lastUnreadMessage = nil
                 }
-                
+                                
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
                 }
@@ -217,12 +227,3 @@ extension ChatViewController {
     }
 }
 
-
-extension ChatViewController {
-    
-    func createChatDot(){
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 10))
-        
-    }
-    
-}
