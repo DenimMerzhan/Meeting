@@ -191,25 +191,38 @@ extension ChatViewController {
     func addListeners(){
         let db = Firestore.firestore()
         guard let authUser = currentAuthUser else {return}
+        print("StatrListen")
+        
         
         for indexChat in 0...authUser.chatArr.count - 1 {
-            let listener = db.collection("Chats").document(authUser.chatArr[indexChat].ID).collection("Messages").order(by: "Date").addSnapshotListener { QuerySnapshot, Error in
+            _ = db.collection("Chats").document(authUser.chatArr[indexChat].ID).collection("Messages").order(by:"Date").addSnapshotListener { QuerySnapshot, Error in
+                
                 if let err = Error { print("Ошибка прослушивания снимков чата - \(err)")}
-                guard let data = QuerySnapshot?.documents.last else {return}
-                if let sender = data["Sender"] as? String, let body = data["Body"] as? String,let date = data["Date"] as? Double {
-                    authUser.chatArr[indexChat].messages.append(message(sender: sender, body: body))
-                    authUser.chatArr[indexChat].dateLastMessage = date
+                
+                guard let documents = QuerySnapshot?.documents else {return}
+                guard let lastDoc = documents.last else {return}
+                
+                if documents.count > authUser.chatArr.count {
+                    if let body = lastDoc["Body"] as? String {
+                        authUser.chatArr[indexChat].lastUnreadMessage = body
+                        authUser.chatArr[indexChat].numberUnreadMessges = documents.count - authUser.chatArr.count
+                    }
+                }
+                
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
                 }
             }
-        }
-        DispatchQueue.main.async {
-            let newArr = authUser.chatArr.sorted(by: {$0.dateLastMessage ?? 0 < $1.dateLastMessage ?? 0 })
-            authUser.chatArr = newArr
-            print(authUser.chatArr)
-            
-            self.tableView.reloadData()
         }
     }
 }
 
 
+extension ChatViewController {
+    
+    func createChatDot(){
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 10))
+        
+    }
+    
+}

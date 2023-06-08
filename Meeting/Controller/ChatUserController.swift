@@ -82,7 +82,7 @@ extension ChatUserController {
         
         tableView.dataSource = self
         tableView.delegate = self
-//        tableView.separatorStyle = .none
+        tableView.separatorStyle = .none
         tableView.register(UINib(nibName: "CurrentChatCell", bundle: nil), forCellReuseIdentifier: "currentChatCell")
         
         avatarUser.layer.cornerRadius = avatarUser.frame.width / 2
@@ -120,7 +120,7 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
         let cell = tableView.dequeueReusableCell(withIdentifier: "currentChatCell", for: indexPath) as! CurrentChatCell
         
         cell.messageLabel.text = chatArr[indexPath.row].body
-        cell.selectionStyle = .none
+//        cell.selectionStyle = .none
         
         let id = chatArr[indexPath.row].sender
         
@@ -220,8 +220,6 @@ extension ChatUserController {
     }
     
 }
-
-
 
 
 //MARK: -  Тень для TopView

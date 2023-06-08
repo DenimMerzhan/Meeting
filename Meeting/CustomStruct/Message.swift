@@ -11,7 +11,8 @@ struct Chat {
     
     let ID: String
     var messages =  [message]()
-    var dateLastMessage: Double?
+    var lastUnreadMessage: String?
+    var numberUnreadMessges = 0
     
     init(ID: String) {
         self.ID = ID
