@@ -271,7 +271,7 @@
                                             <constraint firstAttribute="height" constant="40" id="zZS-Um-KIE"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                        <textInputTraits key="textInputTraits"/>
+                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                     </textField>
                                 </subviews>
                                 <constraints>

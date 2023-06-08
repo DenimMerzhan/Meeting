@@ -50,6 +50,8 @@ class CurrentChatCell: UITableViewCell {
         rightConstrainsToSuperView.constant = 5
         leftMessageViewConstrains.constant = 5
         
+//        bottomMessageViewConstrains.constant = 5
+        
         rightMessageViewConstrains.isActive = true
     }
     

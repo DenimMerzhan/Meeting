@@ -349,14 +349,20 @@ extension CurrentAuthUser {
         }
         
         let messagesRef = db.collection("Chats").document(chatID).collection("Messages").order(by:"Date")
+        
         do {
             let snapShot = try await messagesRef.getDocuments()
+            let snapChat = try await db.collection("Chats").document(chatID).getDocument()
+            let dateLastMessageRead = snapChat.data()?[ID + "-DateOfLastMessageRead"] as? Double ?? 0
+            
             if snapShot.isEmpty {return nil}
             
             var chat = Chat(ID: chatID)
             for doc in snapShot.documents {
-                if let sender = doc.data()["Sender"] as? String, let body = doc.data()["Body"] as? String {
-                    chat.messages.append(message(sender: sender, body: body))
+                if let sender = doc.data()["Sender"] as? String, let body = doc.data()["Body"] as? String,let date = doc.data()["Date"] as? Double {
+                    if date <= dateLastMessageRead { /// Если пользователь прочитал это сообшение, то добавляем его в архив
+                        chat.messages.append(message(sender: sender, body: body))
+                    }
                 }
             }
             return chat

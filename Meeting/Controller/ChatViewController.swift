@@ -22,7 +22,7 @@ class ChatViewController: UIViewController {
     
     var selectedUser: User?
     var currentAuthUser: CurrentAuthUser?
-    var listenerArr =  [ListenerRegistration]()
+    var listenersArr =  [ListenerRegistration]()
     
     var potentialChatArr: [User] {
         get {
@@ -61,7 +61,7 @@ class ChatViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         collectionView.reloadData()
-        tableView.reloadData()
+        addListeners()
     }
 }
 
@@ -200,10 +200,15 @@ extension ChatViewController {
     func addListeners(){
         let db = Firestore.firestore()
         guard let authUser = currentAuthUser else {return}
-        print("StatrListen")
+        
+        if authUser.chatArr.count == 0 {return}
+        
+        listenersArr.removeAll()
         
         for indexChat in 0...authUser.chatArr.count - 1 {
             let listener = db.collection("Chats").document(authUser.chatArr[indexChat].ID).collection("Messages").order(by:"Date").addSnapshotListener { querySnapshot, Error in
+                
+                print("StatrListen")
                 
                 if let err = Error { print("Ошибка прослушивания снимков чата - \(err)")}
                 
@@ -212,6 +217,8 @@ extension ChatViewController {
             
                 if documents.count > authUser.chatArr[indexChat].messages.count {
                     if let body = lastDoc["Body"] as? String {
+                        print("Yeah", documents.count)
+                        print(authUser.chatArr[indexChat].messages.count)
                         authUser.chatArr[indexChat].lastUnreadMessage = body
                         authUser.chatArr[indexChat].numberUnreadMessges = documents.count - authUser.chatArr[indexChat].messages.count
                     }
@@ -223,6 +230,7 @@ extension ChatViewController {
                     self.tableView.reloadData()
                 }
             }
+            listenersArr.append(listener)
         }
     }
 }

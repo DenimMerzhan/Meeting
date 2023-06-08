@@ -44,20 +44,25 @@ class ChatUserController: UIViewController {
         
         guard let body = textField.text else {return}
         
+        if textField.text?.count == 0 {return}
         textField.text = ""
         
         if let error = currentAuthUser.sendMessageToServer(pairUserID: selectedUser.ID, body: body){
             print("Ошибка отправки сообщения - \(error)")
         }else {
-            if currentAuthUser.chatArr.firstIndex(where: {$0.ID.contains(selectedUser.ID)}) != nil {
-                loadMessage()
-            }else { /// Если чата не существует, значит это первое сообщение
-                Task {
-                    if let chat = await currentAuthUser.loadChats(pairUserID: selectedUser.ID) {
-                        currentAuthUser.chatArr.append(chat)
-                        loadMessage()
+            if currentAuthUser.chatArr.firstIndex(where: {$0.ID.contains(selectedUser.ID)}) == nil { /// Если чата не существует, значит это первое сообщение
+                 
+                var chatID = String()
+                if currentAuthUser.ID > selectedUser.ID {
+                    chatID = currentAuthUser.ID + "\\" + selectedUser.ID
+                    }else {
+                        chatID = selectedUser.ID + "\\" + currentAuthUser.ID
                     }
-                }
+                    
+                var chat = Chat(ID: chatID)
+                chat.messages.append(message(sender: currentAuthUser.ID, body: body))
+                currentAuthUser.chatArr.append(chat)
+                loadMessage()
             }
         }
     }
@@ -69,6 +74,11 @@ class ChatUserController: UIViewController {
     deinit {
         print("Denit")
         listener?.remove() /// Удаляем прослушивателя
+        
+        if let chatIndex = currentAuthUser.chatArr.firstIndex(where: {$0.ID.contains(selectedUser.ID)}) {
+            currentAuthUser.chatArr[chatIndex].lastUnreadMessage = nil
+        } /// После того как пользователь прочитал сообщения обнуляем последнее не прочитанное сообщение
+        
         NotificationCenter.default.removeObserver(self,name: Notification.Name("sceneWillEnterForeground"), object: nil)
     }
 }
@@ -107,10 +117,6 @@ extension ChatUserController {
         nameUser.text = selectedUser.name
         
         loadMessage()
-        
-        if let chatIndex = currentAuthUser.chatArr.firstIndex(where: {$0.ID.contains(selectedUser.ID)}) {
-            currentAuthUser.chatArr[chatIndex].lastUnreadMessage = nil
-        } /// После того как пользователь прочитал сообщения обнуляем последнее не прочитанное сообщение
         
     }
 }
@@ -175,12 +181,9 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
             }
         }
         
-        
         if indexPath.row + 1 < chatArr.count && chatArr[indexPath.row + 1].sender == id {
             cell.avatar.image = UIImage()
             cell.bottomMessageViewConstrains.constant = 0
-        }else {
-            cell.bottomMessageViewConstrains.constant = 5
         }
         
         return cell
@@ -200,6 +203,9 @@ extension ChatUserController {
         
         guard let indexChat = currentAuthUser.chatArr.firstIndex(where: {$0.ID.contains(selectedUser.ID)}) else  {return}
         
+        listener?.remove()
+        
+        let currentUserID = currentAuthUser.ID
         let indexChatOnServer = currentAuthUser.chatArr[indexChat].ID
         
         let db = Firestore.firestore()
@@ -218,7 +224,7 @@ extension ChatUserController {
                 }
             }
             
-            db.collection("Chats").document(indexChatOnServer).setData([(self?.currentAuthUser.ID ?? "") + "DateOfLastMessageRead" : Date().timeIntervalSince1970])
+            db.collection("Chats").document(indexChatOnServer).setData([(currentUserID) + "-DateOfLastMessageRead" : Date().timeIntervalSince1970],merge: true)
             
             DispatchQueue.main.async {
                 self?.tableView.reloadData()
@@ -248,4 +254,3 @@ extension UIView {
                                                      height: layer.shadowRadius)).cgPath
     }
 }
-
