@@ -40,31 +40,14 @@ class ChatViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        if let vc = self.tabBarController?.viewControllers![0] as? PairsViewController {
-            currentAuthUser = vc.currentAuthUser
-        }
-        
-        addListeners()
-        
-        tableView.register(UINib(nibName: "TableViewCell", bundle: nil), forCellReuseIdentifier: "ChatCell")
-        tableView.rowHeight = 100
-        tableView.separatorStyle = .none
-        tableView.isScrollEnabled = false
-        tableView.dataSource = self
-        tableView.delegate = self
-        
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        collectionView.register(UINib(nibName: "PotentialChatCell", bundle: nil), forCellWithReuseIdentifier: "potentialChatCell")
+        setupSetings()
     }
-    
-    override func viewDidAppear(_ animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
+        print("Appear")
         collectionView.reloadData()
         addListeners()
     }
 }
-
 
 
 //MARK: - TableViewDataSource and Delegate
@@ -210,15 +193,14 @@ extension ChatViewController {
                 
                 print("StatrListen")
                 
-                if let err = Error { print("Ошибка прослушивания снимков чата - \(err)")}
+                if let err = Error { print("Ошибка прослушивания снимков чата - \(err)"); return}
                 
                 guard let documents = querySnapshot?.documents else {return}
                 guard let lastDoc = documents.last else {return}
             
                 if documents.count > authUser.chatArr[indexChat].messages.count {
                     if let body = lastDoc["Body"] as? String {
-                        print("Yeah", documents.count)
-                        print(authUser.chatArr[indexChat].messages.count)
+                        print("CountDocuments", documents.count)
                         authUser.chatArr[indexChat].lastUnreadMessage = body
                         authUser.chatArr[indexChat].numberUnreadMessges = documents.count - authUser.chatArr[indexChat].messages.count
                     }
@@ -235,3 +217,27 @@ extension ChatViewController {
     }
 }
 
+
+//MARK: -  Стартовые настройки
+
+extension ChatViewController {
+    
+    func setupSetings(){
+        
+        if let vc = self.tabBarController?.viewControllers![0] as? PairsViewController {
+            currentAuthUser = vc.currentAuthUser
+        }
+        
+        tableView.register(UINib(nibName: "TableViewCell", bundle: nil), forCellReuseIdentifier: "ChatCell")
+        tableView.rowHeight = 100
+        tableView.separatorStyle = .none
+        tableView.isScrollEnabled = false
+        tableView.dataSource = self
+        tableView.delegate = self
+        
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.register(UINib(nibName: "PotentialChatCell", bundle: nil), forCellWithReuseIdentifier: "potentialChatCell")
+        
+    }
+}

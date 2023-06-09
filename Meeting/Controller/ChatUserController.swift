@@ -43,34 +43,32 @@ class ChatUserController: UIViewController {
     @IBAction func sendPressed(_ sender: UIButton) {
         
         guard let body = textField.text else {return}
-        
         if textField.text?.count == 0 {return}
         textField.text = ""
         
-        if let error = currentAuthUser.sendMessageToServer(pairUserID: selectedUser.ID, body: body){
-            print("Ошибка отправки сообщения - \(error)")
-        }else {
-            if currentAuthUser.chatArr.firstIndex(where: {$0.ID.contains(selectedUser.ID)}) == nil { /// Если чата не существует, значит это первое сообщение
-                 
-                var chatID = String()
-                if currentAuthUser.ID > selectedUser.ID {
-                    chatID = currentAuthUser.ID + "\\" + selectedUser.ID
-                    }else {
-                        chatID = selectedUser.ID + "\\" + currentAuthUser.ID
-                    }
-                    
-                var chat = Chat(ID: chatID)
-                chat.messages.append(message(sender: currentAuthUser.ID, body: body))
-                currentAuthUser.chatArr.append(chat)
-                loadMessage()
+        currentAuthUser.sendMessageToServer(pairUserID: selectedUser.ID, body: body)
+        
+        if currentAuthUser.chatArr.firstIndex(where: {$0.ID.contains(selectedUser.ID)}) == nil { /// Если чата не существует, значит это первое сообщение
+            
+            var chatID = String()
+            if currentAuthUser.ID > selectedUser.ID {
+                chatID = currentAuthUser.ID + "\\" + selectedUser.ID
+            }else {
+                chatID = selectedUser.ID + "\\" + currentAuthUser.ID
             }
+            
+            var chat = Chat(ID: chatID)
+            chat.messages.append(message(sender: currentAuthUser.ID, body: body))
+            currentAuthUser.chatArr.append(chat)
+            loadMessage()
         }
+        
     }
     
     @objc func userReturnedToChat(){ /// Когда пользователь снова открывает приложение, мы снова загружаем чаты
         loadMessage()
     }
-        
+    
     deinit {
         print("Denit")
         listener?.remove() /// Удаляем прослушивателя
@@ -146,6 +144,10 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
         
         if id == currentAuthUser.ID {
             
+            if chatArr[indexPath.row].messagedWritingOnServer == false {
+                cell.statusMessage.image = UIImage(named: "SendMessageTimer")
+            }
+            
             cell.heartLikeView.isHidden = true
             cell.rightMessageViewConstrains.isActive = false
             cell.avatar.image = UIImage()
@@ -202,6 +204,7 @@ extension ChatUserController {
     func loadMessage(){
         
         guard let indexChat = currentAuthUser.chatArr.firstIndex(where: {$0.ID.contains(selectedUser.ID)}) else  {return}
+        let authUser = currentAuthUser
         
         listener?.remove()
         
@@ -209,24 +212,38 @@ extension ChatUserController {
         let indexChatOnServer = currentAuthUser.chatArr[indexChat].ID
         
         let db = Firestore.firestore()
-        let listener = db.collection("Chats").document(indexChatOnServer).collection("Messages").order(by: "Date").addSnapshotListener { [weak self] QuerySnapshot, err in
+        let listener = db.collection("Chats").document(indexChatOnServer).collection("Messages").order(by: "Date").addSnapshotListener(includeMetadataChanges: true) { [weak self] QuerySnapshot, err in
             
-            if let error = err {print("Ошибка прослушивания снимков с сервера - \(error)")}
+            
+            if let error = err {print("Ошибка прослушивания снимков с сервера - \(error)"); return}
             
             print("LoadMessage")
             
             guard let document = QuerySnapshot else {return}
-            self?.currentAuthUser.chatArr[indexChat].messages.removeAll()
             
-            for data in document.documents {
+            if document.metadata.isFromCache { /// Если взяты из кеша, а не из сервера
+                self?.currentAuthUser.chatArr[indexChat].messages.removeAll()
+            }
+            var count = self?.currentAuthUser.chatArr.count ?? 0 - 1
+            if count < 0 {count = 0}
+            
+            for i in count...document.documents.count - 1 {
+                
+                let data = document.documents[i]
                 if let body = data["Body"] as? String, let sender = data["Sender"] as? String {
-                    self?.currentAuthUser.chatArr[indexChat].messages.append(message(sender: sender, body: body))
+                    var message = message(sender: sender, body: body)
+                    if document.metadata.isFromCache {
+                        print("Cache")
+                        message.messagedWritingOnServer = false
+                    }
+                    self?.currentAuthUser.chatArr[indexChat].messages.append(message)
                 }
             }
             
             db.collection("Chats").document(indexChatOnServer).setData([(currentUserID) + "-DateOfLastMessageRead" : Date().timeIntervalSince1970],merge: true)
             
             DispatchQueue.main.async {
+                
                 self?.tableView.reloadData()
                 let count = self?.currentAuthUser.chatArr[indexChat].messages.count ?? 1
                 let indexPath = IndexPath(row: count - 1, section: 0)

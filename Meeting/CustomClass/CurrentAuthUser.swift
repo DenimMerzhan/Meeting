@@ -79,7 +79,7 @@ class CurrentAuthUser {
                     
                     if let likeArr = dataDoc["LikeArr"] as? [String] {self.likeArr = likeArr}
                     if let disLikeArr = dataDoc["DisLikeArr"] as? [String] {self.disLikeArr = disLikeArr}
-                    if let superLikeArr = dataDoc["SuperLikeArr"] as? [String] {self.superLikeArr = superLikeArr}
+                    if let superLikeArr = dataDoc["SuperLikeArr"] as? [String] {self.superLikeArr = superLikeArr} /// Суперлайков может и не быть, поэтому не ставим guard
                     
                     if let matchArr = dataDoc["MatchArr"] as? [String] { /// Загрузка MatchArr и чатов
                         for matchID in matchArr {
@@ -192,8 +192,6 @@ class CurrentAuthUser {
             currentUserLoaded = true
         }
     }
-    
-    
     
     
     //MARK: -  Загрузка фото на сервер
@@ -396,16 +394,14 @@ extension CurrentAuthUser {
 
 extension CurrentAuthUser {
     
-    func sendMessageToServer(pairUserID: String,body:String) -> Error? {
+    func sendMessageToServer(pairUserID: String,body:String) {
         var chatID = String()
-        
+        print("StartSend")
         if ID > pairUserID {
             chatID = ID + "\\" + pairUserID
         }else {
             chatID = pairUserID + "\\" + ID
         }
-        
-        var errorSend: erorrMeeting?
         
         let chatRef = db.collection("Chats").document(chatID).collection("Messages")
         chatRef.addDocument(data: [
@@ -414,9 +410,10 @@ extension CurrentAuthUser {
             "Date": Date().timeIntervalSince1970
         ]) { err in
             if let error = err {
-                return  errorSend = erorrMeeting.messageNotSent(code: error)
+                print("Ошибка отправки сообщения - \(error)")
+            }else {
+                print("Успешная отправка сообщения")
             }
         }
-        return nil
     }
 }

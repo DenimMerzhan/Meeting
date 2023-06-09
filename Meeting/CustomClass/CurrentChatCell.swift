@@ -21,6 +21,7 @@ class CurrentChatCell: UITableViewCell {
     @IBOutlet weak var heartLikeView: UIView!
     
     
+    @IBOutlet weak var statusMessage: UIImageView!
     @IBOutlet weak var rightConstrainsToSuperView: NSLayoutConstraint!
     
     override func awakeFromNib() {
@@ -49,6 +50,8 @@ class CurrentChatCell: UITableViewCell {
         rightMessageViewConstrains.constant = 5
         rightConstrainsToSuperView.constant = 5
         leftMessageViewConstrains.constant = 5
+        
+        statusMessage.image = UIImage(systemName: "checkmark")
         
 //        bottomMessageViewConstrains.constant = 5
         

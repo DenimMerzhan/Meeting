@@ -22,5 +22,6 @@ struct Chat {
 struct message {
     var sender: String
     var body: String
+    var messagedWritingOnServer = true
 }
 
