@@ -355,8 +355,8 @@ extension CurrentAuthUser {
             
             if snapShot.isEmpty {return nil}
             
-            var chat = Chat(ID: chatID)
-            chat.dateLastMessageRead = dateLastMessageRead
+            var chat = Chat(ID: chatID,dateLastMessageRead: dateLastMessageRead)
+            
             for doc in snapShot.documents {
                 if let sender = doc.data()["Sender"] as? String, let body = doc.data()["Body"] as? String,let date = doc.data()["Date"] as? Double {
                     if date <= dateLastMessageRead { /// Если пользователь прочитал это сообшение, то добавляем его в архив
@@ -414,7 +414,7 @@ extension CurrentAuthUser {
                 print("Ошибка отправки сообщения - \(error)")
             }else {
                 print("Успешная отправка сообщения")
-                
+               
                 guard let indexChat = self.chatArr.firstIndex(where: {$0.ID == chatID }) else {return}
                 for i in 0...self.chatArr[indexChat].messages.count - 1 {
                     self.chatArr[indexChat].messages[i].messagedWritingOnServer = true

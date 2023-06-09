@@ -13,10 +13,11 @@ struct Chat {
     var messages =  [message]()
     var lastUnreadMessage: String?
     var numberUnreadMessges = 0
-    var dateLastMessageRead: Double = 0
+    var dateLastMessageRead: Double
     
-    init(ID: String) {
+    init(ID: String,dateLastMessageRead:Double) {
         self.ID = ID
+        self.dateLastMessageRead = dateLastMessageRead
     }
 }
 

@@ -21,6 +21,15 @@ class ChatUserController: UIViewController {
     var selectedUser = User(ID: "")
     var listener: ListenerRegistration?
     
+    var statusSendMessage: String {
+        get {
+            for messages in chatArr {
+                if messages.messagedWritingOnServer == false {return "Идет отправка..."}
+            }
+            return  "Отправлено"
+        }
+    }
+    
     var chatArr: [message] {
         get {
             guard let chatArr = currentAuthUser.chatArr.first(where: {$0.ID.contains(selectedUser.ID) })?.messages else {return [message]()}
@@ -57,7 +66,7 @@ class ChatUserController: UIViewController {
                 chatID = selectedUser.ID + "\\" + currentAuthUser.ID
             }
             
-            var chat = Chat(ID: chatID)
+            var chat = Chat(ID: chatID,dateLastMessageRead: Date().timeIntervalSince1970)
             chat.messages.append(message(sender: currentAuthUser.ID, body: body))
             currentAuthUser.chatArr.append(chat)
             loadMessage()
@@ -95,7 +104,8 @@ extension ChatUserController {
         tableView.separatorStyle = .none
         tableView.register(UINib(nibName: "CurrentChatCell", bundle: nil), forCellReuseIdentifier: "currentChatCell")
         tableView.sectionHeaderHeight = 40
-        tableView.sectionFooterHeight = 40
+        
+        
         avatarUser.layer.cornerRadius = avatarUser.frame.width / 2
         avatarUser.clipsToBounds = true
         topElementView.addBottomShadow()
@@ -220,7 +230,7 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return section == tableView.numberOfSections - 1 ? 40 : 0
+        return section == tableView.numberOfSections - 1 ? 20 : 0
     }
     
 }
@@ -263,7 +273,8 @@ extension ChatUserController {
             DispatchQueue.main.async {
                 self?.tableView.reloadData()
                 let count = self?.currentAuthUser.chatArr[indexChat].messages.count ?? 1
-                let indexPath = IndexPath(row: count - 1, section: 0)
+                let sectionNumber = self?.tableView.numberOfSections ?? 1
+                let indexPath = IndexPath(row: count - 1, section: sectionNumber - 1)
                 self?.tableView.scrollToRow(at: indexPath, at: .top, animated: false)
             }
         }
@@ -289,6 +300,7 @@ extension UIView {
     }
 }
 
+//MARK: -  Создание View для колонтитулов
 
 extension ChatUserController {
     
@@ -296,32 +308,36 @@ extension ChatUserController {
         
         let view = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 40))
         
-        let label = UILabel(frame: CGRect(x: 0, y: 0, width: 200, height: 40))
+        let label = UILabel(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 40))
         label.textColor = .gray
         label.textAlignment = .center
         label.center = view.center
-        label.font = .systemFont(ofSize: 12)
         view.addSubview(label)
         
-      
+        let attrs1 = [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 12), NSAttributedString.Key.foregroundColor : UIColor.darkGray]
+        let attrs2 = [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 12), NSAttributedString.Key.foregroundColor : UIColor.gray]
+        let attributedString1 = NSMutableAttributedString(string:"Четверг ", attributes:attrs1)
+        let attributedString2 = NSMutableAttributedString(string:"16:52", attributes:attrs2)
+        attributedString1.append(attributedString2)
+        
         if section == 0 {
             label.text = "Вы образовали пару 19.04.23"
         }else {
-            label.text = "Среда 16:52"
+            label.attributedText = attributedString1
         }
         
         return view
     }
     
     func viewForFooterSection(section: Int) -> UIView {
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 40))
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 20))
         
-        let label = UILabel(frame: CGRect(x: view.frame.maxX - 100, y: 0, width: 100, height: 40))
+        let label = UILabel(frame: CGRect(x: view.frame.maxX - 110, y: 0, width: 100, height: 20))
         label.textColor = .gray
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 12)
         
-        label.text = "Отправлено"
+        label.text = statusSendMessage
         
         view.addSubview(label)
         
