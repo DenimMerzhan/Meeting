@@ -94,7 +94,8 @@ extension ChatUserController {
         tableView.delegate = self
         tableView.separatorStyle = .none
         tableView.register(UINib(nibName: "CurrentChatCell", bundle: nil), forCellReuseIdentifier: "currentChatCell")
-        
+        tableView.sectionHeaderHeight = 40
+        tableView.sectionFooterHeight = 40
         avatarUser.layer.cornerRadius = avatarUser.frame.width / 2
         avatarUser.clipsToBounds = true
         topElementView.addBottomShadow()
@@ -113,7 +114,7 @@ extension ChatUserController {
         
         avatarUser.image = selectedUser.avatar
         nameUser.text = selectedUser.name
-        
+        print(tableView.numberOfSections)
         loadMessage()
         
     }
@@ -125,6 +126,10 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return chatArr.count
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -198,6 +203,26 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let view = viewForHeaderSection(section: section)
+        return view
+    }
+        
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        guard section == tableView.numberOfSections - 1 else {return nil}
+        let view = viewForFooterSection(section: section)
+        return view
+    }
+    
+    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        print("SwipeStart")
+        return .some(.init())
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return section == tableView.numberOfSections - 1 ? 40 : 0
+    }
+    
 }
 
 //MARK: -  Отслеживание изменений на сервере
@@ -211,7 +236,6 @@ extension ChatUserController {
         
         listener?.remove()
         
-        let currentUserID = currentAuthUser.ID
         let indexChatOnServer = currentAuthUser.chatArr[indexChat].ID
         let db = Firestore.firestore()
         
@@ -223,13 +247,13 @@ extension ChatUserController {
             print("LoadMessage")
             
             guard let document = QuerySnapshot else {return}
-            self?.currentAuthUser.chatArr[indexChat].messages.removeAll()
+            authUser.chatArr[indexChat].messages.removeAll()
                
             for data in document.documents {
                 
                 if let body = data["Body"] as? String, let sender = data["Sender"] as? String, let date = data["Date"] as? Double {
                     var message = message(sender: sender, body: body)
-                    if authUser.chatArr[indexChat].dateLastMessageRead >= date {
+                    if authUser.chatArr[indexChat].dateLastMessageRead >= date { /// Если пользователь был в сети к моменту когда это сообщения было отправлено, то помечаем его что оно доставленно на сервер
                         message.messagedWritingOnServer = true
                     }
                     self?.currentAuthUser.chatArr[indexChat].messages.append(message)
@@ -263,4 +287,45 @@ extension UIView {
                                                      width: bounds.width,
                                                      height: layer.shadowRadius)).cgPath
     }
+}
+
+
+extension ChatUserController {
+    
+    func viewForHeaderSection(section: Int) -> UIView {
+        
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 40))
+        
+        let label = UILabel(frame: CGRect(x: 0, y: 0, width: 200, height: 40))
+        label.textColor = .gray
+        label.textAlignment = .center
+        label.center = view.center
+        label.font = .systemFont(ofSize: 12)
+        view.addSubview(label)
+        
+      
+        if section == 0 {
+            label.text = "Вы образовали пару 19.04.23"
+        }else {
+            label.text = "Среда 16:52"
+        }
+        
+        return view
+    }
+    
+    func viewForFooterSection(section: Int) -> UIView {
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 40))
+        
+        let label = UILabel(frame: CGRect(x: view.frame.maxX - 100, y: 0, width: 100, height: 40))
+        label.textColor = .gray
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 12)
+        
+        label.text = "Отправлено"
+        
+        view.addSubview(label)
+        
+        return view
+    }
+    
 }
