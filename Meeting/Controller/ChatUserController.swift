@@ -144,6 +144,7 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
         
         if id == currentAuthUser.ID {
             
+            cell.statusMessage.isHidden = false
             if chatArr[indexPath.row].messagedWritingOnServer == false {
                 cell.statusMessage.image = UIImage(named: "SendMessageTimer")
             }
@@ -160,7 +161,7 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
             let width = label.intrinsicContentSize.width
             
             if width < widthMessagView {
-                let newLeftConstant = widthMessagView - width - 20/// Получаем новую разницу между mesage view и avatar
+                let newLeftConstant = widthMessagView - width - 32/// Получаем новую разницу между mesage view и avatar 32 - расстояние от лейбла до правой стороны и левой стороны messageView
                 cell.leftMessageViewConstrains.constant = newLeftConstant + 5 + 30
             }else {
                 cell.leftMessageViewConstrains.constant = 5
@@ -168,6 +169,8 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
             
             
         }else {
+            cell.statusMessage.isHidden = true
+            cell.labelRightConstrains.constant = 5
             cell.messageLabel.textAlignment = .left
             cell.messageView.backgroundColor = UIColor(named: "GrayColor")
             cell.avatar.image = selectedUser.avatar
@@ -210,8 +213,8 @@ extension ChatUserController {
         
         let currentUserID = currentAuthUser.ID
         let indexChatOnServer = currentAuthUser.chatArr[indexChat].ID
-        
         let db = Firestore.firestore()
+        
         let listener = db.collection("Chats").document(indexChatOnServer).collection("Messages").order(by: "Date").addSnapshotListener(includeMetadataChanges: true) { [weak self] QuerySnapshot, err in
             
             
@@ -220,30 +223,20 @@ extension ChatUserController {
             print("LoadMessage")
             
             guard let document = QuerySnapshot else {return}
-            
-            if document.metadata.isFromCache { /// Если взяты из кеша, а не из сервера
-                self?.currentAuthUser.chatArr[indexChat].messages.removeAll()
-            }
-            var count = self?.currentAuthUser.chatArr.count ?? 0 - 1
-            if count < 0 {count = 0}
-            
-            for i in count...document.documents.count - 1 {
+            self?.currentAuthUser.chatArr[indexChat].messages.removeAll()
+               
+            for data in document.documents {
                 
-                let data = document.documents[i]
-                if let body = data["Body"] as? String, let sender = data["Sender"] as? String {
+                if let body = data["Body"] as? String, let sender = data["Sender"] as? String, let date = data["Date"] as? Double {
                     var message = message(sender: sender, body: body)
-                    if document.metadata.isFromCache {
-                        print("Cache")
-                        message.messagedWritingOnServer = false
+                    if authUser.chatArr[indexChat].dateLastMessageRead >= date {
+                        message.messagedWritingOnServer = true
                     }
                     self?.currentAuthUser.chatArr[indexChat].messages.append(message)
                 }
             }
             
-            db.collection("Chats").document(indexChatOnServer).setData([(currentUserID) + "-DateOfLastMessageRead" : Date().timeIntervalSince1970],merge: true)
-            
             DispatchQueue.main.async {
-                
                 self?.tableView.reloadData()
                 let count = self?.currentAuthUser.chatArr[indexChat].messages.count ?? 1
                 let indexPath = IndexPath(row: count - 1, section: 0)

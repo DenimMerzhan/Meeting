@@ -18,11 +18,12 @@ class CurrentChatCell: UITableViewCell {
     @IBOutlet weak var rightMessageViewConstrains: NSLayoutConstraint!
     @IBOutlet weak var likeButton: UIImageView!
     @IBOutlet weak var bottomMessageViewConstrains: NSLayoutConstraint!
+    
     @IBOutlet weak var heartLikeView: UIView!
-    
-    
     @IBOutlet weak var statusMessage: UIImageView!
+    
     @IBOutlet weak var rightConstrainsToSuperView: NSLayoutConstraint!
+    @IBOutlet weak var labelRightConstrains: NSLayoutConstraint!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -50,8 +51,9 @@ class CurrentChatCell: UITableViewCell {
         rightMessageViewConstrains.constant = 5
         rightConstrainsToSuperView.constant = 5
         leftMessageViewConstrains.constant = 5
-        
+
         statusMessage.image = UIImage(systemName: "checkmark")
+        labelRightConstrains.constant = 22
         
 //        bottomMessageViewConstrains.constant = 5
         

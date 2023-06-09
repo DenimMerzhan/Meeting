@@ -13,6 +13,7 @@ struct Chat {
     var messages =  [message]()
     var lastUnreadMessage: String?
     var numberUnreadMessges = 0
+    var dateLastMessageRead: Double = 0
     
     init(ID: String) {
         self.ID = ID
@@ -22,6 +23,6 @@ struct Chat {
 struct message {
     var sender: String
     var body: String
-    var messagedWritingOnServer = true
+    var messagedWritingOnServer = Bool()
 }
 

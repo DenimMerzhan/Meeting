@@ -217,9 +217,9 @@
 			isa = PBXGroup;
 			children = (
 				CF069DA529EC2D3E005ED378 /* Main.storyboard */,
-				CFA470E72A24DE6C005E3549 /* CurrentChatCell.xib */,
 				CF8F6C0D2A2C7A32004E62D0 /* TableViewCell.xib */,
 				CF8F6C152A2CC85F004E62D0 /* PotentialChatCell.xib */,
+				CFA470E72A24DE6C005E3549 /* CurrentChatCell.xib */,
 			);
 			path = View;
 			sourceTree = "<group>";

@@ -4,6 +4,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -28,27 +29,28 @@
                         <rect key="frame" x="55" y="5" width="230" height="81"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Текст" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="85p-00-vj1">
-                                <rect key="frame" x="10" y="10" width="190" height="61"/>
+                                <rect key="frame" x="10" y="10" width="198" height="61"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="checkmark" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="wmn-HL-dPY" userLabel="StatusSendMessage">
-                                <rect key="frame" x="210" y="73" width="10" height="6.5"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="MessageSend" translatesAutoresizingMaskIntoConstraints="NO" id="wmn-HL-dPY" userLabel="StatusSendMessage">
+                                <rect key="frame" x="213" y="64" width="12" height="12"/>
+                                <color key="tintColor" name="GrayColor"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="10" id="5zh-K3-bpD"/>
-                                    <constraint firstAttribute="height" constant="10" id="uUd-Jk-t6W"/>
+                                    <constraint firstAttribute="width" constant="12" id="Ucm-hX-TjY"/>
+                                    <constraint firstAttribute="height" constant="12" id="YhR-E9-Xrw"/>
                                 </constraints>
                             </imageView>
                         </subviews>
-                        <color key="backgroundColor" red="0.98431372640000003" green="0.90196073060000004" blue="0.48235297199999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <color key="backgroundColor" name="CurrentUserMessageColor"/>
                         <constraints>
                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="45" id="AM9-lt-eQF"/>
-                            <constraint firstAttribute="trailing" secondItem="85p-00-vj1" secondAttribute="trailing" constant="30" id="Km0-hh-YnL"/>
-                            <constraint firstAttribute="bottom" secondItem="wmn-HL-dPY" secondAttribute="bottom" id="Pph-Ro-VXD"/>
+                            <constraint firstAttribute="trailing" secondItem="85p-00-vj1" secondAttribute="trailing" constant="22" id="Km0-hh-YnL"/>
+                            <constraint firstAttribute="bottom" secondItem="wmn-HL-dPY" secondAttribute="bottom" constant="5" id="Pph-Ro-VXD"/>
                             <constraint firstAttribute="bottom" secondItem="85p-00-vj1" secondAttribute="bottom" constant="10" id="VK8-FV-MVM"/>
                             <constraint firstItem="85p-00-vj1" firstAttribute="leading" secondItem="eia-YY-een" secondAttribute="leading" constant="10" id="fnx-Dn-vAb"/>
-                            <constraint firstAttribute="trailing" secondItem="wmn-HL-dPY" secondAttribute="trailing" constant="10" id="noy-hd-Hz5"/>
+                            <constraint firstAttribute="trailing" secondItem="wmn-HL-dPY" secondAttribute="trailing" constant="5" id="noy-hd-Hz5"/>
                             <constraint firstItem="85p-00-vj1" firstAttribute="top" secondItem="eia-YY-een" secondAttribute="top" constant="10" id="rtE-KW-J5M"/>
                         </constraints>
                     </view>
@@ -94,6 +96,7 @@
                 <outlet property="avatar" destination="9dQ-Gc-3Ax" id="QKP-tn-c4i"/>
                 <outlet property="bottomMessageViewConstrains" destination="mah-81-fzk" id="cWi-8n-Yv7"/>
                 <outlet property="heartLikeView" destination="DIB-4y-zOs" id="sDc-Fi-E2k"/>
+                <outlet property="labelRightConstrains" destination="Km0-hh-YnL" id="L3L-Ax-2Yp"/>
                 <outlet property="leftMessageViewConstrains" destination="03I-MB-vtq" id="3ju-tw-hVz"/>
                 <outlet property="likeButton" destination="ys2-Gf-DEw" id="2xn-Ly-q8O"/>
                 <outlet property="messageLabel" destination="85p-00-vj1" id="lBB-nY-I6W"/>
@@ -106,7 +109,13 @@
         </tableViewCell>
     </objects>
     <resources>
-        <image name="checkmark" catalog="system" width="128" height="114"/>
+        <image name="MessageSend" width="144" height="87.5"/>
         <image name="likeMessage" width="262.5" height="237.5"/>
+        <namedColor name="CurrentUserMessageColor">
+            <color red="0.3449999988079071" green="0.71399998664855957" blue="0.9649999737739563" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+        </namedColor>
+        <namedColor name="GrayColor">
+            <color red="0.94099998474121094" green="0.94499999284744263" blue="0.95300000905990601" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+        </namedColor>
     </resources>
 </document>
