@@ -56,13 +56,13 @@ class CurrentAuthUser {
     
     private let db = Firestore.firestore()
     private let storage = Storage.storage()
-   
+    
     init(ID: String){
         self.ID = ID
     }
     
     //MARK: -  Загрузка метаданных о текущем авторизованном пользователе с FireStore
-            
+    
     func loadMetadata() async -> Bool {
         
         let collection  = db.collection("Users").document(ID)
@@ -84,7 +84,7 @@ class CurrentAuthUser {
                     if let matchArr = dataDoc["MatchArr"] as? [String] { /// Загрузка MatchArr и чатов
                         for matchID in matchArr {
                             await loadMatchUser(ID: matchID)
-                                                        
+                            
                             if let chat = await loadChats(pairUserID: matchID) {
                                 chatArr.append(chat)
                             }
@@ -114,15 +114,15 @@ class CurrentAuthUser {
         }
         return true
     }
-
     
     
-//MARK:  - Записиь информации о парах
+    
+    //MARK:  - Записиь информации о парах
     
     func writingPairsInfrormation(){
         
         let documenRef = db.collection("Users").document(ID)
-    
+        
         documenRef.setData([
             "LikeArr" : self.likeArr,
             "DisLikeArr" : self.disLikeArr,
@@ -134,7 +134,7 @@ class CurrentAuthUser {
         }
     }
     
- //MARK: -  Загрузка потеницальных пар для текущего пользователя
+    //MARK: -  Загрузка потеницальных пар для текущего пользователя
     
     func loadNewPotenialPairs(countUser: Int,usersArr: [User]) async -> [String]? {
         var count = 0
@@ -157,7 +157,7 @@ class CurrentAuthUser {
             for document in querySnapshot.documents {
                 
                 if document.documentID == ID { /// Если текущий пользователь пропускаем его добавление
-                   continue
+                    continue
                 }else if viewedUsers.contains(document.documentID) { /// Если кто то есть в архиве viewedUsers тоже пропускаем егго
                     continue
                 }
@@ -179,7 +179,7 @@ class CurrentAuthUser {
     
     
     
-//MARK: -  Загрузка фото с директории
+    //MARK: -  Загрузка фото с директории
     
     func loadPhotoFromDirectory(urlFileArr: [URL]){
         
@@ -195,51 +195,51 @@ class CurrentAuthUser {
     
     
     //MARK: -  Загрузка фото на сервер
-        
+    
     func uploadImageToStorage(image: UIImage) async -> Bool  {
-            
-            let imageID = "photoImage" + "".randomString(length: 5)
-            
-            let imagesRef = storage.reference().child("UsersPhoto").child(ID).child(imageID) /// Создаем ссылку на файл
-            guard let imageData = image.jpegData(compressionQuality: 0.0) else { /// Преобразуем в Jpeg c сжатием
-                return false
-            }
-            
-            
-            let metaData = StorageMetadata()
-            metaData.contentType = "image/jpeg" /// Указываем явный тип данных в FireBase
-            
-            do {
-                try await imagesRef.putDataAsync(imageData)
-                let url = try await imagesRef.downloadURL()
-                let status = await uploadDataToFirestore(url: url, imageID: imageID)
-                if status {
-                    imageArr.append(CurrentUserImage(imageID: imageID,image: image))
-                    return (status)
-                }
-            }catch {
-                print(error)
-                return false
-            }
+        
+        let imageID = "photoImage" + "".randomString(length: 5)
+        
+        let imagesRef = storage.reference().child("UsersPhoto").child(ID).child(imageID) /// Создаем ссылку на файл
+        guard let imageData = image.jpegData(compressionQuality: 0.0) else { /// Преобразуем в Jpeg c сжатием
             return false
         }
         
         
-        private func uploadDataToFirestore(url:URL,imageID: String) async -> Bool {
-         
-            let colletcion = db.collection("Users").document(ID) /// Добавляем в FiresStore ссылку на фото\
-            
-            do {
-               try await colletcion.setData([imageID : url.absoluteString], merge: true)
-                return true
-            }catch{
-                print("Ошибка загрузки данных фото на сервер Firebase Firestore \(error)")
-                return false
+        let metaData = StorageMetadata()
+        metaData.contentType = "image/jpeg" /// Указываем явный тип данных в FireBase
+        
+        do {
+            try await imagesRef.putDataAsync(imageData)
+            let url = try await imagesRef.downloadURL()
+            let status = await uploadDataToFirestore(url: url, imageID: imageID)
+            if status {
+                imageArr.append(CurrentUserImage(imageID: imageID,image: image))
+                return (status)
             }
+        }catch {
+            print(error)
+            return false
         }
+        return false
+    }
     
     
-//MARK: - Удаление фото с сервера Storage и Firestore
+    private func uploadDataToFirestore(url:URL,imageID: String) async -> Bool {
+        
+        let colletcion = db.collection("Users").document(ID) /// Добавляем в FiresStore ссылку на фото\
+        
+        do {
+            try await colletcion.setData([imageID : url.absoluteString], merge: true)
+            return true
+        }catch{
+            print("Ошибка загрузки данных фото на сервер Firebase Firestore \(error)")
+            return false
+        }
+    }
+    
+    
+    //MARK: - Удаление фото с сервера Storage и Firestore
     
     func removePhotoFromServer(imageID:String){
         
@@ -289,7 +289,7 @@ extension CurrentAuthUser {
     }
     
     
-//MARK: - Запись в архив Match
+    //MARK: - Запись в архив Match
     
     private func writeMatch(potetnialPairID:String){
         
@@ -350,30 +350,34 @@ extension CurrentAuthUser {
         
         do {
             let snapShot = try await messagesRef.getDocuments()
-            let snapChat = try await db.collection("Chats").document(chatID).getDocument()
-            let dateLastMessageRead = snapChat.data()?[ID + "-DateOfLastMessageRead"] as? Double ?? 0
             
             if snapShot.isEmpty {return nil}
             
-            var chat = Chat(ID: chatID,dateLastMessageRead: dateLastMessageRead)
+            var chat = Chat(ID: chatID)
             
             for doc in snapShot.documents {
-                if let sender = doc.data()["Sender"] as? String, let body = doc.data()["Body"] as? String,let date = doc.data()["Date"] as? Double {
-                    if date <= dateLastMessageRead { /// Если пользователь прочитал это сообшение, то добавляем его в архив
-                        chat.messages.append(message(sender: sender, body: body))
-                    }
+                let data = doc.data()
+                if let sender = data["Sender"] as? String, let body = data["Body"] as? String, let messageRead = data["MessageRead"] as? Bool, let messageSendOnServer = data["MessageSendOnServer"] as? Bool {
+                    
+                    if sender == pairUserID && messageRead == false {continue} /// Если текущий пользователь не читал сообщение пропускаем его добавление
+                    
+                    var message = message(sender: sender, body: body)
+                    message.messagedWritingOnServer = messageSendOnServer
+                    message.messageRead = messageRead
+                    chat.messages.append(message)
+                    
                 }
             }
             return chat
         }catch {
-         print("Ошибка получения чата - \(error)")
+            print("Ошибка получения чата - \(error)")
             return nil
         }
     }
     
     
     
-//MARK: -  Загрузка MatchUser
+    //MARK: -  Загрузка MatchUser
     
     func loadMatchUser(ID:String) async {
         
@@ -387,7 +391,7 @@ extension CurrentAuthUser {
         }
         self.matchArr.append(matchUser)
     }
-
+    
 }
 
 
@@ -404,24 +408,26 @@ extension CurrentAuthUser {
             chatID = pairUserID + "\\" + ID
         }
         
-        let chatRef = db.collection("Chats").document(chatID).collection("Messages")
-        chatRef.addDocument(data: [
+        var chatRef: DocumentReference? = nil
+        
+        chatRef = db.collection("Chats").document(chatID).collection("Messages").addDocument(data: [
             "Sender": ID,
             "Body": body,
-            "Date": Date().timeIntervalSince1970
+            "Date": Date().timeIntervalSince1970,
+            "MessageRead": false,
+            "MessageSendOnServer": false
         ]) { err in
             if let error = err {
                 print("Ошибка отправки сообщения - \(error)")
             }else {
                 print("Успешная отправка сообщения")
-               
-                guard let indexChat = self.chatArr.firstIndex(where: {$0.ID == chatID }) else {return}
-                for i in 0...self.chatArr[indexChat].messages.count - 1 {
-                    self.chatArr[indexChat].messages[i].messagedWritingOnServer = true
+                
+                if let ref = chatRef {
+                    ref.setData([
+                        "Date": Date().timeIntervalSince1970,
+                        "MessageSendOnServer": true
+                    ],merge: true)
                 }
-                let date = Date().timeIntervalSince1970
-                self.db.collection("Chats").document(chatID).setData([(self.ID) + "-DateOfLastMessageRead" : date],merge: true) /// Дата последнего прочитанного сообщения
-                self.chatArr[indexChat].dateLastMessageRead = date
             }
         }
     }

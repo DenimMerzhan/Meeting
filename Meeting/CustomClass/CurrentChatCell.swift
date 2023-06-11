@@ -51,8 +51,9 @@ class CurrentChatCell: UITableViewCell {
         rightMessageViewConstrains.constant = 5
         rightConstrainsToSuperView.constant = 5
         leftMessageViewConstrains.constant = 5
-
-        statusMessage.image = UIImage(systemName: "checkmark")
+       
+        statusMessage.image = UIImage(named: "SendMessageTimer")
+        
         labelRightConstrains.constant = 22
         
 //        bottomMessageViewConstrains.constant = 5

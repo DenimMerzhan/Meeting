@@ -66,7 +66,7 @@ class ChatUserController: UIViewController {
                 chatID = selectedUser.ID + "\\" + currentAuthUser.ID
             }
             
-            var chat = Chat(ID: chatID,dateLastMessageRead: Date().timeIntervalSince1970)
+            var chat = Chat(ID: chatID)
             chat.messages.append(message(sender: currentAuthUser.ID, body: body))
             currentAuthUser.chatArr.append(chat)
             loadMessage()
@@ -105,7 +105,6 @@ extension ChatUserController {
         tableView.register(UINib(nibName: "CurrentChatCell", bundle: nil), forCellReuseIdentifier: "currentChatCell")
         tableView.sectionHeaderHeight = 40
         
-        
         avatarUser.layer.cornerRadius = avatarUser.frame.width / 2
         avatarUser.clipsToBounds = true
         topElementView.addBottomShadow()
@@ -124,9 +123,8 @@ extension ChatUserController {
         
         avatarUser.image = selectedUser.avatar
         nameUser.text = selectedUser.name
-        print(tableView.numberOfSections)
-        loadMessage()
         
+        loadMessage()
     }
 }
 
@@ -139,7 +137,7 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -160,8 +158,12 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
         if id == currentAuthUser.ID {
             
             cell.statusMessage.isHidden = false
-            if chatArr[indexPath.row].messagedWritingOnServer == false {
-                cell.statusMessage.image = UIImage(named: "SendMessageTimer")
+            if chatArr[indexPath.row].messagedWritingOnServer {
+                cell.statusMessage.image = UIImage(systemName: "checkmark")
+            }
+            
+            if chatArr[indexPath.row].messageRead {
+                cell.statusMessage.image = UIImage(named: "MessageSend")
             }
             
             cell.heartLikeView.isHidden = true
@@ -246,26 +248,30 @@ extension ChatUserController {
         
         listener?.remove()
         
-        let indexChatOnServer = currentAuthUser.chatArr[indexChat].ID
+        let chatID = currentAuthUser.chatArr[indexChat].ID
         let db = Firestore.firestore()
         
-        let listener = db.collection("Chats").document(indexChatOnServer).collection("Messages").order(by: "Date").addSnapshotListener(includeMetadataChanges: true) { [weak self] QuerySnapshot, err in
+        let listener = db.collection("Chats").document(chatID).collection("Messages").order(by: "Date").addSnapshotListener(includeMetadataChanges: true) { [weak self] QuerySnapshot, Error in
             
-            
-            if let error = err {print("Ошибка прослушивания снимков с сервера - \(error)"); return}
+            if let error = Error {print("Ошибка прослушивания снимков с сервера - \(error)"); return}
             
             print("LoadMessage")
             
             guard let document = QuerySnapshot else {return}
             authUser.chatArr[indexChat].messages.removeAll()
-               
+            
             for data in document.documents {
                 
-                if let body = data["Body"] as? String, let sender = data["Sender"] as? String, let date = data["Date"] as? Double {
+                if let body = data["Body"] as? String, let sender = data["Sender"] as? String, let messageRed = data["MessageRead"] as? Bool, let messageSendOnServer = data["MessageSendOnServer"] as? Bool {
+                    
                     var message = message(sender: sender, body: body)
-                    if authUser.chatArr[indexChat].dateLastMessageRead >= date { /// Если пользователь был в сети к моменту когда это сообщения было отправлено, то помечаем его что оно доставленно на сервер
-                        message.messagedWritingOnServer = true
+                    
+                    if sender == self?.selectedUser.ID && messageRed == false {
+                        db.collection("Chats").document(chatID).collection("Messages").document(data.documentID).setData(["MessageRead" : true], merge: true)
+                        print("MessagerRead")
                     }
+                    message.messagedWritingOnServer = messageSendOnServer
+                    message.messageRead = messageRed
                     self?.currentAuthUser.chatArr[indexChat].messages.append(message)
                 }
             }
@@ -278,6 +284,7 @@ extension ChatUserController {
                 self?.tableView.scrollToRow(at: indexPath, at: .top, animated: false)
             }
         }
+            
         self.listener = listener
     }
     

@@ -26,7 +26,7 @@ class PairsViewController: UIViewController {
     var nextCard = CardModel().createEmptyCard()
         
     var cardModel = CardModel()
-    var currentAuthUser = CurrentAuthUser(ID:"5TJFG62E5i")
+    var currentAuthUser = CurrentAuthUser(ID:"+79817550000")
     
     var progressViewLoadUsers = CreateButton().createProgressLoadUsersStartForLaunch(width: 0)
     var timer = Timer()
@@ -391,7 +391,6 @@ extension PairsViewController  {
             }
         }
     }
-    
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let destanationVC = segue.destination as? MatchController else {return}
