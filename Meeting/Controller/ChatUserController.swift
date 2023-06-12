@@ -21,6 +21,8 @@ class ChatUserController: UIViewController {
     var selectedUser = User(ID: "")
     var listener: ListenerRegistration?
     
+    var cachedCellHeight = [[Float]]()
+    
     var statusSendMessage: String {
         get {
             for messages in chatArr {
@@ -30,8 +32,17 @@ class ChatUserController: UIViewController {
         }
     }
     
-    var chatArr = [message]()
-    var structMessagesArr = [StructMessages]()
+    var chatArr: [message] {
+        get {
+            return currentAuthUser.chatArr[indexChat].messages
+        }
+    }
+    var structMessagesArr: [StructMessages] {
+        get {
+            return currentAuthUser.chatArr[indexChat].structuredMessagesByDates
+        }
+    }
+    var indexChat = Int()
     
     let widthMessagView = UIScreen.main.bounds.width - 90 /// 45 - ширина аватара, 25 - ширина сердечка справа, 20 - отуступы от краев и от друг друга
     
@@ -100,6 +111,8 @@ extension ChatUserController {
         tableView.separatorStyle = .none
         tableView.register(UINib(nibName: "CurrentChatCell", bundle: nil), forCellReuseIdentifier: "currentChatCell")
         tableView.sectionHeaderHeight = 40
+        tableView.estimatedRowHeight = 55
+        tableView.rowHeight = UITableView.automaticDimension
         
         avatarUser.layer.cornerRadius = avatarUser.frame.width / 2
         avatarUser.clipsToBounds = true
@@ -119,6 +132,7 @@ extension ChatUserController {
         
         avatarUser.image = selectedUser.avatar
         nameUser.text = selectedUser.name
+        
         
         loadMessage()
     }
@@ -155,11 +169,11 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
         if sender == currentAuthUser.ID {
             
             cell.statusMessage.isHidden = false
-            if chatArr[indexPath.row].messagedWritingOnServer {
+            if structMessagesArr[indexPath.section - 1].messages[indexPath.row].messagedWritingOnServer {
                 cell.statusMessage.image = UIImage(systemName: "checkmark")
             }
             
-            if chatArr[indexPath.row].messageRead {
+            if structMessagesArr[indexPath.section - 1].messages[indexPath.row].messageRead {
                 cell.statusMessage.image = UIImage(named: "MessageSend")
             }
             
@@ -200,7 +214,9 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
             }
         }
         
-        if indexPath.row + 1 < chatArr.count && chatArr[indexPath.row + 1].sender == sender {
+        
+        
+        if  indexPath.row + 1 < structMessagesArr[indexPath.section - 1].messages.count && structMessagesArr[indexPath.section - 1].messages[indexPath.row + 1].sender == sender {
             cell.avatar.image = UIImage()
             cell.bottomMessageViewConstrains.constant = 0
         }
@@ -229,7 +245,6 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return section == tableView.numberOfSections - 1 ? 20 : 0
     }
-    
 }
 
 //MARK: -  Отслеживание изменений на сервере
