@@ -357,11 +357,11 @@ extension CurrentAuthUser {
             
             for doc in snapShot.documents {
                 let data = doc.data()
-                if let sender = data["Sender"] as? String, let body = data["Body"] as? String, let messageRead = data["MessageRead"] as? Bool, let messageSendOnServer = data["MessageSendOnServer"] as? Bool {
+                if let sender = data["Sender"] as? String, let body = data["Body"] as? String,let dateMessage = data["Date"] as? Double , let messageRead = data["MessageRead"] as? Bool, let messageSendOnServer = data["MessageSendOnServer"] as? Bool {
                     
                     if sender == pairUserID && messageRead == false {continue} /// Если текущий пользователь не читал сообщение пропускаем его добавление
                     
-                    var message = message(sender: sender, body: body)
+                    var message = message(sender: sender, body: body,dateMessage: dateMessage)
                     message.messagedWritingOnServer = messageSendOnServer
                     message.messageRead = messageRead
                     chat.messages.append(message)

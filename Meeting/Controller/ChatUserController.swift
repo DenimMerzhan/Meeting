@@ -30,12 +30,8 @@ class ChatUserController: UIViewController {
         }
     }
     
-    var chatArr: [message] {
-        get {
-            guard let chatArr = currentAuthUser.chatArr.first(where: {$0.ID.contains(selectedUser.ID) })?.messages else {return [message]()}
-            return chatArr
-        }
-    }
+    var chatArr = [message]()
+    var structMessagesArr = [StructMessages]()
     
     let widthMessagView = UIScreen.main.bounds.width - 90 /// 45 - ширина аватара, 25 - ширина сердечка справа, 20 - отуступы от краев и от друг друга
     
@@ -67,7 +63,7 @@ class ChatUserController: UIViewController {
             }
             
             var chat = Chat(ID: chatID)
-            chat.messages.append(message(sender: currentAuthUser.ID, body: body))
+            chat.messages.append(message(sender: currentAuthUser.ID, body: body,dateMessage: Date().timeIntervalSince1970))
             currentAuthUser.chatArr.append(chat)
             loadMessage()
         }
@@ -133,21 +129,22 @@ extension ChatUserController {
 extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return chatArr.count
+        if section == 0 {return 0}
+        return structMessagesArr[section - 1].messages.count
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return structMessagesArr.count + 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "currentChatCell", for: indexPath) as! CurrentChatCell
         
-        cell.messageLabel.text = chatArr[indexPath.row].body
+        cell.messageLabel.text = structMessagesArr[indexPath.section - 1].messages[indexPath.row].body
+        let sender = structMessagesArr[indexPath.section - 1].messages[indexPath.row].sender
+        
         cell.selectionStyle = .none
-        
-        let id = chatArr[indexPath.row].sender
-        
+    
         let label = UILabel() /// Лейбл с постоянной высотой 45 и шириной что бы всегда расчитывать одну и ту же идеальную ширину текста для ячейки
         
         label.text = cell.messageLabel.text
@@ -155,7 +152,7 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
         label.frame.size.width = widthMessagView - 20
         label.frame.size.height = 45
         
-        if id == currentAuthUser.ID {
+        if sender == currentAuthUser.ID {
             
             cell.statusMessage.isHidden = false
             if chatArr[indexPath.row].messagedWritingOnServer {
@@ -203,7 +200,7 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
             }
         }
         
-        if indexPath.row + 1 < chatArr.count && chatArr[indexPath.row + 1].sender == id {
+        if indexPath.row + 1 < chatArr.count && chatArr[indexPath.row + 1].sender == sender {
             cell.avatar.image = UIImage()
             cell.bottomMessageViewConstrains.constant = 0
         }
@@ -221,9 +218,7 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
     }
         
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        guard section == tableView.numberOfSections - 1 else {return nil}
-        let view = viewForFooterSection(section: section)
-        return view
+        return section == tableView.numberOfSections - 1 ? viewForFooterSection(section: section) : nil
     }
     
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
@@ -256,15 +251,15 @@ extension ChatUserController {
             if let error = Error {print("Ошибка прослушивания снимков с сервера - \(error)"); return}
             
             print("LoadMessage")
-            
+                       
             guard let document = QuerySnapshot else {return}
             authUser.chatArr[indexChat].messages.removeAll()
             
             for data in document.documents {
                 
-                if let body = data["Body"] as? String, let sender = data["Sender"] as? String, let messageRed = data["MessageRead"] as? Bool, let messageSendOnServer = data["MessageSendOnServer"] as? Bool {
+                if let body = data["Body"] as? String, let sender = data["Sender"] as? String, let date = data["Date"] as? Double, let messageRed = data["MessageRead"] as? Bool, let messageSendOnServer = data["MessageSendOnServer"] as? Bool {
                     
-                    var message = message(sender: sender, body: body)
+                    var message = message(sender: sender, body: body,dateMessage: date)
                     
                     if sender == self?.selectedUser.ID && messageRed == false {
                         db.collection("Chats").document(chatID).collection("Messages").document(data.documentID).setData(["MessageRead" : true], merge: true)
@@ -278,9 +273,9 @@ extension ChatUserController {
             
             DispatchQueue.main.async {
                 self?.tableView.reloadData()
-                let count = self?.currentAuthUser.chatArr[indexChat].messages.count ?? 1
-                let sectionNumber = self?.tableView.numberOfSections ?? 1
-                let indexPath = IndexPath(row: count - 1, section: sectionNumber - 1)
+                let sectionNumber = (self?.tableView.numberOfSections ?? 1) - 1
+                let row = (self?.structMessagesArr.last?.messages.count ?? 1) - 1
+                let indexPath = IndexPath(row: row, section: sectionNumber)
                 self?.tableView.scrollToRow(at: indexPath, at: .top, animated: false)
             }
         }
@@ -314,27 +309,21 @@ extension ChatUserController {
     func viewForHeaderSection(section: Int) -> UIView {
         
         let view = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 40))
-        
         let label = UILabel(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 40))
         label.textColor = .gray
         label.textAlignment = .center
         label.center = view.center
         view.addSubview(label)
         
-        let attrs1 = [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 12), NSAttributedString.Key.foregroundColor : UIColor.darkGray]
-        let attrs2 = [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 12), NSAttributedString.Key.foregroundColor : UIColor.gray]
-        let attributedString1 = NSMutableAttributedString(string:"Четверг ", attributes:attrs1)
-        let attributedString2 = NSMutableAttributedString(string:"16:52", attributes:attrs2)
-        attributedString1.append(attributedString2)
-        
         if section == 0 {
             label.text = "Вы образовали пару 19.04.23"
-        }else {
-            label.attributedText = attributedString1
+        }else if section <= structMessagesArr.count {
+            let text = structMessagesArr[section - 1].dateOnFormat
+            label.attributedText = text
         }
-        
         return view
     }
+    
     
     func viewForFooterSection(section: Int) -> UIView {
         let view = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 20))
