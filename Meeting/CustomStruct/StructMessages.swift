@@ -13,7 +13,8 @@ struct StructMessages {
     
     var dateDouble: Double
     var dateToCompare: String
-    var dateOnFormat: NSMutableAttributedString {
+    
+    var dateForHeadersAndFooters: NSMutableAttributedString {
         get {
            
             let dateFormatter = DateFormatter()

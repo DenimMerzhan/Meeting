@@ -17,6 +17,16 @@ struct message {
     var messageRead = Bool()
     var dateMessage: Double
     
+    
+    var timeMessage: String {
+        get {
+            let dateFormatter = DateFormatter()
+            let dateMessage = Date(timeIntervalSince1970: dateMessage)
+            dateFormatter.dateFormat = "HH:mm"
+            return dateFormatter.string(from: dateMessage)
+        }
+    }
+    
     var dateMessageToCompare: String {
         get {
             let dateFormatter = DateFormatter()

@@ -25,8 +25,9 @@ class CurrentChatCell: UITableViewCell {
     @IBOutlet weak var rightMessageViewConstrainsToSuperView: NSLayoutConstraint!
     @IBOutlet weak var labelRightConstrainsToMessageView: NSLayoutConstraint!
     
-    var heightCell: CGFloat?
+    
     var currentUser = Bool()
+    var bottomConstant = CGFloat()
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -35,10 +36,8 @@ class CurrentChatCell: UITableViewCell {
         
         avatar.layer.cornerRadius = avatar.frame.width / 2
         avatar.clipsToBounds = true
-//        messageView.layer.cornerRadius = 5
         likeButton.alpha = 0.2
         
-
         
     }
     
@@ -64,12 +63,12 @@ class CurrentChatCell: UITableViewCell {
         labelRightConstrainsToMessageView.constant = 22
         rightMessageViewConstrainsToHeartView.isActive = true
         
-//        bottomMessageViewConstrains.constant = 5
+//       bottomMessageViewConstrains.constant = 5
         
     }
 
     override func layoutSubviews() {
-        
+        cellActionButtonLabel?.textColor = .gray
         if currentUser {
             var leftRadius = messageView.frame.height / 2
             if messageView.frame.height > 55 {
@@ -154,4 +153,32 @@ extension UIView{
         shape.path = maskPath.cgPath
         layer.mask = shape
     }
+}
+
+
+
+//MARK: -  Расширение для установки цвета заголовка действия смахивания
+
+extension CurrentChatCell {
+
+    /// Returns label of cell action button.
+    ///
+    /// Use this property to set cell action button label color.
+    var cellActionButtonLabel: UILabel? {
+        for subview in self.superview?.subviews ?? [] {
+            if String(describing: subview).range(of: "UISwipeActionPullView") != nil {
+                for view in subview.subviews {
+                    if String(describing: view).range(of: "UISwipeActionStandardButton") != nil {
+                        for sub in view.subviews {
+                            if let label = sub as? UILabel {
+                                return label
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return nil
+    }
+
 }

@@ -218,12 +218,11 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
         }
         
         
-        
         if  indexPath.row + 1 < structMessagesArr[indexPath.section - 1].messages.count && structMessagesArr[indexPath.section - 1].messages[indexPath.row + 1].sender == sender {
             cell.avatar.image = UIImage()
             cell.bottomMessageViewConstrains.constant = 0
         }
-        
+    
         return cell
     }
     
@@ -242,9 +241,17 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
         return section == tableView.numberOfSections - 1 ? viewForFooterSection(section: section) : nil
     }
     
-    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        print("SwipeStart")
-        return .some(.init())
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+       
+        let timeMessage = structMessagesArr[indexPath.section - 1].messages[indexPath.row].timeMessage
+        
+        let deleteAction = UIContextualAction(style: .normal, title: timeMessage) { action, view, completionHandler in
+            completionHandler(true)
+        }
+        deleteAction.backgroundColor = .white
+        let swipeConfiguration = UISwipeActionsConfiguration(actions: [deleteAction])
+        swipeConfiguration.performsFirstActionWithFullSwipe = false
+        return swipeConfiguration
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
@@ -335,7 +342,7 @@ extension ChatUserController {
         if section == 0 {
             label.text = "Вы образовали пару 19.04.23"
         }else if section <= structMessagesArr.count {
-            let text = structMessagesArr[section - 1].dateOnFormat
+            let text = structMessagesArr[section - 1].dateForHeadersAndFooters
             label.attributedText = text
         }
         return view
