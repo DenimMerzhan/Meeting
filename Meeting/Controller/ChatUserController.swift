@@ -32,16 +32,13 @@ class ChatUserController: UIViewController {
         }
     }
     
-    var chatArr: [message] {
-        get {
-            return currentAuthUser.chatArr[indexChat].messages
+    var chatArr =  [message]() {
+        didSet {
+            currentAuthUser.chatArr[indexChat].messages = chatArr
+            structMessagesArr = currentAuthUser.chatArr[indexChat].structuredMessagesByDates
         }
     }
-    var structMessagesArr: [StructMessages] {
-        get {
-            return currentAuthUser.chatArr[indexChat].structuredMessagesByDates
-        }
-    }
+    var structMessagesArr =  [StructMessages]()
     var indexChat = Int()
     
     let widthMessagView = UIScreen.main.bounds.width - 90 /// 45 - ширина аватара, 25 - ширина сердечка справа, 20 - отуступы от краев и от друг друга
@@ -88,7 +85,6 @@ class ChatUserController: UIViewController {
     deinit {
         print("Denit")
         listener?.remove() /// Удаляем прослушивателя
-        
         if let chatIndex = currentAuthUser.chatArr.firstIndex(where: {$0.ID.contains(selectedUser.ID)}) {
             currentAuthUser.chatArr[chatIndex].lastUnreadMessage = nil
         } /// После того как пользователь прочитал сообщения обнуляем последнее не прочитанное сообщение
@@ -111,8 +107,6 @@ extension ChatUserController {
         tableView.separatorStyle = .none
         tableView.register(UINib(nibName: "CurrentChatCell", bundle: nil), forCellReuseIdentifier: "currentChatCell")
         tableView.sectionHeaderHeight = 40
-        tableView.estimatedRowHeight = 55
-        tableView.rowHeight = UITableView.automaticDimension
         
         avatarUser.layer.cornerRadius = avatarUser.frame.width / 2
         avatarUser.clipsToBounds = true
@@ -253,9 +247,6 @@ extension ChatUserController {
     
     func loadMessage(){
         
-        guard let indexChat = currentAuthUser.chatArr.firstIndex(where: {$0.ID.contains(selectedUser.ID)}) else  {return}
-        let authUser = currentAuthUser
-        
         listener?.remove()
         
         let chatID = currentAuthUser.chatArr[indexChat].ID
@@ -268,7 +259,7 @@ extension ChatUserController {
             print("LoadMessage")
                        
             guard let document = QuerySnapshot else {return}
-            authUser.chatArr[indexChat].messages.removeAll()
+            self?.chatArr.removeAll()
             
             for data in document.documents {
                 
@@ -282,7 +273,7 @@ extension ChatUserController {
                     }
                     message.messagedWritingOnServer = messageSendOnServer
                     message.messageRead = messageRed
-                    self?.currentAuthUser.chatArr[indexChat].messages.append(message)
+                    self?.chatArr.append(message)
                 }
             }
             

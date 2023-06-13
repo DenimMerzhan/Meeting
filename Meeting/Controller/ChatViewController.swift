@@ -163,6 +163,8 @@ extension ChatViewController {
         destanationVC.selectedUser = user
         destanationVC.currentAuthUser = authUser
         destanationVC.indexChat = indexChat
+        destanationVC.chatArr = authUser.chatArr[indexChat].messages
+        destanationVC.structMessagesArr = authUser.chatArr[indexChat].structuredMessagesByDates
         
     }
 }
