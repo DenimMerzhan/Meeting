@@ -25,23 +25,27 @@ class ChatUserController: UIViewController {
     
     var statusSendMessage: String {
         get {
-            for messages in chatArr {
+            for messages in messageArr {
                 if messages.messagedWritingOnServer == false {return "Идет отправка..."}
             }
-            return  "Отправлено"
+            guard let messageRead = messageArr.last?.messageRead else {return "Отправлено"}
+            if messageRead {return "Прочитанно"}
+            return "Отправлено"
         }
     }
     
-    var chatArr =  [message]() {
+    var messageArr =  [message]() {
         didSet {
-            currentAuthUser.chatArr[indexChat].messages = chatArr
-            structMessagesArr = currentAuthUser.chatArr[indexChat].structuredMessagesByDates
+            guard let index = indexChat else {return}
+            currentAuthUser.chatArr[index].messages = messageArr
+            structMessagesArr = currentAuthUser.chatArr[index].structuredMessagesByDates
         }
     }
     var structMessagesArr =  [StructMessages]()
-    var indexChat = Int()
+    var indexChat: Int?
     
-    let widthMessagView = UIScreen.main.bounds.width - 90 /// 45 - ширина аватара, 25 - ширина сердечка справа, 20 - отуступы от краев и от друг друга
+    let widthMessagViewCurrentUser = UIScreen.main.bounds.width - 60 /// 45 - ширина аватара, 15 - отступы друг от друга
+    let widthMessagViewOtherUser = UIScreen.main.bounds.width - 90 /// 45 - ширина аватара, 25 - ширина сердечка справа, 20 - отуступы от краев и от друг друга
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -71,8 +75,11 @@ class ChatUserController: UIViewController {
             }
             
             var chat = Chat(ID: chatID)
-            chat.messages.append(message(sender: currentAuthUser.ID, body: body,dateMessage: Date().timeIntervalSince1970))
+            let message = message(sender: currentAuthUser.ID, body: body,dateMessage: Date().timeIntervalSince1970)
+            chat.messages.append(message)
             currentAuthUser.chatArr.append(chat)
+            indexChat = currentAuthUser.chatArr.firstIndex(where: {$0.ID == chatID}) ?? 0
+            messageArr.append(message)
             loadMessage()
         }
         
@@ -127,7 +134,6 @@ extension ChatUserController {
         avatarUser.image = selectedUser.avatar
         nameUser.text = selectedUser.name
         
-        
         loadMessage()
     }
 }
@@ -157,11 +163,12 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
         
         label.text = cell.messageLabel.text
         label.font = cell.messageLabel.font
-        label.frame.size.width = widthMessagView - 20
         label.frame.size.height = 45
         
         if sender == currentAuthUser.ID {
-            
+            cell.currentUser = true
+        
+            label.frame.size.width = widthMessagViewCurrentUser - 32
             cell.statusMessage.isHidden = false
             if structMessagesArr[indexPath.section - 1].messages[indexPath.row].messagedWritingOnServer {
                 cell.statusMessage.image = UIImage(systemName: "checkmark")
@@ -172,39 +179,41 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
             }
             
             cell.heartLikeView.isHidden = true
-            cell.rightMessageViewConstrains.isActive = false
+            cell.rightMessageViewConstrainsToHeartView.isActive = false
             cell.avatar.image = UIImage()
-            cell.rightConstrainsToSuperView.isActive = true /// Дополнительная константа которая говорит что MessageView будт на расстояние от SuperView на 5 пунктов
+            cell.rightMessageViewConstrainsToSuperView.isActive = true /// Дополнительная константа которая говорит что MessageView будт на расстояние от SuperView на 5 пунктов
             
             cell.messageLabel.textAlignment = .right
             cell.messageView.backgroundColor = UIColor(named: "CurrentUserMessageColor")
             cell.messageLabel.textColor = .white
             
-            let width = label.intrinsicContentSize.width
+            let widthLabel = label.intrinsicContentSize.width
             
-            if width < widthMessagView {
-                let newLeftConstant = widthMessagView - width - 32/// Получаем новую разницу между mesage view и avatar 32 - расстояние от лейбла до правой стороны и левой стороны messageView
-                cell.leftMessageViewConstrains.constant = newLeftConstant + 5 + 30
+            if widthLabel < widthMessagViewCurrentUser {
+                let newLeftConstant = widthMessagViewCurrentUser - widthLabel - 32 /// MessageView стал больше после того как мы скрыли сердечко, получаем расстояение от MessageView до аватарки, 32 - (10 расстояние Лейбла от левого, 22 растояние от правого края)
+                cell.leftMessageViewConstrainsToSuperView.constant = newLeftConstant + 5
             }else {
-                cell.leftMessageViewConstrains.constant = 5
+                cell.leftMessageViewConstrainsToSuperView.constant = 5
             }
             
             
         }else {
+            label.frame.size.width = widthMessagViewOtherUser - 20 /// 20 -  (10 расстояние Лейбла от левого, 10 растояние от правого края)
+            
             cell.statusMessage.isHidden = true
-            cell.labelRightConstrains.constant = 5
+            cell.labelRightConstrainsToMessageView.constant = 10
             cell.messageLabel.textAlignment = .left
             cell.messageView.backgroundColor = UIColor(named: "GrayColor")
             cell.avatar.image = selectedUser.avatar
             cell.messageLabel.textColor = .black
             
-            let width = label.intrinsicContentSize.width
+            let widthLabel = label.intrinsicContentSize.width
             
-            if width < widthMessagView {
-                let newRightConstrains = widthMessagView - width - 20
-                cell.rightMessageViewConstrains.constant = newRightConstrains + 5
+            if widthLabel < widthMessagViewOtherUser {
+                let newRightConstrains = widthMessagViewOtherUser - widthLabel - 20
+                cell.rightMessageViewConstrainsToHeartView.constant = newRightConstrains + 5
             }else {
-                cell.rightMessageViewConstrains.constant = 5
+                cell.rightMessageViewConstrainsToHeartView.constant = 5
             }
         }
         
@@ -228,6 +237,8 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
     }
         
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        guard let lastMessage = messageArr.last else {return nil}
+        if lastMessage.sender != currentAuthUser.ID {return nil}
         return section == tableView.numberOfSections - 1 ? viewForFooterSection(section: section) : nil
     }
     
@@ -248,8 +259,8 @@ extension ChatUserController {
     func loadMessage(){
         
         listener?.remove()
-        
-        let chatID = currentAuthUser.chatArr[indexChat].ID
+        guard let index = indexChat else {return}
+        let chatID = currentAuthUser.chatArr[index].ID
         let db = Firestore.firestore()
         
         let listener = db.collection("Chats").document(chatID).collection("Messages").order(by: "Date").addSnapshotListener(includeMetadataChanges: true) { [weak self] QuerySnapshot, Error in
@@ -259,7 +270,7 @@ extension ChatUserController {
             print("LoadMessage")
                        
             guard let document = QuerySnapshot else {return}
-            self?.chatArr.removeAll()
+            self?.messageArr.removeAll()
             
             for data in document.documents {
                 
@@ -273,7 +284,7 @@ extension ChatUserController {
                     }
                     message.messagedWritingOnServer = messageSendOnServer
                     message.messageRead = messageRed
-                    self?.chatArr.append(message)
+                    self?.messageArr.append(message)
                 }
             }
             

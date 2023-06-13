@@ -159,12 +159,14 @@ extension ChatViewController {
         guard let destanationVC = segue.destination as? ChatUserController else  {return}
         guard let user = selectedUser else {return}
         guard let authUser = currentAuthUser else {return}
-        guard let indexChat = authUser.chatArr.firstIndex(where: {$0.ID.contains(user.ID)}) else {return}
         destanationVC.selectedUser = user
         destanationVC.currentAuthUser = authUser
-        destanationVC.indexChat = indexChat
-        destanationVC.chatArr = authUser.chatArr[indexChat].messages
-        destanationVC.structMessagesArr = authUser.chatArr[indexChat].structuredMessagesByDates
+        
+        if let indexChat = authUser.chatArr.firstIndex(where: {$0.ID.contains(user.ID)})  {
+            destanationVC.indexChat = indexChat
+            destanationVC.messageArr = authUser.chatArr[indexChat].messages
+            destanationVC.structMessagesArr = authUser.chatArr[indexChat].structuredMessagesByDates
+        }
         
     }
 }

@@ -96,13 +96,13 @@
                 <outlet property="avatar" destination="9dQ-Gc-3Ax" id="QKP-tn-c4i"/>
                 <outlet property="bottomMessageViewConstrains" destination="mah-81-fzk" id="cWi-8n-Yv7"/>
                 <outlet property="heartLikeView" destination="DIB-4y-zOs" id="sDc-Fi-E2k"/>
-                <outlet property="labelRightConstrains" destination="Km0-hh-YnL" id="L3L-Ax-2Yp"/>
-                <outlet property="leftMessageViewConstrains" destination="03I-MB-vtq" id="3ju-tw-hVz"/>
+                <outlet property="labelRightConstrainsToMessageView" destination="Km0-hh-YnL" id="L3L-Ax-2Yp"/>
+                <outlet property="leftMessageViewConstrainsToSuperView" destination="03I-MB-vtq" id="3ju-tw-hVz"/>
                 <outlet property="likeButton" destination="ys2-Gf-DEw" id="2xn-Ly-q8O"/>
                 <outlet property="messageLabel" destination="85p-00-vj1" id="lBB-nY-I6W"/>
                 <outlet property="messageView" destination="eia-YY-een" id="olw-q3-LDB"/>
-                <outlet property="rightConstrainsToSuperView" destination="UW6-LJ-IfN" id="rLl-tn-ivT"/>
-                <outlet property="rightMessageViewConstrains" destination="12l-tU-bzo" id="Y0P-YD-Bzg"/>
+                <outlet property="rightMessageViewConstrainsToHeartView" destination="12l-tU-bzo" id="Y0P-YD-Bzg"/>
+                <outlet property="rightMessageViewConstrainsToSuperView" destination="UW6-LJ-IfN" id="rLl-tn-ivT"/>
                 <outlet property="statusMessage" destination="wmn-HL-dPY" id="QLa-Ah-6g3"/>
             </connections>
             <point key="canvasLocation" x="-155.07246376811597" y="45.200892857142854"/>
