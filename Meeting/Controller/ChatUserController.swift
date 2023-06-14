@@ -112,7 +112,7 @@ extension ChatUserController {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.separatorStyle = .none
-        tableView.register(UINib(nibName: "CurrentChatCell", bundle: nil), forCellReuseIdentifier: "currentChatCell")
+        tableView.register(UINib(nibName: "CurrentChatCellTableView", bundle: nil), forCellReuseIdentifier: "currentChatCell")
         tableView.sectionHeaderHeight = 40
         
         avatarUser.layer.cornerRadius = avatarUser.frame.width / 2
@@ -167,9 +167,11 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
         
         if sender == currentAuthUser.ID {
             cell.currentUser = true
-        
-            label.frame.size.width = widthMessagViewCurrentUser - 32
+            label.frame.size.width = widthMessagViewCurrentUser - 37
             cell.statusMessage.isHidden = false
+            cell.heartView.isHidden = true
+            cell.avatar.image = UIImage()
+            
             if structMessagesArr[indexPath.section - 1].messages[indexPath.row].messagedWritingOnServer {
                 cell.statusMessage.image = UIImage(systemName: "checkmark")
             }
@@ -178,50 +180,42 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
                 cell.statusMessage.image = UIImage(named: "MessageSend")
             }
             
-            cell.heartLikeView.isHidden = true
-            cell.rightMessageViewConstrainsToHeartView.isActive = false
-            cell.avatar.image = UIImage()
-            cell.rightMessageViewConstrainsToSuperView.isActive = true /// Дополнительная константа которая говорит что MessageView будт на расстояние от SuperView на 5 пунктов
-            
+            cell.messageBubble.backgroundColor = UIColor(named: "CurrentUserMessageColor")
             cell.messageLabel.textAlignment = .right
-            cell.messageView.backgroundColor = UIColor(named: "CurrentUserMessageColor")
             cell.messageLabel.textColor = .white
             
             let widthLabel = label.intrinsicContentSize.width
-            
+
             if widthLabel < widthMessagViewCurrentUser {
-                let newLeftConstant = widthMessagViewCurrentUser - widthLabel - 32 /// MessageView стал больше после того как мы скрыли сердечко, получаем расстояение от MessageView до аватарки, 32 - (10 расстояние Лейбла от левого, 22 растояние от правого края)
-                cell.leftMessageViewConstrainsToSuperView.constant = newLeftConstant + 5
+                cell.messageBubbleLeftConstrains.constant = widthMessagViewCurrentUser - widthLabel - 37
             }else {
-                cell.leftMessageViewConstrainsToSuperView.constant = 5
+                cell.messageBubbleLeftConstrains.constant = 0
             }
             
             
         }else {
             label.frame.size.width = widthMessagViewOtherUser - 20 /// 20 -  (10 расстояние Лейбла от левого, 10 растояние от правого края)
             
+            cell.heartView.isHidden = false
             cell.statusMessage.isHidden = true
-            cell.labelRightConstrainsToMessageView.constant = 10
             cell.messageLabel.textAlignment = .left
-            cell.messageView.backgroundColor = UIColor(named: "GrayColor")
+            cell.messageBubble.backgroundColor = UIColor(named: "GrayColor")
             cell.avatar.image = selectedUser.avatar
             cell.messageLabel.textColor = .black
             
             let widthLabel = label.intrinsicContentSize.width
             
-            if widthLabel < widthMessagViewOtherUser {
-                let newRightConstrains = widthMessagViewOtherUser - widthLabel - 20
-                cell.rightMessageViewConstrainsToHeartView.constant = newRightConstrains + 5
+            if widthLabel < widthMessagViewCurrentUser {
+                cell.messageBubbleRightConstrains.constant = widthMessagViewOtherUser - widthLabel - 20
             }else {
-                cell.rightMessageViewConstrainsToHeartView.constant = 5
+                cell.messageBubbleRightConstrains.constant = 0
             }
         }
         
         
-        if  indexPath.row + 1 < structMessagesArr[indexPath.section - 1].messages.count && structMessagesArr[indexPath.section - 1].messages[indexPath.row + 1].sender == sender {
-            cell.avatar.image = UIImage()
-            cell.bottomMessageViewConstrains.constant = 0
-        }
+//        if  indexPath.row + 1 < structMessagesArr[indexPath.section - 1].messages.count && structMessagesArr[indexPath.section - 1].messages[indexPath.row + 1].sender == sender {
+//            cell.avatar.image = UIImage()
+//        }
     
         return cell
     }
@@ -257,7 +251,7 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return section == tableView.numberOfSections - 1 ? 20 : 0
+        return section == tableView.numberOfSections - 1 ? 10 : 0
     }
 }
 

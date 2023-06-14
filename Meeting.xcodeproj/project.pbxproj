@@ -31,6 +31,8 @@
 		CF8F6C172A2CC85F004E62D0 /* PotentialChatCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8F6C152A2CC85F004E62D0 /* PotentialChatCell.xib */; };
 		CF933C302A0CD65C0015E99B /* CustomError.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF933C2F2A0CD65C0015E99B /* CustomError.swift */; };
 		CF9AF8DA2A1DF1AD00E9F07E /* ChatUserController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9AF8D92A1DF1AD00E9F07E /* ChatUserController.swift */; };
+		CF9D50882A39899700CFB524 /* CurrentChatCellTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9D50862A39899700CFB524 /* CurrentChatCellTableView.swift */; };
+		CF9D50892A39899700CFB524 /* CurrentChatCellTableView.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF9D50872A39899700CFB524 /* CurrentChatCellTableView.xib */; };
 		CFA140D92A00D61A00DD384B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CFA140D82A00D61A00DD384B /* GoogleService-Info.plist */; };
 		CFA470E82A24DE6C005E3549 /* CurrentChatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA470E62A24DE6C005E3549 /* CurrentChatCell.swift */; };
 		CFA470E92A24DE6C005E3549 /* CurrentChatCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFA470E72A24DE6C005E3549 /* CurrentChatCell.xib */; };
@@ -73,6 +75,8 @@
 		CF8F6C152A2CC85F004E62D0 /* PotentialChatCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PotentialChatCell.xib; sourceTree = "<group>"; };
 		CF933C2F2A0CD65C0015E99B /* CustomError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomError.swift; sourceTree = "<group>"; };
 		CF9AF8D92A1DF1AD00E9F07E /* ChatUserController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatUserController.swift; sourceTree = "<group>"; };
+		CF9D50862A39899700CFB524 /* CurrentChatCellTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentChatCellTableView.swift; sourceTree = "<group>"; };
+		CF9D50872A39899700CFB524 /* CurrentChatCellTableView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CurrentChatCellTableView.xib; sourceTree = "<group>"; };
 		CFA140D82A00D61A00DD384B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CFA470E62A24DE6C005E3549 /* CurrentChatCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentChatCell.swift; sourceTree = "<group>"; };
 		CFA470E72A24DE6C005E3549 /* CurrentChatCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CurrentChatCell.xib; sourceTree = "<group>"; };
@@ -172,6 +176,7 @@
 				CF7D03082A0B80330028E7EB /* CurrentAuthUser.swift */,
 				CFC6D2FF29FE43B100A712BA /* CircularProgressBarView.swift */,
 				CF1DC80729F0D46C001E2EAD /* CardView.swift */,
+				CF9D50862A39899700CFB524 /* CurrentChatCellTableView.swift */,
 			);
 			path = CustomClass;
 			sourceTree = "<group>";
@@ -226,6 +231,7 @@
 				CF8F6C0D2A2C7A32004E62D0 /* TableViewCell.xib */,
 				CF8F6C152A2CC85F004E62D0 /* PotentialChatCell.xib */,
 				CFA470E72A24DE6C005E3549 /* CurrentChatCell.xib */,
+				CF9D50872A39899700CFB524 /* CurrentChatCellTableView.xib */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -302,6 +308,7 @@
 				CF069DAC29EC2D3E005ED378 /* LaunchScreen.storyboard in Resources */,
 				CF8F6C0F2A2C7A32004E62D0 /* TableViewCell.xib in Resources */,
 				CFA140D92A00D61A00DD384B /* GoogleService-Info.plist in Resources */,
+				CF9D50892A39899700CFB524 /* CurrentChatCellTableView.xib in Resources */,
 				CF069DA929EC2D3E005ED378 /* Assets.xcassets in Resources */,
 				CF069DA729EC2D3E005ED378 /* Main.storyboard in Resources */,
 				CF8F6C172A2CC85F004E62D0 /* PotentialChatCell.xib in Resources */,
@@ -385,6 +392,7 @@
 				CF65ED7D2A277DFD00820D6B /* matchDelegate.swift in Sources */,
 				CF59A22C2A1B53B300954CCE /* ChatViewController.swift in Sources */,
 				CFC72D4F2A0135F2008CDB14 /* FirebaseStorageModel.swift in Sources */,
+				CF9D50882A39899700CFB524 /* CurrentChatCellTableView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

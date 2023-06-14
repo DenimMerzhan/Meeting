@@ -11,20 +11,16 @@ class CurrentChatCell: UITableViewCell {
 
 
     @IBOutlet weak var avatar: UIImageView!
-    
-    @IBOutlet weak var messageView: UIView!
+    @IBOutlet weak var messageBubble: UIView!
     @IBOutlet weak var messageLabel: UILabel!
-    @IBOutlet weak var leftMessageViewConstrainsToSuperView: NSLayoutConstraint!
-    @IBOutlet weak var rightMessageViewConstrainsToHeartView: NSLayoutConstraint!
-    @IBOutlet weak var likeButton: UIImageView!
-    @IBOutlet weak var bottomMessageViewConstrains: NSLayoutConstraint!
-    
-    @IBOutlet weak var heartLikeView: UIView!
     @IBOutlet weak var statusMessage: UIImageView!
     
-    @IBOutlet weak var rightMessageViewConstrainsToSuperView: NSLayoutConstraint!
-    @IBOutlet weak var labelRightConstrainsToMessageView: NSLayoutConstraint!
+    @IBOutlet weak var heartLikeImageView: UIImageView!
+    @IBOutlet weak var heartView: UIView!
     
+    
+    @IBOutlet weak var messageBubbleLeftConstrains: NSLayoutConstraint!
+    @IBOutlet weak var messageBubbleRightConstrains: NSLayoutConstraint!
     
     var currentUser = Bool()
     var bottomConstant = CGFloat()
@@ -36,33 +32,18 @@ class CurrentChatCell: UITableViewCell {
         
         avatar.layer.cornerRadius = avatar.frame.width / 2
         avatar.clipsToBounds = true
-        likeButton.alpha = 0.2
-        
-        
-    }
-    
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-        
-        // Configure the view for the selected state
+        heartLikeImageView.alpha = 0.2
+  
     }
     
     override func prepareForReuse() { /// Подготовка перед повторным использованием
         
-        heartLikeView.isHidden = false
-        rightMessageViewConstrainsToSuperView.isActive = false
+        messageBubbleLeftConstrains.constant = 0
+        messageBubbleRightConstrains.constant = 0
         
         currentUser = false
-        
-        rightMessageViewConstrainsToHeartView.constant = 5
-        rightMessageViewConstrainsToSuperView.constant = 5
-        leftMessageViewConstrainsToSuperView.constant = 5
-       
         statusMessage.image = UIImage(named: "SendMessageTimer")
-    
-        labelRightConstrainsToMessageView.constant = 22
-        rightMessageViewConstrainsToHeartView.isActive = true
-        
+
 //       bottomMessageViewConstrains.constant = 5
         
     }
@@ -70,17 +51,17 @@ class CurrentChatCell: UITableViewCell {
     override func layoutSubviews() {
         
         if currentUser {
-            var leftRadius = messageView.frame.height / 2
-            if messageView.frame.height > 55 {
-                leftRadius = messageView.frame.height / 3
+            var leftRadius = messageBubble.frame.height / 2
+            if messageBubble.frame.height > 55 {
+                leftRadius = messageBubble.frame.height / 3
             }
-            messageView.roundCorners(topLeft: leftRadius, topRight: 23, bottomLeft: leftRadius, bottomRight: 10)
+            messageBubble.roundCorners(topLeft: leftRadius, topRight: 23, bottomLeft: leftRadius, bottomRight: 10)
         }else {
-            var rightRadius = messageView.frame.height / 2
-            if messageView.frame.height > 55 {
-                rightRadius = messageView.frame.height / 3
+            var rightRadius = messageBubble.frame.height / 2
+            if messageBubble.frame.height > 55 {
+                rightRadius = messageBubble.frame.height / 3
             }
-            messageView.roundCorners(topLeft: 23, topRight: rightRadius, bottomLeft: 10, bottomRight: rightRadius)
+            messageBubble.roundCorners(topLeft: 23, topRight: rightRadius, bottomLeft: 10, bottomRight: rightRadius)
         }
     }
 }
@@ -139,8 +120,6 @@ extension UIBezierPath {
         cgPath = path
     }
 }
-
-
 
 extension UIView{
     func roundCorners(topLeft: CGFloat = 0, topRight: CGFloat = 0, bottomLeft: CGFloat = 0, bottomRight: CGFloat = 0) {//(topLeft: CGFloat, topRight: CGFloat, bottomLeft: CGFloat, bottomRight: CGFloat) {
