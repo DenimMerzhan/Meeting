@@ -108,6 +108,29 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
         performSegue(withIdentifier: "goToChat", sender: self)
     }
     
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let deleteAction = UIContextualAction(style: .destructive, title: "") { action, view, completion in
+            print("Yeah")
+            completion(true)
+        }
+
+        let banAction = UIContextualAction(style: .normal, title: "") { action, view, completion in
+            print("Yeah")
+            completion(true)
+            
+        }
+        
+        banAction.backgroundColor = UIColor(named: "BanUserColor")
+        banAction.image = createBanImage()
+
+        deleteAction.backgroundColor = UIColor(named: "DeleteChatColor")
+        deleteAction.image = createDeleteImage()
+        
+        let swipeConfiguration = UISwipeActionsConfiguration(actions: [deleteAction,banAction])
+        swipeConfiguration.performsFirstActionWithFullSwipe = false
+        return swipeConfiguration
+    }
+    
 }
 
 //MARK: - UICollectionViewDataSource
@@ -245,5 +268,78 @@ extension ChatViewController {
         collectionView.dataSource = self
         collectionView.register(UINib(nibName: "PotentialChatCell", bundle: nil), forCellWithReuseIdentifier: "potentialChatCell")
         
+    }
+}
+
+
+//MARK: - Создание Image для кнопок удаления и жалобы
+
+extension ChatViewController {
+    
+    
+    func createBanImage() -> UIImage {
+        
+        
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: 60, height: 100))
+        let imageView = UIImageView(frame: CGRect(x: 0, y: 20, width: 25, height: 25))
+        
+        imageView.center.x = view.center.x
+        imageView.image = UIImage(named: "BanImage")
+        imageView.tintColor = .white
+        imageView.contentMode = .scaleAspectFill
+        
+        let label = UILabel(frame: CGRect(x: 0, y: 50, width: 60, height: 40))
+        label.textAlignment = .center
+        label.numberOfLines = 2
+        label.font = .systemFont(ofSize: 12)
+        label.textColor = .white
+        label.text = "Пожаловаться"
+        
+        view.addSubview(imageView)
+        view.addSubview(label)
+        view.backgroundColor = .clear
+        
+        return view.asImage()
+    }
+    
+    func createDeleteImage() -> UIImage {
+        
+        
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: 60, height: 100))
+        let imageView = UIImageView(frame: CGRect(x: 0, y: 20, width: 20, height: 20))
+        
+        imageView.center.x = view.center.x
+        imageView.image = UIImage(named: "DeleteChatUser")?.withTintColor(.white)
+        imageView.contentMode = .scaleAspectFill
+        imageView.tintColor = .white
+        
+        let label = UILabel(frame: CGRect(x: 0, y: 50, width: 60, height: 40))
+        label.textAlignment = .center
+        label.numberOfLines = 2
+        label.font = .systemFont(ofSize: 12)
+        label.textColor = .white
+        label.text = "Удалить из пар"
+        
+        view.addSubview(imageView)
+        view.addSubview(label)
+        view.backgroundColor = .clear
+        
+        return view.asImage()
+        
+    }
+    
+}
+
+//MARK: - Конвертирование UIView to Image
+
+extension UIView {
+
+    // Using a function since `var image` might conflict with an existing variable
+    // (like on `UIImageView`)
+    func asImage() -> UIImage {
+        let renderer = UIGraphicsImageRenderer(bounds: bounds)
+        return renderer.image { rendererContext in
+            layer.render(in: rendererContext.cgContext)
+        }
     }
 }

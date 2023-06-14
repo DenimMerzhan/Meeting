@@ -65,12 +65,12 @@ class ChatCell: UITableViewCell {
         banView.frame.size.height = 100
         banView.setupView()
         
-        panGesture.delegate = self
-        panGesture.addTarget(self, action: #selector(viewDrags(_:)))
+//        panGesture.delegate = self
+//        panGesture.addTarget(self, action: #selector(viewDrags(_:)))
         
-        self.addSubview(deleteView)
-        self.addSubview(banView)
-        chatView.addGestureRecognizer(panGesture)
+//        self.addSubview(deleteView)
+//        self.addSubview(banView)
+//        chatView.addGestureRecognizer(panGesture)
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -80,9 +80,16 @@ class ChatCell: UITableViewCell {
     }
     
 
+    
     override func prepareForReuse() {
         countUnreadMessageView.isHidden = true
     }
+    
+//    override func layoutSubviews() {
+//        cellActionButtonLabel?.numberOfLines = 2
+//        cellActionButtonLabel?.font = .systemFont(ofSize: 10)
+//        cellActionButtonLabel?.frame = CGRect(x: 0, y: 25, width: 60, height: 100)
+//    }
     
 //MARK: - ViewDrags
     
@@ -221,4 +228,30 @@ class changeView: UIView {
     }
     
     
+}
+
+
+
+extension ChatCell {
+
+    /// Returns label of cell action button.
+    ///
+    /// Use this property to set cell action button label color.
+    var cellActionButtonLabel: UILabel? {
+        for subview in self.superview?.subviews ?? [] {
+            if String(describing: subview).range(of: "UISwipeActionPullView") != nil {
+                for view in subview.subviews {
+                    if String(describing: view).range(of: "UISwipeActionStandardButton") != nil {
+                        for sub in view.subviews {
+                            if let label = sub as? UILabel {
+                                return label
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return nil
+    }
+
 }

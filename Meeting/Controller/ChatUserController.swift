@@ -244,13 +244,15 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
        
         let timeMessage = structMessagesArr[indexPath.section - 1].messages[indexPath.row].timeMessage
-        
-        let deleteAction = UIContextualAction(style: .normal, title: timeMessage) { action, view, completionHandler in
+        let image = createTimeMessageImage(timeMessage: timeMessage)
+        let deleteAction = UIContextualAction(style: .normal, title: "") { action, view, completionHandler in
             completionHandler(true)
         }
         deleteAction.backgroundColor = .white
+        deleteAction.image = image
         let swipeConfiguration = UISwipeActionsConfiguration(actions: [deleteAction])
         swipeConfiguration.performsFirstActionWithFullSwipe = false
+        
         return swipeConfiguration
     }
     
@@ -362,6 +364,28 @@ extension ChatUserController {
         view.addSubview(label)
         
         return view
+    }
+    
+}
+
+//MARK: -  Создание Image для просмотра времени сообщения
+
+extension ChatUserController {
+    
+    func createTimeMessageImage(timeMessage: String) -> UIImage {
+        
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
+        view.backgroundColor = .clear
+        let label = UILabel(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
+        label.textColor = .gray
+        label.text = timeMessage
+        label.font = .systemFont(ofSize: 10)
+        
+        view.addSubview(label)
+        
+        return view.asImage()
+        
+        
     }
     
 }
