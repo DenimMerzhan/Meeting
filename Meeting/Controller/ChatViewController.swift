@@ -24,6 +24,15 @@ class ChatViewController: UIViewController {
     var currentAuthUser: CurrentAuthUser?
     var listenersArr =  [ListenerRegistration]()
     
+    var indexChat: Int? {
+        get {
+            guard let authUser = currentAuthUser else {return nil}
+            guard let otheUser = selectedUser else {return nil}
+            guard let indexChat = authUser.chatArr.firstIndex(where: {$0.ID.contains(otheUser.ID)}) else {return nil}
+            return indexChat
+        }
+    }
+    
     var potentialChatArr: [User] {
         get {
             var potentialArr = [User]()
@@ -70,7 +79,7 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
         let chat = authUser.chatArr[indexPath.row]
         guard let pairUser = authUser.matchArr.first(where: {chat.ID.contains($0.ID)}) else {return cell}
        
-        
+        cell.chatID = chat.ID
         if let lastUnreadMessage = chat.lastUnreadMessage {
             cell.countUnreadMessageView.isHidden = false
             cell.countUnreadMessageLabel.text = String(chat.numberUnreadMessges)
@@ -79,20 +88,10 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
             cell.commentLabel.text = chat.messages.last?.body /// Последнее сообщение в чате
         }
         
-        cell.scrollView = verticalScrollView
         cell.avatar.image = pairUser.avatar
         cell.nameLabel.text = pairUser.name
         
         
-        let action = UIAction { [weak self] UIAction in
-            guard let indexUser = authUser.matchArr.firstIndex(where: {chat.ID.contains($0.ID)}) else {return}
-            
-            authUser.chatArr.remove(at: indexPath.row)
-            authUser.matchArr.remove(at: indexUser)
-            self?.tableView.reloadData()
-        }
-        
-        cell.deleteView.button.addAction(action, for: .touchUpInside)
         return cell
     }
     
@@ -109,9 +108,18 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        guard let cell = tableView.cellForRow(at: indexPath) as? ChatCell else {return nil}
+        guard let authUser = currentAuthUser else {return nil}
+        
         let deleteAction = UIContextualAction(style: .destructive, title: "") { action, view, completion in
-            print("Yeah")
-            completion(true)
+            self.listenersArr.removeAll()
+            authUser.deleteChat(chatID:cell.chatID) { success in
+                if success {
+//                    tableView.reloadData()
+                }
+//                self.addListeners()
+                completion(true)
+            }
         }
 
         let banAction = UIContextualAction(style: .normal, title: "") { action, view, completion in
@@ -121,10 +129,10 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
         }
         
         banAction.backgroundColor = UIColor(named: "BanUserColor")
-        banAction.image = createBanImage()
+        banAction.image = cell.banImage
 
         deleteAction.backgroundColor = UIColor(named: "DeleteChatColor")
-        deleteAction.image = createDeleteImage()
+        deleteAction.image = cell.deleteImage
         
         let swipeConfiguration = UISwipeActionsConfiguration(actions: [deleteAction,banAction])
         swipeConfiguration.performsFirstActionWithFullSwipe = false
@@ -185,12 +193,11 @@ extension ChatViewController {
         destanationVC.selectedUser = user
         destanationVC.currentAuthUser = authUser
         
-        if let indexChat = authUser.chatArr.firstIndex(where: {$0.ID.contains(user.ID)})  {
+        if let indexChat = self.indexChat  {
             destanationVC.indexChat = indexChat
             destanationVC.messageArr = authUser.chatArr[indexChat].messages
             destanationVC.structMessagesArr = authUser.chatArr[indexChat].structuredMessagesByDates
         }
-        
     }
 }
 
@@ -271,75 +278,13 @@ extension ChatViewController {
     }
 }
 
-
-//MARK: - Создание Image для кнопок удаления и жалобы
-
 extension ChatViewController {
     
-    
-    func createBanImage() -> UIImage {
-        
-        
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: 60, height: 100))
-        let imageView = UIImageView(frame: CGRect(x: 0, y: 20, width: 25, height: 25))
-        
-        imageView.center.x = view.center.x
-        imageView.image = UIImage(named: "BanImage")
-        imageView.tintColor = .white
-        imageView.contentMode = .scaleAspectFill
-        
-        let label = UILabel(frame: CGRect(x: 0, y: 50, width: 60, height: 40))
-        label.textAlignment = .center
-        label.numberOfLines = 2
-        label.font = .systemFont(ofSize: 12)
-        label.textColor = .white
-        label.text = "Пожаловаться"
-        
-        view.addSubview(imageView)
-        view.addSubview(label)
-        view.backgroundColor = .clear
-        
-        return view.asImage()
-    }
-    
-    func createDeleteImage() -> UIImage {
-        
-        
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: 60, height: 100))
-        let imageView = UIImageView(frame: CGRect(x: 0, y: 20, width: 20, height: 20))
-        
-        imageView.center.x = view.center.x
-        imageView.image = UIImage(named: "DeleteChatUser")?.withTintColor(.white)
-        imageView.contentMode = .scaleAspectFill
-        imageView.tintColor = .white
-        
-        let label = UILabel(frame: CGRect(x: 0, y: 50, width: 60, height: 40))
-        label.textAlignment = .center
-        label.numberOfLines = 2
-        label.font = .systemFont(ofSize: 12)
-        label.textColor = .white
-        label.text = "Удалить из пар"
-        
-        view.addSubview(imageView)
-        view.addSubview(label)
-        view.backgroundColor = .clear
-        
-        return view.asImage()
+    func deleteChat(){
+        guard let indexChat = indexChat else {return}
+        currentAuthUser?.chatArr.remove(at: indexChat)
         
     }
     
 }
 
-//MARK: - Конвертирование UIView to Image
-
-extension UIView {
-
-    // Using a function since `var image` might conflict with an existing variable
-    // (like on `UIImageView`)
-    func asImage() -> UIImage {
-        let renderer = UIGraphicsImageRenderer(bounds: bounds)
-        return renderer.image { rendererContext in
-            layer.render(in: rendererContext.cgContext)
-        }
-    }
-}

@@ -25,6 +25,7 @@
 		CF7D03092A0B80330028E7EB /* CurrentAuthUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7D03082A0B80330028E7EB /* CurrentAuthUser.swift */; };
 		CF807F0929FFF57800D5ACD1 /* SettingsPhotoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF807F0829FFF57800D5ACD1 /* SettingsPhotoCell.swift */; };
 		CF81B5FB2A30A7180005EA70 /* UserReturnedToChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF81B5FA2A30A7180005EA70 /* UserReturnedToChat.swift */; };
+		CF8C3E162A3B34F500B59026 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8C3E152A3B34F500B59026 /* Extension.swift */; };
 		CF8F6C0E2A2C7A32004E62D0 /* ChatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8F6C0C2A2C7A32004E62D0 /* ChatCell.swift */; };
 		CF8F6C0F2A2C7A32004E62D0 /* TableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8F6C0D2A2C7A32004E62D0 /* TableViewCell.xib */; };
 		CF8F6C162A2CC85F004E62D0 /* PotentialChatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8F6C142A2CC85F004E62D0 /* PotentialChatCell.swift */; };
@@ -67,6 +68,7 @@
 		CF7D03082A0B80330028E7EB /* CurrentAuthUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentAuthUser.swift; sourceTree = "<group>"; };
 		CF807F0829FFF57800D5ACD1 /* SettingsPhotoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPhotoCell.swift; sourceTree = "<group>"; };
 		CF81B5FA2A30A7180005EA70 /* UserReturnedToChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserReturnedToChat.swift; sourceTree = "<group>"; };
+		CF8C3E152A3B34F500B59026 /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
 		CF8F6C0C2A2C7A32004E62D0 /* ChatCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCell.swift; sourceTree = "<group>"; };
 		CF8F6C0D2A2C7A32004E62D0 /* TableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TableViewCell.xib; sourceTree = "<group>"; };
 		CF8F6C142A2CC85F004E62D0 /* PotentialChatCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PotentialChatCell.swift; sourceTree = "<group>"; };
@@ -129,6 +131,7 @@
 			children = (
 				CF069D9F29EC2D3D005ED378 /* AppDelegate.swift */,
 				CF069DA129EC2D3D005ED378 /* SceneDelegate.swift */,
+				CF8C3E172A3B350500B59026 /* Extension */,
 				CF65ED7E2A277E0600820D6B /* Protocol */,
 				CFD689202A0E09D1003EB21A /* Test */,
 				CF933C312A0CD67A0015E99B /* CustomEnum */,
@@ -152,6 +155,14 @@
 				CF81B5FA2A30A7180005EA70 /* UserReturnedToChat.swift */,
 			);
 			path = Protocol;
+			sourceTree = "<group>";
+		};
+		CF8C3E172A3B350500B59026 /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				CF8C3E152A3B34F500B59026 /* Extension.swift */,
+			);
+			name = Extension;
 			sourceTree = "<group>";
 		};
 		CF933C312A0CD67A0015E99B /* CustomEnum */ = {
@@ -381,6 +392,7 @@
 				CF65ED802A2789AC00820D6B /* MatchController.swift in Sources */,
 				CFFD03E029F9003B000732AC /* CardModel.swift in Sources */,
 				CFC6D2FE29FE403000A712BA /* ProfileViewController.swift in Sources */,
+				CF8C3E162A3B34F500B59026 /* Extension.swift in Sources */,
 				CFD1CAE729FEABB6009AE9A7 /* SettingsPhotoViewController.swift in Sources */,
 				CF65ED7D2A277DFD00820D6B /* matchDelegate.swift in Sources */,
 				CF59A22C2A1B53B300954CCE /* ChatViewController.swift in Sources */,

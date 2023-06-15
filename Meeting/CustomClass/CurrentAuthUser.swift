@@ -373,8 +373,34 @@ extension CurrentAuthUser {
             print("Ошибка получения чата - \(error)")
             return nil
         }
+        
+        
     }
     
+    func deleteChat(chatID:String, completion: @escaping(Bool) -> Void){
+        guard let indexChat = chatArr.firstIndex(where: {$0.ID == chatID}) else {return}
+        print(chatID)
+        db.collection("Chats").document(chatID).collection("Messages").getDocuments { querySnapshot, err in
+            if err != nil {
+                print("Ошибка удаления чата - \(err!)")
+                completion(false)
+            }
+            guard let documents = querySnapshot?.documents else {return}
+            for document in documents {
+                let ref = document.reference
+                print(ref.path)
+                ref.delete { err in
+                    if let error = err {
+                        print("Ошибка удаления чата - \(error)")
+                        completion(false)
+                    }
+                }
+            }
+            self.chatArr.remove(at: indexChat)
+            print("Успешное удаления чата")
+            completion(true)
+        }
+    }
     
     
     //MARK: -  Загрузка MatchUser
@@ -432,3 +458,5 @@ extension CurrentAuthUser {
         }
     }
 }
+
+
