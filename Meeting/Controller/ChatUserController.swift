@@ -112,7 +112,7 @@ extension ChatUserController {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.separatorStyle = .none
-        tableView.register(UINib(nibName: "CurrentChatCellTableView", bundle: nil), forCellReuseIdentifier: "currentChatCell")
+        tableView.register(UINib(nibName: "CurrentChatCell", bundle: nil), forCellReuseIdentifier: "currentChatCell")
         tableView.sectionHeaderHeight = 40
         
         avatarUser.layer.cornerRadius = avatarUser.frame.width / 2
@@ -160,14 +160,18 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
         cell.selectionStyle = .none
     
         let label = UILabel() /// Лейбл с постоянной высотой 45 и шириной что бы всегда расчитывать одну и ту же идеальную ширину текста для ячейки
-        
         label.text = cell.messageLabel.text
         label.font = cell.messageLabel.font
         label.frame.size.height = 45
         
         if sender == currentAuthUser.ID {
+            
             cell.currentUser = true
+            
             label.frame.size.width = widthMessagViewCurrentUser - 37
+            let perfectWidthLabel = label.intrinsicContentSize.width
+            cell.perfectWidthLabel = perfectWidthLabel
+            
             cell.statusMessage.isHidden = false
             cell.heartView.isHidden = true
             cell.avatar.image = UIImage()
@@ -184,17 +188,11 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
             cell.messageLabel.textAlignment = .right
             cell.messageLabel.textColor = .white
             
-            let widthLabel = label.intrinsicContentSize.width
-
-            if widthLabel < widthMessagViewCurrentUser {
-                cell.messageBubbleLeftConstrains.constant = widthMessagViewCurrentUser - widthLabel - 37
-            }else {
-                cell.messageBubbleLeftConstrains.constant = 0
-            }
-            
-            
         }else {
             label.frame.size.width = widthMessagViewOtherUser - 20 /// 20 -  (10 расстояние Лейбла от левого, 10 растояние от правого края)
+            
+            let perfectWidthLabel = label.intrinsicContentSize.width
+            cell.perfectWidthLabel = perfectWidthLabel
             
             cell.heartView.isHidden = false
             cell.statusMessage.isHidden = true
@@ -203,19 +201,11 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
             cell.avatar.image = selectedUser.avatar
             cell.messageLabel.textColor = .black
             
-            let widthLabel = label.intrinsicContentSize.width
-            
-            if widthLabel < widthMessagViewCurrentUser {
-                cell.messageBubbleRightConstrains.constant = widthMessagViewOtherUser - widthLabel - 20
-            }else {
-                cell.messageBubbleRightConstrains.constant = 0
-            }
         }
         
-        
-//        if  indexPath.row + 1 < structMessagesArr[indexPath.section - 1].messages.count && structMessagesArr[indexPath.section - 1].messages[indexPath.row + 1].sender == sender {
-//            cell.avatar.image = UIImage()
-//        }
+        if  indexPath.row + 1 < structMessagesArr[indexPath.section - 1].messages.count && structMessagesArr[indexPath.section - 1].messages[indexPath.row + 1].sender == sender {
+            cell.avatar.image = UIImage()
+        }
     
         return cell
     }
