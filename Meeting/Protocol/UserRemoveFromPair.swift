@@ -7,6 +7,6 @@
 
 import Foundation
 
-protocol UserReturnedToChat {
-    func loadMessage()
+protocol UserRemoveFromPair {
+    func ShouldUpdateDataWhenTheUserDelete()
 }

@@ -14,7 +14,7 @@ class MatchController: UIViewController {
     
     
     var delegate: passDataDelegate?
-    
+    var currentAuthUser: CurrentAuthUser?
     var newMatch: User? {
         didSet {
             guard let user = newMatch else {return}
@@ -58,9 +58,10 @@ class MatchController: UIViewController {
     
     
     @IBAction func sendPressed(_ sender: UIButton) {
+        guard let newMatch = self.newMatch else {return}
+        guard currentAuthUser?.chatArr.first(where: {$0.ID.contains(newMatch.ID)}) != nil else {return} /// Проверяем создался ли чат, если нет выходим
         self.dismiss(animated: false, completion: nil)
-        guard let user = newMatch else {return}
-        delegate?.goToMatchVC(matchController: self,matchUser: user)
+        delegate?.goToMatchVC(matchController: self,matchUser: newMatch)
     }
     
     func changePostionProgressBar(progressBar:[UIView],y: CGFloat){

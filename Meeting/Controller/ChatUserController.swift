@@ -17,7 +17,12 @@ class ChatUserController: UIViewController {
     @IBOutlet weak var nameUser: UILabel!
     @IBOutlet weak var textField: UITextField!
     
-    var currentAuthUser = CurrentAuthUser(ID: "")
+    var currentAuthUser = CurrentAuthUser(ID: "") {
+        didSet {
+            print("CurrentAuthUSer")
+        }
+    }
+    
     var selectedUser = User(ID: "")
     var listener: ListenerRegistration?
     
@@ -36,13 +41,14 @@ class ChatUserController: UIViewController {
     
     var messageArr =  [message]() {
         didSet {
-            guard let index = indexChat else {return}
-            currentAuthUser.chatArr[index].messages = messageArr
-            structMessagesArr = currentAuthUser.chatArr[index].structuredMessagesByDates
+            if self.isViewLoaded == false { return}
+
+            currentAuthUser.chatArr[indexChat].messages = messageArr
+            structMessagesArr = currentAuthUser.chatArr[indexChat].structuredMessagesByDates
         }
     }
     var structMessagesArr =  [StructMessages]()
-    var indexChat: Int?
+    var indexChat =  Int()
     
     let widthMessagViewCurrentUser = UIScreen.main.bounds.width - 60 /// 45 - ширина аватара, 15 - отступы друг от друга
     let widthMessagViewOtherUser = UIScreen.main.bounds.width - 90 /// 45 - ширина аватара, 25 - ширина сердечка справа, 20 - отуступы от краев и от друг друга
@@ -51,7 +57,6 @@ class ChatUserController: UIViewController {
         super.viewDidLoad()
         setupSetings()
     }
-    
     
     @IBAction func exitButtonPressed(_ sender: Any) {
         self.dismiss(animated: true)
@@ -62,26 +67,25 @@ class ChatUserController: UIViewController {
         guard let body = textField.text else {return}
         if textField.text?.count == 0 {return}
         textField.text = ""
-        
         currentAuthUser.sendMessageToServer(pairUserID: selectedUser.ID, body: body)
         
-        if currentAuthUser.chatArr.firstIndex(where: {$0.ID.contains(selectedUser.ID)}) == nil { /// Если чата не существует, значит это первое сообщение
-            
-            var chatID = String()
-            if currentAuthUser.ID > selectedUser.ID {
-                chatID = currentAuthUser.ID + "\\" + selectedUser.ID
-            }else {
-                chatID = selectedUser.ID + "\\" + currentAuthUser.ID
-            }
-            
-            var chat = Chat(ID: chatID)
-            let message = message(sender: currentAuthUser.ID, body: body,dateMessage: Date().timeIntervalSince1970)
-            chat.messages.append(message)
-            currentAuthUser.chatArr.append(chat)
-            indexChat = currentAuthUser.chatArr.firstIndex(where: {$0.ID == chatID}) ?? 0
-            messageArr.append(message)
-            loadMessage()
-        }
+//        if currentAuthUser.chatArr.firstIndex(where: {$0.ID.contains(selectedUser.ID)}) == nil { /// Если чата не существует, значит это первое сообщение
+//
+//            var chatID = String()
+//            if currentAuthUser.ID > selectedUser.ID {
+//                chatID = currentAuthUser.ID + "\\" + selectedUser.ID
+//            }else {
+//                chatID = selectedUser.ID + "\\" + currentAuthUser.ID
+//            }
+//
+//            var chat = Chat(ID: chatID)
+//            let message = message(sender: currentAuthUser.ID, body: body,dateMessage: Date().timeIntervalSince1970)
+//            chat.messages.append(message)
+//            currentAuthUser.chatArr.append(chat)
+//            indexChat = currentAuthUser.chatArr.firstIndex(where: {$0.ID == chatID}) ?? 0
+//            messageArr.append(message)
+//            loadMessage()
+//        }
         
     }
     
@@ -133,7 +137,7 @@ extension ChatUserController {
         
         avatarUser.image = selectedUser.avatar
         nameUser.text = selectedUser.name
-        
+        print("ViewDidLoad")
         loadMessage()
     }
 }
@@ -252,8 +256,7 @@ extension ChatUserController {
     func loadMessage(){
         
         listener?.remove()
-        guard let index = indexChat else {return}
-        let chatID = currentAuthUser.chatArr[index].ID
+        let chatID = currentAuthUser.chatArr[indexChat].ID
         let db = Firestore.firestore()
         
         let listener = db.collection("Chats").document(chatID).collection("Messages").order(by: "Date").addSnapshotListener(includeMetadataChanges: true) { [weak self] QuerySnapshot, Error in
@@ -264,9 +267,7 @@ extension ChatUserController {
                        
             guard let document = QuerySnapshot else {return}
             
-            if document.isEmpty { /// Если документ пустой значит один из пользователей удалил чат
-                self?.dismiss(animated: true)
-            }
+            if document.isEmpty {return} /// Если документ пустой значит чата не начался
             self?.messageArr.removeAll()
             
             for data in document.documents {

@@ -14,6 +14,8 @@ class PotentialChatCell: UICollectionViewCell {
     @IBOutlet weak var avatar: UIImageView!
     @IBOutlet weak var name: UILabel!
     
+    var chatID = String()
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         

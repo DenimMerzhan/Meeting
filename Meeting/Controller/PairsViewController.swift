@@ -88,7 +88,7 @@ class PairsViewController: UIViewController {
         Task {
             
             if await loadCurrentUsersData() {
-//                await loadNewUsers(numberRequsetedUsers: 1)
+                await loadNewUsers(numberRequsetedUsers: 1)
                 startSettings()
             }else{
                 print("Ошибка загрузки текущего пользователя")
@@ -395,7 +395,7 @@ extension PairsViewController  {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let destanationVC = segue.destination as? MatchController else {return}
         guard let newMatch = basketUser.first(where: {$0.ID == matchID }) else {return}
-        currentAuthUser.matchArr.append(newMatch)
+        destanationVC.currentAuthUser = currentAuthUser
         destanationVC.newMatch = newMatch
         destanationVC.delegate = self
     }

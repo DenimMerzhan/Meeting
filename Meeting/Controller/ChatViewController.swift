@@ -24,17 +24,48 @@ class ChatViewController: UIViewController {
     var currentAuthUser: CurrentAuthUser?
     var listenersArr =  [ListenerRegistration]()
     
+    var goToChat = Bool()
+    
+    var shouldPerfomSegue: Bool {
+        get {
+            if selectedUser == nil {return false}
+            if currentAuthUser == nil {return false}
+            if currentAuthUser?.matchArr.contains(where: {$0.ID == selectedUser?.ID }) == false {return false}
+            if currentAuthUser?.chatArr.first(where: {$0.ID.contains(selectedUser!.ID)}) == nil {return false}
+            return true
+        }
+    }
+    
+    var arr = [Int]()
     var potentialChatArr: [User] {
         get {
             var potentialArr = [User]()
             guard let authUser = currentAuthUser else {return [User]()}
             
             for user in authUser.matchArr {
-                if  authUser.chatArr.first(where: {$0.ID.contains(user.ID)}) == nil {
+                guard let chat = authUser.chatArr.first(where: {$0.ID.contains(user.ID)}) else {break}
+                if  chat.messages.count == 0 {
                     potentialArr.append(user)
                 }
             }
             return potentialArr
+        }
+    }
+    
+    var chatArr: [Chat] {
+        get {
+            var chatArr = [Chat]()
+            guard let authUser = currentAuthUser else {return chatArr}
+            for chat in authUser.chatArr {
+                if chat.messages.count > 0 {
+                    chatArr.append(chat)
+                }
+            }
+            return chatArr
+        }
+        
+        set{
+            
         }
     }
     
@@ -43,13 +74,18 @@ class ChatViewController: UIViewController {
         setupSetings()
     }
     override func viewWillAppear(_ animated: Bool) {
-        print("Appear")
-        
+
         if let vc = self.tabBarController?.viewControllers![0] as? PairsViewController {
             currentAuthUser = vc.currentAuthUser
+            currentAuthUser?.delegate = self
         }
         collectionView.reloadData()
         addListeners()
+        
+        if goToChat {
+            performSegue(withIdentifier: "goToChat", sender: self)
+        }
+        goToChat = false
     }
 }
 
@@ -59,11 +95,10 @@ class ChatViewController: UIViewController {
 extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let autUser = currentAuthUser else {return 0 }
-        let height = CGFloat(autUser.chatArr.count * 100) + 330
+        let height = CGFloat(chatArr.count * 100) + 330
         heightMostScrollView.constant = height /// Обновляем константу вертикального ScrollView  в зависимости от количества чатов
         view.layoutIfNeeded()
-        return autUser.chatArr.count
+        return chatArr.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -71,7 +106,7 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
         
         
         guard let authUser = currentAuthUser else {return cell}
-        let chat = authUser.chatArr[indexPath.row]
+        let chat = chatArr[indexPath.row]
         guard let pairUser = authUser.matchArr.first(where: {chat.ID.contains($0.ID)}) else {return cell}
        
         cell.chatID = chat.ID
@@ -86,7 +121,6 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
         cell.avatar.image = pairUser.avatar
         cell.nameLabel.text = pairUser.name
         
-        
         return cell
     }
     
@@ -94,12 +128,12 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         guard let authUser = currentAuthUser else {return}
-        let id = authUser.chatArr[indexPath.row].ID
-        guard let matchUser = authUser.matchArr.first(where: {id.contains($0.ID)}) else {return}
+        guard let cell = tableView.cellForRow(at: indexPath) as? ChatCell else {return}
+        guard let matchUser = authUser.matchArr.first(where: {cell.chatID.contains($0.ID)}) else {return}
         
         selectedUser = matchUser
         tableView.deselectRow(at: indexPath, animated: true)
-        performSegue(withIdentifier: "goToChat", sender: self)
+        if shouldPerfomSegue { performSegue(withIdentifier: "goToChat", sender: self)}
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
@@ -149,6 +183,10 @@ extension ChatViewController: UICollectionViewDataSource, UICollectionViewDelega
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "potentialChatCell", for: indexPath) as! PotentialChatCell
         
+        let userID = potentialChatArr[indexPath.row].ID
+        guard let chatID = currentAuthUser?.chatArr.first(where: {$0.ID.contains(userID)})?.ID else {return cell}
+        cell.chatID = chatID
+        
         if indexPath.row < potentialChatArr.count {
             cell.avatar.image = potentialChatArr[indexPath.row].avatar
             cell.name.text = potentialChatArr[indexPath.row].name
@@ -167,10 +205,10 @@ extension ChatViewController: UICollectionViewDataSource, UICollectionViewDelega
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let cell = collectionView.cellForItem(at: indexPath) as? PotentialChatCell else {return}
-        if cell.avatar.image != nil { /// Если ячейка не пустая
-            selectedUser = potentialChatArr[indexPath.row]
-            performSegue(withIdentifier: "goToChat", sender: self)
-        }
+        guard let matchUser = currentAuthUser?.matchArr.first(where: {cell.chatID.contains($0.ID)}) else {return} /// Ищем пользователя в архиве матчАрр если его нет значит его удалили из пар
+        selectedUser = matchUser
+        if shouldPerfomSegue {performSegue(withIdentifier: "goToChat", sender: self)}
+        
     }
 }
 
@@ -179,27 +217,38 @@ extension ChatViewController: UICollectionViewDataSource, UICollectionViewDelega
 extension ChatViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
         guard let destanationVC = segue.destination as? ChatUserController else  {return}
         guard let user = selectedUser else {return}
         guard let authUser = currentAuthUser else {return}
+        guard let indexChat = authUser.chatArr.firstIndex(where: {$0.ID.contains(user.ID)}) else {return}
+
+        if authUser.chatArr[indexChat].messages.count > 0 {
+            destanationVC.messageArr = authUser.chatArr[indexChat].messages
+            destanationVC.structMessagesArr =  authUser.chatArr[indexChat].structuredMessagesByDates
+        }
         destanationVC.selectedUser = user
         destanationVC.currentAuthUser = authUser
+        destanationVC.indexChat = indexChat
         
-        if let indexChat = authUser.chatArr.firstIndex(where: {$0.ID.contains(user.ID)})  {
-            destanationVC.indexChat = indexChat
-            destanationVC.messageArr = authUser.chatArr[indexChat].messages
-            destanationVC.structMessagesArr = authUser.chatArr[indexChat].structuredMessagesByDates
-        }
     }
 }
 
 
 //MARK: -  Переход с MatchController в ChatUserController
 
-extension ChatViewController: passDataDelegate {
+extension ChatViewController: passDataDelegate, UserRemoveFromPair {
+    
+    func ShouldUpdateDataWhenTheUserDelete() { /// Когда пользователя удалил из пар обновляем данные
+        tableView.reloadData()
+        collectionView.reloadData()
+    }
+    
     func goToMatchVC( matchController: UIViewController?, matchUser: User) {
         selectedUser = matchUser
-        performSegue(withIdentifier: "goToChat", sender: self)
+        if shouldPerfomSegue {
+            performSegue(withIdentifier: "goToChat", sender: self)
+        }
     }
 }
 
@@ -230,18 +279,10 @@ extension ChatViewController {
                 if let err = Error { print("Ошибка прослушивания снимков чата - \(err)"); return}
                 
                 guard let documents = querySnapshot?.documents else {return}
-                print("CountDocuments", documents.count)
-                guard let lastDoc = documents.last else { /// Если документ пустой значит чата еще было
-                    print("NotLastDoc")
-                    return}
                 
-                if authUser.chatArr.first(where: {$0.ID == chatID}) == nil { /// Если документ не пустой, но такого чата еще нету у текущего пользователя то создаем чат
-                    print("Новый чат создан")
-                    let chat = Chat(ID: chatID)
-                    authUser.chatArr.append(chat)
-                }
+                guard let lastDoc = documents.last else {return} /// Если документ пустой значит чат пустой
                 
-                guard let indexChat = authUser.chatArr.firstIndex(where: {$0.ID == chatID}) else {return}
+                guard let indexChat = self.chatArr.firstIndex(where: {$0.ID == chatID}) else {return}
                 
                 if documents.count > authUser.chatArr[indexChat].messages.count {
                     if let body = lastDoc["Body"] as? String {

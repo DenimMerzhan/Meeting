@@ -19,6 +19,8 @@ class CurrentAuthUser {
     var name = String()
     var age = Int()
     
+    var delegate: UserRemoveFromPair?
+    
     var avatar: UIImage {
         get {
             if imageArr.count > 1 {
@@ -32,7 +34,8 @@ class CurrentAuthUser {
     var urlPhotoArr = [String]()
     var imageArr = [CurrentUserImage]()
     
-    private var matchArrID = [String]()
+    //    private var matchArrID = [String]()
+    private var listenerMatchArrID: ListenerRegistration?
     
     var matchArr = [User]()
     var chatArr = [Chat]()
@@ -58,6 +61,7 @@ class CurrentAuthUser {
     func loadMetadata() async -> Bool {
         
         let collection  = db.collection("Users").document(ID)
+        listenMatchUserID()
         
         do {
             
@@ -72,16 +76,6 @@ class CurrentAuthUser {
                     if let likeArr = dataDoc["LikeArr"] as? [String] {self.likeArr = likeArr}
                     if let disLikeArr = dataDoc["DisLikeArr"] as? [String] {self.disLikeArr = disLikeArr}
                     if let superLikeArr = dataDoc["SuperLikeArr"] as? [String] {self.superLikeArr = superLikeArr} /// Суперлайков может и не быть, поэтому не ставим guard
-                    
-                    if let matchArr = dataDoc["MatchArr"] as? [String] { /// Загрузка MatchArr и чатов
-                        for matchID in matchArr {
-                            await loadMatchUser(ID: matchID)
-                            
-                            if let chat = await loadChats(pairUserID: matchID) {
-                                chatArr.append(chat)
-                            }
-                        }
-                    }
                     
                     for data in dataDoc { /// Загрузка ссылок на фото в Storage
                         if data.key.contains("photoImage") {
@@ -290,6 +284,22 @@ extension CurrentAuthUser {
             let currentUserRef = db.collection("Users").document(ID)
             let matchUserRef = db.collection("Users").document(potetnialPairID)
             
+            var matchArrID = [String]() /// Cоздаем новый МатчАрр что бы в последтвии записать его на сервер
+            for user in matchArr {
+                matchArrID.append(user.ID)
+            }
+            matchArrID.append(potetnialPairID)
+            
+            var chatID = String()
+            
+            if ID > potetnialPairID {
+                chatID = ID + "\\" + potetnialPairID
+            }else {
+                chatID = potetnialPairID + "\\" + ID
+            }
+            
+            try await db.collection("Chats").document(chatID).setData(["DateMatch" : Date().timeIntervalSince1970], merge: true) /// Создаем чат с датой матча
+            
             do {
                 guard let pairData = try await matchUserRef.getDocument().data() else {return}
                 if let arrPair = pairData["MatchArr"] as? [String] {
@@ -311,13 +321,6 @@ extension CurrentAuthUser {
                     print("Ошибка записи в MatchArr - \(err)")
                 }
             }
-            
-            db.collection("Chats").document(ID + "\\" + potetnialPairID).collection("Messages").document("Test").setData(["Test" : 0]) { Error in
-                if let err = Error {
-                    print("Ошибка создания тестового чата - \(err)")
-                }
-            }
-            
         }
     }
     
@@ -342,10 +345,9 @@ extension CurrentAuthUser {
         
         do {
             let snapShot = try await messagesRef.getDocuments()
-            
-            if snapShot.isEmpty {return nil}
-            
             var chat = Chat(ID: chatID)
+            
+            if snapShot.isEmpty {return chat}
             
             for doc in snapShot.documents {
                 let data = doc.data()
@@ -367,7 +369,7 @@ extension CurrentAuthUser {
         }
     }
     
-//MARK: -  Удаление чата
+    //MARK: -  Удаление чата
     
     func deleteChat(chatID:String, completion: @escaping() -> Void){
         guard let indexChat = chatArr.firstIndex(where: {$0.ID == chatID}) else {return}
@@ -408,26 +410,54 @@ extension CurrentAuthUser {
         }
         self.matchArr.append(matchUser)
     }
-   
+    
+    
+    //MARK:  - Прослушивание MatchUserID
     
     func listenMatchUserID(){
         
-        db.collection("Users").document(ID).addSnapshotListener { docSnap, err in
+        listenerMatchArrID?.remove()
+        
+        let listener = db.collection("Users").document(ID).addSnapshotListener { docSnap, err in
             if let error = err {print("Ошибка загрузки пользователей Match - \(error)")}
             guard let document = docSnap else {return}
+            print("Прослушка MatchUserID")
+            if document.metadata.hasPendingWrites {
+                print("MatchArr From Cache")
+                return} /// Если сообщения взято из кеша выходим
+            
             if let matchArrID = document["MatchArr"] as? [String] {
-                self.matchArrID.removeAll()
-                self.matchArrID = matchArrID
+                
                 Task {
+                    
                     for ID in matchArrID {
+                        
                         if self.matchArr.contains(where: {$0.ID == ID}) {continue}
+                        
+                        if let chat = await self.loadChats(pairUserID: ID) {
+                            self.chatArr.append(chat)
+                            print("Добавлен чат")
+                            print(self.chatArr.count, "ChatArr - Count")
+                        }
                         await self.loadMatchUser(ID: ID)
                     }
-//                    for i in 0...self.matchArr.count - 1{
-//                        if matchArrID.contains(self.matchArr[i].ID) {continue}
-//                        self.matchArr.remove(at: <#T##Int#>)
-//                    }
+                    self.checkIsDeleteUser(matchArrIdOnServer: matchArrID)
                 }
+            }
+            
+        }
+        listenerMatchArrID = listener
+    }
+    
+    func checkIsDeleteUser(matchArrIdOnServer: [String]){
+        
+        for i in 0...matchArr.count - 1 {
+            let userID = matchArr[i].ID
+            guard let chatIndex = chatArr.firstIndex(where: {$0.ID.contains(userID)}) else {continue}
+            if matchArrIdOnServer.contains(where: {$0 == userID}) == false { /// Если такого ID нету на сервере то значит пользователя удалили из пар
+                matchArr.remove(at: i)
+                chatArr.remove(at: chatIndex)
+                delegate?.ShouldUpdateDataWhenTheUserDelete()
             }
         }
         

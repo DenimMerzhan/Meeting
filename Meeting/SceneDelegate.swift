@@ -35,6 +35,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }catch{
             print("Ошибка удаления папок при закрытие приложения - \(error)")
         }
+        NotificationCenter.default.post(name: Notification.Name(rawValue: "sceneDidDisconnect"), object: nil)
     }
 
     func sceneDidBecomeActive(_ scene: UIScene) {
