@@ -31,7 +31,7 @@ class ChatViewController: UIViewController {
             if selectedUser == nil {return false}
             if currentAuthUser == nil {return false}
             if currentAuthUser?.matchArr.contains(where: {$0.ID == selectedUser?.ID }) == false {return false}
-            if currentAuthUser?.chatArr.first(where: {$0.ID.contains(selectedUser!.ID)}) == nil {return false}
+            if selectedUser?.chat == nil {return false}
             return true
         }
     }
@@ -43,7 +43,7 @@ class ChatViewController: UIViewController {
             guard let authUser = currentAuthUser else {return [User]()}
             
             for user in authUser.matchArr {
-                guard let chat = authUser.chatArr.first(where: {$0.ID.contains(user.ID)}) else {break}
+                guard let chat = user.chat else {continue}
                 if  chat.messages.count == 0 {
                     potentialArr.append(user)
                 }
@@ -56,16 +56,14 @@ class ChatViewController: UIViewController {
         get {
             var chatArr = [Chat]()
             guard let authUser = currentAuthUser else {return chatArr}
-            for chat in authUser.chatArr {
+            
+            for user in authUser.matchArr {
+                guard let chat = user.chat else {continue}
                 if chat.messages.count > 0 {
                     chatArr.append(chat)
                 }
             }
             return chatArr
-        }
-        
-        set{
-            
         }
     }
     
@@ -109,7 +107,7 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
         let chat = chatArr[indexPath.row]
         guard let pairUser = authUser.matchArr.first(where: {chat.ID.contains($0.ID)}) else {return cell}
        
-        cell.chatID = chat.ID
+        cell.userID = pairUser.ID
         if let lastUnreadMessage = chat.lastUnreadMessage {
             cell.countUnreadMessageView.isHidden = false
             cell.countUnreadMessageLabel.text = String(chat.numberUnreadMessges)
@@ -127,9 +125,8 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        guard let authUser = currentAuthUser else {return}
         guard let cell = tableView.cellForRow(at: indexPath) as? ChatCell else {return}
-        guard let matchUser = authUser.matchArr.first(where: {cell.chatID.contains($0.ID)}) else {return}
+        guard let matchUser = currentAuthUser?.matchArr.first(where: {$0.ID == cell.userID}) else {return}
         
         selectedUser = matchUser
         tableView.deselectRow(at: indexPath, animated: true)
@@ -138,10 +135,11 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         guard let cell = tableView.cellForRow(at: indexPath) as? ChatCell else {return nil}
+        guard let matchUser = currentAuthUser?.matchArr.first(where: {$0.ID == cell.userID}) else {return nil}
         guard let authUser = currentAuthUser else {return nil}
         
         let deleteAction = UIContextualAction(style: .destructive, title: "") { action, view, completion in
-            authUser.deleteChat(chatID: cell.chatID) {
+            authUser.deletePair(user: matchUser) {
                 tableView.reloadData()
                 self.addListeners()
                 completion(true)
@@ -183,11 +181,14 @@ extension ChatViewController: UICollectionViewDataSource, UICollectionViewDelega
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "potentialChatCell", for: indexPath) as! PotentialChatCell
         
-        let userID = potentialChatArr[indexPath.row].ID
-        guard let chatID = currentAuthUser?.chatArr.first(where: {$0.ID.contains(userID)})?.ID else {return cell}
-        cell.chatID = chatID
+
         
         if indexPath.row < potentialChatArr.count {
+            
+            let user = potentialChatArr[indexPath.row]
+            guard let chatID = user.chat?.ID else {return cell}
+            cell.chatID = chatID
+            
             cell.avatar.image = potentialChatArr[indexPath.row].avatar
             cell.name.text = potentialChatArr[indexPath.row].name
         }else {
@@ -221,15 +222,14 @@ extension ChatViewController {
         guard let destanationVC = segue.destination as? ChatUserController else  {return}
         guard let user = selectedUser else {return}
         guard let authUser = currentAuthUser else {return}
-        guard let indexChat = authUser.chatArr.firstIndex(where: {$0.ID.contains(user.ID)}) else {return}
+        guard let chat = user.chat else {return}
 
-        if authUser.chatArr[indexChat].messages.count > 0 {
-            destanationVC.messageArr = authUser.chatArr[indexChat].messages
-            destanationVC.structMessagesArr =  authUser.chatArr[indexChat].structuredMessagesByDates
+        if chat.messages.count > 0 {
+            destanationVC.messageArr = chat.messages
+            destanationVC.structMessagesArr =  chat.structuredMessagesByDates
         }
         destanationVC.selectedUser = user
         destanationVC.currentAuthUser = authUser
-        destanationVC.indexChat = indexChat
         
     }
 }
@@ -265,32 +265,25 @@ extension ChatViewController {
         
         for user in authUser.matchArr {
             
-            var chatID = String()
-            if authUser.ID > user.ID {
-                chatID = authUser.ID + "\\" + user.ID
-            }else {
-                chatID = user.ID + "\\" + authUser.ID
-            }
+            guard let chat = user.chat else {return}
             
-            let listener = db.collection("Chats").document(chatID).collection("Messages").order(by:"Date").addSnapshotListener { querySnapshot, Error in
+            
+            let listener = db.collection("Chats").document(user.chatID).collection("Messages").order(by:"Date").addSnapshotListener { querySnapshot, Error in
                 
                 print("StatrListen")
                 
                 if let err = Error { print("Ошибка прослушивания снимков чата - \(err)"); return}
                 
                 guard let documents = querySnapshot?.documents else {return}
-                
                 guard let lastDoc = documents.last else {return} /// Если документ пустой значит чат пустой
                 
-                guard let indexChat = self.chatArr.firstIndex(where: {$0.ID == chatID}) else {return}
-                
-                if documents.count > authUser.chatArr[indexChat].messages.count {
+                if documents.count > chat.messages.count {
                     if let body = lastDoc["Body"] as? String {
-                        authUser.chatArr[indexChat].lastUnreadMessage = body
-                        authUser.chatArr[indexChat].numberUnreadMessges = documents.count - authUser.chatArr[indexChat].messages.count
+                        user.chat?.lastUnreadMessage = body
+                        user.chat?.numberUnreadMessges = documents.count - chat.messages.count
                     }
                 }else {
-                    authUser.chatArr[indexChat].lastUnreadMessage = nil
+                    user.chat?.lastUnreadMessage = nil
                 }
                                 
                 DispatchQueue.main.async {

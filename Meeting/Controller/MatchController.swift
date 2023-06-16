@@ -59,7 +59,7 @@ class MatchController: UIViewController {
     
     @IBAction func sendPressed(_ sender: UIButton) {
         guard let newMatch = self.newMatch else {return}
-        guard currentAuthUser?.chatArr.first(where: {$0.ID.contains(newMatch.ID)}) != nil else {return} /// Проверяем создался ли чат, если нет выходим
+        guard newMatch.chat != nil else {return} /// Проверяем создался ли чат, если нет выходим
         self.dismiss(animated: false, completion: nil)
         delegate?.goToMatchVC(matchController: self,matchUser: newMatch)
     }

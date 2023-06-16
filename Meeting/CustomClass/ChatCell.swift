@@ -20,8 +20,8 @@ class ChatCell: UITableViewCell {
     
     var banImage = UIImage()
     var deleteImage = UIImage()
-
-    var chatID = String()
+    
+    var userID = String()
     
     override func awakeFromNib() {
         super.awakeFromNib()

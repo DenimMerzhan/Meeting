@@ -289,7 +289,7 @@ extension PairsViewController {
             
             for ID in newUsersID {
                 
-                var newUser = User(ID: ID)
+                var newUser = User(ID: ID,currentAuthUserID: currentAuthUser.ID)
                 await newUser.loadMetaData()
 
                 if let urlFilesArr = await FirebaseStorageModel().loadPhotoToFile(urlPhotoArr: newUser.urlPhotoArr, userID: ID,currentUser: false) {

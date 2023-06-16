@@ -9,12 +9,25 @@ import Foundation
 import UIKit
 import FirebaseFirestore
 
-struct User {
+class User {
     
-    var ID = String()
+    var ID: String
+    var currentAuthUserID: String
+    
+    var chat: Chat?
+    var chatID: String {
+        get {
+            if currentAuthUserID > ID {
+                return currentAuthUserID + "\\" + ID
+            }else {
+               return ID + "\\" + currentAuthUserID
+            }
+        }
+    }
     
     var name = String()
     var age = Int()
+    
     
     var avatar: UIImage {
         get {
@@ -32,15 +45,17 @@ struct User {
     private let db = Firestore.firestore()
     private let fileManager = FileManager.default
     
-    init(ID:String) {
+    init(ID:String,currentAuthUserID: String) {
         self.ID = ID
+        self.currentAuthUserID = currentAuthUserID
+        loadChat()
     }
     
     
     
-//MARK: - Загрузка метаданных о пользователе с сервера
+    //MARK: - Загрузка метаданных о пользователе с сервера
     
-    mutating func loadMetaData() async {
+    func loadMetaData() async {
         
         let collection  = db.collection("Users").document(ID)
         
@@ -71,9 +86,9 @@ struct User {
     }
     
     
-//MARK: - Загрузка фото пользователя с директории
+    //MARK: - Загрузка фото пользователя с директории
     
-    mutating func loadPhotoFromDirectory(urlFileArr: [URL] ){
+    func loadPhotoFromDirectory(urlFileArr: [URL] ){
         
         for url in urlFileArr {
             if let newImage = UIImage(contentsOfFile: url.path) {
@@ -83,7 +98,7 @@ struct User {
     }
     
     
-//MARK: -  Удаление фото пользователя с директории
+    //MARK: -  Удаление фото пользователя с директории
     
     func cleanPhotoUser(){
         
@@ -96,6 +111,42 @@ struct User {
             print("Ошибка удаления файла по этому - \(ID) , ошибка - \(error)")
         }
     }
+    
+//MARK: -  Загрузка чата
+    
+    func loadChat() {
+        
+        var chatID = String()
+        
+        if currentAuthUserID > ID {
+            chatID = currentAuthUserID + "\\" + ID
+        }else {
+            chatID = ID + "\\" + currentAuthUserID
+        }
+        
+        db.collection("Chats").document(chatID).collection("Messages").order(by:"Date").getDocuments { [weak self] querySnap, err in
+            if let error = err {print("Ошибка получения чата - \(error)")}
+            guard let snapShot = querySnap else {return}
+            
+            self?.chat = Chat(ID: chatID)
+            
+            for doc in snapShot.documents {
+                let data = doc.data()
+                if let sender = data["Sender"] as? String, let body = data["Body"] as? String,let dateMessage = data["Date"] as? Double , let messageRead = data["MessageRead"] as? Bool, let messageSendOnServer = data["MessageSendOnServer"] as? Bool {
+                    
+                    if sender == self?.ID && messageRead == false {continue} /// Если текущий пользователь не читал сообщение пропускаем его добавление
+                    
+                    var message = message(sender: sender, body: body,dateMessage: dateMessage)
+                    message.messagedWritingOnServer = messageSendOnServer
+                    message.messageRead = messageRead
+                    self?.chat?.messages.append(message)
+                    
+                }
+            }
+            
+        }
+    }
+    
 }
 
 

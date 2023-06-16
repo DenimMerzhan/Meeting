@@ -23,10 +23,8 @@ class ChatUserController: UIViewController {
         }
     }
     
-    var selectedUser = User(ID: "")
+    var selectedUser = User(ID: "",currentAuthUserID: "")
     var listener: ListenerRegistration?
-    
-    var cachedCellHeight = [[Float]]()
     
     var statusSendMessage: String {
         get {
@@ -41,14 +39,12 @@ class ChatUserController: UIViewController {
     
     var messageArr =  [message]() {
         didSet {
-            if self.isViewLoaded == false { return}
-
-            currentAuthUser.chatArr[indexChat].messages = messageArr
-            structMessagesArr = currentAuthUser.chatArr[indexChat].structuredMessagesByDates
+            guard let chat = selectedUser.chat else {return}
+            selectedUser.chat?.messages = messageArr
+            structMessagesArr = chat.structuredMessagesByDates
         }
     }
     var structMessagesArr =  [StructMessages]()
-    var indexChat =  Int()
     
     let widthMessagViewCurrentUser = UIScreen.main.bounds.width - 60 /// 45 - ширина аватара, 15 - отступы друг от друга
     let widthMessagViewOtherUser = UIScreen.main.bounds.width - 90 /// 45 - ширина аватара, 25 - ширина сердечка справа, 20 - отуступы от краев и от друг друга
@@ -67,7 +63,7 @@ class ChatUserController: UIViewController {
         guard let body = textField.text else {return}
         if textField.text?.count == 0 {return}
         textField.text = ""
-        currentAuthUser.sendMessageToServer(pairUserID: selectedUser.ID, body: body)
+        currentAuthUser.sendMessageToServer(user: selectedUser, body: body)
         
 //        if currentAuthUser.chatArr.firstIndex(where: {$0.ID.contains(selectedUser.ID)}) == nil { /// Если чата не существует, значит это первое сообщение
 //
@@ -96,9 +92,7 @@ class ChatUserController: UIViewController {
     deinit {
         print("Denit")
         listener?.remove() /// Удаляем прослушивателя
-        if let chatIndex = currentAuthUser.chatArr.firstIndex(where: {$0.ID.contains(selectedUser.ID)}) {
-            currentAuthUser.chatArr[chatIndex].lastUnreadMessage = nil
-        } /// После того как пользователь прочитал сообщения обнуляем последнее не прочитанное сообщение
+        selectedUser.chat?.lastUnreadMessage = nil /// После того как пользователь прочитал сообщения обнуляем последнее не прочитанное сообщение
         
         NotificationCenter.default.removeObserver(self,name: Notification.Name("sceneWillEnterForeground"), object: nil)
     }
@@ -256,7 +250,7 @@ extension ChatUserController {
     func loadMessage(){
         
         listener?.remove()
-        let chatID = currentAuthUser.chatArr[indexChat].ID
+        let chatID = selectedUser.chatID
         let db = Firestore.firestore()
         
         let listener = db.collection("Chats").document(chatID).collection("Messages").order(by: "Date").addSnapshotListener(includeMetadataChanges: true) { [weak self] QuerySnapshot, Error in
@@ -275,7 +269,7 @@ extension ChatUserController {
                 if let body = data["Body"] as? String, let sender = data["Sender"] as? String, let date = data["Date"] as? Double, let messageRed = data["MessageRead"] as? Bool, let messageSendOnServer = data["MessageSendOnServer"] as? Bool {
                     
                     var message = message(sender: sender, body: body,dateMessage: date)
-                    
+                    print(message.body)
                     if sender == self?.selectedUser.ID && messageRed == false {
                         db.collection("Chats").document(chatID).collection("Messages").document(data.documentID).setData(["MessageRead" : true], merge: true)
                     }
