@@ -32,15 +32,7 @@ class CurrentAuthUser {
     var urlPhotoArr = [String]()
     var imageArr = [CurrentUserImage]()
     
-    private var matchArrID: [String] {
-        get {
-            var currentMatchArr = [String]()
-            for user in matchArr {
-                currentMatchArr.append(user.ID)
-            }
-            return currentMatchArr
-        }
-    }
+    private var matchArrID = [String]()
     
     var matchArr = [User]()
     var chatArr = [Chat]()
@@ -244,11 +236,11 @@ class CurrentAuthUser {
     func removePhotoFromServer(imageID:String){
         
         let imagesRef = storage.reference().child("UsersPhoto").child(ID).child(imageID)
-        imagesRef.delete { [unowned self] error in
+        imagesRef.delete { [weak self] error in
             if let err = error {
                 print("Ошибка удаления фото с хранилища Firebase \(err)")
             }else {
-                self.deletePhotoFromFirebase(imageId: imageID)
+                self?.deletePhotoFromFirebase(imageId: imageID)
             }
         }
     }
@@ -373,32 +365,31 @@ extension CurrentAuthUser {
             print("Ошибка получения чата - \(error)")
             return nil
         }
-        
-        
     }
     
-    func deleteChat(chatID:String, completion: @escaping(Bool) -> Void){
+//MARK: -  Удаление чата
+    
+    func deleteChat(chatID:String, completion: @escaping() -> Void){
         guard let indexChat = chatArr.firstIndex(where: {$0.ID == chatID}) else {return}
         print(chatID)
         db.collection("Chats").document(chatID).collection("Messages").getDocuments { querySnapshot, err in
             if err != nil {
                 print("Ошибка удаления чата - \(err!)")
-                completion(false)
+                completion()
             }
             guard let documents = querySnapshot?.documents else {return}
             for document in documents {
                 let ref = document.reference
-                print(ref.path)
                 ref.delete { err in
                     if let error = err {
                         print("Ошибка удаления чата - \(error)")
-                        completion(false)
+                        completion()
                     }
                 }
             }
             self.chatArr.remove(at: indexChat)
             print("Успешное удаления чата")
-            completion(true)
+            completion()
         }
     }
     
@@ -417,7 +408,30 @@ extension CurrentAuthUser {
         }
         self.matchArr.append(matchUser)
     }
+   
     
+    func listenMatchUserID(){
+        
+        db.collection("Users").document(ID).addSnapshotListener { docSnap, err in
+            if let error = err {print("Ошибка загрузки пользователей Match - \(error)")}
+            guard let document = docSnap else {return}
+            if let matchArrID = document["MatchArr"] as? [String] {
+                self.matchArrID.removeAll()
+                self.matchArrID = matchArrID
+                Task {
+                    for ID in matchArrID {
+                        if self.matchArr.contains(where: {$0.ID == ID}) {continue}
+                        await self.loadMatchUser(ID: ID)
+                    }
+//                    for i in 0...self.matchArr.count - 1{
+//                        if matchArrID.contains(self.matchArr[i].ID) {continue}
+//                        self.matchArr.remove(at: <#T##Int#>)
+//                    }
+                }
+            }
+        }
+        
+    }
 }
 
 

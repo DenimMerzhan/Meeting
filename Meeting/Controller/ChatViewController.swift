@@ -24,15 +24,6 @@ class ChatViewController: UIViewController {
     var currentAuthUser: CurrentAuthUser?
     var listenersArr =  [ListenerRegistration]()
     
-    var indexChat: Int? {
-        get {
-            guard let authUser = currentAuthUser else {return nil}
-            guard let otheUser = selectedUser else {return nil}
-            guard let indexChat = authUser.chatArr.firstIndex(where: {$0.ID.contains(otheUser.ID)}) else {return nil}
-            return indexChat
-        }
-    }
-    
     var potentialChatArr: [User] {
         get {
             var potentialArr = [User]()
@@ -53,6 +44,10 @@ class ChatViewController: UIViewController {
     }
     override func viewWillAppear(_ animated: Bool) {
         print("Appear")
+        
+        if let vc = self.tabBarController?.viewControllers![0] as? PairsViewController {
+            currentAuthUser = vc.currentAuthUser
+        }
         collectionView.reloadData()
         addListeners()
     }
@@ -112,12 +107,9 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
         guard let authUser = currentAuthUser else {return nil}
         
         let deleteAction = UIContextualAction(style: .destructive, title: "") { action, view, completion in
-            self.listenersArr.removeAll()
-            authUser.deleteChat(chatID:cell.chatID) { success in
-                if success {
-//                    tableView.reloadData()
-                }
-//                self.addListeners()
+            authUser.deleteChat(chatID: cell.chatID) {
+                tableView.reloadData()
+                self.addListeners()
                 completion(true)
             }
         }
@@ -193,7 +185,7 @@ extension ChatViewController {
         destanationVC.selectedUser = user
         destanationVC.currentAuthUser = authUser
         
-        if let indexChat = self.indexChat  {
+        if let indexChat = authUser.chatArr.firstIndex(where: {$0.ID.contains(user.ID)})  {
             destanationVC.indexChat = indexChat
             destanationVC.messageArr = authUser.chatArr[indexChat].messages
             destanationVC.structMessagesArr = authUser.chatArr[indexChat].structuredMessagesByDates
@@ -220,23 +212,39 @@ extension ChatViewController {
         let db = Firestore.firestore()
         guard let authUser = currentAuthUser else {return}
         
-        if authUser.chatArr.count == 0 {return}
+        removeListeners()
         
-        listenersArr.removeAll()
-        
-        for indexChat in 0...authUser.chatArr.count - 1 {
-            let listener = db.collection("Chats").document(authUser.chatArr[indexChat].ID).collection("Messages").order(by:"Date").addSnapshotListener { querySnapshot, Error in
+        for user in authUser.matchArr {
+            
+            var chatID = String()
+            if authUser.ID > user.ID {
+                chatID = authUser.ID + "\\" + user.ID
+            }else {
+                chatID = user.ID + "\\" + authUser.ID
+            }
+            
+            let listener = db.collection("Chats").document(chatID).collection("Messages").order(by:"Date").addSnapshotListener { querySnapshot, Error in
                 
                 print("StatrListen")
                 
                 if let err = Error { print("Ошибка прослушивания снимков чата - \(err)"); return}
                 
                 guard let documents = querySnapshot?.documents else {return}
-                guard let lastDoc = documents.last else {return}
-            
+                print("CountDocuments", documents.count)
+                guard let lastDoc = documents.last else { /// Если документ пустой значит чата еще было
+                    print("NotLastDoc")
+                    return}
+                
+                if authUser.chatArr.first(where: {$0.ID == chatID}) == nil { /// Если документ не пустой, но такого чата еще нету у текущего пользователя то создаем чат
+                    print("Новый чат создан")
+                    let chat = Chat(ID: chatID)
+                    authUser.chatArr.append(chat)
+                }
+                
+                guard let indexChat = authUser.chatArr.firstIndex(where: {$0.ID == chatID}) else {return}
+                
                 if documents.count > authUser.chatArr[indexChat].messages.count {
                     if let body = lastDoc["Body"] as? String {
-                        print("CountDocuments", documents.count)
                         authUser.chatArr[indexChat].lastUnreadMessage = body
                         authUser.chatArr[indexChat].numberUnreadMessges = documents.count - authUser.chatArr[indexChat].messages.count
                     }
@@ -246,10 +254,18 @@ extension ChatViewController {
                                 
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
+                    self.collectionView.reloadData()
                 }
             }
             listenersArr.append(listener)
         }
+    }
+    
+    func removeListeners(){
+        for listener in listenersArr {
+            listener.remove()
+        }
+        listenersArr.removeAll()
     }
 }
 
@@ -259,10 +275,6 @@ extension ChatViewController {
 extension ChatViewController {
     
     func setupSetings(){
-        
-        if let vc = self.tabBarController?.viewControllers![0] as? PairsViewController {
-            currentAuthUser = vc.currentAuthUser
-        }
         
         tableView.register(UINib(nibName: "TableViewCell", bundle: nil), forCellReuseIdentifier: "ChatCell")
         tableView.rowHeight = 100
@@ -278,13 +290,4 @@ extension ChatViewController {
     }
 }
 
-extension ChatViewController {
-    
-    func deleteChat(){
-        guard let indexChat = indexChat else {return}
-        currentAuthUser?.chatArr.remove(at: indexChat)
-        
-    }
-    
-}
 

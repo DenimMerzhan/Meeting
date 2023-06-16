@@ -263,6 +263,10 @@ extension ChatUserController {
             print("LoadMessage")
                        
             guard let document = QuerySnapshot else {return}
+            
+            if document.isEmpty { /// Если документ пустой значит один из пользователей удалил чат
+                self?.dismiss(animated: true)
+            }
             self?.messageArr.removeAll()
             
             for data in document.documents {
@@ -273,8 +277,11 @@ extension ChatUserController {
                     
                     if sender == self?.selectedUser.ID && messageRed == false {
                         db.collection("Chats").document(chatID).collection("Messages").document(data.documentID).setData(["MessageRead" : true], merge: true)
-                        print("MessagerRead")
                     }
+                    if document.metadata.isFromCache == false && messageSendOnServer == false {
+                        db.collection("Chats").document(chatID).collection("Messages").document(data.documentID).setData(["MessageSendOnServer" : true], merge: true)
+                    }
+                    
                     message.messagedWritingOnServer = messageSendOnServer
                     message.messageRead = messageRed
                     self?.messageArr.append(message)
