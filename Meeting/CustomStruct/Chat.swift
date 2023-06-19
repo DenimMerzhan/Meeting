@@ -30,6 +30,7 @@ struct Chat {
                     }
                 }
             }
+            
             return messageArr
         }
     }

@@ -57,7 +57,6 @@ class ProfileViewController: UIViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
-        guard segue.identifier == "settingsToPhotoSettings" else {return}
         guard let destination = segue.destination as? SettingsPhotoViewController else {return}
         destination.currentAuthUser = currentAuthUser
         

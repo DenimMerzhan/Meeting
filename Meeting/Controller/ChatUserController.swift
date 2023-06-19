@@ -39,9 +39,9 @@ class ChatUserController: UIViewController {
     
     var messageArr =  [message]() {
         didSet {
-            guard let chat = selectedUser.chat else {return}
+            guard selectedUser.chat != nil else {return}
             selectedUser.chat?.messages = messageArr
-            structMessagesArr = chat.structuredMessagesByDates
+            structMessagesArr = selectedUser.chat!.structuredMessagesByDates
         }
     }
     var structMessagesArr =  [StructMessages]()
@@ -64,24 +64,6 @@ class ChatUserController: UIViewController {
         if textField.text?.count == 0 {return}
         textField.text = ""
         currentAuthUser.sendMessageToServer(user: selectedUser, body: body)
-        
-//        if currentAuthUser.chatArr.firstIndex(where: {$0.ID.contains(selectedUser.ID)}) == nil { /// Если чата не существует, значит это первое сообщение
-//
-//            var chatID = String()
-//            if currentAuthUser.ID > selectedUser.ID {
-//                chatID = currentAuthUser.ID + "\\" + selectedUser.ID
-//            }else {
-//                chatID = selectedUser.ID + "\\" + currentAuthUser.ID
-//            }
-//
-//            var chat = Chat(ID: chatID)
-//            let message = message(sender: currentAuthUser.ID, body: body,dateMessage: Date().timeIntervalSince1970)
-//            chat.messages.append(message)
-//            currentAuthUser.chatArr.append(chat)
-//            indexChat = currentAuthUser.chatArr.firstIndex(where: {$0.ID == chatID}) ?? 0
-//            messageArr.append(message)
-//            loadMessage()
-//        }
         
     }
     
@@ -354,9 +336,21 @@ extension ChatUserController {
     
 }
 
-//MARK: -  Создание Image для просмотра времени сообщения
+//MARK: -  Отклонение контроллера при удаление пары
 
-extension ChatUserController {
+extension ChatUserController: UserRemoveFromPair{
+    
+    func ShouldUpdateDataWhenTheUserDelete() { /// Если пользователя удалили из пар моментально отклоняем контроллер
+        let alert = UIAlertController(title: "Пара удалена", message: "Пользователь удалил вас из пар", preferredStyle: .alert)
+        let action = UIAlertAction(title: "Ок", style: .default) { [weak self] action in
+            self?.dismiss(animated: true)
+        }
+        alert.addAction(action)
+        self.present(alert, animated: true)
+    }
+    
+ 
+//MARK: -  Создание Image для просмотра времени сообщения
     
     func createTimeMessageImage(timeMessage: String) -> UIImage {
         
@@ -375,3 +369,4 @@ extension ChatUserController {
     }
     
 }
+

@@ -22,7 +22,7 @@ class SettingsPhotoViewController: UIViewController {
     var defaults = UserDefaults.standard
     var index = IndexPath()
     
-    var currentAuthUser = CurrentAuthUser(ID: "dwdw")
+    var currentAuthUser = CurrentAuthUser(ID: "")
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,7 +32,6 @@ class SettingsPhotoViewController: UIViewController {
         imagePicker.delegate = self
         imagePicker.allowsEditing = false /// Спрашивает может ли пользователь редактикровать фото
         imagePicker.sourceType = .photoLibrary
-
         
         collectionPhotoView.register(SettingsPhotoCell.self, forCellWithReuseIdentifier: SettingsPhotoCell.identifier)
     }
@@ -40,7 +39,6 @@ class SettingsPhotoViewController: UIViewController {
     
     @IBAction func donePressed(_ sender: UIButton) {
         defaults.set(Float(currentAuthUser.imageArr.count) / 9 , forKey: "ProfileFilingScale") /// Записываем данные о количествах фото текущего пользователя
-        
         self.dismiss(animated: true)
     }
     
@@ -58,7 +56,6 @@ extension SettingsPhotoViewController : UICollectionViewDataSource, UICollection
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 9
     }
-    
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
