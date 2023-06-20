@@ -147,6 +147,38 @@ class User {
         }
     }
     
+    func deleteUserMatchArr(currentAuthUserID: String){ /// Удаляем текущего авторизованного пользователя из архива данного пользователя
+        let ID = self.ID
+        
+        db.collection("Users").document(ID).getDocument { [weak self] docSnap, err in
+            
+            if let error = err {print("Ошибка получения matchArr PairUser - \(error)")}
+            
+            if var matchArr = docSnap?.data()?["MatchArr"] as? [String] {
+                matchArr.removeAll(where: {$0 == currentAuthUserID})
+                self?.db.collection("Users").document(ID).setData(["MatchArr" : matchArr],merge: true) /// Удаляем у другого пользователя
+            }
+        }
+    }
+    
+    func deleteLikeUser(currentAuthUserID: String){ /// Удаляем из архива лайка или суперлайка текущего авторизованного пользователя
+        let ID = self.ID
+        
+        db.collection("Users").document(ID).getDocument { [weak self] docSnap, err in
+            
+            if let error = err {print("Ошибка получения matchArr PairUser - \(error)")}
+            
+            if var likeArr = docSnap?.data()?["LikeArr"] as? [String] {
+                likeArr.removeAll(where: {$0 == currentAuthUserID})
+                self?.db.collection("Users").document(ID).setData(["LikeArr" : likeArr],merge: true) /// Удаляем у другого пользователя
+            }
+            
+            if var superLikeArr = docSnap?.data()?["SuperLikeArr"] as? [String] {
+                superLikeArr.removeAll(where: {$0 == currentAuthUserID})
+                self?.db.collection("Users").document(ID).setData(["SuperLikeArr" : superLikeArr],merge: true) /// Удаляем у другого пользователя
+            }
+        }
+    }
 }
 
 

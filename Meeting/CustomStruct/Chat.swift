@@ -12,8 +12,6 @@ struct Chat {
   
     let ID: String
     var messages =  [message]()
-    var lastUnreadMessage: String?
-    var numberUnreadMessges = 0
     
     var structuredMessagesByDates: [StructMessages] {
         get {
@@ -33,6 +31,16 @@ struct Chat {
             
             return messageArr
         }
+    }
+    
+    func numberUnreadMessges(pairID: String) -> Int {
+        var count = 0
+        for message in messages {
+            if message.messageRead == false && message.sender == pairID {
+                count += 1
+            }
+        }
+        return count
     }
     
     init(ID: String) {

@@ -19,7 +19,7 @@ class CurrentAuthUser {
     var name = String()
     var age = Int()
     
-    var delegate: UserRemoveFromPair?
+    var delegate: MatchArrHasBennUpdate?
     
     var avatar: UIImage {
         get {
@@ -329,19 +329,38 @@ extension CurrentAuthUser {
 extension CurrentAuthUser {
     
     
-    //MARK: -  Удаление чата
+//MARK: -  Удаление пары
     
     func deletePair(user:User, completion: @escaping() -> Void){
         
         let chatID = user.chatID
+        var matchArrID = [String]()
         
-        db.collection("Chats").document(chatID).collection("Messages").getDocuments { querySnapshot, err in
+        for user in matchArr {
+            matchArrID.append(user.ID)
+        }
+        
+        db.collection("Chats").document(chatID).collection("Messages").getDocuments { [self] querySnapshot, err in
             if err != nil {
-                print("Ошибка удаления чата - \(err!)")
+                print("Ошибка получения чата для удаления - \(err!)")
                 completion()
             }
+            
+            matchArrID.removeAll(where: {$0 == user.ID})
+            self.likeArr.removeAll(where: {$0 == user.ID})
+            self.superLikeArr.removeAll(where: {$0 == user.ID})
+            
+            self.db.collection("Users").document(self.ID).setData(["LikeArr" : self.likeArr],merge: true)
+            self.db.collection("Users").document(self.ID).setData(["SuperLikeArr" : self.superLikeArr],merge: true)
+            
+            user.deleteUserMatchArr(currentAuthUserID: self.ID)
+//            user.deleteLikeUser(currentAuthUserID: self.ID)
+            
+            self.db.collection("Users").document(self.ID).setData(["MatchArr" : matchArrID],merge: true) /// Удаляем пользователя из матч арр у текущего пользователя
+            
             guard let documents = querySnapshot?.documents else {return}
-            for document in documents {
+            
+            for document in documents { /// Удаляем чат
                 let ref = document.reference
                 ref.delete { err in
                     if let error = err {
@@ -350,7 +369,7 @@ extension CurrentAuthUser {
                     }
                 }
             }
-            self.matchArr.removeAll(where: {$0.ID == user.ID })
+            db.collection("Chats").document(chatID).delete() /// Удаляем документ
             print("Успешное удаления чата")
             completion()
         }
@@ -361,7 +380,7 @@ extension CurrentAuthUser {
     
     func loadMatchUser(ID:String) async {
         
-        var matchUser = User(ID: ID,currentAuthUserID: self.ID)
+        let matchUser = User(ID: ID,currentAuthUserID: self.ID)
         await matchUser.loadMetaData()
         guard let avatarUrl = matchUser.urlPhotoArr.last else {return}
         if let fileAvatar = await FirebaseStorageModel().loadPhotoToFile(urlPhotoArr: [avatarUrl], userID: matchUser.ID, currentUser: false) {
@@ -383,9 +402,7 @@ extension CurrentAuthUser {
             if let error = err {print("Ошибка загрузки пользователей Match - \(error)")}
             guard let document = docSnap else {return}
             print("Прослушка MatchUserID")
-            if document.metadata.hasPendingWrites {
-                print("MatchArr From Cache")
-                return} /// Если сообщения взято из кеша выходим
+            
             
             if let matchArrID = document["MatchArr"] as? [String] {
                 
@@ -403,17 +420,20 @@ extension CurrentAuthUser {
         listenerMatchArrID = listener
     }
     
-    func checkIsDeleteUser(matchArrIdOnServer: [String]){
+    
+    func checkIsDeleteUser(matchArrIdOnServer: [String]){ /// Проверка есть удалили ли какого то пользователя с сервера
+        
+        if matchArr.count == 0 {return}
         
         for i in 0...matchArr.count - 1 {
             let user = matchArr[i]
             if matchArrIdOnServer.contains(where: {$0 == user.ID}) == false { /// Если такого ID нету на сервере то значит пользователя удалили из пар
                 user.chat = nil
                 matchArr.remove(at: i)
-                delegate?.ShouldUpdateDataWhenTheUserDelete()
+                delegate?.updateDataWhenUserDelete()
             }
         }
-        
+        delegate?.updateDataWheTheMatchArrUpdate() /// Обновляем данные
     }
 }
 

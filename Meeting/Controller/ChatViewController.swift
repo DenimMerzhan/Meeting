@@ -24,8 +24,6 @@ class ChatViewController: UIViewController {
     var currentAuthUser: CurrentAuthUser?
     var listenersArr =  [ListenerRegistration]()
     
-    var goToChat = Bool()
-    
     var shouldPerfomSegue: Bool {
         get {
             if selectedUser == nil {return false}
@@ -79,11 +77,11 @@ class ChatViewController: UIViewController {
         }
         collectionView.reloadData()
         addListeners()
-        
-        if goToChat {
-            performSegue(withIdentifier: "goToChat", sender: self)
-        }
-        goToChat = false
+    
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        removeListeners() /// Удаляем прослушивателей что бы они не нагружали ChatUserController
     }
 }
 
@@ -108,14 +106,13 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
         guard let pairUser = authUser.matchArr.first(where: {chat.ID.contains($0.ID)}) else {return cell}
        
         cell.userID = pairUser.ID
-        if let lastUnreadMessage = chat.lastUnreadMessage {
+        
+        if chat.numberUnreadMessges(pairID: pairUser.ID) > 0 {
             cell.countUnreadMessageView.isHidden = false
-            cell.countUnreadMessageLabel.text = String(chat.numberUnreadMessges)
-            cell.commentLabel.text = lastUnreadMessage
-        }else {
-            cell.commentLabel.text = chat.messages.last?.body /// Последнее сообщение в чате
+            cell.countUnreadMessageLabel.text = String(chat.numberUnreadMessges(pairID: pairUser.ID))
         }
         
+        cell.commentLabel.text = chat.messages.last?.body
         cell.avatar.image = pairUser.avatar
         cell.nameLabel.text = pairUser.name
         
@@ -140,8 +137,6 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
         
         let deleteAction = UIContextualAction(style: .destructive, title: "") { action, view, completion in
             authUser.deletePair(user: matchUser) {
-                tableView.reloadData()
-                self.addListeners()
                 completion(true)
             }
         }
@@ -237,11 +232,12 @@ extension ChatViewController {
 
 //MARK: -  Переход с MatchController в ChatUserController
 
-extension ChatViewController: passDataDelegate, UserRemoveFromPair {
+extension ChatViewController: passDataDelegate, MatchArrHasBennUpdate {
     
-    func ShouldUpdateDataWhenTheUserDelete() { /// Когда пользователя удалил из пар обновляем данные
-        tableView.reloadData()
-        collectionView.reloadData()
+    func updateDataWheTheMatchArrUpdate() { /// Каждый раз когда обновился MatchArr обновляем данные
+        DispatchQueue.main.async {
+            self.addListeners()
+        }
     }
     
     func goToMatchVC( matchController: UIViewController?, matchUser: User) {
@@ -265,9 +261,6 @@ extension ChatViewController {
         
         for user in authUser.matchArr {
             
-            guard let chat = user.chat else {return}
-            
-            
             let listener = db.collection("Chats").document(user.chatID).collection("Messages").order(by:"Date").addSnapshotListener { querySnapshot, Error in
                 
                 print("StatrListen")
@@ -275,15 +268,18 @@ extension ChatViewController {
                 if let err = Error { print("Ошибка прослушивания снимков чата - \(err)"); return}
                 
                 guard let documents = querySnapshot?.documents else {return}
-                guard let lastDoc = documents.last else {return} /// Если документ пустой значит чат пустой
+                if documents.isEmpty {return}
                 
-                if documents.count > chat.messages.count {
-                    if let body = lastDoc["Body"] as? String {
-                        user.chat?.lastUnreadMessage = body
-                        user.chat?.numberUnreadMessges = documents.count - chat.messages.count
+                user.chat?.messages.removeAll()
+                
+                for data in documents {
+                    
+                    if let body = data["Body"] as? String, let sender = data["Sender"] as? String, let date = data["Date"] as? Double, let messageRed = data["MessageRead"] as? Bool, let messageSendOnServer = data["MessageSendOnServer"] as? Bool {
+                        let message = message(sender: sender, body: body, messagedWritingOnServer: messageSendOnServer, messageRead: messageRed, dateMessage: date)
+                        
+                        user.chat?.messages.append(message)
                     }
-                }else {
-                    user.chat?.lastUnreadMessage = nil
+                    
                 }
                                 
                 DispatchQueue.main.async {
@@ -295,7 +291,7 @@ extension ChatViewController {
         }
     }
     
-    func removeListeners(){
+    func removeListeners(){ /// Удаление всех прослушивателей
         for listener in listenersArr {
             listener.remove()
         }

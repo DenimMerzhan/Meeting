@@ -74,8 +74,6 @@ class ChatUserController: UIViewController {
     deinit {
         print("Denit")
         listener?.remove() /// Удаляем прослушивателя
-        selectedUser.chat?.lastUnreadMessage = nil /// После того как пользователь прочитал сообщения обнуляем последнее не прочитанное сообщение
-        
         NotificationCenter.default.removeObserver(self,name: Notification.Name("sceneWillEnterForeground"), object: nil)
     }
 }
@@ -338,9 +336,9 @@ extension ChatUserController {
 
 //MARK: -  Отклонение контроллера при удаление пары
 
-extension ChatUserController: UserRemoveFromPair{
-    
-    func ShouldUpdateDataWhenTheUserDelete() { /// Если пользователя удалили из пар моментально отклоняем контроллер
+extension ChatUserController: MatchArrHasBennUpdate{
+        
+    func updateDataWhenUserDelete() { /// Если пользователя удалили из пар моментально отклоняем контроллер и выводим предупреждение
         let alert = UIAlertController(title: "Пара удалена", message: "Пользователь удалил вас из пар", preferredStyle: .alert)
         let action = UIAlertAction(title: "Ок", style: .default) { [weak self] action in
             self?.dismiss(animated: true)

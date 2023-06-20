@@ -24,7 +24,7 @@
 		CF65ED802A2789AC00820D6B /* MatchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF65ED7F2A2789AC00820D6B /* MatchController.swift */; };
 		CF7D03092A0B80330028E7EB /* CurrentAuthUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7D03082A0B80330028E7EB /* CurrentAuthUser.swift */; };
 		CF807F0929FFF57800D5ACD1 /* SettingsPhotoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF807F0829FFF57800D5ACD1 /* SettingsPhotoCell.swift */; };
-		CF81B5FB2A30A7180005EA70 /* UserRemoveFromPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF81B5FA2A30A7180005EA70 /* UserRemoveFromPair.swift */; };
+		CF81B5FB2A30A7180005EA70 /* MatchArrHasBennUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF81B5FA2A30A7180005EA70 /* MatchArrHasBennUpdate.swift */; };
 		CF8C3E162A3B34F500B59026 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8C3E152A3B34F500B59026 /* Extension.swift */; };
 		CF8F6C0E2A2C7A32004E62D0 /* ChatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8F6C0C2A2C7A32004E62D0 /* ChatCell.swift */; };
 		CF8F6C0F2A2C7A32004E62D0 /* TableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8F6C0D2A2C7A32004E62D0 /* TableViewCell.xib */; };
@@ -67,7 +67,7 @@
 		CF65ED7F2A2789AC00820D6B /* MatchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchController.swift; sourceTree = "<group>"; };
 		CF7D03082A0B80330028E7EB /* CurrentAuthUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentAuthUser.swift; sourceTree = "<group>"; };
 		CF807F0829FFF57800D5ACD1 /* SettingsPhotoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPhotoCell.swift; sourceTree = "<group>"; };
-		CF81B5FA2A30A7180005EA70 /* UserRemoveFromPair.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRemoveFromPair.swift; sourceTree = "<group>"; };
+		CF81B5FA2A30A7180005EA70 /* MatchArrHasBennUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchArrHasBennUpdate.swift; sourceTree = "<group>"; };
 		CF8C3E152A3B34F500B59026 /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
 		CF8F6C0C2A2C7A32004E62D0 /* ChatCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCell.swift; sourceTree = "<group>"; };
 		CF8F6C0D2A2C7A32004E62D0 /* TableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TableViewCell.xib; sourceTree = "<group>"; };
@@ -152,7 +152,7 @@
 			isa = PBXGroup;
 			children = (
 				CF65ED7C2A277DFD00820D6B /* matchDelegate.swift */,
-				CF81B5FA2A30A7180005EA70 /* UserRemoveFromPair.swift */,
+				CF81B5FA2A30A7180005EA70 /* MatchArrHasBennUpdate.swift */,
 			);
 			path = Protocol;
 			sourceTree = "<group>";
@@ -369,7 +369,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF81B5FB2A30A7180005EA70 /* UserRemoveFromPair.swift in Sources */,
+				CF81B5FB2A30A7180005EA70 /* MatchArrHasBennUpdate.swift in Sources */,
 				CF069DA429EC2D3D005ED378 /* PairsViewController.swift in Sources */,
 				CF933C302A0CD65C0015E99B /* CustomError.swift in Sources */,
 				CFC72D512A014543008CDB14 /* CreateButton.swift in Sources */,
