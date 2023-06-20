@@ -44,20 +44,20 @@ class CurrentAuthUser {
     var superLikeArr = [String]()
     
     var numberPotenialPairsOnServer = Int()
-    var currentUserLoaded = Bool()
     
     var newUsersLoading = Bool()
     
     private let db = Firestore.firestore()
     private let storage = Storage.storage()
+    private let fileManager = FileManager.default
     
     init(ID: String){
         self.ID = ID
     }
     
-    //MARK: -  Загрузка метаданных о текущем авторизованном пользователе с FireStore
+//MARK: -  Загрузка метаданных о текущем авторизованном пользователе с FireStore
     
-    func loadMetadata() async -> Bool {
+    func loadMetadata() async {
         
         let collection  = db.collection("Users").document(ID)
         listenMatchUserID()
@@ -84,20 +84,12 @@ class CurrentAuthUser {
                         }
                     }
                 }else {
-                    print("Ошибка в преобразование данных о текущем пользователе")
-                    return false
-                }
+                    print("Ошибка в преобразование данных о текущем пользователе")}
             }
             
         }catch{
-            print("Ошибка получения ссылок на фото с сервера FirebaseFirestore - \(error)")
-            return false
-        }
+            print("Ошибка получения ссылок на фото с сервера FirebaseFirestore - \(error)")}
         
-        if urlPhotoArr.count == 0 {
-            currentUserLoaded = true /// Если фото у пользователя нету, то указываем что он загрузился
-        }
-        return true
     }
     
     
@@ -119,7 +111,7 @@ class CurrentAuthUser {
         }
     }
     
-    //MARK: -  Загрузка потеницальных пар для текущего пользователя
+//MARK: -  Загрузка потеницальных пар для текущего пользователя
     
     func loadNewPotenialPairs(countUser: Int,usersArr: [User]) async -> [String]? {
         var count = 0
@@ -164,26 +156,12 @@ class CurrentAuthUser {
     
     
     
-    //MARK: -  Загрузка фото с директории
-    
-    func loadPhotoFromDirectory(urlFileArr: [URL]){
-        
-        for url in urlFileArr {
-            
-            if let newImage = UIImage(contentsOfFile: url.path) {
-                let imageID = url.lastPathComponent
-                imageArr.append(CurrentUserImage(imageID: imageID,image: newImage))
-            }
-            currentUserLoaded = true
-        }
-    }
-    
-    
+
     //MARK: -  Загрузка фото на сервер
     
     func uploadImageToStorage(image: UIImage) async -> Bool  {
         
-        let imageID = "photoImage" + "".randomString(length: 5)
+        let imageID = "photoImage" + "".randomString(length:10)
         
         let imagesRef = storage.reference().child("UsersPhoto").child(ID).child(imageID) /// Создаем ссылку на файл
         guard let imageData = image.jpegData(compressionQuality: 0.0) else { /// Преобразуем в Jpeg c сжатием
@@ -223,8 +201,50 @@ class CurrentAuthUser {
         }
     }
     
+//MARK: -  Загрузка фото
     
-    //MARK: - Удаление фото с сервера Storage и Firestore
+    func loadPhoto() async {
+        
+        var urlFileArr = [URL]()
+        if urlPhotoArr.count == 0 {return}
+        
+        let userLibary = fileManager.urls(for: .documentDirectory, in: .userDomainMask) /// Стандартная библиотека пользователя
+        
+        let newFolder = userLibary[0].appendingPathComponent("CurrentUserPhoto")
+        
+        if FileManager.default.fileExists(atPath: newFolder.path) == false { /// Если директории нет создаем эту папку
+            try! fileManager.createDirectory(at: newFolder, withIntermediateDirectories: true)
+        }
+        
+        for urlPhoto in urlPhotoArr {
+            
+            let Reference = storage.reference(forURL: urlPhoto)
+            do {
+                if let namePhoto = try await Reference.getMetadata().name {
+                    let url = try await Reference.writeAsync(toFile: newFolder.appendingPathComponent(namePhoto))
+                    urlFileArr.append(url)
+                }
+            }catch{
+                print("Ошибка записи фото в директорию пользователя - \(error)")
+            }
+        }
+        loadPhotoFromDirectory(urlFileArr: urlFileArr)
+    }
+    
+//MARK: -  Загрузка фото с директории
+    
+private func loadPhotoFromDirectory(urlFileArr: [URL]){
+        
+        for url in urlFileArr {
+            
+            if let newImage = UIImage(contentsOfFile: url.path) {
+                let imageID = url.lastPathComponent
+                imageArr.append(CurrentUserImage(imageID: imageID,image: newImage))
+            }
+        }
+    }
+    
+//MARK: - Удаление фото с сервера Storage и Firestore
     
     func removePhotoFromServer(imageID:String){
         
@@ -325,12 +345,10 @@ extension CurrentAuthUser {
     
 }
 
+//MARK: -  Удаление пары
 
 extension CurrentAuthUser {
-    
-    
-//MARK: -  Удаление пары
-    
+
     func deletePair(user:User){
         
         let chatID = user.chatID
@@ -371,18 +389,13 @@ extension CurrentAuthUser {
     }
     
     
-    //MARK: -  Загрузка MatchUser
+//MARK: -  Загрузка MatchUser
     
     func loadMatchUser(ID:String) async {
         
         let matchUser = User(ID: ID,currentAuthUserID: self.ID)
         await matchUser.loadMetaData()
-        guard let avatarUrl = matchUser.urlPhotoArr.last else {return}
-        if let fileAvatar = await FirebaseStorageModel().loadPhotoToFile(urlPhotoArr: [avatarUrl], userID: matchUser.ID, currentUser: false) {
-            matchUser.loadPhotoFromDirectory(urlFileArr: fileAvatar)
-        }else {
-            return
-        }
+        await matchUser.loadPhoto(avatar: true)
         self.matchArr.append(matchUser)
     }
     
@@ -411,6 +424,7 @@ extension CurrentAuthUser {
         listenerMatchArrID = listener
     }
     
+//MARK: -  Проверка удалили ли пользователей
     
     func checkIsDeleteUser(matchArrIdOnServer: [String]){ /// Проверка есть удалили ли какого то пользователя с сервера
         

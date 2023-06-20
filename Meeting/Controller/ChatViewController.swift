@@ -134,9 +134,8 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
         guard let authUser = currentAuthUser else {return nil}
         
         let deleteAction = UIContextualAction(style: .destructive, title: "") { action, view, completion in
-            authUser.deletePair(user: matchUser) {
-                completion(true)
-            }
+            authUser.deletePair(user: matchUser)
+            completion(true)
         }
 
         let banAction = UIContextualAction(style: .normal, title: "") { action, view, completion in

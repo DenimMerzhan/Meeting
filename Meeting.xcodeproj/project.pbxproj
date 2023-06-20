@@ -37,7 +37,6 @@
 		CFA470E82A24DE6C005E3549 /* CurrentChatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA470E62A24DE6C005E3549 /* CurrentChatCell.swift */; };
 		CFC6D2FE29FE403000A712BA /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC6D2FD29FE403000A712BA /* ProfileViewController.swift */; };
 		CFC6D30029FE43B100A712BA /* CircularProgressBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC6D2FF29FE43B100A712BA /* CircularProgressBarView.swift */; };
-		CFC72D4F2A0135F2008CDB14 /* FirebaseStorageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC72D4E2A0135F2008CDB14 /* FirebaseStorageModel.swift */; };
 		CFC72D512A014543008CDB14 /* CreateButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC72D502A014543008CDB14 /* CreateButton.swift */; };
 		CFCD0F9C2A0A887E00C17AFC /* TestFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFCD0F9B2A0A887E00C17AFC /* TestFile.swift */; };
 		CFD1CAE729FEABB6009AE9A7 /* SettingsPhotoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD1CAE629FEABB6009AE9A7 /* SettingsPhotoViewController.swift */; };
@@ -80,7 +79,6 @@
 		CFA470E62A24DE6C005E3549 /* CurrentChatCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentChatCell.swift; sourceTree = "<group>"; };
 		CFC6D2FD29FE403000A712BA /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		CFC6D2FF29FE43B100A712BA /* CircularProgressBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressBarView.swift; sourceTree = "<group>"; };
-		CFC72D4E2A0135F2008CDB14 /* FirebaseStorageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseStorageModel.swift; sourceTree = "<group>"; };
 		CFC72D502A014543008CDB14 /* CreateButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateButton.swift; sourceTree = "<group>"; };
 		CFCD0F9B2A0A887E00C17AFC /* TestFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFile.swift; sourceTree = "<group>"; };
 		CFD1CAE629FEABB6009AE9A7 /* SettingsPhotoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPhotoViewController.swift; sourceTree = "<group>"; };
@@ -224,7 +222,6 @@
 			isa = PBXGroup;
 			children = (
 				CFFD03DF29F9003B000732AC /* CardModel.swift */,
-				CFC72D4E2A0135F2008CDB14 /* FirebaseStorageModel.swift */,
 				CFC72D502A014543008CDB14 /* CreateButton.swift */,
 			);
 			path = Model;
@@ -396,7 +393,6 @@
 				CFD1CAE729FEABB6009AE9A7 /* SettingsPhotoViewController.swift in Sources */,
 				CF65ED7D2A277DFD00820D6B /* matchDelegate.swift in Sources */,
 				CF59A22C2A1B53B300954CCE /* ChatViewController.swift in Sources */,
-				CFC72D4F2A0135F2008CDB14 /* FirebaseStorageModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

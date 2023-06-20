@@ -24,13 +24,11 @@ class ProfileViewController: UIViewController {
     
     var currentAuthUser =   CurrentAuthUser(ID: "") {
         didSet {
-            if currentAuthUser.currentUserLoaded {
-                nameAgeLabel.text = currentAuthUser.name + " " + String(currentAuthUser.age)
-                if currentAuthUser.imageArr.count != 0 {
-                    profilePhoto.image = currentAuthUser.imageArr[0].image
-                }
-                animateProgressToValue = Float(currentAuthUser.imageArr.count) / 9
+            nameAgeLabel.text = currentAuthUser.name + " " + String(currentAuthUser.age)
+            if currentAuthUser.imageArr.count != 0 {
+                profilePhoto.image = currentAuthUser.imageArr[0].image
             }
+            animateProgressToValue = Float(currentAuthUser.imageArr.count) / 9
         }
     }
     
@@ -47,12 +45,7 @@ class ProfileViewController: UIViewController {
     
     
     @IBAction func settingsPhotoPressed(_ sender: UIButton) {
-        
-        if currentAuthUser.currentUserLoaded {
-            print(currentAuthUser.imageArr.count, "imageArr Current User")
-            performSegue(withIdentifier: "settingsToPhotoSettings", sender: self)
-        }
-        
+        performSegue(withIdentifier: "settingsToPhotoSettings", sender: self)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
