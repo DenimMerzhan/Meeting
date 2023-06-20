@@ -13,6 +13,7 @@ class MatchController: UIViewController {
     @IBOutlet var tapGesture: UITapGestureRecognizer!
     
     
+    @IBOutlet weak var textField: UITextField!
     var delegate: passDataDelegate?
     var currentAuthUser: CurrentAuthUser?
     var newMatch: User? {
@@ -59,9 +60,16 @@ class MatchController: UIViewController {
     
     @IBAction func sendPressed(_ sender: UIButton) {
         guard let newMatch = self.newMatch else {return}
-        guard newMatch.chat != nil else {return} /// Проверяем создался ли чат, если нет выходим
+        guard let authUser = currentAuthUser else {return}
+        if authUser.matchArr.contains(where: {$0.ID == newMatch.ID }) == false {return} /// Проверяем добавился ли пользаватель в MatchArr
+        
+        guard let body = textField.text else {return}
+        if textField.text?.count == 0 {return}
+        textField.text = ""
+        authUser.sendMessageToServer(user: newMatch, body: body) /// Отправляем первое сообщение
+        
         self.dismiss(animated: false, completion: nil)
-        delegate?.goToMatchVC(matchController: self,matchUser: newMatch)
+        delegate?.goToMatchVC(matchController: self,matchUser: newMatch,currentAuthUser: authUser)
     }
     
     func changePostionProgressBar(progressBar:[UIView],y: CGFloat){

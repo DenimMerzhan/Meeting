@@ -331,7 +331,7 @@ extension CurrentAuthUser {
     
 //MARK: -  Удаление пары
     
-    func deletePair(user:User, completion: @escaping() -> Void){
+    func deletePair(user:User){
         
         let chatID = user.chatID
         var matchArrID = [String]()
@@ -342,9 +342,7 @@ extension CurrentAuthUser {
         
         db.collection("Chats").document(chatID).collection("Messages").getDocuments { [self] querySnapshot, err in
             if err != nil {
-                print("Ошибка получения чата для удаления - \(err!)")
-                completion()
-            }
+                print("Ошибка получения чата для удаления - \(err!)")}
             
             matchArrID.removeAll(where: {$0 == user.ID})
             self.likeArr.removeAll(where: {$0 == user.ID})
@@ -353,8 +351,8 @@ extension CurrentAuthUser {
             self.db.collection("Users").document(self.ID).setData(["LikeArr" : self.likeArr],merge: true)
             self.db.collection("Users").document(self.ID).setData(["SuperLikeArr" : self.superLikeArr],merge: true)
             
-            user.deleteUserMatchArr(currentAuthUserID: self.ID)
-//            user.deleteLikeUser(currentAuthUserID: self.ID)
+            user.deleteUserMatchArr(currentAuthUserID: self.ID) /// Удаляем из архива МатчАрр текущего пользователя
+//            user.deleteLikeUser(currentAuthUserID: self.ID) /// Удаляем из архива лайков текущего пользователя
             
             self.db.collection("Users").document(self.ID).setData(["MatchArr" : matchArrID],merge: true) /// Удаляем пользователя из матч арр у текущего пользователя
             
@@ -364,14 +362,11 @@ extension CurrentAuthUser {
                 let ref = document.reference
                 ref.delete { err in
                     if let error = err {
-                        print("Ошибка удаления чата - \(error)")
-                        completion()
-                    }
+                        print("Ошибка удаления чата - \(error)")}
                 }
             }
             db.collection("Chats").document(chatID).delete() /// Удаляем документ
             print("Успешное удаления чата")
-            completion()
         }
     }
     
@@ -403,11 +398,8 @@ extension CurrentAuthUser {
             guard let document = docSnap else {return}
             print("Прослушка MatchUserID")
             
-            
             if let matchArrID = document["MatchArr"] as? [String] {
-                
                 Task {
-                    
                     for ID in matchArrID {
                         if self.matchArr.contains(where: {$0.ID == ID}) {continue}
                         await self.loadMatchUser(ID: ID)
@@ -415,7 +407,6 @@ extension CurrentAuthUser {
                     self.checkIsDeleteUser(matchArrIdOnServer: matchArrID)
                 }
             }
-            
         }
         listenerMatchArrID = listener
     }

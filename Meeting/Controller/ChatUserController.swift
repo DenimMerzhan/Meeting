@@ -111,7 +111,7 @@ extension ChatUserController {
         
         avatarUser.image = selectedUser.avatar
         nameUser.text = selectedUser.name
-        print("ViewDidLoad")
+        currentAuthUser.delegate = self
         loadMessage()
     }
 }
@@ -136,7 +136,7 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
         let sender = structMessagesArr[indexPath.section - 1].messages[indexPath.row].sender
         
         cell.selectionStyle = .none
-    
+        
         let label = UILabel() /// Лейбл с постоянной высотой 45 и шириной что бы всегда расчитывать одну и ту же идеальную ширину текста для ячейки
         label.text = cell.messageLabel.text
         label.font = cell.messageLabel.font
@@ -184,7 +184,7 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
         if  indexPath.row + 1 < structMessagesArr[indexPath.section - 1].messages.count && structMessagesArr[indexPath.section - 1].messages[indexPath.row + 1].sender == sender {
             cell.avatar.image = UIImage()
         }
-    
+        
         return cell
     }
     
@@ -196,7 +196,7 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
         let view = viewForHeaderSection(section: section)
         return view
     }
-        
+    
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         guard let lastMessage = messageArr.last else {return nil}
         if lastMessage.sender != currentAuthUser.ID {return nil}
@@ -204,7 +204,7 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-       
+        
         let timeMessage = structMessagesArr[indexPath.section - 1].messages[indexPath.row].timeMessage
         let image = createTimeMessageImage(timeMessage: timeMessage)
         let deleteAction = UIContextualAction(style: .normal, title: "") { action, view, completionHandler in
@@ -238,7 +238,7 @@ extension ChatUserController {
             if let error = Error {print("Ошибка прослушивания снимков с сервера - \(error)"); return}
             
             print("LoadMessage")
-                       
+            
             guard let document = QuerySnapshot else {return}
             
             if document.isEmpty {return} /// Если документ пустой значит чата не начался
@@ -249,7 +249,6 @@ extension ChatUserController {
                 if let body = data["Body"] as? String, let sender = data["Sender"] as? String, let date = data["Date"] as? Double, let messageRed = data["MessageRead"] as? Bool, let messageSendOnServer = data["MessageSendOnServer"] as? Bool {
                     
                     var message = message(sender: sender, body: body,dateMessage: date)
-                    print(message.body)
                     if sender == self?.selectedUser.ID && messageRed == false {
                         db.collection("Chats").document(chatID).collection("Messages").document(data.documentID).setData(["MessageRead" : true], merge: true)
                     }
@@ -271,7 +270,7 @@ extension ChatUserController {
                 self?.tableView.scrollToRow(at: indexPath, at: .top, animated: false)
             }
         }
-            
+        
         self.listener = listener
     }
     
@@ -337,18 +336,21 @@ extension ChatUserController {
 //MARK: -  Отклонение контроллера при удаление пары
 
 extension ChatUserController: MatchArrHasBennUpdate{
-        
+    
     func updateDataWhenUserDelete() { /// Если пользователя удалили из пар моментально отклоняем контроллер и выводим предупреждение
-        let alert = UIAlertController(title: "Пара удалена", message: "Пользователь удалил вас из пар", preferredStyle: .alert)
-        let action = UIAlertAction(title: "Ок", style: .default) { [weak self] action in
-            self?.dismiss(animated: true)
+       
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: "Пара удалена", message: "Пользователь удалил вас из пар", preferredStyle: .alert)
+            let action = UIAlertAction(title: "Ок", style: .default) { [weak self] action in
+                self?.dismiss(animated: true)
+            }
+            alert.addAction(action)
+            self.present(alert, animated: true)
         }
-        alert.addAction(action)
-        self.present(alert, animated: true)
     }
     
- 
-//MARK: -  Создание Image для просмотра времени сообщения
+    
+    //MARK: -  Создание Image для просмотра времени сообщения
     
     func createTimeMessageImage(timeMessage: String) -> UIImage {
         

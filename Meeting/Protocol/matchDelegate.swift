@@ -11,6 +11,6 @@ import UIKit
 
 protocol passDataDelegate {
     
-    func goToMatchVC(matchController:UIViewController?,matchUser: User)
+    func goToMatchVC(matchController:UIViewController?,matchUser: User, currentAuthUser:CurrentAuthUser)
     
 }

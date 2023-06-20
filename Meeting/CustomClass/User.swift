@@ -53,7 +53,7 @@ class User {
     
     
     
-    //MARK: - Загрузка метаданных о пользователе с сервера
+//MARK: - Загрузка метаданных о пользователе с сервера
     
     func loadMetaData() async {
         
@@ -96,7 +96,6 @@ class User {
             }
         }
     }
-    
     
     //MARK: -  Удаление фото пользователя с директории
     
@@ -146,6 +145,8 @@ class User {
             
         }
     }
+    
+//MARK: -  Удаление пользователя из MatchArr, likeArr и SuperLikeArr
     
     func deleteUserMatchArr(currentAuthUserID: String){ /// Удаляем текущего авторизованного пользователя из архива данного пользователя
         let ID = self.ID

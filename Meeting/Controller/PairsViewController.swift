@@ -403,12 +403,12 @@ extension PairsViewController  {
 //MARK: - Переход с MATCH Сontroller с помощью делегата
 
 extension PairsViewController: passDataDelegate {
-    func goToMatchVC( matchController: UIViewController?,matchUser:User) {
+    func goToMatchVC( matchController: UIViewController?,matchUser:User,currentAuthUser:CurrentAuthUser) {
      
         guard let vc = self.tabBarController?.viewControllers![1] as? ChatViewController else {return}
         guard let matchVC = matchController as? MatchController else {return}
         matchVC.delegate = vc
-        matchVC.delegate?.goToMatchVC(matchController: nil, matchUser: matchUser)
+        matchVC.delegate?.goToMatchVC(matchController: nil, matchUser: matchUser,currentAuthUser: currentAuthUser)
         tabBarController?.selectedIndex = 1
     }
 }

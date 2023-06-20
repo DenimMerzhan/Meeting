@@ -75,9 +75,7 @@ class ChatViewController: UIViewController {
             currentAuthUser = vc.currentAuthUser
             currentAuthUser?.delegate = self
         }
-        collectionView.reloadData()
         addListeners()
-    
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -225,7 +223,6 @@ extension ChatViewController {
         }
         destanationVC.selectedUser = user
         destanationVC.currentAuthUser = authUser
-        
     }
 }
 
@@ -240,8 +237,9 @@ extension ChatViewController: passDataDelegate, MatchArrHasBennUpdate {
         }
     }
     
-    func goToMatchVC( matchController: UIViewController?, matchUser: User) {
+    func goToMatchVC( matchController: UIViewController?, matchUser: User, currentAuthUser: CurrentAuthUser) {
         selectedUser = matchUser
+        self.currentAuthUser = currentAuthUser
         if shouldPerfomSegue {
             performSegue(withIdentifier: "goToChat", sender: self)
         }
@@ -258,12 +256,17 @@ extension ChatViewController {
         guard let authUser = currentAuthUser else {return}
         
         removeListeners()
+
+        if authUser.matchArr.count == 0 {
+            tableView.reloadData()
+            collectionView.reloadData()
+        }
         
         for user in authUser.matchArr {
             
             let listener = db.collection("Chats").document(user.chatID).collection("Messages").order(by:"Date").addSnapshotListener { querySnapshot, Error in
                 
-                print("StatrListen")
+                print("ListenMessageChatController")
                 
                 if let err = Error { print("Ошибка прослушивания снимков чата - \(err)"); return}
                 

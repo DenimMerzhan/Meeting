@@ -96,6 +96,7 @@
                     </view>
                     <connections>
                         <outlet property="tapGesture" destination="cpY-AQ-UdA" id="b8h-LH-Ufz"/>
+                        <outlet property="textField" destination="HS1-lc-72Q" id="XsG-z4-zoh"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SKx-zi-z9I" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
