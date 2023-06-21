@@ -147,11 +147,9 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
             
             cell.currentUser = true
             
-            if message.messageLike {
-                cell.messageBubble.backgroundColor = UIColor(named: "DeleteChatColor")
-            }else {
-                cell.messageBubble.backgroundColor = UIColor(named: "CurrentUserMessageColor")
-            }
+            if message.messagedWritingOnServer {cell.statusMessage.image = UIImage(systemName: "checkmark")}
+            if message.messageRead {cell.statusMessage.image = UIImage(named: "MessageSend")}
+            if message.messageLike {cell.statusMessage.image = UIImage(named: "LikeMessageRed")}
             
             label.frame.size.width = widthMessagViewCurrentUser - 37
             let perfectWidthLabel = label.intrinsicContentSize.width
@@ -160,14 +158,8 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
             cell.statusMessage.isHidden = false
             cell.heartView.isHidden = true
             cell.avatar.image = UIImage()
-            
-            if structMessagesArr[indexPath.section - 1].messages[indexPath.row].messagedWritingOnServer {
-                cell.statusMessage.image = UIImage(systemName: "checkmark")
-            }
-            
-            if structMessagesArr[indexPath.section - 1].messages[indexPath.row].messageRead {
-                cell.statusMessage.image = UIImage(named: "MessageSend")
-            }
+            cell.messageBubble.backgroundColor = UIColor(named: "CurrentUserMessageColor")
+
             
             cell.messageLabel.textAlignment = .right
             cell.messageLabel.textColor = .white
@@ -176,6 +168,7 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
             label.frame.size.width = widthMessagViewOtherUser - 20 /// 20 -  (10 расстояние Лейбла от левого, 10 растояние от правого края)
             
             let buttonAction = UIAction { action in
+                print("Action")
                 message.messagePathOnServer.setData(["MessageLike" : !message.messageLike],merge: true)
             }
             cell.messageLikeButton.addAction(buttonAction, for: .touchUpInside)

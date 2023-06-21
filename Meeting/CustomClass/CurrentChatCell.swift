@@ -46,6 +46,7 @@ class CurrentChatCell: UITableViewCell {
     
     override func prepareForReuse() { /// Подготовка перед повторным использованием
         
+        messageLikeButton.removeTarget(nil, action: nil, for: .allEvents)
         currentUser = false
         statusMessage.image = UIImage(named: "SendMessageTimer")
         messageLikeButton.setImage(UIImage(named: "likeMessageBlack"), for: .normal)
