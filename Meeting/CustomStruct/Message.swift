@@ -13,7 +13,7 @@ struct message {
     
     var sender: String
     var body: String
-    var messagePathOnServer: String
+    var messagePathOnServer: DocumentReference
     
     var messagedWritingOnServer = Bool()
     var messageRead = Bool()

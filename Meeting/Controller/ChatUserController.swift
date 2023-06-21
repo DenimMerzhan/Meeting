@@ -175,15 +175,15 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
         }else {
             label.frame.size.width = widthMessagViewOtherUser - 20 /// 20 -  (10 расстояние Лейбла от левого, 10 растояние от правого края)
             
-            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(likeMessageTapped))
-            let ewe = UITapGestureRecognizer(target: <#T##Any?#>, action: <#T##Selector?#>)
-            
-            cell.messageLikeImage.addGestureRecognizer(tapGesture)
-            cell.messageLikeImage.isUserInteractionEnabled = true
-            
+            let buttonAction = UIAction { action in
+                message.messagePathOnServer.setData(["MessageLike" : !message.messageLike],merge: true)
+            }
+            cell.messageLikeButton.addAction(buttonAction, for: .touchUpInside)
+        
             if message.messageLike {
-                cell.messageLikeImage.image = UIImage(named: "LikeMessageRed")
-                cell.messageLikeImage.alpha = 1
+                cell.messageLikeButton.setImage(UIImage(named: "LikeMessageRed"), for: .normal)
+                cell.messageLikeButton.tintColor = UIColor(named: "DeleteChatColor")
+                cell.messageLikeButton.alpha = 1
             }
             
             let perfectWidthLabel = label.intrinsicContentSize.width
@@ -265,7 +265,7 @@ extension ChatUserController {
                 
                 if let body = data["Body"] as? String, let sender = data["Sender"] as? String, let date = data["Date"] as? Double, let messageRed = data["MessageRead"] as? Bool, let messageSendOnServer = data["MessageSendOnServer"] as? Bool, let messageLike = data["MessageLike"] as? Bool {
                     
-                    var message = message(sender: sender, body: body, messagePathOnServer: data.reference.path, dateMessage: date)
+                    var message = message(sender: sender, body: body, messagePathOnServer: data.reference, dateMessage: date)
                     
                     message.messageLike = messageLike
                     if sender == self?.selectedUser.ID && messageRed == false {
@@ -292,11 +292,6 @@ extension ChatUserController {
         
         self.listener = listener
     }
-    
-    @objc func likeMessageTapped() {
-        print(<#T##Any...#>)
-    }
-    
 }
 
 

@@ -61,19 +61,21 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kOm-r1-4Tx" userLabel="HeartView">
                                 <rect key="frame" x="285" y="0.0" width="25" height="86"/>
                                 <subviews>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="likeMessageBlack" translatesAutoresizingMaskIntoConstraints="NO" id="gYn-cA-S2A">
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eAj-Cb-sFa">
                                         <rect key="frame" x="0.0" y="30.666666666666664" width="25" height="25"/>
-                                        <color key="tintColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="25" id="GW0-By-rCR"/>
-                                            <constraint firstAttribute="width" constant="25" id="dRp-t3-j9Z"/>
+                                            <constraint firstAttribute="height" constant="25" id="W0K-Dv-rSL"/>
+                                            <constraint firstAttribute="width" constant="25" id="qkB-Mr-1aK"/>
                                         </constraints>
-                                    </imageView>
+                                        <color key="tintColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" title="Button" image="likeMessageBlack"/>
+                                    </button>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstItem="gYn-cA-S2A" firstAttribute="centerY" secondItem="kOm-r1-4Tx" secondAttribute="centerY" id="CWk-bO-vL5"/>
+                                    <constraint firstItem="eAj-Cb-sFa" firstAttribute="centerX" secondItem="kOm-r1-4Tx" secondAttribute="centerX" id="HAr-bK-TUZ"/>
+                                    <constraint firstItem="eAj-Cb-sFa" firstAttribute="centerY" secondItem="kOm-r1-4Tx" secondAttribute="centerY" id="Loq-tb-mMM"/>
                                     <constraint firstAttribute="width" constant="25" id="pNh-he-riZ"/>
-                                    <constraint firstItem="gYn-cA-S2A" firstAttribute="centerX" secondItem="kOm-r1-4Tx" secondAttribute="centerX" id="xQb-Qx-dQh"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -99,7 +101,7 @@
                 <outlet property="heartView" destination="kOm-r1-4Tx" id="Hbj-ws-Zo5"/>
                 <outlet property="messageBubble" destination="Vxp-JK-pGF" id="RKF-jS-CKe"/>
                 <outlet property="messageLabel" destination="q7o-eJ-UzT" id="zKs-O4-ptW"/>
-                <outlet property="messageLikeImage" destination="gYn-cA-S2A" id="aiU-C2-e9k"/>
+                <outlet property="messageLikeButton" destination="eAj-Cb-sFa" id="Jcx-NU-hGy"/>
                 <outlet property="statusMessage" destination="0zc-Bf-kTh" id="AM8-aJ-thp"/>
             </connections>
             <point key="canvasLocation" x="36.641221374045799" y="5.9859154929577469"/>

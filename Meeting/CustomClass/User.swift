@@ -131,7 +131,7 @@ class User {
                     
                     if sender == self?.ID && messageRead == false {continue} /// Если текущий пользователь не читал сообщение пропускаем его добавление
                     
-                    var message = message(sender: sender, body: body,messagePathOnServer: doc.reference.path, dateMessage: dateMessage)
+                    var message = message(sender: sender, body: body,messagePathOnServer: doc.reference, dateMessage: dateMessage)
                     message.messagedWritingOnServer = messageSendOnServer
                     message.messageRead = messageRead
                     self?.chat?.messages.append(message)
