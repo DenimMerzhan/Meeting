@@ -13,10 +13,12 @@ struct message {
     
     var sender: String
     var body: String
+    var messagePathOnServer: String
+    
     var messagedWritingOnServer = Bool()
     var messageRead = Bool()
     var dateMessage: Double
-    
+    var messageLike = false
     
     var timeMessage: String {
         get {

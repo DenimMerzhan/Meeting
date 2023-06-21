@@ -48,7 +48,7 @@ struct Test {
             metaData.contentType = "image/jpeg" /// Указываем явный тип данных в FireBase
             
             do {
-                try await imagesRef.putDataAsync(imageData)
+                _ = try await imagesRef.putDataAsync(imageData)
                 let url = try await imagesRef.downloadURL()
                 await uploadDataToFirestore(url: url, imageID: imageID,currentUserID: dataUser.nameUser,name: dataUser.nameUser,age: dataUser.ageUser)
             }catch {

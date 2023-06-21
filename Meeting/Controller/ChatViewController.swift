@@ -277,7 +277,7 @@ extension ChatViewController {
                 for data in documents {
                     
                     if let body = data["Body"] as? String, let sender = data["Sender"] as? String, let date = data["Date"] as? Double, let messageRed = data["MessageRead"] as? Bool, let messageSendOnServer = data["MessageSendOnServer"] as? Bool {
-                        let message = message(sender: sender, body: body, messagedWritingOnServer: messageSendOnServer, messageRead: messageRed, dateMessage: date)
+                        let message = message(sender: sender, body: body, messagePathOnServer: data.reference.path, messagedWritingOnServer: messageSendOnServer, messageRead: messageRed, dateMessage: date)
                         
                         user.chat?.messages.append(message)
                     }

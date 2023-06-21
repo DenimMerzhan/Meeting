@@ -15,7 +15,7 @@ class CurrentChatCell: UITableViewCell {
     @IBOutlet weak var messageLabel: UILabel!
     @IBOutlet weak var statusMessage: UIImageView!
     
-    @IBOutlet weak var heartLikeImageView: UIImageView!
+    @IBOutlet weak var messageLikeImage: UIImageView!
     @IBOutlet weak var heartView: UIView!
     
     var currentUser = Bool()
@@ -39,7 +39,7 @@ class CurrentChatCell: UITableViewCell {
         
         avatar.layer.cornerRadius = avatar.frame.width / 2
         avatar.clipsToBounds = true
-        heartLikeImageView.alpha = 0.2
+        messageLikeImage.alpha = 0.2
   
     }
     
@@ -47,6 +47,9 @@ class CurrentChatCell: UITableViewCell {
         
         currentUser = false
         statusMessage.image = UIImage(named: "SendMessageTimer")
+        messageLikeImage.image = UIImage(named: "likeMessageBlack")
+        messageLikeImage.alpha = 0.2
+        
 //       bottomMessageViewConstrains.constant = 5
         
     }

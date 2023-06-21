@@ -31,6 +31,7 @@ struct CreateButton {
         
         button.backgroundColor = .white
         button.setImage(UIImage(named: "DeletePhoto"), for: .normal)
+        button.imageView?.contentMode = .scaleAspectFit
         button.tintColor = UIColor.gray
         
         button.layer.borderWidth = 0.5
@@ -94,7 +95,7 @@ extension CreateButton {
         return (progressBar,backView,checkMarkImage)
     }
     
-//MARK: Прогресс Бар для Загрузки пользователей
+//MARK: - Прогресс Бар для Загрузки пользователей
     
     func createProgressLoadUsersStartForLaunch(width:CGFloat) -> (backView: UIView,progressBar: UIProgressView,label: UILabel){
         

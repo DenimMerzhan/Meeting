@@ -456,7 +456,8 @@ extension CurrentAuthUser {
             "Body": body,
             "Date": Date().timeIntervalSince1970,
             "MessageRead": false,
-            "MessageSendOnServer": false
+            "MessageSendOnServer": false,
+            "MessageLike": false
         ]) { err in
             if let error = err {
                 print("Ошибка отправки сообщения - \(error)")

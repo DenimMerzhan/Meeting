@@ -132,8 +132,9 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "currentChatCell", for: indexPath) as! CurrentChatCell
         
-        cell.messageLabel.text = structMessagesArr[indexPath.section - 1].messages[indexPath.row].body
-        let sender = structMessagesArr[indexPath.section - 1].messages[indexPath.row].sender
+        let message = structMessagesArr[indexPath.section - 1].messages[indexPath.row]
+        cell.messageLabel.text = message.body
+        let sender = message.sender
         
         cell.selectionStyle = .none
         
@@ -145,6 +146,12 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
         if sender == currentAuthUser.ID {
             
             cell.currentUser = true
+            
+            if message.messageLike {
+                cell.messageBubble.backgroundColor = UIColor(named: "DeleteChatColor")
+            }else {
+                cell.messageBubble.backgroundColor = UIColor(named: "CurrentUserMessageColor")
+            }
             
             label.frame.size.width = widthMessagViewCurrentUser - 37
             let perfectWidthLabel = label.intrinsicContentSize.width
@@ -162,12 +169,22 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
                 cell.statusMessage.image = UIImage(named: "MessageSend")
             }
             
-            cell.messageBubble.backgroundColor = UIColor(named: "CurrentUserMessageColor")
             cell.messageLabel.textAlignment = .right
             cell.messageLabel.textColor = .white
             
         }else {
             label.frame.size.width = widthMessagViewOtherUser - 20 /// 20 -  (10 расстояние Лейбла от левого, 10 растояние от правого края)
+            
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(likeMessageTapped))
+            let ewe = UITapGestureRecognizer(target: <#T##Any?#>, action: <#T##Selector?#>)
+            
+            cell.messageLikeImage.addGestureRecognizer(tapGesture)
+            cell.messageLikeImage.isUserInteractionEnabled = true
+            
+            if message.messageLike {
+                cell.messageLikeImage.image = UIImage(named: "LikeMessageRed")
+                cell.messageLikeImage.alpha = 1
+            }
             
             let perfectWidthLabel = label.intrinsicContentSize.width
             cell.perfectWidthLabel = perfectWidthLabel
@@ -246,9 +263,11 @@ extension ChatUserController {
             
             for data in document.documents {
                 
-                if let body = data["Body"] as? String, let sender = data["Sender"] as? String, let date = data["Date"] as? Double, let messageRed = data["MessageRead"] as? Bool, let messageSendOnServer = data["MessageSendOnServer"] as? Bool {
+                if let body = data["Body"] as? String, let sender = data["Sender"] as? String, let date = data["Date"] as? Double, let messageRed = data["MessageRead"] as? Bool, let messageSendOnServer = data["MessageSendOnServer"] as? Bool, let messageLike = data["MessageLike"] as? Bool {
                     
-                    var message = message(sender: sender, body: body,dateMessage: date)
+                    var message = message(sender: sender, body: body, messagePathOnServer: data.reference.path, dateMessage: date)
+                    
+                    message.messageLike = messageLike
                     if sender == self?.selectedUser.ID && messageRed == false {
                         db.collection("Chats").document(chatID).collection("Messages").document(data.documentID).setData(["MessageRead" : true], merge: true)
                     }
@@ -272,6 +291,10 @@ extension ChatUserController {
         }
         
         self.listener = listener
+    }
+    
+    @objc func likeMessageTapped() {
+        print(<#T##Any...#>)
     }
     
 }

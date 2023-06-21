@@ -112,7 +112,6 @@ extension SettingsPhotoViewController {
         
     func createImage(indexPath: Int,cellWidth: CGFloat,cellHeight: CGFloat) -> UIImageView? { /// Создание фото
         
-        
         if indexPath < currentAuthUser.imageArr.count {
             let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: cellWidth, height: cellHeight))
             imageView.image = currentAuthUser.imageArr[indexPath].image
