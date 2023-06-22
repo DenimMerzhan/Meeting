@@ -28,7 +28,7 @@
                                     <constraint firstAttribute="height" constant="45" id="p1l-ee-1xn"/>
                                 </constraints>
                             </imageView>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Vxp-JK-pGF" userLabel="MessageBuble">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Vxp-JK-pGF" userLabel="MessageBuble" customClass="messageBuble" customModule="Meeting" customModuleProvider="target">
                                 <rect key="frame" x="50" y="0.0" width="230" height="86"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" alignment="bottom" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="5Oq-Kv-1F2">

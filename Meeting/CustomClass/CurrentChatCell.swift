@@ -21,18 +21,6 @@ class CurrentChatCell: UITableViewCell {
     
     var currentUser = Bool()
     
-    var perfectWidthLabel = CGFloat()
-    var pruningMessageBuble: CGFloat {
-        get {
-            if messageBubble.frame.height > 55 {return 0}
-            if currentUser {
-                return messageBubble.frame.width - perfectWidthLabel - 37
-            }else {
-                return messageBubble.frame.width - perfectWidthLabel - 20
-            }
-        }
-    }
-    
     override func awakeFromNib() {
         super.awakeFromNib()
         frame.size.width = UIScreen.main.bounds.width ///  Обновляем ширину ячейки в зависимости от ширины экрана
@@ -56,23 +44,7 @@ class CurrentChatCell: UITableViewCell {
 //       bottomMessageViewConstrains.constant = 5
         
     }
-
-    override func layoutSubviews() {
-                
-        if currentUser {
-            var leftRadius = messageBubble.frame.height / 2
-            if messageBubble.frame.height > 55 {
-                leftRadius = messageBubble.frame.height / 3
-            }
-            messageBubble.roundCorners(topLeft: leftRadius, topRight: 23, bottomLeft: leftRadius, bottomRight: 10,indentFromLeft: pruningMessageBuble,indentFromRight: 0)
-        }else {
-            var rightRadius = messageBubble.frame.height / 2
-            if messageBubble.frame.height > 55 {
-                rightRadius = messageBubble.frame.height / 3
-            }
-            messageBubble.roundCorners(topLeft: 23, topRight: rightRadius, bottomLeft: 10, bottomRight: rightRadius,indentFromLeft: 0,indentFromRight: -pruningMessageBuble)
-        }
-    }
+    
 }
 
 

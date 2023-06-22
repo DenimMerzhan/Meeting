@@ -17,14 +17,12 @@ class ChatUserController: UIViewController {
     @IBOutlet weak var nameUser: UILabel!
     @IBOutlet weak var textField: UITextField!
     
-    var currentAuthUser = CurrentAuthUser(ID: "") {
-        didSet {
-            print("CurrentAuthUSer")
-        }
-    }
+    var currentAuthUser = CurrentAuthUser(ID: "")
     
     var selectedUser = User(ID: "",currentAuthUserID: "")
     var listener: ListenerRegistration?
+    var messageLike = Bool()
+    
     
     var statusSendMessage: String {
         get {
@@ -39,15 +37,15 @@ class ChatUserController: UIViewController {
     
     var messageArr =  [message]() {
         didSet {
-            guard selectedUser.chat != nil else {return}
             selectedUser.chat?.messages = messageArr
-            structMessagesArr = selectedUser.chat!.structuredMessagesByDates
+            structMessagesArr = selectedUser.chat?.structuredMessagesByDates ?? [StructMessages]()
         }
     }
+    
     var structMessagesArr =  [StructMessages]()
     
-    let widthMessagViewCurrentUser = UIScreen.main.bounds.width - 60 /// 45 - ширина аватара, 15 - отступы друг от друга
-    let widthMessagViewOtherUser = UIScreen.main.bounds.width - 90 /// 45 - ширина аватара, 25 - ширина сердечка справа, 20 - отуступы от краев и от друг друга
+//    let widthMessagViewCurrentUser = UIScreen.main.bounds.width - 60 /// 45 - ширина аватара, 15 - отступы друг от друга
+//    let widthMessagViewOtherUser = UIScreen.main.bounds.width - 90 /// 45 - ширина аватара, 25 - ширина сердечка справа, 20 - отуступы от краев и от друг друга
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -138,38 +136,39 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
         
         cell.selectionStyle = .none
         
-        let label = UILabel() /// Лейбл с постоянной высотой 45 и шириной что бы всегда расчитывать одну и ту же идеальную ширину текста для ячейки
-        label.text = cell.messageLabel.text
-        label.font = cell.messageLabel.font
-        label.frame.size.height = 45
-        
         if sender == currentAuthUser.ID {
             
-            cell.currentUser = true
+            let view = cell.messageBubble as! messageBuble
+            view.currentUser = true
+            view.label.text = cell.messageLabel.text
+            view.label.font = cell.messageLabel.font
             
             if message.messagedWritingOnServer {cell.statusMessage.image = UIImage(systemName: "checkmark")}
             if message.messageRead {cell.statusMessage.image = UIImage(named: "MessageSend")}
             if message.messageLike {cell.statusMessage.image = UIImage(named: "LikeMessageRed")}
-            
-            label.frame.size.width = widthMessagViewCurrentUser - 37
-            let perfectWidthLabel = label.intrinsicContentSize.width
-            cell.perfectWidthLabel = perfectWidthLabel
             
             cell.statusMessage.isHidden = false
             cell.heartView.isHidden = true
             cell.avatar.image = UIImage()
             cell.messageBubble.backgroundColor = UIColor(named: "CurrentUserMessageColor")
 
-            
             cell.messageLabel.textAlignment = .right
             cell.messageLabel.textColor = .white
             
-        }else {
-            label.frame.size.width = widthMessagViewOtherUser - 20 /// 20 -  (10 расстояние Лейбла от левого, 10 растояние от правого края)
             
-            let buttonAction = UIAction { action in
+        }else {
+            
+            
+            let view = cell.messageBubble as! messageBuble
+            view.currentUser = false
+            view.label.text = cell.messageLabel.text
+            view.label.font = cell.messageLabel.font
+            
+            let buttonAction = UIAction { [weak self] action in
                 print("Action")
                 message.messagePathOnServer.setData(["MessageLike" : !message.messageLike],merge: true)
+                self?.messageLike = true
+                print("ActionEnd")
             }
             cell.messageLikeButton.addAction(buttonAction, for: .touchUpInside)
         
@@ -178,9 +177,6 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
                 cell.messageLikeButton.tintColor = UIColor(named: "DeleteChatColor")
                 cell.messageLikeButton.alpha = 1
             }
-            
-            let perfectWidthLabel = label.intrinsicContentSize.width
-            cell.perfectWidthLabel = perfectWidthLabel
             
             cell.heartView.isHidden = false
             cell.statusMessage.isHidden = true
@@ -247,8 +243,6 @@ extension ChatUserController {
             
             if let error = Error {print("Ошибка прослушивания снимков с сервера - \(error)"); return}
             
-            print("LoadMessage")
-            
             guard let document = QuerySnapshot else {return}
             
             if document.isEmpty {return} /// Если документ пустой значит чата не начался
@@ -275,11 +269,19 @@ extension ChatUserController {
             }
             
             DispatchQueue.main.async {
+                
+//                if document.metadata.isFromCache == false && self?.messageLike == false {
+//                    
+//                    let sectionNumber = (self?.tableView.numberOfSections ?? 1) - 1
+//                    let row = (self?.structMessagesArr.last?.messages.count ?? 1) - 1
+//                    let indexPath = IndexPath(row: row, section: sectionNumber)
+//                    self?.tableView.scrollToRow(at: indexPath, at: .top, animated: false)
+//                    
+//                }else if document.metadata.isFromCache == false {
+//                    self?.messageLike = false
+//                }
+                
                 self?.tableView.reloadData()
-                let sectionNumber = (self?.tableView.numberOfSections ?? 1) - 1
-                let row = (self?.structMessagesArr.last?.messages.count ?? 1) - 1
-                let indexPath = IndexPath(row: row, section: sectionNumber)
-                self?.tableView.scrollToRow(at: indexPath, at: .top, animated: false)
             }
         }
         

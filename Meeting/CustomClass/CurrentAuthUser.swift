@@ -67,24 +67,24 @@ class CurrentAuthUser {
             let docSnap = try await collection.getDocument()
             if let dataDoc = docSnap.data() {
                 
-                if let name = dataDoc["Name"] as? String ,let age = dataDoc["Age"] as? Int {
-                    
-                    self.name = name
-                    self.age = age
-                    
-                    if let likeArr = dataDoc["LikeArr"] as? [String] {self.likeArr = likeArr}
-                    if let disLikeArr = dataDoc["DisLikeArr"] as? [String] {self.disLikeArr = disLikeArr}
-                    if let superLikeArr = dataDoc["SuperLikeArr"] as? [String] {self.superLikeArr = superLikeArr} /// Суперлайков может и не быть, поэтому не ставим guard
-                    
-                    for data in dataDoc { /// Загрузка ссылок на фото в Storage
-                        if data.key.contains("photoImage") {
-                            if let urlPhoto = data.value as? String {
-                                self.urlPhotoArr.append(urlPhoto)
-                            }
-                        }
-                    }
-                }else {
-                    print("Ошибка в преобразование данных о текущем пользователе")}
+//                if let name = dataDoc["Name"] as? String ,let age = dataDoc["Age"] as? Int {
+//                    
+//                    self.name = name
+//                    self.age = age
+//                    
+//                    if let likeArr = dataDoc["LikeArr"] as? [String] {self.likeArr = likeArr}
+//                    if let disLikeArr = dataDoc["DisLikeArr"] as? [String] {self.disLikeArr = disLikeArr}
+//                    if let superLikeArr = dataDoc["SuperLikeArr"] as? [String] {self.superLikeArr = superLikeArr} /// Суперлайков может и не быть, поэтому не ставим guard
+//                    
+//                    for data in dataDoc { /// Загрузка ссылок на фото в Storage
+//                        if data.key.contains("photoImage") {
+//                            if let urlPhoto = data.value as? String {
+//                                self.urlPhotoArr.append(urlPhoto)
+//                            }
+//                        }
+//                    }
+//                }else {
+//                    print("Ошибка в преобразование данных о текущем пользователе")}
             }
             
         }catch{
