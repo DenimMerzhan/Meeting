@@ -19,6 +19,8 @@ class ChatUserController: UIViewController {
     
     var currentAuthUser = CurrentAuthUser(ID: "")
     
+    var isFirstLaunch = true
+    
     var selectedUser = User(ID: "",currentAuthUserID: "")
     var listener: ListenerRegistration?
     var messageLike = Bool()
@@ -35,12 +37,7 @@ class ChatUserController: UIViewController {
         }
     }
     
-    var messageArr =  [message]() {
-        didSet {
-            selectedUser.chat?.messages = messageArr
-            structMessagesArr = selectedUser.chat?.structuredMessagesByDates ?? [StructMessages]()
-        }
-    }
+    var messageArr =  [message]()
     
     var structMessagesArr =  [StructMessages]()
     
@@ -131,18 +128,17 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
         let cell = tableView.dequeueReusableCell(withIdentifier: "currentChatCell", for: indexPath) as! CurrentChatCell
         
         let message = structMessagesArr[indexPath.section - 1].messages[indexPath.row]
+        cell.messageLabel.text = message.body
         let sender = message.sender
         let view = cell.messageBubble as! messageBuble
         
-        view.labelForCalculate.text = cell.messageLabel.text
-        view.labelForCalculate.font = cell.messageLabel.font
-        
-        cell.messageLabel.text = message.body
         cell.selectionStyle = .none
         
         if sender == currentAuthUser.ID {
             
             view.isCurrentUser = true
+            view.labelForCalculate.text = cell.messageLabel.text
+            view.labelForCalculate.font = cell.messageLabel.font
             
             if message.messagedWritingOnServer {cell.statusMessage.image = UIImage(systemName: "checkmark")}
             if message.messageRead {cell.statusMessage.image = UIImage(named: "MessageSend")}
@@ -158,8 +154,10 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
             
             
         }else {
-            
+        
             view.isCurrentUser = false
+            view.labelForCalculate.text = cell.messageLabel.text
+            view.labelForCalculate.font = cell.messageLabel.font
             
             let buttonAction = UIAction { [weak self] action in
                 print("Action")
@@ -266,19 +264,24 @@ extension ChatUserController {
             }
             
             DispatchQueue.main.async {
+                guard let newMessageArr = self?.messageArr else {return}
+                guard let oldMessageArr = self?.selectedUser.chat?.messages else {return}
                 
-//                if document.metadata.isFromCache == false && self?.messageLike == false {
-//                    
-//                    let sectionNumber = (self?.tableView.numberOfSections ?? 1) - 1
-//                    let row = (self?.structMessagesArr.last?.messages.count ?? 1) - 1
-//                    let indexPath = IndexPath(row: row, section: sectionNumber)
-//                    self?.tableView.scrollToRow(at: indexPath, at: .top, animated: false)
-//                    
-//                }else if document.metadata.isFromCache == false {
-//                    self?.messageLike = false
-//                }
+                if newMessageArr.count > oldMessageArr.count || self?.isFirstLaunch ?? true { /// Если архив сообщений увеличился или это первый запуск то прокручиваем вниз
+                    
+                    self?.structMessagesArr = self?.selectedUser.chat?.structuredMessagesByDates ?? [StructMessages]()
+                    self?.tableView.reloadData()
+                    
+                    let sectionNumber = (self?.tableView.numberOfSections ?? 1) - 1
+                    let row = (self?.structMessagesArr.last?.messages.count ?? 1) - 1
+                    let indexPath = IndexPath(row: row, section: sectionNumber)
+                    self?.tableView.scrollToRow(at: indexPath, at: .top, animated: false)
+                }
                 
+                self?.selectedUser.chat?.messages = newMessageArr
+                self?.structMessagesArr = self?.selectedUser.chat?.structuredMessagesByDates ?? [StructMessages]()
                 self?.tableView.reloadData()
+                self?.isFirstLaunch = false
             }
         }
         
