@@ -14,12 +14,8 @@ class CurrentChatCell: UITableViewCell {
     @IBOutlet weak var messageBubble: UIView!
     @IBOutlet weak var messageLabel: UILabel!
     @IBOutlet weak var statusMessage: UIImageView!
-    
     @IBOutlet weak var messageLikeButton: UIButton!
-    
     @IBOutlet weak var heartView: UIView!
-    
-    var currentUser = Bool()
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -34,8 +30,9 @@ class CurrentChatCell: UITableViewCell {
     
     override func prepareForReuse() { /// Подготовка перед повторным использованием
         
+        messageBubble.setNeedsDisplay()
+        
         messageLikeButton.removeTarget(nil, action: nil, for: .allEvents)
-        currentUser = false
         statusMessage.image = UIImage(named: "SendMessageTimer")
         messageLikeButton.setImage(UIImage(named: "likeMessageBlack"), for: .normal)
         messageLikeButton.alpha = 0.2

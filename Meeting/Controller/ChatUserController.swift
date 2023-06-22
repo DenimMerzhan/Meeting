@@ -131,17 +131,18 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
         let cell = tableView.dequeueReusableCell(withIdentifier: "currentChatCell", for: indexPath) as! CurrentChatCell
         
         let message = structMessagesArr[indexPath.section - 1].messages[indexPath.row]
-        cell.messageLabel.text = message.body
         let sender = message.sender
+        let view = cell.messageBubble as! messageBuble
         
+        view.labelForCalculate.text = cell.messageLabel.text
+        view.labelForCalculate.font = cell.messageLabel.font
+        
+        cell.messageLabel.text = message.body
         cell.selectionStyle = .none
         
         if sender == currentAuthUser.ID {
             
-            let view = cell.messageBubble as! messageBuble
-            view.currentUser = true
-            view.label.text = cell.messageLabel.text
-            view.label.font = cell.messageLabel.font
+            view.isCurrentUser = true
             
             if message.messagedWritingOnServer {cell.statusMessage.image = UIImage(systemName: "checkmark")}
             if message.messageRead {cell.statusMessage.image = UIImage(named: "MessageSend")}
@@ -158,11 +159,7 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
             
         }else {
             
-            
-            let view = cell.messageBubble as! messageBuble
-            view.currentUser = false
-            view.label.text = cell.messageLabel.text
-            view.label.font = cell.messageLabel.font
+            view.isCurrentUser = false
             
             let buttonAction = UIAction { [weak self] action in
                 print("Action")

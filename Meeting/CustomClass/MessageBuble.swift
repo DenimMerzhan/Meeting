@@ -9,28 +9,28 @@ import UIKit
 
 class messageBuble: UIView {
     
-    var currentUser = Bool()
-    var perfectWidthLabel = CGFloat()
-    var label = UILabel(frame: CGRect(x: 0, y: 0, width: 0, height: 45))
-    
+    var isCurrentUser = Bool()
+    var labelForCalculate = UILabel(frame: CGRect(x: 0, y: 0, width: 0, height: 45))
     
     override func draw(_ rect: CGRect) {
-        if currentUser {
-            label.frame.size.width = self.frame.width - 37
+        
+        if isCurrentUser {
+            labelForCalculate.frame.size.width = self.frame.width - 37
         }else {
-            label.frame.size.width = self.frame.size.width - 20
+            labelForCalculate.frame.size.width = self.frame.size.width - 20
         }
+        
         var indentFromLeft: CGFloat = 0
         var indentFromRight: CGFloat = 0
         
         if self.frame.height < 55 {
-            indentFromLeft =  self.frame.width  - label.intrinsicContentSize.width - 37
-            indentFromRight =  self.frame.width  - label.intrinsicContentSize.width - 20
+            indentFromLeft =  self.frame.width  - labelForCalculate.intrinsicContentSize.width - 37 /// 37 ( 12 размер статуса сообщения, 20 расстояние в сткэ вию, 5 расстояние между лейбл и статусом сообщения
+            indentFromRight = -(self.frame.width  - labelForCalculate.intrinsicContentSize.width - 20)
         }
         
         var maskPath = UIBezierPath()
         
-        if currentUser {
+        if isCurrentUser {
             
             var leftRadius = self.frame.height / 2
             if self.frame.height > 55 {
@@ -48,6 +48,7 @@ class messageBuble: UIView {
             if self.frame.height > 55 {
                 rightRadius = self.frame.height / 3
             }
+            
             let topLeftRadius = CGSize(width: 23, height: 23)
             let topRightRadius = CGSize(width: rightRadius, height: rightRadius)
             let bottomLeftRadius = CGSize(width: 10, height: 10)
@@ -55,6 +56,7 @@ class messageBuble: UIView {
             
             maskPath = UIBezierPath(shouldRoundRect: bounds, topLeftRadius: topLeftRadius, topRightRadius: topRightRadius, bottomLeftRadius: bottomLeftRadius, bottomRightRadius: bottomRightRadius, indentFromLeft: 0, indentFromRight: indentFromRight)
         }
+       
         let shape = CAShapeLayer()
         shape.path = maskPath.cgPath
         layer.mask = shape

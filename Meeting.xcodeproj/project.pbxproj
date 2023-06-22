@@ -133,7 +133,7 @@
 				CF069DA129EC2D3D005ED378 /* SceneDelegate.swift */,
 				CF8C3E172A3B350500B59026 /* Extension */,
 				CF65ED7E2A277E0600820D6B /* Protocol */,
-				CFD689202A0E09D1003EB21A /* Test */,
+				CFD689202A0E09D1003EB21A /* AddUserToServer */,
 				CF933C312A0CD67A0015E99B /* CustomEnum */,
 				CFA140DB2A00E24300DD384B /* CustomStruct */,
 				CFA140DA2A00E21600DD384B /* CustomClass */,
@@ -200,12 +200,12 @@
 			path = CustomStruct;
 			sourceTree = "<group>";
 		};
-		CFD689202A0E09D1003EB21A /* Test */ = {
+		CFD689202A0E09D1003EB21A /* AddUserToServer */ = {
 			isa = PBXGroup;
 			children = (
 				CFCD0F9B2A0A887E00C17AFC /* TestFile.swift */,
 			);
-			path = Test;
+			path = AddUserToServer;
 			sourceTree = "<group>";
 		};
 		CFFD03E129F90FAD000732AC /* Controller */ = {
