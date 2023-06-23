@@ -11,17 +11,11 @@ class CurrentChatCell: UITableViewCell {
 
 
     @IBOutlet weak var avatar: UIImageView!
-    
-    @IBOutlet weak var messageView: UIView!
+    @IBOutlet weak var messageBubble: UIView!
     @IBOutlet weak var messageLabel: UILabel!
-    @IBOutlet weak var leftMessageViewConstrains: NSLayoutConstraint!
-    @IBOutlet weak var rightMessageViewConstrains: NSLayoutConstraint!
-    @IBOutlet weak var likeButton: UIImageView!
-    @IBOutlet weak var bottomMessageViewConstrains: NSLayoutConstraint!
-    @IBOutlet weak var heartLikeView: UIView!
-    
-    
-    @IBOutlet weak var rightConstrainsToSuperView: NSLayoutConstraint!
+    @IBOutlet weak var statusMessage: UIImageView!
+    @IBOutlet weak var messageLikeButton: UIButton!
+    @IBOutlet weak var heartView: UIView!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -30,15 +24,26 @@ class CurrentChatCell: UITableViewCell {
         
         avatar.layer.cornerRadius = avatar.frame.width / 2
         avatar.clipsToBounds = true
-        messageView.layer.cornerRadius = messageView.frame.height /  5
-        likeButton.alpha = 0.4
-        
+        messageLikeButton.alpha = 0.2
+  
     }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
+    
+    override func prepareForReuse() { /// Подготовка перед повторным использованием
+        
+        messageBubble.setNeedsDisplay()
+        
+        messageLikeButton.removeTarget(nil, action: nil, for: .allEvents)
+        statusMessage.image = UIImage(named: "SendMessageTimer")
+        messageLikeButton.setImage(UIImage(named: "likeMessageBlack"), for: .normal)
+        messageLikeButton.alpha = 0.2
+        messageLikeButton.tintColor = .gray
+        
+//       bottomMessageViewConstrains.constant = 5
+        
     }
     
 }
+
+
+
+

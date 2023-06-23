@@ -6,19 +6,36 @@
 //
 
 import Foundation
+import FirebaseFirestore
 
-struct chat {
-    
-    let ID: String
-    var messages =  [message]()
-    
-    init(ID: String) {
-        self.ID = ID
-    }
-}
 
 struct message {
+    
     var sender: String
     var body: String
+    var messagePathOnServer: DocumentReference
+    
+    var messagedWritingOnServer = Bool()
+    var messageRead = Bool()
+    var dateMessage: Double
+    var messageLike = false
+    
+    var timeMessage: String {
+        get {
+            let dateFormatter = DateFormatter()
+            let dateMessage = Date(timeIntervalSince1970: dateMessage)
+            dateFormatter.dateFormat = "HH:mm"
+            return dateFormatter.string(from: dateMessage)
+        }
+    }
+    
+    var dateMessageToCompare: String {
+        get {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyy, MMM, EEEE"
+            let date = Date(timeIntervalSince1970: dateMessage)
+            return dateFormatter.string(from: date)
+        }
+    }
 }
 

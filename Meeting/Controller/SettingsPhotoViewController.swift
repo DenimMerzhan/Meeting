@@ -22,7 +22,7 @@ class SettingsPhotoViewController: UIViewController {
     var defaults = UserDefaults.standard
     var index = IndexPath()
     
-    var currentAuthUser = CurrentAuthUser(ID: "dwdw")
+    var currentAuthUser = CurrentAuthUser(ID: "")
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,15 +32,13 @@ class SettingsPhotoViewController: UIViewController {
         imagePicker.delegate = self
         imagePicker.allowsEditing = false /// Спрашивает может ли пользователь редактикровать фото
         imagePicker.sourceType = .photoLibrary
-
         
-        collectionPhotoView.register(CollectionPhotoCell.self, forCellWithReuseIdentifier: CollectionPhotoCell.identifier)
+        collectionPhotoView.register(SettingsPhotoCell.self, forCellWithReuseIdentifier: SettingsPhotoCell.identifier)
     }
     
     
     @IBAction func donePressed(_ sender: UIButton) {
         defaults.set(Float(currentAuthUser.imageArr.count) / 9 , forKey: "ProfileFilingScale") /// Записываем данные о количествах фото текущего пользователя
-        
         self.dismiss(animated: true)
     }
     
@@ -59,10 +57,9 @@ extension SettingsPhotoViewController : UICollectionViewDataSource, UICollection
         return 9
     }
     
-    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionPhotoCell.identifier, for: indexPath) as! CollectionPhotoCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SettingsPhotoCell.identifier, for: indexPath) as! SettingsPhotoCell
         cell.layer.cornerRadius = 10
         cell.layer.masksToBounds = true
         
@@ -115,7 +112,6 @@ extension SettingsPhotoViewController {
         
     func createImage(indexPath: Int,cellWidth: CGFloat,cellHeight: CGFloat) -> UIImageView? { /// Создание фото
         
-        
         if indexPath < currentAuthUser.imageArr.count {
             let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: cellWidth, height: cellHeight))
             imageView.image = currentAuthUser.imageArr[indexPath].image
@@ -146,7 +142,7 @@ extension SettingsPhotoViewController {
     }
     
     
-    func createDeleteButton(x: CGFloat, y: CGFloat,index: Int,cell:CollectionPhotoCell) -> UIButton {
+    func createDeleteButton(x: CGFloat, y: CGFloat,index: Int,cell:SettingsPhotoCell) -> UIButton {
         let buttonDelete = CreateButton().createDeleteButtonPhotoSetings(x: x, y: y)
         
         let action = UIAction { [unowned self] action in

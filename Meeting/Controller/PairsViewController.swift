@@ -24,9 +24,9 @@ class PairsViewController: UIViewController {
     
     var currentCard: CardView?
     var nextCard = CardModel().createEmptyCard()
-        
+    
     var cardModel = CardModel()
-    var currentAuthUser = CurrentAuthUser(ID: "82KqIldcFx")
+    var currentAuthUser = CurrentAuthUser(ID:"+79817550000")
     
     var progressViewLoadUsers = CreateButton().createProgressLoadUsersStartForLaunch(width: 0)
     var timer = Timer()
@@ -44,7 +44,7 @@ class PairsViewController: UIViewController {
     var usersArr =  [User]() {
         didSet {
             
-//            print("usersArr.count - \(usersArr.count)")
+            //            print("usersArr.count - \(usersArr.count)")
             
             if usersArr.count < 50 && currentAuthUser.numberPotenialPairsOnServer > 0 && currentAuthUser.newUsersLoading == false {
                 print("Загрузка новых пользователей")
@@ -54,12 +54,12 @@ class PairsViewController: UIViewController {
                 
             }
             if currentCard?.ID == "Loading_Card" && usersArr.count > 3 {
-               
+                
                 currentCard?.removeFromSuperview()
                 nextCard.removeFromSuperview()
                 createStartCard()
             }else if currentCard?.ID == "Loading_Card" && usersArr.count > 0 && currentAuthUser.newUsersLoading == false {
-               
+                
                 currentCard?.removeFromSuperview()
                 nextCard.removeFromSuperview()
                 createStartCard()
@@ -86,23 +86,16 @@ class PairsViewController: UIViewController {
         
         
         Task {
-            
-            if await loadCurrentUsersData() {
-                await loadNewUsers(numberRequsetedUsers: 2)
-                startSettings()
-            }else{
-                print("Ошибка загрузки текущего пользователя")
-            }
+            await currentAuthUser.loadMetadata()
+            await currentAuthUser.loadPhoto()
+//            await loadNewUsers(numberRequsetedUsers: 1)
+            startSettings()
         }
-
-    }
-    
-    
-    override func viewDidAppear(_ animated: Bool) {
         
     }
     
-//MARK: -  Одна из кнопок лайка была нажата
+    
+    //MARK: -  Одна из кнопок лайка была нажата
     
     @IBAction func buttonPressed(_ sender: UIButton) {
         
@@ -130,22 +123,22 @@ class PairsViewController: UIViewController {
             self.currentCard!.transform = CGAffineTransform(rotationAngle: abs(differenceX) * 0.002)
             self.currentCard!.alpha = 0
             self.loadNewPeople(card: self.currentCard!)
-           
+            
         }
         
     }
     
-//MARK: - Пользователь тапнул по фото
+    //MARK: - Пользователь тапнул по фото
     
     
     @IBAction func cardTap(_ sender: UITapGestureRecognizer) {
         if let index =  currentCard!.refreshPhoto(sender, indexCurrentImage: indexCurrentImage) {
             indexCurrentImage = index
         }
-}
+    }
     
-//MARK: -  Карта была нажата пальцем
-
+    //MARK: -  Карта была нажата пальцем
+    
     @IBAction func cardsDrags(_ sender: UIPanGestureRecognizer) {
         
         
@@ -161,7 +154,7 @@ class PairsViewController: UIViewController {
             card.transform = CGAffineTransform(rotationAngle: abs(xFromCenter) * 0.002) /// Поворачиваем View, внутри  rotationAngle радианты а не градусы
             
             
-//MARK: -   Когда пользователь отпустил палец
+            //MARK: -   Когда пользователь отпустил палец
             
             if sender.state == UIGestureRecognizer.State.ended { ///  Когда пользователь отпустил палец
                 
@@ -182,7 +175,7 @@ class PairsViewController: UIViewController {
                         card.alpha = 0
                         self.currentAuthUser.disLikeArr.append(card.ID)
                         self.loadNewPeople(card: card)
-                       
+                        
                     }
                 }else if yFromCenter < -250 { /// Супер Лайк
                     
@@ -243,7 +236,7 @@ extension PairsViewController {
         }
         
         if currentCard?.ID == "Stop_Card"  {
-
+            
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 card.removeFromSuperview()
             }
@@ -284,39 +277,22 @@ extension PairsViewController {
     func loadNewUsers(numberRequsetedUsers: Int) async{
         
         currentAuthUser.newUsersLoading = true
-                
+        
         if let newUsersID = await currentAuthUser.loadNewPotenialPairs(countUser: numberRequsetedUsers,usersArr: usersArr) {
             
             for ID in newUsersID {
                 
-                var newUser = User(ID: ID)
+                let newUser = User(ID: ID,currentAuthUserID: currentAuthUser.ID)
                 await newUser.loadMetaData()
-
-                if let urlFilesArr = await FirebaseStorageModel().loadPhotoToFile(urlPhotoArr: newUser.urlPhotoArr, userID: ID,currentUser: false) {
-                    newUser.loadPhotoFromDirectory(urlFileArr: urlFilesArr)
-                    if ID == newUsersID.last {
-                        currentAuthUser.newUsersLoading = false
-                    }
-                    usersArr.append(newUser)
-                    progressViewLoadUsers.progressBar.progress += 0.05
+                await newUser.loadPhoto(avatar: false)
+                
+                if ID == newUsersID.last {
+                    currentAuthUser.newUsersLoading = false
+                }
+                usersArr.append(newUser)
+                progressViewLoadUsers.progressBar.progress += 0.05
             }
-        }
             currentAuthUser.newUsersLoading = false
-    }
-}
-//MARK: -  Загрузка данных о текущем авторизованном пользователе
-    
-    func loadCurrentUsersData() async -> Bool {
-        
-        if await currentAuthUser.loadMetadata() {
-            
-            if let urlArrFiles = await FirebaseStorageModel().loadPhotoToFile(urlPhotoArr: currentAuthUser.urlPhotoArr, userID: currentAuthUser.ID,currentUser: true) {
-                currentAuthUser.loadPhotoFromDirectory(urlFileArr: urlArrFiles)
-            }
-            print("количество фото текущего пользователя ", currentAuthUser.imageArr.count)
-            return true
-        }else {
-            return false
         }
     }
 }
@@ -328,7 +304,7 @@ extension PairsViewController {
         
         timer.invalidate()
         progressViewLoadUsers.progressBar.setProgress(1, animated: true)
-       
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             
             self.progressViewLoadUsers.progressBar.removeFromSuperview()
@@ -339,7 +315,7 @@ extension PairsViewController {
             self.tabBarController?.tabBar.clipsToBounds = true
             self.tabBarController?.tabBar.backgroundColor = .white
             self.tabBarController?.tabBar.isHidden = false
-    
+            
             if self.usersArr.count > 0 {
                 self.createStartCard()
             }else {
@@ -363,7 +339,7 @@ extension PairsViewController {
         
         stackViewButton.isHidden = false
     }
- 
+    
     func fireTimer(){
         
         progressViewLoadUsers.progressBar.progress += 0.005
@@ -392,12 +368,10 @@ extension PairsViewController  {
         }
     }
     
-    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let destanationVC = segue.destination as? MatchController else {return}
         guard let newMatch = basketUser.first(where: {$0.ID == matchID }) else {return}
-        currentAuthUser.matchArr.append(newMatch)
-        currentAuthUser.chatArr.append(chat(ID: newMatch.ID))
+        destanationVC.currentAuthUser = currentAuthUser
         destanationVC.newMatch = newMatch
         destanationVC.delegate = self
     }
@@ -405,12 +379,12 @@ extension PairsViewController  {
 //MARK: - Переход с MATCH Сontroller с помощью делегата
 
 extension PairsViewController: passDataDelegate {
-    func goToMatchVC( matchController: UIViewController?,matchUser:User) {
-     
+    func goToMatchVC( matchController: UIViewController?,matchUser:User,currentAuthUser:CurrentAuthUser) {
+        
         guard let vc = self.tabBarController?.viewControllers![1] as? ChatViewController else {return}
         guard let matchVC = matchController as? MatchController else {return}
         matchVC.delegate = vc
-        matchVC.delegate?.goToMatchVC(matchController: nil, matchUser: matchUser)
+        matchVC.delegate?.goToMatchVC(matchController: nil, matchUser: matchUser,currentAuthUser: currentAuthUser)
         tabBarController?.selectedIndex = 1
     }
 }
