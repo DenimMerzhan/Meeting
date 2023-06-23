@@ -28,21 +28,16 @@ class ChatUserController: UIViewController {
     
     var statusSendMessage: String {
         get {
-            for messages in messageArr {
+            for messages in chat.messages {
                 if messages.messagedWritingOnServer == false {return "Идет отправка..."}
             }
-            guard let messageRead = messageArr.last?.messageRead else {return "Отправлено"}
+            guard let messageRead = chat.messages.last?.messageRead else {return "Отправлено"}
             if messageRead {return "Прочитанно"}
             return "Отправлено"
         }
     }
     
-    var messageArr =  [message]()
-    
-    var structMessagesArr =  [StructMessages]()
-    
-//    let widthMessagViewCurrentUser = UIScreen.main.bounds.width - 60 /// 45 - ширина аватара, 15 - отступы друг от друга
-//    let widthMessagViewOtherUser = UIScreen.main.bounds.width - 90 /// 45 - ширина аватара, 25 - ширина сердечка справа, 20 - отуступы от краев и от друг друга
+    var chat =  Chat(ID: "")
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -117,27 +112,27 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {return 0}
-        return structMessagesArr[section - 1].messages.count
+        return chat.structuredMessagesByDates[section - 1].messages.count
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return structMessagesArr.count + 1
+        return chat.structuredMessagesByDates.count + 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "currentChatCell", for: indexPath) as! CurrentChatCell
         
-        let message = structMessagesArr[indexPath.section - 1].messages[indexPath.row]
-        cell.messageLabel.text = message.body
+        let message = chat.structuredMessagesByDates[indexPath.section - 1].messages[indexPath.row]
         let sender = message.sender
         let view = cell.messageBubble as! messageBuble
         
         cell.selectionStyle = .none
+        cell.messageLabel.text = message.body
         
         if sender == currentAuthUser.ID {
             
             view.isCurrentUser = true
-            view.labelForCalculate.text = cell.messageLabel.text
+            view.labelForCalculate.text = cell.messageLabel.text /// Передаем текст и шрифт для расчета идеальной ширины лейбла
             view.labelForCalculate.font = cell.messageLabel.font
             
             if message.messagedWritingOnServer {cell.statusMessage.image = UIImage(systemName: "checkmark")}
@@ -182,7 +177,7 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
             
         }
         
-        if  indexPath.row + 1 < structMessagesArr[indexPath.section - 1].messages.count && structMessagesArr[indexPath.section - 1].messages[indexPath.row + 1].sender == sender {
+        if  indexPath.row + 1 < chat.structuredMessagesByDates[indexPath.section - 1].messages.count && chat.structuredMessagesByDates[indexPath.section - 1].messages[indexPath.row + 1].sender == sender {
             cell.avatar.image = UIImage()
         }
         
@@ -199,14 +194,14 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        guard let lastMessage = messageArr.last else {return nil}
+        guard let lastMessage = chat.messages.last else {return nil}
         if lastMessage.sender != currentAuthUser.ID {return nil}
         return section == tableView.numberOfSections - 1 ? viewForFooterSection(section: section) : nil
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
-        let timeMessage = structMessagesArr[indexPath.section - 1].messages[indexPath.row].timeMessage
+        let timeMessage = chat.structuredMessagesByDates[indexPath.section - 1].messages[indexPath.row].timeMessage
         let image = createTimeMessageImage(timeMessage: timeMessage)
         let deleteAction = UIContextualAction(style: .normal, title: "") { action, view, completionHandler in
             completionHandler(true)
@@ -241,7 +236,7 @@ extension ChatUserController {
             guard let document = QuerySnapshot else {return}
             
             if document.isEmpty {return} /// Если документ пустой значит чата не начался
-            self?.messageArr.removeAll()
+            self?.chat.messages.removeAll()
             
             for data in document.documents {
                 
@@ -259,27 +254,27 @@ extension ChatUserController {
                     
                     message.messagedWritingOnServer = messageSendOnServer
                     message.messageRead = messageRed
-                    self?.messageArr.append(message)
+                    self?.chat.messages.append(message)
                 }
             }
             
             DispatchQueue.main.async {
-                guard let newMessageArr = self?.messageArr else {return}
+                
+                guard let newMessageArr = self?.chat.messages else {return}
                 guard let oldMessageArr = self?.selectedUser.chat?.messages else {return}
                 
                 if newMessageArr.count > oldMessageArr.count || self?.isFirstLaunch ?? true { /// Если архив сообщений увеличился или это первый запуск то прокручиваем вниз
                     
-                    self?.structMessagesArr = self?.selectedUser.chat?.structuredMessagesByDates ?? [StructMessages]()
-                    self?.tableView.reloadData()
+                    if newMessageArr.count == 0 {return}
                     
+                    self?.tableView.reloadData()
                     let sectionNumber = (self?.tableView.numberOfSections ?? 1) - 1
-                    let row = (self?.structMessagesArr.last?.messages.count ?? 1) - 1
+                    let row = (self?.chat.structuredMessagesByDates.last?.messages.count ?? 1) - 1
                     let indexPath = IndexPath(row: row, section: sectionNumber)
                     self?.tableView.scrollToRow(at: indexPath, at: .top, animated: false)
                 }
                 
-                self?.selectedUser.chat?.messages = newMessageArr
-                self?.structMessagesArr = self?.selectedUser.chat?.structuredMessagesByDates ?? [StructMessages]()
+                self?.selectedUser.chat = self?.chat
                 self?.tableView.reloadData()
                 self?.isFirstLaunch = false
             }
@@ -321,8 +316,8 @@ extension ChatUserController {
         
         if section == 0 {
             label.text = "Вы образовали пару 19.04.23"
-        }else if section <= structMessagesArr.count {
-            let text = structMessagesArr[section - 1].dateForHeadersAndFooters
+        }else if section <= chat.structuredMessagesByDates.count {
+            let text = chat.structuredMessagesByDates[section - 1].dateForHeadersAndFooters
             label.attributedText = text
         }
         return view

@@ -20,8 +20,8 @@ class messageBuble: UIView {
             labelForCalculate.frame.size.width = self.frame.size.width - 20
         }
         
-        var indentFromLeft: CGFloat = 0
-        var indentFromRight: CGFloat = 0
+        var indentFromLeft: CGFloat = 0 /// Обрезка слева   
+        var indentFromRight: CGFloat = 0 /// Обрезка справа
         
         if self.frame.height < 55 {
             indentFromLeft =  self.frame.width  - labelForCalculate.intrinsicContentSize.width - 37 /// 37 ( 12 размер статуса сообщения, 20 расстояние в сткэ вию, 5 расстояние между лейбл и статусом сообщения

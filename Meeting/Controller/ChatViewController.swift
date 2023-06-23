@@ -215,11 +215,7 @@ extension ChatViewController {
         guard let user = selectedUser else {return}
         guard let authUser = currentAuthUser else {return}
         guard let chat = user.chat else {return}
-
-        if chat.messages.count > 0 {
-            destanationVC.messageArr = chat.messages
-            destanationVC.structMessagesArr =  chat.structuredMessagesByDates
-        }
+        destanationVC.chat = chat
         destanationVC.selectedUser = user
         destanationVC.currentAuthUser = authUser
     }
