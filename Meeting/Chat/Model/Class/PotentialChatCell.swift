@@ -12,7 +12,7 @@ class PotentialChatCell: UICollectionViewCell {
     
 
 
-    @IBOutlet weak var avatar: ChatAvatar!
+    @IBOutlet weak var avatar: DefaultLoadPhoto!
     @IBOutlet weak var name: UILabel!
     
     

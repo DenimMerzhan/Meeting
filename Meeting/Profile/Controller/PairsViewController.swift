@@ -72,7 +72,6 @@ class PairsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
         timer = Timer.scheduledTimer(withTimeInterval: 3, repeats: true) { timer in
             self.fireTimer()
         }

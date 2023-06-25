@@ -10,7 +10,7 @@ import UIKit
 class SettingsPhotoCell: UICollectionViewCell {
     
     static let identifier = "PhotoCell"
-    var photoImage =  UIImageView()
+    var photoImage =  DefaultLoadPhoto(frame: .zero)
     var dottedBorder = CAShapeLayer()
     
     override init(frame: CGRect) {
@@ -19,23 +19,19 @@ class SettingsPhotoCell: UICollectionViewCell {
         
         dottedBorder = createDottedLine()
         contentView.layer.addSublayer(dottedBorder)
+        photoImage.frame = contentView.bounds
+        dottedBorder.frame = contentView.bounds
+        photoImage.loadIndicator.removeFromSuperview()
+        photoImage.setupView()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        photoImage.frame = contentView.bounds
-        dottedBorder.frame = contentView.bounds
-        
-    }
-    
     override func prepareForReuse() {
         photoImage.image = nil
     }
-    
     
     func createDottedLine() -> CAShapeLayer { /// Создание пунткирной границы
         

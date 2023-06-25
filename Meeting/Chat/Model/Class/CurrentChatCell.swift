@@ -11,7 +11,7 @@ class CurrentChatCell: UITableViewCell {
 
 
 
-    @IBOutlet weak var avatar: ChatAvatar!
+    @IBOutlet weak var avatar: DefaultLoadPhoto!
     @IBOutlet weak var messageBubble: UIView!
     @IBOutlet weak var messageLabel: UILabel!
     @IBOutlet weak var statusMessage: UIImageView!

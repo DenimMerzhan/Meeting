@@ -62,15 +62,24 @@ extension SettingsPhotoViewController : UICollectionViewDataSource, UICollection
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SettingsPhotoCell.identifier, for: indexPath) as! SettingsPhotoCell
         cell.layer.cornerRadius = 10
         cell.layer.masksToBounds = true
+        let index = indexPath.row
         
       
         
-        if let imageView = createImage(indexPath: indexPath.row, cellWidth: cell.frame.width, cellHeight: cell.frame.height) {
+        if index < currentAuthUser.imageArr.count {
             
-            cell.photoImage.image = imageView.image
+            currentAuthUser.imageArr[index].delegate = self
+            
+            if currentAuthUser.imageArr[index].image == nil{
+                cell.photoImage.loadIndicator.startAnimating()
+                cell.photoImage.image = UIImage(color: UIColor(named: "GrayColor")!)
+            }else {
+                cell.photoImage.image = currentAuthUser.imageArr[index].image
+                cell.photoImage.loadIndicator.stopAnimating()
+            }
+            
             cell.photoImage.contentMode = .scaleAspectFill
             cell.dottedBorder.isHidden = true
-            
             let button = createDeleteButton(x: cell.frame.maxX ,y: cell.frame.maxY, index: indexPath.row,cell: cell)
             collectionPhotoView.addSubview(button)
             
@@ -80,9 +89,9 @@ extension SettingsPhotoViewController : UICollectionViewDataSource, UICollection
             cell.dottedBorder.isHidden = false
             cell.photoImage.image = .none
             
+            cell.photoImage.loadIndicator.stopAnimating()
             let button = createAddButton(x: cell.frame.maxX ,y: cell.frame.maxY)
             collectionPhotoView.addSubview(button)
-            
         }
         return cell
     }
@@ -213,7 +222,13 @@ extension SettingsPhotoViewController {
 
 }
 
+//MARK: -  Обновляем СollectionView когда фото загрузилось
 
+extension SettingsPhotoViewController: UpdateWhenPhotoLoad {
+    func userPhotoLoaded() {
+        collectionPhotoView.reloadData()
+    }
+}
 
        
        

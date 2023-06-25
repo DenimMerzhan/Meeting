@@ -13,7 +13,7 @@ class ChatUserController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var topElementView: UIView!
-    @IBOutlet weak var userAvatar: ChatAvatar!
+    @IBOutlet weak var userAvatar: DefaultLoadPhoto!
     @IBOutlet weak var nameUser: UILabel!
     @IBOutlet weak var textField: UITextField!
     

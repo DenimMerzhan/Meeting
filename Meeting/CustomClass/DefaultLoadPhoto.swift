@@ -7,13 +7,22 @@
 
 import UIKit
 
-class ChatAvatar: UIImageView {
+class DefaultLoadPhoto: UIImageView {
 
     let loadIndicator = UIActivityIndicatorView(frame: .zero)
     
 
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupView()
+    }
+    
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+        setupView()
+    }
+    
+    func setupView(){
         
         loadIndicator.frame.size = self.frame.size
         loadIndicator.center.x = self.frame.width / 2

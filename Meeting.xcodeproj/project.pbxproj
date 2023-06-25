@@ -41,7 +41,7 @@
 		CFD1CAE729FEABB6009AE9A7 /* SettingsPhotoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD1CAE629FEABB6009AE9A7 /* SettingsPhotoViewController.swift */; };
 		CFD689222A0E5EB0003EB21A /* CurrentUserImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD689212A0E5EB0003EB21A /* CurrentUserImage.swift */; };
 		CFDE37432A48405D00709FFB /* CurrentChatCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFDE37422A48405D00709FFB /* CurrentChatCell.xib */; };
-		CFDE374D2A4842F800709FFB /* ChatAvatar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDE374C2A4842F800709FFB /* ChatAvatar.swift */; };
+		CFDE374D2A4842F800709FFB /* DefaultLoadPhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDE374C2A4842F800709FFB /* DefaultLoadPhoto.swift */; };
 		CFFD03E029F9003B000732AC /* CardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFD03DF29F9003B000732AC /* CardModel.swift */; };
 /* End PBXBuildFile section */
 
@@ -84,7 +84,7 @@
 		CFD1CAE629FEABB6009AE9A7 /* SettingsPhotoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPhotoViewController.swift; sourceTree = "<group>"; };
 		CFD689212A0E5EB0003EB21A /* CurrentUserImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserImage.swift; sourceTree = "<group>"; };
 		CFDE37422A48405D00709FFB /* CurrentChatCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = CurrentChatCell.xib; path = Meeting/Chat/View/CurrentChatCell.xib; sourceTree = SOURCE_ROOT; };
-		CFDE374C2A4842F800709FFB /* ChatAvatar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAvatar.swift; sourceTree = "<group>"; };
+		CFDE374C2A4842F800709FFB /* DefaultLoadPhoto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultLoadPhoto.swift; sourceTree = "<group>"; };
 		CFFD03DF29F9003B000732AC /* CardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -185,6 +185,7 @@
 		CFA140DA2A00E21600DD384B /* CustomClass */ = {
 			isa = PBXGroup;
 			children = (
+				CFDE374C2A4842F800709FFB /* DefaultLoadPhoto.swift */,
 				CF7D03082A0B80330028E7EB /* CurrentAuthUser.swift */,
 				CF1DC80929F0DFC3001E2EAD /* User.swift */,
 				CFCD028D2A4580890092DCC0 /* UserPhoto.swift */,
@@ -255,7 +256,6 @@
 				CF8F6C0C2A2C7A32004E62D0 /* ChatCell.swift */,
 				CF8F6C142A2CC85F004E62D0 /* PotentialChatCell.swift */,
 				CFA470E62A24DE6C005E3549 /* CurrentChatCell.swift */,
-				CFDE374C2A4842F800709FFB /* ChatAvatar.swift */,
 			);
 			path = Class;
 			sourceTree = "<group>";
@@ -418,7 +418,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF069DA429EC2D3D005ED378 /* PairsViewController.swift in Sources */,
-				CFDE374D2A4842F800709FFB /* ChatAvatar.swift in Sources */,
+				CFDE374D2A4842F800709FFB /* DefaultLoadPhoto.swift in Sources */,
 				CF933C302A0CD65C0015E99B /* CustomError.swift in Sources */,
 				CFC72D512A014543008CDB14 /* CreateButton.swift in Sources */,
 				CF1DC80829F0D46C001E2EAD /* CardView.swift in Sources */,

@@ -10,7 +10,7 @@ import UIKit
 class ChatCell: UITableViewCell {
 
 
-    @IBOutlet weak var avatar: ChatAvatar!
+    @IBOutlet weak var avatar: DefaultLoadPhoto!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var commentLabel: UILabel!
     @IBOutlet weak var chatView: UIView!
