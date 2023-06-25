@@ -286,7 +286,7 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yIg-L0-2qW" userLabel="topElementView">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="85"/>
                                 <subviews>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="1" translatesAutoresizingMaskIntoConstraints="NO" id="FHP-2u-TBt">
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="1" translatesAutoresizingMaskIntoConstraints="NO" id="FHP-2u-TBt" customClass="ChatAvatar" customModule="Meeting" customModuleProvider="target">
                                         <rect key="frame" x="189.66666666666666" y="25" width="35" height="35"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="35" id="OCy-Nb-2Az"/>
@@ -351,11 +351,11 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="avatarUser" destination="FHP-2u-TBt" id="Gqh-N4-tQ8"/>
                         <outlet property="nameUser" destination="HYi-8d-61K" id="Sqj-DC-1kD"/>
                         <outlet property="tableView" destination="aeX-Zf-T0m" id="Mem-U9-YVi"/>
                         <outlet property="textField" destination="1yf-dG-W8K" id="Cnj-aK-NXi"/>
                         <outlet property="topElementView" destination="yIg-L0-2qW" id="VEd-en-fcF"/>
+                        <outlet property="userAvatar" destination="FHP-2u-TBt" id="dtk-sb-5KD"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5YV-Go-N28" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

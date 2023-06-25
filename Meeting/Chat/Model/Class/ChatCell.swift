@@ -9,30 +9,23 @@ import UIKit
 
 class ChatCell: UITableViewCell {
 
-    @IBOutlet weak var avatar: UIImageView!
+
+    @IBOutlet weak var avatar: ChatAvatar!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var commentLabel: UILabel!
-    
     @IBOutlet weak var chatView: UIView!
-    
     @IBOutlet weak var countUnreadMessageView: UIView!
     @IBOutlet weak var countUnreadMessageLabel: UILabel!
     
     var banImage = UIImage()
     var deleteImage = UIImage()
-    var loadIndicator = UIActivityIndicatorView(frame: .zero)
     
     var userID = String()
     
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        loadIndicator.frame.size = avatar.frame.size
-        loadIndicator.backgroundColor = .gray
-        loadIndicator.style = UIActivityIndicatorView.Style.large
-        loadIndicator.startAnimating()
-        loadIndicator.hidesWhenStopped = true
-        avatar.addSubview(loadIndicator)
+        avatar.loadIndicator.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
         
         banImage = createBanImage()
         deleteImage = createDeleteImage()

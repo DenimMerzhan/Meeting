@@ -8,9 +8,17 @@
 import UIKit
 import FirebaseFirestore
 
-class ChatViewController: UIViewController {
+protocol MatchArrHasBennUpdate {
+    func updateDataWheTheMatchArrUpdate()
+    func updateDataWhenUserDelete()
+}
 
-    
+extension MatchArrHasBennUpdate {
+    func updateDataWheTheMatchArrUpdate() {}
+    func updateDataWhenUserDelete(){}
+}
+
+class ChatViewController: UIViewController {
     
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var tableView: UITableView!
@@ -107,9 +115,11 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
         pairUser.avatar?.delegate = self
         
         if pairUser.avatar?.image == nil {
-            cell.loadIndicator.startAnimating()
+            cell.avatar.loadIndicator.startAnimating()
+            cell.avatar.image = UIImage(color: UIColor(named: "GrayColor")!)
         }else {
-            cell.loadIndicator.stopAnimating()
+            cell.avatar.image = pairUser.avatar?.image
+            cell.avatar.loadIndicator.stopAnimating()
         }
         
         if chat.numberUnreadMessges(pairID: pairUser.ID) > 0 {
@@ -118,7 +128,6 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
         }
         
         cell.commentLabel.text = chat.messages.last?.body
-        cell.avatar.image = pairUser.avatar?.image
         cell.nameLabel.text = pairUser.name
         
         return cell
@@ -188,9 +197,9 @@ extension ChatViewController: UICollectionViewDataSource, UICollectionViewDelega
             user.avatar?.delegate = self
             
             if user.avatar?.image == nil {
-                cell.loadIndicator.startAnimating()
+                cell.avatar.loadIndicator.startAnimating()
             }else {
-                cell.loadIndicator.stopAnimating()
+                cell.avatar.loadIndicator.stopAnimating()
             }
             cell.avatar.image = user.avatar?.image
             cell.name.text = potentialChatArr[indexPath.row].name

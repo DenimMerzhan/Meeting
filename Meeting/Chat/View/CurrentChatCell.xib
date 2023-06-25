@@ -21,7 +21,7 @@
                     <stackView opaque="NO" contentMode="scaleToFill" alignment="bottom" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="vLj-sL-vDZ">
                         <rect key="frame" x="5" y="5" width="310" height="86"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="1" translatesAutoresizingMaskIntoConstraints="NO" id="Smc-Fh-rRI">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="1" translatesAutoresizingMaskIntoConstraints="NO" id="Smc-Fh-rRI" customClass="ChatAvatar" customModule="Meeting" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="41" width="45" height="45"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="45" id="dBZ-O7-ysN"/>
@@ -113,7 +113,7 @@
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
-                <outlet property="avatar" destination="Smc-Fh-rRI" id="hrQ-WI-mTr"/>
+                <outlet property="avatar" destination="Smc-Fh-rRI" id="udO-o9-aDU"/>
                 <outlet property="heartView" destination="kOm-r1-4Tx" id="Hbj-ws-Zo5"/>
                 <outlet property="messageBubble" destination="Vxp-JK-pGF" id="RKF-jS-CKe"/>
                 <outlet property="messageLabel" destination="q7o-eJ-UzT" id="zKs-O4-ptW"/>

@@ -17,7 +17,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="105" height="155"/>
                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                 <subviews>
-                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="O2z-kd-zRJ">
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="O2z-kd-zRJ" customClass="ChatAvatar" customModule="Meeting" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="0.0" width="105" height="130"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="130" id="NiU-AU-B5j"/>
@@ -45,7 +45,7 @@
             </constraints>
             <size key="customSize" width="195" height="256"/>
             <connections>
-                <outlet property="avatar" destination="O2z-kd-zRJ" id="0Xp-3g-N7w"/>
+                <outlet property="avatar" destination="O2z-kd-zRJ" id="pzl-23-E1b"/>
                 <outlet property="name" destination="e3h-Uu-GVI" id="z8g-CB-Cfe"/>
             </connections>
             <point key="canvasLocation" x="118.32061068702289" y="92.253521126760575"/>

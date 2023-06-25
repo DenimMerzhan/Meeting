@@ -13,7 +13,7 @@ class ChatUserController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var topElementView: UIView!
-    @IBOutlet weak var avatarUser: UIImageView!
+    @IBOutlet weak var userAvatar: ChatAvatar!
     @IBOutlet weak var nameUser: UILabel!
     @IBOutlet weak var textField: UITextField!
     
@@ -83,8 +83,8 @@ extension ChatUserController {
         tableView.register(UINib(nibName: "CurrentChatCell", bundle: nil), forCellReuseIdentifier: "currentChatCell")
         tableView.sectionHeaderHeight = 40
         
-        avatarUser.layer.cornerRadius = avatarUser.frame.width / 2
-        avatarUser.clipsToBounds = true
+        userAvatar.layer.cornerRadius = userAvatar.frame.width / 2
+        userAvatar.clipsToBounds = true
         topElementView.addBottomShadow()
         
         textField.layer.cornerRadius = textField.frame.height / 2
@@ -98,13 +98,13 @@ extension ChatUserController {
             NSAttributedString.Key.font : UIFont.systemFont(ofSize: 15)
         ]
         textField.attributedPlaceholder = NSAttributedString(string: "Сообщение",attributes: attributes)
-        
-        avatarUser.image = selectedUser.avatar?.image
+        userAvatar.loadIndicator.transform = CGAffineTransform(scaleX: 0.3, y: 0.3)
+        if selectedUser.avatar?.image != nil {
+            userAvatar.image = selectedUser.avatar?.image
+        }
         nameUser.text = selectedUser.name
-        currentAuthUser.delegate = self
         selectedUser.avatar?.delegate = self
         currentAuthUser.avatar?.delegate = self
-        
         loadMessage()
     }
 }
@@ -145,7 +145,7 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
             cell.statusMessage.isHidden = false
             cell.heartView.isHidden = true
             cell.avatar.image = UIImage()
-            cell.loadIndicator.stopAnimating()
+            cell.avatar.loadIndicator.stopAnimating()
             cell.messageBubble.backgroundColor = UIColor(named: "CurrentUserMessageColor")
 
             cell.messageLabel.textAlignment = .right
@@ -156,9 +156,11 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
         
             
             if selectedUser.avatar?.image == nil {
-                cell.loadIndicator.startAnimating()
+                cell.avatar.loadIndicator.startAnimating()
+                cell.avatar.image = UIImage(color: UIColor(named: "GrayColor")!)
             }else {
-                cell.loadIndicator.stopAnimating()
+                cell.avatar.loadIndicator.stopAnimating()
+                cell.avatar.image = selectedUser.avatar?.image
             }
             
             view.isCurrentUser = false
@@ -183,13 +185,13 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
             cell.statusMessage.isHidden = true
             cell.messageLabel.textAlignment = .left
             cell.messageBubble.backgroundColor = UIColor(named: "GrayColor")
-            cell.avatar.image = selectedUser.avatar?.image
             cell.messageLabel.textColor = .black
             
         }
         
         if  indexPath.row + 1 < chat.structuredMessagesByDates[indexPath.section - 1].messages.count && chat.structuredMessagesByDates[indexPath.section - 1].messages[indexPath.row + 1].sender == sender {
             cell.avatar.image = UIImage()
+            cell.avatar.loadIndicator.stopAnimating()
         }
         
         return cell
@@ -358,6 +360,7 @@ extension ChatUserController: MatchArrHasBennUpdate, UpdateWhenPhotoLoad {
     
     func userPhotoLoaded() {
         tableView.reloadData()
+        userAvatar.image = selectedUser.avatar?.image
     }
     
     func updateDataWhenUserDelete() { /// Если пользователя удалили из пар моментально отклоняем контроллер и выводим предупреждение
