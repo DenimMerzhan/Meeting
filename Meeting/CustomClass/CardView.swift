@@ -12,19 +12,23 @@ import AudioToolbox
 
 class CardView: UIView {
     
-    var imageUserView: UIImageView?
-    var imageArr: [UIImage]?
+    var imageView: UserPhoto?
+    var imageArr: [UserPhoto]?
     var ID = String()
+    
+        var nameUser = UILabel()
+        var age = UILabel()
+        var progressBar = [UIView]()
     
     var likImage = UIImageView()
     var dislikeImage = UIImageView()
     var superLikeImage = UIImageView()
     
-    init(frame: CGRect, heartLikeImage: UIImageView = UIImageView(), heartDislikeImage: UIImageView = UIImageView(),imageUser: ImageUserView?,imageArr: [UIImage]?,superLike: UIImageView,userID: String) {
+    init(frame: CGRect, heartLikeImage: UIImageView = UIImageView(), heartDislikeImage: UIImageView = UIImageView(),imageUser: UserPhoto?,imageArr: [UserPhoto]?,superLike: UIImageView,userID: String) {
         
         self.likImage = heartLikeImage
         self.dislikeImage = heartDislikeImage
-        self.imageUserView = imageUser
+        self.imageView = imageUser
         self.imageArr = imageArr
         self.superLikeImage = superLike
         self.ID = userID
@@ -78,16 +82,15 @@ class CardView: UIView {
     func refreshPhoto(_ sender: UITapGestureRecognizer,indexCurrentImage: Int) -> Int? {
 
         let coordinates = sender.location(in: self).x
-        guard let currentImage = imageUserView as? ImageUserView else {return nil }
         guard let imageArr = self.imageArr else {return nil}
         var index = indexCurrentImage
         
         if coordinates > 220 && indexCurrentImage < imageArr.count - 1 {
             index += 1
-            currentImage.progressBar[index-1].backgroundColor = .gray
+            self.progressBar[index-1].backgroundColor = .gray
         }else if  coordinates < 180 && indexCurrentImage > 0  {
             index -= 1
-            currentImage.progressBar[index+1].backgroundColor = .gray
+            self.progressBar[index+1].backgroundColor = .gray
         }else if indexCurrentImage == 0 || indexCurrentImage == imageArr.count - 1 {
             self.backgroundColor = .white
             CardModel().createAnimate(indexImage: index, currentCard: self)
@@ -97,8 +100,8 @@ class CardView: UIView {
         AudioServicesPlayAlertSoundWithCompletion(SystemSoundID(1161)) { /// Cоздаем звук при Тапе
         }
         
-        currentImage.progressBar[index].backgroundColor = .white
-        currentImage.image = imageArr[index]
+        self.progressBar[index].backgroundColor = .white
+        self.imageView =  imageArr[index]
         
         return index
 }
@@ -110,30 +113,30 @@ class CardView: UIView {
 }   
 
 
-//MARK: -  Кастомный ImageUserView
-
-class ImageUserView: UIImageView {
-    
-    var nameUser = UILabel()
-    var age = UILabel()
-    var progressBar = [UIView]()
-    
-    
-    init(frame:CGRect, nameUser: UILabel = UILabel(), age: UILabel = UILabel(), progressBar: [UIView] = [UIView]()) {
-        
-        self.nameUser = nameUser
-        self.age = age
-        self.progressBar = progressBar
-        
-        super.init(frame: frame)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    deinit {
-//        print("Объект imageUserView уничтожен")
-    }
-}
+////MARK: -  Кастомный ImageUserView
+//
+//class ImageUserView: UIImageView {
+//
+//    var nameUser = UILabel()
+//    var age = UILabel()
+//    var progressBar = [UIView]()
+//
+//
+//    init(frame:CGRect, nameUser: UILabel = UILabel(), age: UILabel = UILabel(), progressBar: [UIView] = [UIView]()) {
+//
+//        self.nameUser = nameUser
+//        self.age = age
+//        self.progressBar = progressBar
+//
+//        super.init(frame: frame)
+//    }
+//
+//    required init?(coder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
+//
+//    deinit {
+////        print("Объект imageUserView уничтожен")
+//    }
+//}
 

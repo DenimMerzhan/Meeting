@@ -21,20 +21,14 @@ class CurrentAuthUser {
     
     var delegate: MatchArrHasBennUpdate?
     
-    var avatar: UIImage {
+    var avatar: UserPhoto? {
         get {
-            if imageArr.count > 1 {
-                return imageArr[0].image
-            }else {
-                return UIImage()
-            }
+            return imageArr.first
         }
     }
     
-    var urlPhotoArr = [String]()
-    var imageArr = [CurrentUserImage]()
+    var imageArr = [UserPhoto]()
     
-    //    private var matchArrID = [String]()
     private var listenerMatchArrID: ListenerRegistration?
     
     var matchArr = [User]()
@@ -51,7 +45,7 @@ class CurrentAuthUser {
     private let storage = Storage.storage()
     private let fileManager = FileManager.default
     
-    init(ID: String){
+    init(ID: String) {
         self.ID = ID
     }
     
@@ -62,34 +56,34 @@ class CurrentAuthUser {
         let collection  = db.collection("Users").document(ID)
         listenMatchUserID()
         
-        do {
-            
-            let docSnap = try await collection.getDocument()
-            if let dataDoc = docSnap.data() {
+            do {
                 
-//                if let name = dataDoc["Name"] as? String ,let age = dataDoc["Age"] as? Int {
-//                    
-//                    self.name = name
-//                    self.age = age
-//                    
-//                    if let likeArr = dataDoc["LikeArr"] as? [String] {self.likeArr = likeArr}
-//                    if let disLikeArr = dataDoc["DisLikeArr"] as? [String] {self.disLikeArr = disLikeArr}
-//                    if let superLikeArr = dataDoc["SuperLikeArr"] as? [String] {self.superLikeArr = superLikeArr} /// Суперлайков может и не быть, поэтому не ставим guard
-//                    
-//                    for data in dataDoc { /// Загрузка ссылок на фото в Storage
-//                        if data.key.contains("photoImage") {
-//                            if let urlPhoto = data.value as? String {
-//                                self.urlPhotoArr.append(urlPhoto)
-//                            }
-//                        }
-//                    }
-//                }else {
-//                    print("Ошибка в преобразование данных о текущем пользователе")}
-            }
-            
-        }catch{
-            print("Ошибка получения ссылок на фото с сервера FirebaseFirestore - \(error)")}
-        
+                let docSnap = try await collection.getDocument()
+                if let dataDoc = docSnap.data() {
+                    
+                    if let name = dataDoc["Name"] as? String ,let age = dataDoc["Age"] as? Int {
+                        
+                        self.name = name
+                        self.age = age
+                        
+                        if let likeArr = dataDoc["LikeArr"] as? [String] {self.likeArr = likeArr}
+                        if let disLikeArr = dataDoc["DisLikeArr"] as? [String] {self.disLikeArr = disLikeArr}
+                        if let superLikeArr = dataDoc["SuperLikeArr"] as? [String] {self.superLikeArr = superLikeArr} /// Суперлайков может и не быть, поэтому не ставим guard
+                        
+                        for data in dataDoc { /// Загрузка ссылок на фото в Storage
+                            if data.key.contains("photoImage") {
+                                if let urlPhoto = data.value as? String {
+                                    let image = await UserPhoto(frame: .zero, urlPhotoFromServer: urlPhoto, imageID: data.key)
+                                    self.imageArr.append(image)
+                                }
+                            }
+                        }
+                    }else {
+                        print("Ошибка в преобразование данных о текущем пользователе")}
+                }
+                
+            }catch{
+                print("Ошибка получения ссылок на фото с сервера FirebaseFirestore - \(error)")}
     }
     
     
@@ -177,7 +171,8 @@ class CurrentAuthUser {
             let url = try await imagesRef.downloadURL()
             let status = await uploadDataToFirestore(url: url, imageID: imageID)
             if status {
-                imageArr.append(CurrentUserImage(imageID: imageID,image: image))
+//                await imageArr.append(UserPhotoImageView(frame: .zero))
+//                await imageArr.last?.loadPhotoFromServer(urlPhotoOnServer: url.absoluteString, imageID: imageID)
                 return (status)
             }
         }catch {
@@ -201,48 +196,6 @@ class CurrentAuthUser {
         }
     }
     
-//MARK: -  Загрузка фото
-    
-    func loadPhoto() async {
-        
-        var urlFileArr = [URL]()
-        if urlPhotoArr.count == 0 {return}
-        
-        let userLibary = fileManager.urls(for: .documentDirectory, in: .userDomainMask) /// Стандартная библиотека пользователя
-        
-        let newFolder = userLibary[0].appendingPathComponent("CurrentUserPhoto")
-        
-        if FileManager.default.fileExists(atPath: newFolder.path) == false { /// Если директории нет создаем эту папку
-            try! fileManager.createDirectory(at: newFolder, withIntermediateDirectories: true)
-        }
-        
-        for urlPhoto in urlPhotoArr {
-            
-            let Reference = storage.reference(forURL: urlPhoto)
-            do {
-                if let namePhoto = try await Reference.getMetadata().name {
-                    let url = try await Reference.writeAsync(toFile: newFolder.appendingPathComponent(namePhoto))
-                    urlFileArr.append(url)
-                }
-            }catch{
-                print("Ошибка записи фото в директорию пользователя - \(error)")
-            }
-        }
-        loadPhotoFromDirectory(urlFileArr: urlFileArr)
-    }
-    
-//MARK: -  Загрузка фото с директории
-    
-private func loadPhotoFromDirectory(urlFileArr: [URL]){
-        
-        for url in urlFileArr {
-            
-            if let newImage = UIImage(contentsOfFile: url.path) {
-                let imageID = url.lastPathComponent
-                imageArr.append(CurrentUserImage(imageID: imageID,image: newImage))
-            }
-        }
-    }
     
 //MARK: - Удаление фото с сервера Storage и Firestore
     
@@ -388,18 +341,6 @@ extension CurrentAuthUser {
         }
     }
     
-    
-//MARK: -  Загрузка MatchUser
-    
-    func loadMatchUser(ID:String) async {
-        
-        let matchUser = User(ID: ID,currentAuthUserID: self.ID)
-        await matchUser.loadMetaData()
-        await matchUser.loadPhoto(avatar: true)
-        self.matchArr.append(matchUser)
-    }
-    
-    
     //MARK:  - Прослушивание MatchUserID
     
     func listenMatchUserID(){
@@ -415,7 +356,9 @@ extension CurrentAuthUser {
                 Task {
                     for ID in matchArrID {
                         if self.matchArr.contains(where: {$0.ID == ID}) {continue}
-                        await self.loadMatchUser(ID: ID)
+                        let matchUser = await User(ID: ID,currentAuthUserID: self.ID)
+                        await matchUser.loadMetaData()
+                        self.matchArr.append(matchUser)
                     }
                     self.checkIsDeleteUser(matchArrIdOnServer: matchArrID)
                 }

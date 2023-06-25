@@ -52,11 +52,7 @@ struct CardModel {
         superLike.isHidden = true
         
         
-        let imageView = ImageUserView(frame: CGRect(x: 0, y: 0, width: frame.width, height: frame.height),nameUser: nameLabel,age: ageLabel)
-        imageView.image = newUser.imageArr[0]
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true /// Ограничиваем фото в размерах
-    
+        let imageView = newUser.imageArr[0]
         
         let gradient = CAGradientLayer() ///  Градиент
         gradient.frame = CGRect(x: 0, y: frame.height - 203, width: frame.width, height: 203)
@@ -67,6 +63,10 @@ struct CardModel {
         
         let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,imageUser: imageView,imageArr: newUser.imageArr,superLike: superLike, userID: newUser.ID)
         
+        
+        card.age = ageLabel
+        card.nameUser = nameLabel
+       
         card.addSubview(imageView)
         imageView.addSubview(nameLabel)
         imageView.addSubview(ageLabel)
@@ -74,8 +74,8 @@ struct CardModel {
         card.addSubview(dislikeHeart)
         card.addSubview(superLike)
         
-        let progressBar = createProgressBar(countPhoto: newUser.imageArr.count, image: imageView)
-        imageView.progressBar = progressBar
+        let progressBar = createProgressBar(countPhoto: newUser.imageArr.count, cardView: card)
+        card.progressBar = progressBar
         
         return card
         
@@ -86,10 +86,10 @@ struct CardModel {
     
 //MARK: - Создание ProgressBar
     
-    func createProgressBar(countPhoto: Int,image: ImageUserView) -> [UIView] { /// Создаем кучу одинаковых View
+    func createProgressBar(countPhoto: Int,cardView: CardView) -> [UIView] { /// Создаем кучу одинаковых View
         
         var viewArr = [UIView]()
-        let mostWidth = (image.frame.size.width - 5 - CGFloat(countPhoto * 7)) / CGFloat(countPhoto) /// Расчитываем длинну каждой полоски
+        let mostWidth = (cardView.frame.size.width - 5 - CGFloat(countPhoto * 7)) / CGFloat(countPhoto) /// Расчитываем длинну каждой полоски
         
         for i in 0...countPhoto - 1 {
             
@@ -107,8 +107,8 @@ struct CardModel {
             newView.layer.cornerRadius = 2 /// Закругление
             newView.layer.masksToBounds = true /// Обрезание слоев по границам
             newView.alpha = 0.6
-            viewArr.append(newView) /// Добавляем в архи полосок
-            image.addSubview(newView)
+            viewArr.append(newView) /// Добавляем в архив полосок
+            cardView.addSubview(newView)
         }
         
         
@@ -188,7 +188,7 @@ struct CardModel {
         }
         
         
-        let layer = currentCard.imageUserView!.layer /// Создаем ссылку на слой imageUser
+        let layer = currentCard.imageView!.layer /// Создаем ссылку на слой imageUser
         
         var rotationAndPerspectiveTransform : CATransform3D = CATransform3DIdentity
         rotationAndPerspectiveTransform.m34 = 1.0 / -1000

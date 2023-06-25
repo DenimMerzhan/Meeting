@@ -17,10 +17,18 @@ class CurrentChatCell: UITableViewCell {
     @IBOutlet weak var messageLikeButton: UIButton!
     @IBOutlet weak var heartView: UIView!
     
+    var loadIndicator = UIActivityIndicatorView(frame: .zero)
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         frame.size.width = UIScreen.main.bounds.width ///  Обновляем ширину ячейки в зависимости от ширины экрана
         layoutIfNeeded()
+        
+        loadIndicator.frame.size = avatar.frame.size
+        loadIndicator.backgroundColor = .gray
+        loadIndicator.hidesWhenStopped = true
+        loadIndicator.startAnimating()
+        avatar.addSubview(loadIndicator)
         
         avatar.layer.cornerRadius = avatar.frame.width / 2
         avatar.clipsToBounds = true

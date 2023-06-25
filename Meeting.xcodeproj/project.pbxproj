@@ -39,6 +39,7 @@
 		CFC6D2FE29FE403000A712BA /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC6D2FD29FE403000A712BA /* ProfileViewController.swift */; };
 		CFC6D30029FE43B100A712BA /* CircularProgressBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC6D2FF29FE43B100A712BA /* CircularProgressBarView.swift */; };
 		CFC72D512A014543008CDB14 /* CreateButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC72D502A014543008CDB14 /* CreateButton.swift */; };
+		CFCD028E2A4580890092DCC0 /* UserPhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFCD028D2A4580890092DCC0 /* UserPhoto.swift */; };
 		CFCD0F9C2A0A887E00C17AFC /* TestFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFCD0F9B2A0A887E00C17AFC /* TestFile.swift */; };
 		CFD1CAE729FEABB6009AE9A7 /* SettingsPhotoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD1CAE629FEABB6009AE9A7 /* SettingsPhotoViewController.swift */; };
 		CFD689222A0E5EB0003EB21A /* CurrentUserImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD689212A0E5EB0003EB21A /* CurrentUserImage.swift */; };
@@ -82,6 +83,7 @@
 		CFC6D2FD29FE403000A712BA /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		CFC6D2FF29FE43B100A712BA /* CircularProgressBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressBarView.swift; sourceTree = "<group>"; };
 		CFC72D502A014543008CDB14 /* CreateButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateButton.swift; sourceTree = "<group>"; };
+		CFCD028D2A4580890092DCC0 /* UserPhoto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPhoto.swift; sourceTree = "<group>"; };
 		CFCD0F9B2A0A887E00C17AFC /* TestFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFile.swift; sourceTree = "<group>"; };
 		CFD1CAE629FEABB6009AE9A7 /* SettingsPhotoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPhotoViewController.swift; sourceTree = "<group>"; };
 		CFD689212A0E5EB0003EB21A /* CurrentUserImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserImage.swift; sourceTree = "<group>"; };
@@ -185,6 +187,7 @@
 				CFC6D2FF29FE43B100A712BA /* CircularProgressBarView.swift */,
 				CF1DC80729F0D46C001E2EAD /* CardView.swift */,
 				CF18EB6A2A4419A3005DE882 /* MessageBuble.swift */,
+				CFCD028D2A4580890092DCC0 /* UserPhoto.swift */,
 			);
 			path = CustomClass;
 			sourceTree = "<group>";
@@ -394,6 +397,7 @@
 				CFFD03E029F9003B000732AC /* CardModel.swift in Sources */,
 				CFC6D2FE29FE403000A712BA /* ProfileViewController.swift in Sources */,
 				CF8C3E162A3B34F500B59026 /* Extension.swift in Sources */,
+				CFCD028E2A4580890092DCC0 /* UserPhoto.swift in Sources */,
 				CFD1CAE729FEABB6009AE9A7 /* SettingsPhotoViewController.swift in Sources */,
 				CF65ED7D2A277DFD00820D6B /* matchDelegate.swift in Sources */,
 				CF59A22C2A1B53B300954CCE /* ChatViewController.swift in Sources */,

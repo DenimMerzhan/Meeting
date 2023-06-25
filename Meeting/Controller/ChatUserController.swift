@@ -99,9 +99,12 @@ extension ChatUserController {
         ]
         textField.attributedPlaceholder = NSAttributedString(string: "Сообщение",attributes: attributes)
         
-        avatarUser.image = selectedUser.avatar
+        avatarUser.image = selectedUser.avatar?.image
         nameUser.text = selectedUser.name
         currentAuthUser.delegate = self
+        selectedUser.avatar?.delegate = self
+        currentAuthUser.avatar?.delegate = self
+        
         loadMessage()
     }
 }
@@ -142,6 +145,7 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
             cell.statusMessage.isHidden = false
             cell.heartView.isHidden = true
             cell.avatar.image = UIImage()
+            cell.loadIndicator.stopAnimating()
             cell.messageBubble.backgroundColor = UIColor(named: "CurrentUserMessageColor")
 
             cell.messageLabel.textAlignment = .right
@@ -150,6 +154,13 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
             
         }else {
         
+            
+            if selectedUser.avatar?.image == nil {
+                cell.loadIndicator.startAnimating()
+            }else {
+                cell.loadIndicator.stopAnimating()
+            }
+            
             view.isCurrentUser = false
             view.labelForCalculate.text = cell.messageLabel.text
             view.labelForCalculate.font = cell.messageLabel.font
@@ -172,7 +183,7 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
             cell.statusMessage.isHidden = true
             cell.messageLabel.textAlignment = .left
             cell.messageBubble.backgroundColor = UIColor(named: "GrayColor")
-            cell.avatar.image = selectedUser.avatar
+            cell.avatar.image = selectedUser.avatar?.image
             cell.messageLabel.textColor = .black
             
         }
@@ -343,7 +354,11 @@ extension ChatUserController {
 
 //MARK: -  Отклонение контроллера при удаление пары
 
-extension ChatUserController: MatchArrHasBennUpdate{
+extension ChatUserController: MatchArrHasBennUpdate, UpdateWhenPhotoLoad {
+    
+    func userPhotoLoaded() {
+        tableView.reloadData()
+    }
     
     func updateDataWhenUserDelete() { /// Если пользователя удалили из пар моментально отклоняем контроллер и выводим предупреждение
        

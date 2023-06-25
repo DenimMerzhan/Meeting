@@ -22,7 +22,7 @@
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1QJ-29-Ibl" userLabel="ChatView">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="100"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="1" translatesAutoresizingMaskIntoConstraints="NO" id="44z-Ap-fHh">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="44z-Ap-fHh">
                                 <rect key="frame" x="0.0" y="15" width="70" height="70"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="70" id="MWC-wp-AtZ"/>
@@ -124,7 +124,6 @@
         </tableViewCell>
     </objects>
     <resources>
-        <image name="1" width="1718" height="2160"/>
         <namedColor name="GrayColor">
             <color red="0.94099998474121094" green="0.94499999284744263" blue="0.95300000905990601" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
         </namedColor>

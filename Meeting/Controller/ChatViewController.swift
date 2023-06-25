@@ -104,6 +104,13 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
         guard let pairUser = authUser.matchArr.first(where: {chat.ID.contains($0.ID)}) else {return cell}
        
         cell.userID = pairUser.ID
+        pairUser.avatar?.delegate = self
+        
+        if pairUser.avatar?.image == nil {
+            cell.loadIndicator.startAnimating()
+        }else {
+            cell.loadIndicator.stopAnimating()
+        }
         
         if chat.numberUnreadMessges(pairID: pairUser.ID) > 0 {
             cell.countUnreadMessageView.isHidden = false
@@ -111,7 +118,7 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
         }
         
         cell.commentLabel.text = chat.messages.last?.body
-        cell.avatar.image = pairUser.avatar
+        cell.avatar.image = pairUser.avatar?.image
         cell.nameLabel.text = pairUser.name
         
         return cell
@@ -173,15 +180,19 @@ extension ChatViewController: UICollectionViewDataSource, UICollectionViewDelega
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "potentialChatCell", for: indexPath) as! PotentialChatCell
         
-
-        
         if indexPath.row < potentialChatArr.count {
             
             let user = potentialChatArr[indexPath.row]
             guard let chatID = user.chat?.ID else {return cell}
             cell.chatID = chatID
+            user.avatar?.delegate = self
             
-            cell.avatar.image = potentialChatArr[indexPath.row].avatar
+            if user.avatar?.image == nil {
+                cell.loadIndicator.startAnimating()
+            }else {
+                cell.loadIndicator.stopAnimating()
+            }
+            cell.avatar.image = user.avatar?.image
             cell.name.text = potentialChatArr[indexPath.row].name
         }else {
             cell.avatar.image = nil
@@ -224,7 +235,12 @@ extension ChatViewController {
 
 //MARK: -  Переход с MatchController в ChatUserController
 
-extension ChatViewController: passDataDelegate, MatchArrHasBennUpdate {
+extension ChatViewController: passDataDelegate, MatchArrHasBennUpdate, UpdateWhenPhotoLoad {
+    
+    func userPhotoLoaded() {
+        tableView.reloadData()
+        collectionView.reloadData()
+    }
     
     func updateDataWheTheMatchArrUpdate() { /// Каждый раз когда обновился MatchArr обновляем данные
         DispatchQueue.main.async {

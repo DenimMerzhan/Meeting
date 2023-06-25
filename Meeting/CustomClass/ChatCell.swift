@@ -20,11 +20,19 @@ class ChatCell: UITableViewCell {
     
     var banImage = UIImage()
     var deleteImage = UIImage()
+    var loadIndicator = UIActivityIndicatorView(frame: .zero)
     
     var userID = String()
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        
+        loadIndicator.frame.size = avatar.frame.size
+        loadIndicator.backgroundColor = .gray
+        loadIndicator.style = UIActivityIndicatorView.Style.large
+        loadIndicator.startAnimating()
+        loadIndicator.hidesWhenStopped = true
+        avatar.addSubview(loadIndicator)
         
         banImage = createBanImage()
         deleteImage = createDeleteImage()
@@ -36,6 +44,7 @@ class ChatCell: UITableViewCell {
         avatar.layer.cornerRadius = avatar.frame.width / 2
         avatar.clipsToBounds = true
         commentLabel.textColor = .gray
+        
         
     }
 

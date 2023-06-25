@@ -26,7 +26,7 @@ class PairsViewController: UIViewController {
     var nextCard = CardModel().createEmptyCard()
     
     var cardModel = CardModel()
-    var currentAuthUser = CurrentAuthUser(ID:"+79817550000")
+    var currentAuthUser = CurrentAuthUser(ID: "+79817550000")
     
     var progressViewLoadUsers = CreateButton().createProgressLoadUsersStartForLaunch(width: 0)
     var timer = Timer()
@@ -44,7 +44,7 @@ class PairsViewController: UIViewController {
     var usersArr =  [User]() {
         didSet {
             
-            //            print("usersArr.count - \(usersArr.count)")
+                        print("usersArr.count - \(usersArr.count)")
             
             if usersArr.count < 50 && currentAuthUser.numberPotenialPairsOnServer > 0 && currentAuthUser.newUsersLoading == false {
                 print("Загрузка новых пользователей")
@@ -77,7 +77,6 @@ class PairsViewController: UIViewController {
             self.fireTimer()
         }
         
-        
         progressViewLoadUsers.backView.center = view.center
         progressViewLoadUsers.label = CreateButton().createProgressLoadUsersStartForLaunch(width: view.frame.width - 40).label
         progressViewLoadUsers.label.center = CGPoint(x: view.center.x, y: view.center.y - 70)
@@ -87,7 +86,6 @@ class PairsViewController: UIViewController {
         
         Task {
             await currentAuthUser.loadMetadata()
-            await currentAuthUser.loadPhoto()
 //            await loadNewUsers(numberRequsetedUsers: 1)
             startSettings()
         }
@@ -218,7 +216,6 @@ extension PairsViewController {
         
         if usersArr.count > 0 {
             basketUser.append(usersArr[0])
-            usersArr[0].cleanPhotoUser() /// Удаляем папку с фото с  директории пользователя
             usersArr.removeFirst()
         }
         nextCard = createNextCard()
@@ -284,8 +281,7 @@ extension PairsViewController {
                 
                 let newUser = User(ID: ID,currentAuthUserID: currentAuthUser.ID)
                 await newUser.loadMetaData()
-                await newUser.loadPhoto(avatar: false)
-                
+               
                 if ID == newUsersID.last {
                     currentAuthUser.newUsersLoading = false
                 }
@@ -354,7 +350,7 @@ extension PairsViewController {
 
 
 
-//MARK:  - Когда слуичилось
+//MARK:  - Когда случилось
 
 extension PairsViewController  {
     

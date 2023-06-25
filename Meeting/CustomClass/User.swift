@@ -29,38 +29,22 @@ class User {
     var name = String()
     var age = Int()
     
-    
-    var avatar: UIImage {
+    var avatar: UserPhoto? {
         get {
-            if imageArr.count > 0 {
-                return imageArr[0]
-            }else {
-                return UIImage()
-            }
+            return imageArr.first
         }
     }
     
-    var imageArr = [UIImage]()
-    var urlPhotoArr = [String]()
+    var imageArr = [UserPhoto]()
     
     private let db = Firestore.firestore()
-    private let fileManager = FileManager.default
-    private let storage = Storage.storage()
-    
+   
     init(ID:String,currentAuthUserID: String) {
         self.ID = ID
         self.currentAuthUserID = currentAuthUserID
         loadChat()
     }
     
-    
-    func loadUser(){
-        Task {
-            await loadMetaData()
-            loadChat()
-        }
-        
-    }
 //MARK: - Загрузка метаданных о пользователе с сервера
     
     func loadMetaData() async {
@@ -78,7 +62,9 @@ class User {
                     for data in dataDoc {
                         if data.key.contains("photoImage") {
                             if let urlPhoto = data.value as? String {
-                                self.urlPhotoArr.append(urlPhoto)
+                                let imageView = await UserPhoto(frame: .zero, urlPhotoFromServer: urlPhoto, imageID: data.key)
+                                imageArr.append(imageView)
+                                
                             }
                         }
                     }
@@ -93,23 +79,9 @@ class User {
         }
     }
     
-//MARK: -  Удаление фото пользователя с директории
-    
-    func cleanPhotoUser(){
-        
-        let userLibary = fileManager.urls(for: .documentDirectory, in: .userDomainMask) /// Стандартная библиотека пользователя
-        let currentFolder = userLibary[0].appendingPathComponent("OtherUsersPhoto/\(ID)") /// Добавляем к ней новую папку
-        
-        do {
-            try fileManager.removeItem(at: currentFolder)
-        }catch{
-            print("Ошибка удаления файла по этому - \(ID) , ошибка - \(error)")
-        }
-    }
-    
 //MARK: -  Загрузка чата
     
-    func loadChat() {
+    private func loadChat() {
         
         var chatID = String()
         
@@ -178,51 +150,5 @@ class User {
     }
 }
 
-//MARK: -  Загрузка фото
-
-extension User {
-    
-    func loadPhoto(avatar:Bool) async {
-        
-        var urlFileArr = [URL]()
-        if urlPhotoArr.count == 0 {return}
-        imageArr.removeAll()
-        
-        let userLibary = fileManager.urls(for: .documentDirectory, in: .userDomainMask) /// Стандартная библиотека пользователя
-        
-        var newFolder = userLibary[0].appendingPathComponent("OtherUsersPhoto/\(ID)")
-        
-        if FileManager.default.fileExists(atPath: newFolder.path) == false { /// Если директории нет создаем эту папку
-            try! fileManager.createDirectory(at: newFolder, withIntermediateDirectories: true)
-        }
-        
-        for urlPhoto in urlPhotoArr {
-            
-            let Reference = storage.reference(forURL: urlPhoto)
-            do {
-                if let namePhoto = try await Reference.getMetadata().name {
-                    let url = try await Reference.writeAsync(toFile: newFolder.appendingPathComponent(namePhoto))
-                    urlFileArr.append(url)
-                }
-            }catch{
-                print("Ошибка записи фото в директорию пользователя - \(error)")
-            }
-            if avatar {break} /// Если мы хотим загрузить только аватар, то выходим
-        }
-        loadPhotoFromDirectory(urlFileArr: urlFileArr)
-    }
-
-    
-//MARK: - Загрузка фото пользователя с директории
-        
-        private func loadPhotoFromDirectory(urlFileArr: [URL] ){
-            
-            for url in urlFileArr {
-                if let newImage = UIImage(contentsOfFile: url.path) {
-                    imageArr.append(newImage)
-                }
-            }
-        }
-}
 
 

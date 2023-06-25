@@ -145,13 +145,13 @@ extension SettingsPhotoViewController {
     func createDeleteButton(x: CGFloat, y: CGFloat,index: Int,cell:SettingsPhotoCell) -> UIButton {
         let buttonDelete = CreateButton().createDeleteButtonPhotoSetings(x: x, y: y)
         
-        let action = UIAction { [unowned self] action in
-            
-            currentAuthUser.removePhotoFromServer(imageID: currentAuthUser.imageArr[index].imageID)
-            self.currentAuthUser.imageArr.remove(at: index)
-            self.collectionPhotoView.reloadData()
-        }
-        buttonDelete.addAction(action, for: .touchUpInside)
+//        let action = UIAction { [unowned self] action in
+//            guard let imageID = currentAuthUser.imageArr[index].imageID else {return}
+//            currentAuthUser.removePhotoFromServer(imageID: imageID)
+//            self.currentAuthUser.imageArr.remove(at: index)
+//            self.collectionPhotoView.reloadData()
+//        }
+//        buttonDelete.addAction(action, for: .touchUpInside)
         
         return buttonDelete
     }
