@@ -171,8 +171,7 @@ class CurrentAuthUser {
             let url = try await imagesRef.downloadURL()
             let status = await uploadDataToFirestore(url: url, imageID: imageID)
             if status {
-//                await imageArr.append(UserPhotoImageView(frame: .zero))
-//                await imageArr.last?.loadPhotoFromServer(urlPhotoOnServer: url.absoluteString, imageID: imageID)
+                await imageArr.append(UserPhoto(frame: .zero, urlPhotoFromServer: url.absoluteString, imageID: imageID))
                 return (status)
             }
         }catch {
