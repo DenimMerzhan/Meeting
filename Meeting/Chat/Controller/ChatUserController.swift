@@ -101,6 +101,7 @@ extension ChatUserController {
         userAvatar.loadIndicator.transform = CGAffineTransform(scaleX: 0.3, y: 0.3)
         if selectedUser.avatar?.image != nil {
             userAvatar.image = selectedUser.avatar?.image
+            userAvatar.loadIndicator.stopAnimating()
         }
         nameUser.text = selectedUser.name
         selectedUser.avatar?.delegate = self
@@ -361,6 +362,7 @@ extension ChatUserController: MatchArrHasBennUpdate, LoadPhoto {
     func userPhotoLoaded() {
         tableView.reloadData()
         userAvatar.image = selectedUser.avatar?.image
+        userAvatar.loadIndicator.stopAnimating()
     }
     
     func updateDataWhenUserDelete() { /// Если пользователя удалили из пар моментально отклоняем контроллер и выводим предупреждение

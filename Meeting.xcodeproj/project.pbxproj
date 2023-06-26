@@ -14,6 +14,7 @@
 		CF069DA729EC2D3E005ED378 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CF069DA529EC2D3E005ED378 /* Main.storyboard */; };
 		CF069DA929EC2D3E005ED378 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CF069DA829EC2D3E005ED378 /* Assets.xcassets */; };
 		CF069DAC29EC2D3E005ED378 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CF069DAA29EC2D3E005ED378 /* LaunchScreen.storyboard */; };
+		CF11F8FB2A49DC800032B7AE /* ReachabilityInternet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF11F8FA2A49DC800032B7AE /* ReachabilityInternet.swift */; };
 		CF18EB6B2A4419A3005DE882 /* MessageBuble.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF18EB6A2A4419A3005DE882 /* MessageBuble.swift */; };
 		CF1DC80829F0D46C001E2EAD /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1DC80729F0D46C001E2EAD /* CardView.swift */; };
 		CF1DC80A29F0DFC3001E2EAD /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1DC80929F0DFC3001E2EAD /* User.swift */; };
@@ -57,6 +58,7 @@
 		CF069DA829EC2D3E005ED378 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CF069DAB29EC2D3E005ED378 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CF069DAD29EC2D3E005ED378 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CF11F8FA2A49DC800032B7AE /* ReachabilityInternet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReachabilityInternet.swift; sourceTree = "<group>"; };
 		CF18EB6A2A4419A3005DE882 /* MessageBuble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageBuble.swift; sourceTree = "<group>"; };
 		CF1DC80729F0D46C001E2EAD /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		CF1DC80929F0DFC3001E2EAD /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
@@ -188,6 +190,7 @@
 				CF7D03082A0B80330028E7EB /* CurrentAuthUser.swift */,
 				CF1DC80929F0DFC3001E2EAD /* User.swift */,
 				CFCD028D2A4580890092DCC0 /* UserPhoto.swift */,
+				CF11F8FA2A49DC800032B7AE /* ReachabilityInternet.swift */,
 			);
 			path = CustomClass;
 			sourceTree = "<group>";
@@ -445,6 +448,7 @@
 				CFCD028E2A4580890092DCC0 /* UserPhoto.swift in Sources */,
 				CFD1CAE729FEABB6009AE9A7 /* SettingsPhotoViewController.swift in Sources */,
 				CF59A22C2A1B53B300954CCE /* ChatViewController.swift in Sources */,
+				CF11F8FB2A49DC800032B7AE /* ReachabilityInternet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

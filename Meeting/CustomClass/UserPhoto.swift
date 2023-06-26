@@ -41,7 +41,15 @@ class UserPhoto: UIImageView {
         let photoRef = storage.reference(forURL: urlPhoto)
         let maxSize = Int64(1 * 4096 * 4096)
         photoRef.getData(maxSize: maxSize) { [weak self] data, err in
-            if let error = err {print("Ошибка загрузки фото по данному пути \(urlPhoto), \(error)")}
+            if let error = err {
+                print("Ошибка загрузки фото по данному пути \(urlPhoto), \(error)")
+                if Reachability.isConnectedToNetwork() == false { /// Если нет соединения пытаемся скачать фото через 5 секунд
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
+                        self?.loadPhotoFromServer()
+                    }
+                }
+                return
+            }
             guard let photoData = data else {return}
             guard let image = UIImage(data: photoData) else {return}
             
