@@ -24,21 +24,19 @@ class SettingsPhotoCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        self.layer.cornerRadius = 10
-        self.layer.masksToBounds = true
-        
-        contentView.addSubview(photoImage)
-        dottedBorder = createDottedLine()
-        contentView.layer.addSublayer(dottedBorder)
-        photoImage.frame = contentView.bounds
-        dottedBorder.frame = contentView.bounds
-        
+        photoImage.layer.cornerRadius = 10
+        photoImage.layer.masksToBounds = true
+        photoImage.frame = CGRect(x: 0, y: 0, width: frame.width - 14, height: frame.height - 20)
         photoImage.loadIndicator.removeFromSuperview() /// Удаляем индикатор т.к он создался  по размерм .zero при инициализации
         photoImage.setupView() /// Создаем заново индикатор и начинаем анимацию
-        photoImage.contentMode = .scaleAspectFill
+        photoImage.contentMode = .scaleToFill
+        self.contentView.addSubview(photoImage)
         
-        addButton = createAddButtonPhotoSetings(x: frame.size.width, y: frame.size.height)
-        deleteButton = createDeleteButtonPhotoSetings(x: frame.size.width, y: frame.size.height)
+        dottedBorder = createDottedLine()
+        photoImage.layer.addSublayer(dottedBorder)
+        
+        addButton = createAddButtonPhotoSetings(x: photoImage.frame.maxX, y: photoImage.frame.maxY)
+        deleteButton = createDeleteButtonPhotoSetings(x: photoImage.frame.maxX, y: photoImage.frame.maxY)
         self.addSubview(addButton)
         self.addSubview(deleteButton)
     }
@@ -61,7 +59,7 @@ class SettingsPhotoCell: UICollectionViewCell {
         let viewBorder = CAShapeLayer()
         viewBorder.strokeColor = UIColor.gray.cgColor
         viewBorder.lineDashPattern = [10,4]  /// Штриховой узор, применяемый к контуру фигуры при обводке.
-        viewBorder.frame = bounds
+        viewBorder.frame = photoImage.bounds
         viewBorder.opacity = 0.4
         viewBorder.lineWidth = 5
         viewBorder.fillColor = nil
