@@ -244,7 +244,7 @@ extension ChatViewController {
 
 //MARK: -  Переход с MatchController в ChatUserController
 
-extension ChatViewController: passDataDelegate, MatchArrHasBennUpdate, UpdateWhenPhotoLoad {
+extension ChatViewController: passDataDelegate, MatchArrHasBennUpdate, LoadPhoto {
     
     func userPhotoLoaded() {
         tableView.reloadData()

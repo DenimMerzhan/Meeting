@@ -356,7 +356,7 @@ extension ChatUserController {
 
 //MARK: -  Отклонение контроллера при удаление пары
 
-extension ChatUserController: MatchArrHasBennUpdate, UpdateWhenPhotoLoad {
+extension ChatUserController: MatchArrHasBennUpdate, LoadPhoto {
     
     func userPhotoLoaded() {
         tableView.reloadData()

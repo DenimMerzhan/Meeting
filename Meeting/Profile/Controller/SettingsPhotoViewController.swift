@@ -180,7 +180,7 @@ extension SettingsPhotoViewController {
 
 //MARK: -  Обновляем СollectionView когда фото загрузилось
 
-extension SettingsPhotoViewController: UpdateWhenPhotoLoad {
+extension SettingsPhotoViewController: LoadPhoto {
     func userPhotoLoaded() {
         print("Перезагрузка")
         collectionPhotoView.reloadData()

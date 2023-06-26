@@ -151,7 +151,6 @@
 			children = (
 				CF59A22B2A1B53B300954CCE /* ChatViewController.swift */,
 				CF9AF8D92A1DF1AD00E9F07E /* ChatUserController.swift */,
-				CFC6D2FD29FE403000A712BA /* ProfileViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -205,7 +204,7 @@
 		CFDE37452A4840DC00709FFB /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				CF069DA329EC2D3D005ED378 /* PairsViewController.swift */,
+				CFC6D2FD29FE403000A712BA /* ProfileViewController.swift */,
 				CFD1CAE629FEABB6009AE9A7 /* SettingsPhotoViewController.swift */,
 			);
 			path = Controller;
@@ -233,6 +232,7 @@
 		CFDE37482A48417400709FFB /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				CF069DA329EC2D3D005ED378 /* PairsViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";

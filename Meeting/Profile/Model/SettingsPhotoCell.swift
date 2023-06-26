@@ -26,10 +26,10 @@ class SettingsPhotoCell: UICollectionViewCell {
         
         photoImage.layer.cornerRadius = 10
         photoImage.layer.masksToBounds = true
-        photoImage.frame = CGRect(x: 0, y: 0, width: frame.width - 14, height: frame.height - 20)
+        photoImage.frame = CGRect(x: 0, y: 0, width: frame.width - 14, height: frame.height - 22)
         photoImage.loadIndicator.removeFromSuperview() /// Удаляем индикатор т.к он создался  по размерм .zero при инициализации
         photoImage.setupView() /// Создаем заново индикатор и начинаем анимацию
-        photoImage.contentMode = .scaleToFill
+        photoImage.contentMode = .scaleAspectFill
         self.contentView.addSubview(photoImage)
         
         dottedBorder = createDottedLine()

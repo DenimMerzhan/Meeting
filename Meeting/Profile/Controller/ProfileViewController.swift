@@ -9,38 +9,34 @@ import UIKit
 
 class ProfileViewController: UIViewController {
     
-    @IBOutlet weak var profilePhoto: UIImageView!
+
+    
+    @IBOutlet weak var avatar: DefaultLoadPhoto!
     @IBOutlet weak var changePhotoButton: UIButton!
     @IBOutlet weak var fillingScaleProfile: UILabel!
     
     @IBOutlet weak var mostStackView: UIView!
-    
     @IBOutlet weak var nameAgeLabel: UILabel!
     
     var circularProgressBar = CircularProgressBarView(frame: .zero)
-    var animateProgressToValue = Float(0)
-    
-    let defaults = UserDefaults.standard
-    
-    var currentAuthUser =   CurrentAuthUser(ID: "") {
-        didSet {
-            nameAgeLabel.text = currentAuthUser.name + " " + String(currentAuthUser.age)
-            if currentAuthUser.imageArr.count != 0 {
-                profilePhoto.image = currentAuthUser.imageArr[0].image
-            }
-            animateProgressToValue = Float(currentAuthUser.imageArr.count) / 9
+    var currentAuthUser =   CurrentAuthUser(ID: "")
+    var profileProgress: Float {
+        get {
+            return Float(currentAuthUser.imageArr.count) / 9
         }
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        guard let vc = self.tabBarController?.viewControllers?[0] as? PairsViewController else {return}
-        currentAuthUser = vc.currentAuthUser
+        if currentAuthUser.avatar?.image != nil {
+            avatar.image = currentAuthUser.avatar?.image
+            avatar.loadIndicator.stopAnimating()
+        }
         profileUpdate()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        startSettings(animateProgressToValue: animateProgressToValue)
+        startSettings()
     }
     
     
@@ -49,12 +45,9 @@ class ProfileViewController: UIViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
         guard let destination = segue.destination as? SettingsPhotoViewController else {return}
         destination.currentAuthUser = currentAuthUser
-        
     }
-    
 }
 
 
@@ -63,25 +56,31 @@ class ProfileViewController: UIViewController {
 
 private extension ProfileViewController {
         
-    func startSettings(animateProgressToValue: Float){
+    func startSettings(){
         
+        guard let vc = self.tabBarController?.viewControllers?[0] as? PairsViewController else {return}
+        currentAuthUser = vc.currentAuthUser
+        currentAuthUser.avatar?.delegate = self
+        avatar.image = currentAuthUser.avatar?.image
+        
+        nameAgeLabel.text = currentAuthUser.name + " " + String(currentAuthUser.age)
         nameAgeLabel.lineBreakMode = .byWordWrapping
         nameAgeLabel.numberOfLines = 3
         
-        fillingScaleProfile.frame.origin.x = profilePhoto.frame.origin.x
-        fillingScaleProfile.frame.origin.y = profilePhoto.frame.maxY - 7
+        
         
         let changePhotoLayer = changePhotoButton.layer
         let filingScaleLayer = fillingScaleProfile.layer
         
-        profilePhoto.layer.cornerRadius = profilePhoto.frame.size.width / 2
-        profilePhoto.clipsToBounds = true
+        avatar.layer.cornerRadius = avatar.frame.size.width / 2
+        avatar.clipsToBounds = true
         
-        circularProgressBar.createCircularPath(radius: profilePhoto.frame.width / 2  + 8) /// Создаем прогресс бар
-        circularProgressBar.progressAnimation(duration: 2,toValue: animateProgressToValue)
+        circularProgressBar.createCircularPath(radius: avatar.frame.width / 2  + 8) /// Создаем прогресс бар
+        circularProgressBar.progressAnimation(duration: 2,toValue: profileProgress)
         circularProgressBar.backgroundColor = .red
         mostStackView.addSubview(circularProgressBar)
         
+        changePhotoButton.frame.size = CGSize(width: 50, height: 50)
         changePhotoLayer.cornerRadius = changePhotoButton.frame.size.width / 2 /// Делаем круглым наш карандаш
         changePhotoButton.clipsToBounds = true
         
@@ -107,21 +106,27 @@ private extension ProfileViewController {
     
     func profileUpdate(){ /// Обновления шкалы заполненности профиля
         
-        fillingScaleProfile.frame.origin.x = profilePhoto.frame.origin.x /// Делаем шкалу профиля ровно под фото профиля
-        fillingScaleProfile.frame.origin.y = profilePhoto.frame.maxY - 7
+        fillingScaleProfile.center.x = avatar.center.x /// Делаем шкалу профиля ровно под фото профиля
+        fillingScaleProfile.frame.origin.y = avatar.frame.maxY - 7
         
-        changePhotoButton.center.x = profilePhoto.frame.maxX - 25
-        changePhotoButton.center.y = profilePhoto.frame.origin.y + 15
+        changePhotoButton.center.x = avatar.frame.maxX - 20
+        changePhotoButton.center.y = avatar.frame.origin.y + 10
         
-        circularProgressBar.center = profilePhoto.center
+        circularProgressBar.center = avatar.center
         
         changePhotoButton.titleLabel?.text = ""
         
-        var newStatus = animateProgressToValue * 100
+        var newStatus = profileProgress * 100
         if newStatus > 100 {newStatus = 100}
         fillingScaleProfile.text = String(format: "%.0f", newStatus)  + "% ЗАПОЛНЕНО"
         
-        circularProgressBar.progressAnimation(duration: Double(animateProgressToValue) * 8, toValue: animateProgressToValue - 0.1)
+        circularProgressBar.progressAnimation(duration: Double(profileProgress) * 8, toValue: profileProgress - 0.1)
     }
-    
+}
+
+extension ProfileViewController: LoadPhoto {
+    func userPhotoLoaded() {
+        avatar.image = currentAuthUser.avatar?.image
+        avatar.loadIndicator.stopAnimating()
+    }
 }

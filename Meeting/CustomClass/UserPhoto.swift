@@ -9,7 +9,7 @@ import UIKit
 import FirebaseStorage
 
 
-protocol UpdateWhenPhotoLoad {
+protocol LoadPhoto {
     func userPhotoLoaded()
 }
 
@@ -17,7 +17,7 @@ class UserPhoto: UIImageView {
     
     var urlPhotoFromServer: String?
     var imageID: String?
-    var delegate: UpdateWhenPhotoLoad?
+    var delegate: LoadPhoto?
     
     private let storage = Storage.storage()
     
