@@ -14,7 +14,6 @@ class User {
     
     var ID: String
     var currentAuthUserID: String
-    
     var chat: Chat?
     var chatID: String {
         get {
@@ -42,6 +41,7 @@ class User {
     init(ID:String,currentAuthUserID: String) {
         self.ID = ID
         self.currentAuthUserID = currentAuthUserID
+        
         loadChat()
     }
     
@@ -76,7 +76,7 @@ class User {
             }
         }catch{
             print("Ошибка получения ссылок на фото с сервера FirebaseFirestore - \(error)")
-        }
+        }       
     }
     
 //MARK: -  Загрузка чата

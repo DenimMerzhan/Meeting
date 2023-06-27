@@ -12,41 +12,7 @@ import AudioToolbox
 
 
 struct CardModel {
-    
-    
-//MARK: - Создание новой карты
-    
-    
-    func createCard(newUser: User) -> CardView {
-
-        let imageView = CardImageView(name: newUser.name, age: String(newUser.age),countPhoto: newUser.imageArr.count)
-        let card = CardView(imageUser: imageView, imageArr: newUser.imageArr, userID: newUser.ID)
-        return card
-    }
  
-
-//MARK: -  Создание карты оповещения что идет загрузка пользователей
-    
-    func createLoadingUsersCard() -> CardView {
-        
-        let imageView = CardImageView(name: "Идет заугрзка новых пар для тебя...", age: "",countPhoto: 0)
-        let card = CardView(imageUser: imageView, imageArr: nil, userID: "")
-        
-        return card
-        
-    }
-    
-    
-//MARK: - Создаение пустой карты
-    
-    
-    func createEmptyCard() -> CardView {
-        
-        let imageView = CardImageView(name: "Пары закончились", age: "",countPhoto: 0)
-        let card = CardView(imageUser: imageView, imageArr: nil, userID: "")
-        
-        return card
-    }
     
     
     
@@ -67,7 +33,7 @@ struct CardModel {
         }
         
         
-        let layer = currentCard.imageView!.layer /// Создаем ссылку на слой imageUser
+        let layer = currentCard.imageView.layer /// Создаем ссылку на слой imageUser
         
         var rotationAndPerspectiveTransform : CATransform3D = CATransform3DIdentity
         rotationAndPerspectiveTransform.m34 = 1.0 / -1000

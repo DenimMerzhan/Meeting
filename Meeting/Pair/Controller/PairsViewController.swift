@@ -20,10 +20,9 @@ class PairsViewController: UIViewController {
     var stopCard = false
     var center = CGPoint()
     
-    var currentCard: CardView?
-    var nextCard = CardModel().createEmptyCard()
+    var currentCard =  CardView(userID: "", name: "", age: "", imageArr: nil)
+    var nextCard =  CardView(userID: "", name: "", age: "", imageArr: nil)
     
-    var cardModel = CardModel()
     var currentAuthUser = CurrentAuthUser(ID: "+79817550000")
     
     var progressViewLoadUsers = CreateButton().createProgressLoadUsersStartForLaunch(width: 0)
@@ -51,17 +50,6 @@ class PairsViewController: UIViewController {
                 }
                 
             }
-            if currentCard?.ID == "Loading_Card" && usersArr.count > 3 {
-                
-                currentCard?.removeFromSuperview()
-                nextCard.removeFromSuperview()
-                createStartCard()
-            }else if currentCard?.ID == "Loading_Card" && usersArr.count > 0 && currentAuthUser.newUsersLoading == false {
-                
-                currentCard?.removeFromSuperview()
-                nextCard.removeFromSuperview()
-                createStartCard()
-            }
         }
     }
     
@@ -83,7 +71,7 @@ class PairsViewController: UIViewController {
         
         Task {
             await currentAuthUser.loadMetadata()
-            await loadNewUsers(numberRequsetedUsers: 1)
+            await loadNewUsers(numberRequsetedUsers: 10)
             startSettings()
         }
         
@@ -96,28 +84,28 @@ class PairsViewController: UIViewController {
         
         var differenceX = CGFloat()
         var differenceY = CGFloat(-150)
-        guard let userID = currentCard?.ID else {return}
+        
         
         if sender.restorationIdentifier == "Cancel" {
             differenceX = -200
-            currentAuthUser.disLikeArr.append(userID)
+            currentAuthUser.disLikeArr.append(currentCard.ID)
         }else if sender.restorationIdentifier == "SuperLike" {
-            currentAuthUser.superLikeArr.append(userID)
-            checkMatch(ID: userID)
+            currentAuthUser.superLikeArr.append(currentCard.ID)
+            checkMatch(ID: currentCard.ID)
             differenceY = -600
         }else if sender.restorationIdentifier == "Like" {
-            currentAuthUser.likeArr.append(userID)
-            checkMatch(ID: userID)
+            currentAuthUser.likeArr.append(currentCard.ID)
+            checkMatch(ID: currentCard.ID)
             differenceX = 200
         }
         
-        currentCard?.changeHeart(xFromCenter: differenceX, yFromCenter: differenceY)
+        currentCard.changeHeart(xFromCenter: differenceX, yFromCenter: differenceY)
         UIView.animate(withDuration: 0.4, delay: 0) {
             
-            self.currentCard!.center = CGPoint(x: self.currentCard!.center.x + differenceX , y: self.currentCard!.center.y + differenceY )
-            self.currentCard!.transform = CGAffineTransform(rotationAngle: abs(differenceX) * 0.002)
-            self.currentCard!.alpha = 0
-            self.loadNewPeople(card: self.currentCard!)
+            self.currentCard.center = CGPoint(x: self.currentCard.center.x + differenceX , y: self.currentCard.center.y + differenceY )
+            self.currentCard.transform = CGAffineTransform(rotationAngle: abs(differenceX) * 0.002)
+            self.currentCard.alpha = 0
+            self.loadNewPeople(card: self.currentCard)
             
         }
         
@@ -127,7 +115,7 @@ class PairsViewController: UIViewController {
     
     
     @IBAction func cardTap(_ sender: UITapGestureRecognizer) {
-        currentCard?.refreshPhoto(sender)
+        currentCard.refreshPhoto(sender)
     }
     
     //MARK: -  Карта была нажата пальцем
@@ -201,9 +189,7 @@ extension PairsViewController {
     
     func loadNewPeople(card:CardView){
         
-        
         currentAuthUser.writingPairsInfrormation()
-        
         card.removeGestureRecognizer(panGesture)
         card.removeGestureRecognizer(tapGesture)
         
@@ -213,49 +199,27 @@ extension PairsViewController {
             basketUser.append(usersArr[0])
             usersArr.removeFirst()
         }
-        nextCard = createNextCard()
         
-        currentCard!.addGestureRecognizer(panGesture)
-        currentCard!.addGestureRecognizer(tapGesture)
+        if let user = usersArr.first {
+            nextCard = CardView(userID: user.ID, name: user.name, age: String(user.age), imageArr: user.imageArr)
+        }else if currentAuthUser.numberPotenialPairsOnServer == 0 {
+            nextCard = CardView(userID: "Stop_Card", name: "Пары закончились", age: "", imageArr: nil)
+        }
         
+        currentCard.addGestureRecognizer(panGesture)
+        currentCard.addGestureRecognizer(tapGesture)
         view.addSubview(nextCard)
         view.sendSubviewToBack(nextCard)
-        
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { /// Чем выше параметр тем выше шанс что карточка не удалиться и останется висеть в памяти надо подумать над этим
             card.removeFromSuperview()
         }
         
-        if currentCard?.ID == "Stop_Card"  {
+        if currentCard.ID == "Stop_Card"  {
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                card.removeFromSuperview()
-            }
-            currentCard?.removeGestureRecognizer(panGesture)
-            currentCard?.removeGestureRecognizer(tapGesture)
+            currentCard.removeGestureRecognizer(panGesture)
+            currentCard.removeGestureRecognizer(tapGesture)
             stackViewButton.isHidden = true
-        }
-    }
-    
-}
-//MARK: - Создание нового CardView
-
-
-extension PairsViewController {
-    
-    func createNextCard() -> CardView {
-        
-        if usersArr.count > 1 {
-            return  cardModel.createCard(newUser: usersArr[1])
-        }
-        else if usersArr.count < 2 && currentAuthUser.newUsersLoading {
-            return  cardModel.createLoadingUsersCard()
-        }
-        else if usersArr.count < 2 && currentAuthUser.numberPotenialPairsOnServer == 0 {
-            return cardModel.createEmptyCard()
-        }
-        else {
-            return cardModel.createEmptyCard()
         }
     }
     
@@ -275,7 +239,7 @@ extension PairsViewController {
                 
                 let newUser = User(ID: ID,currentAuthUserID: currentAuthUser.ID)
                 await newUser.loadMetaData()
-               
+                
                 if ID == newUsersID.last {
                     currentAuthUser.newUsersLoading = false
                 }
@@ -306,27 +270,29 @@ extension PairsViewController {
             self.tabBarController?.tabBar.backgroundColor = .white
             self.tabBarController?.tabBar.isHidden = false
             
-            if self.usersArr.count > 0 {
+            if self.usersArr.count > 1 {
                 self.createStartCard()
-            }else {
-                self.currentCard = self.cardModel.createEmptyCard()
-                self.view.addSubview(self.currentCard!)
+            }else if self.usersArr.count > 0{
+                let user = self.usersArr[0]
+                self.currentCard = CardView(userID: user.ID, name: user.name, age: String(user.age), imageArr: user.imageArr)
+                self.view.addSubview(self.currentCard)
             }
         }
     }
     
     func createStartCard(){
         
-        currentCard = cardModel.createCard(newUser: usersArr[0])
-        center = currentCard!.center
-        currentCard!.addGestureRecognizer(self.panGesture)
-        currentCard!.addGestureRecognizer(self.tapGesture)
+        let firstUser = self.usersArr[0]
+        let firdUser = self.usersArr[1]
         
-        nextCard = createNextCard()
+        currentCard = CardView(userID: firstUser.ID, name: firstUser.name, age: String(firstUser.age), imageArr: firstUser.imageArr)
+        center = currentCard.center
+        currentCard.addGestureRecognizer(panGesture)
+        currentCard.addGestureRecognizer(tapGesture)
+        nextCard = CardView(userID: firdUser.ID, name: firdUser.name, age: String(firdUser.age), imageArr: firdUser.imageArr)
         view.addSubview(nextCard)
-        self.view.addSubview(self.currentCard!)
+        view.addSubview(currentCard)
         self.view.bringSubviewToFront(self.stackViewButton)
-        
         stackViewButton.isHidden = false
     }
     

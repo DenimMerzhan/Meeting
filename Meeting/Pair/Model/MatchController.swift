@@ -25,14 +25,11 @@ class MatchController: UIViewController {
     var newMatch: User? {
         didSet {
             guard let user = newMatch else {return}
-            
-            let card = cardModel.createCard(newUser: user)
+            let card = CardView(userID: user.ID, name: user.name, age: String(user.age), imageArr: user.imageArr)
             card.addGestureRecognizer(tapGesture)
-            card.nameUser.isHidden = true
+            card.name.isHidden = true
             card.age.isHidden = true
-            if let imageView = card.imageView {
-                changePostionProgressBar(progressBar: imageView.progressBar, y: 50)
-            }
+            changePostionProgressBar(progressBar: card.progressBar, y: 50)
             view.addSubview(card)
             view.sendSubviewToBack(card)
         }
