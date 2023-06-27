@@ -106,9 +106,6 @@ private extension ProfileViewController {
     
     func profileUpdate(){ /// Обновления шкалы заполненности профиля
         
-        fillingScaleProfile.center.x = avatar.center.x /// Делаем шкалу профиля ровно под фото профиля
-        fillingScaleProfile.frame.origin.y = avatar.frame.maxY - 7
-        
         changePhotoButton.center.x = avatar.frame.maxX - 20
         changePhotoButton.center.y = avatar.frame.origin.y + 10
         

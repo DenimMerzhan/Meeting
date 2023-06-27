@@ -17,6 +17,7 @@ class CardView: UIView {
     var ID = String()
     var nameUser = UILabel()
     var age = UILabel()
+    var indexCurrentImage = 0
     
     
     var likImage = UIImageView(frame: CGRect(x: 0.0, y: 8.0, width: 106, height: 79))
@@ -52,8 +53,6 @@ class CardView: UIView {
         self.addSubview(dislikeImage)
         self.addSubview(superLikeImage)
         
-        
-
     }
     
     required init?(coder: NSCoder) {
@@ -100,36 +99,34 @@ class CardView: UIView {
     
 //MARK: - Когда пользователь тапнул по фото обновляет фото и строку прогресса
     
-    func refreshPhoto(_ sender: UITapGestureRecognizer,indexCurrentImage: Int) -> Int? {
+    func refreshPhoto(_ sender: UITapGestureRecognizer){
 
         let coordinates = sender.location(in: self).x
-        guard let imageArr = self.imageArr else {return nil}
-        var index = indexCurrentImage
+        guard let imageArr = self.imageArr else {return}
         
         if coordinates > 220 && indexCurrentImage < imageArr.count - 1 {
-            index += 1
-            self.imageView?.progressBar[index-1].backgroundColor = .gray
+            indexCurrentImage += 1
+            self.imageView?.progressBar[indexCurrentImage-1].backgroundColor = .gray
         }else if  coordinates < 180 && indexCurrentImage > 0  {
-            index -= 1
-            self.imageView?.progressBar[index+1].backgroundColor = .gray
+            indexCurrentImage -= 1
+            self.imageView?.progressBar[indexCurrentImage+1].backgroundColor = .gray
         }else if indexCurrentImage == 0 || indexCurrentImage == imageArr.count - 1 {
             self.backgroundColor = .white
-            CardModel().createAnimate(indexImage: index, currentCard: self)
+            CardModel().createAnimate(indexImage: indexCurrentImage, currentCard: self)
            
         }
         
         AudioServicesPlayAlertSoundWithCompletion(SystemSoundID(1161)) { /// Cоздаем звук при Тапе
         }
         
-        self.imageView?.progressBar[index].backgroundColor = .white
-        if imageArr[index].image == nil {
-            imageView?.startAnimating()
+        self.imageView?.progressBar[indexCurrentImage].backgroundColor = .white
+        if imageArr[indexCurrentImage].image == nil {
+            imageView?.loadIndicator.startAnimating()
             imageView?.image = UIImage(color: UIColor(named: "GrayColor")!)
         }else {
-            imageView?.image = imageArr[index].image
-            imageView?.stopAnimating()
+            imageView?.image = imageArr[indexCurrentImage].image
+            imageView?.loadIndicator.stopAnimating()
         }
-        return index
 }
     
 //    deinit {
@@ -140,7 +137,9 @@ class CardView: UIView {
 
 extension CardView: LoadPhoto {
     func userPhotoLoaded() {
-        
+        guard let imageArr = self.imageArr else {return}
+        imageView?.image = imageArr[indexCurrentImage].image
+        imageView?.loadIndicator.stopAnimating()
     }
     
 }

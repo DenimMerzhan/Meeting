@@ -567,10 +567,13 @@
                                                     <action selector="settingsPhotoPressed:" destination="qng-RP-u3q" eventType="touchUpInside" id="XTw-kL-S3Z"/>
                                                 </connections>
                                             </button>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2FS-Qe-uXV">
-                                                <rect key="frame" x="27" y="290" width="180" height="22"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2FS-Qe-uXV">
+                                                <rect key="frame" x="117" y="228" width="180" height="22"/>
                                                 <color key="backgroundColor" name="MainAppColor"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="22" id="aLs-Dl-baT"/>
+                                                    <constraint firstAttribute="width" constant="180" id="gvC-dI-Hio"/>
+                                                </constraints>
                                                 <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
@@ -584,6 +587,8 @@
                                             <constraint firstAttribute="height" constant="500" id="QpA-rX-R4c"/>
                                             <constraint firstItem="lFT-3Z-kJV" firstAttribute="centerY" secondItem="nwR-m1-hIX" secondAttribute="centerY" id="Y7z-Q9-nYO"/>
                                             <constraint firstItem="M7k-t4-R0P" firstAttribute="leading" secondItem="nwR-m1-hIX" secondAttribute="leading" constant="125" id="e1n-ip-HXg"/>
+                                            <constraint firstItem="2FS-Qe-uXV" firstAttribute="bottom" secondItem="lFT-3Z-kJV" secondAttribute="bottom" constant="15" id="eaX-Mc-WcV"/>
+                                            <constraint firstItem="2FS-Qe-uXV" firstAttribute="centerX" secondItem="lFT-3Z-kJV" secondAttribute="centerX" id="qAv-7u-osl"/>
                                             <constraint firstAttribute="trailing" secondItem="M7k-t4-R0P" secondAttribute="trailing" constant="125" id="rdL-lc-myZ"/>
                                         </constraints>
                                         <variation key="default">

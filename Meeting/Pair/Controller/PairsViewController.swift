@@ -17,8 +17,6 @@ class PairsViewController: UIViewController {
     
     @IBOutlet weak var stackViewButton: UIStackView!
     
-    var indexCurrentImage = 0
-    
     var stopCard = false
     var center = CGPoint()
     
@@ -129,9 +127,7 @@ class PairsViewController: UIViewController {
     
     
     @IBAction func cardTap(_ sender: UITapGestureRecognizer) {
-        if let index =  currentCard!.refreshPhoto(sender, indexCurrentImage: indexCurrentImage) {
-            indexCurrentImage = index
-        }
+        currentCard?.refreshPhoto(sender)
     }
     
     //MARK: -  Карта была нажата пальцем
@@ -226,7 +222,6 @@ extension PairsViewController {
         view.sendSubviewToBack(nextCard)
         
         
-        indexCurrentImage = 0
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { /// Чем выше параметр тем выше шанс что карточка не удалиться и останется висеть в памяти надо подумать над этим
             card.removeFromSuperview()
         }

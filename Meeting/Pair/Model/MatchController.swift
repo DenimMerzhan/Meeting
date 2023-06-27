@@ -42,17 +42,13 @@ class MatchController: UIViewController {
     
     var card: CardView?
     
-    var indexCurrentImage = 0
-    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
 
     @IBAction func tapCard(_ sender: UITapGestureRecognizer) {
         guard let currentCard = card else {return}
-        if let index =  currentCard.refreshPhoto(sender, indexCurrentImage: indexCurrentImage) {
-            indexCurrentImage = index
-        }
+        currentCard.refreshPhoto(sender)
     }
     
 
