@@ -43,7 +43,7 @@ class PairsViewController: UIViewController {
             
             print("usersArr.count - \(usersArr.count)")
             
-            if usersArr.count < 50 && currentAuthUser.numberPotenialPairsOnServer > 0 && currentAuthUser.newUsersLoading == false {
+            if usersArr.count < 5 && currentAuthUser.potentialPairID.count > 0 {
                 print("Загрузка новых пользователей")
                 Task {
                     await loadNewUsers(numberRequsetedUsers: 15)
@@ -78,13 +78,12 @@ class PairsViewController: UIViewController {
     }
     
     
-//MARK: -  Одна из кнопок лайка была нажата
+    //MARK: -  Одна из кнопок лайка была нажата
     
     @IBAction func buttonPressed(_ sender: UIButton) {
         
         var differenceX = CGFloat()
         var differenceY = CGFloat(-150)
-        
         
         if sender.restorationIdentifier == "Cancel" {
             differenceX = -200
@@ -193,17 +192,26 @@ extension PairsViewController {
         card.removeGestureRecognizer(panGesture)
         card.removeGestureRecognizer(tapGesture)
         
-        currentCard = nextCard
-        
-        if usersArr.count > 0 {
-            basketUser.append(usersArr[0])
-            usersArr.removeFirst()
+        if currentCard.ID == "Stop_Card"  {
+            
+            currentCard.removeGestureRecognizer(panGesture)
+            currentCard.removeGestureRecognizer(tapGesture)
+            stackViewButton.isHidden = true
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { /// Чем выше параметр тем выше шанс что карточка не удалиться и останется висеть в памяти надо подумать над этим
+                card.removeFromSuperview()
+            }
+            return
         }
+        
+        currentCard = nextCard
+        basketUser.append(usersArr[0])
+        usersArr.removeFirst()
         
         if let user = usersArr.first {
             nextCard = CardView(userID: user.ID, name: user.name, age: String(user.age), imageArr: user.imageArr)
-        }else if currentAuthUser.numberPotenialPairsOnServer == 0 {
-            nextCard = CardView(userID: "Stop_Card", name: "Пары закончились", age: "", imageArr: nil)
+        }else if currentAuthUser.potentialPairID.count == 0 {
+            nextCard = CardView(userID: "Stop_Card", name: "Пары закончились :(", age: "", imageArr: nil)
         }
         
         currentCard.addGestureRecognizer(panGesture)
@@ -214,13 +222,6 @@ extension PairsViewController {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { /// Чем выше параметр тем выше шанс что карточка не удалиться и останется висеть в памяти надо подумать над этим
             card.removeFromSuperview()
         }
-        
-        if currentCard.ID == "Stop_Card"  {
-            
-            currentCard.removeGestureRecognizer(panGesture)
-            currentCard.removeGestureRecognizer(tapGesture)
-            stackViewButton.isHidden = true
-        }
     }
     
 }
@@ -230,24 +231,20 @@ extension PairsViewController {
 extension PairsViewController {
     
     func loadNewUsers(numberRequsetedUsers: Int) async{
-        
+        print(currentAuthUser.potentialPairID.count)
         currentAuthUser.newUsersLoading = true
         
-        if let newUsersID = await currentAuthUser.loadNewPotenialPairs(countUser: numberRequsetedUsers,usersArr: usersArr) {
+        for i in 0...numberRequsetedUsers {
             
-            for ID in newUsersID {
-                
-                let newUser = User(ID: ID,currentAuthUserID: currentAuthUser.ID)
-                await newUser.loadMetaData()
-                
-                if ID == newUsersID.last {
-                    currentAuthUser.newUsersLoading = false
-                }
-                usersArr.append(newUser)
-                progressViewLoadUsers.progressBar.progress += 0.05
-            }
-            currentAuthUser.newUsersLoading = false
+            if i > currentAuthUser.potentialPairID.count - 1 {break}
+            
+            let newUser = User(ID: currentAuthUser.potentialPairID[0],currentAuthUserID: currentAuthUser.ID)
+            await newUser.loadMetaData()
+            usersArr.append(newUser)
+            progressViewLoadUsers.progressBar.progress += 0.05
+            currentAuthUser.potentialPairID.removeFirst()
         }
+        currentAuthUser.newUsersLoading = false
     }
 }
 //MARK: -  Дополнительные расширения

@@ -37,7 +37,7 @@ class CurrentAuthUser {
     var disLikeArr = [String]()
     var superLikeArr = [String]()
     
-    var numberPotenialPairsOnServer = Int()
+    var potentialPairID = [String]()
     
     var newUsersLoading = Bool()
     
@@ -69,7 +69,7 @@ class CurrentAuthUser {
                         if let likeArr = dataDoc["LikeArr"] as? [String] {self.likeArr = likeArr}
                         if let disLikeArr = dataDoc["DisLikeArr"] as? [String] {self.disLikeArr = disLikeArr}
                         if let superLikeArr = dataDoc["SuperLikeArr"] as? [String] {self.superLikeArr = superLikeArr} /// Суперлайков может и не быть, поэтому не ставим guard
-                        
+                        await loadNewPotenialPairs()
                         for data in dataDoc { /// Загрузка ссылок на фото в Storage
                             if data.key.contains("photoImage") {
                                 if let urlPhoto = data.value as? String {
@@ -107,45 +107,23 @@ class CurrentAuthUser {
     
 //MARK: -  Загрузка потеницальных пар для текущего пользователя
     
-    func loadNewPotenialPairs(countUser: Int,usersArr: [User]) async -> [String]? {
-        var count = 0
+    func loadNewPotenialPairs() async {
+        
         let collection  = db.collection("Users")
-        var newUsersID = [String]()
-        
-        
-        var nonSwipedArr = [String]()
-        
-        for user in usersArr {
-            nonSwipedArr.append(user.ID)
-        }
-        
-        let viewedUsers = likeArr + disLikeArr + superLikeArr + nonSwipedArr
-        
+        let viewedUsers = likeArr + disLikeArr + superLikeArr + [ID]
         print(viewedUsers.count, "количество ограничений")
+        
         do {
-            let querySnapshot = try await collection.getDocuments()
-            
-            for document in querySnapshot.documents {
-                
-                if document.documentID == ID { /// Если текущий пользователь пропускаем его добавление
-                    continue
-                }else if viewedUsers.contains(document.documentID) { /// Если кто то есть в архиве viewedUsers тоже пропускаем егго
-                    continue
-                }
-                
-                newUsersID.append(document.documentID)
-                count += 1
-                if count == countUser {
-                    break
+            let documents = try await collection.getDocuments()
+            for document in documents.documents {
+                if viewedUsers.contains(document.documentID)  {continue}
+                DispatchQueue.main.async {
+                    self.potentialPairID.append(document.documentID)
                 }
             }
-            numberPotenialPairsOnServer = querySnapshot.count - newUsersID.count - viewedUsers.count - 1
-            print("Количество потенциальных пар на сервере - \(numberPotenialPairsOnServer)")
         }catch{
-            print("Ошибка загрузки ID пользователей - \(error)")
-            return nil
+            
         }
-        return newUsersID
     }
     
     
@@ -218,7 +196,7 @@ class CurrentAuthUser {
 }
 
 
-//MARK: -  Поиск пар для пользователя
+//MARK: -  Проверка на матч пользователя
 
 extension CurrentAuthUser {
     
@@ -355,7 +333,7 @@ extension CurrentAuthUser {
                 Task {
                     for ID in matchArrID {
                         if self.matchArr.contains(where: {$0.ID == ID}) {continue}
-                        let matchUser = await User(ID: ID,currentAuthUserID: self.ID)
+                        let matchUser = User(ID: ID,currentAuthUserID: self.ID)
                         await matchUser.loadMetaData()
                         self.matchArr.append(matchUser)
                     }
