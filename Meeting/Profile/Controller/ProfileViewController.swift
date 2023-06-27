@@ -29,7 +29,6 @@ class ProfileViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         if currentAuthUser.avatar?.image != nil {
             avatar.image = currentAuthUser.avatar?.image
-            avatar.loadIndicator.stopAnimating()
         }
         profileUpdate()
     }
@@ -124,6 +123,5 @@ private extension ProfileViewController {
 extension ProfileViewController: LoadPhoto {
     func userPhotoLoaded() {
         avatar.image = currentAuthUser.avatar?.image
-        avatar.loadIndicator.stopAnimating()
     }
 }

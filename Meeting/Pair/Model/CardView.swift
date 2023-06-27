@@ -47,10 +47,7 @@ class CardView: UIView {
         for imageView in imageArr {
             imageView.delegate = self
         }
-        if imageArr.first?.image != nil {
-            imageView.image = imageArr.first?.image
-            imageView.loadIndicator.stopAnimating()
-        }
+        imageView.image = imageArr.first?.image
         
         likeImage.image = UIImage(named: "LikeHeart")!
         dislikeImage.image = UIImage(named: "DislikeHeart")
@@ -148,13 +145,7 @@ class CardView: UIView {
         }
         
         self.progressBar[indexCurrentImage].backgroundColor = .white
-        if imageArr[indexCurrentImage].image == nil {
-            imageView.loadIndicator.startAnimating()
-            imageView.image = UIImage(color: UIColor(named: "GrayColor")!)
-        }else {
-            imageView.image = imageArr[indexCurrentImage].image
-            imageView.loadIndicator.stopAnimating()
-        }
+        imageView.image = imageArr[indexCurrentImage].image
     }
     
 }   
@@ -193,7 +184,6 @@ extension CardView: LoadPhoto {
     func userPhotoLoaded() {
         guard let imageArr = self.imageArr else {return}
         imageView.image = imageArr[indexCurrentImage].image
-        imageView.loadIndicator.stopAnimating()
     }
     
 }

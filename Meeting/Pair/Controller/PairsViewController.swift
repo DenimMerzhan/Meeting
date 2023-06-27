@@ -71,14 +71,14 @@ class PairsViewController: UIViewController {
         
         Task {
             await currentAuthUser.loadMetadata()
-            await loadNewUsers(numberRequsetedUsers: 10)
+            await loadNewUsers(numberRequsetedUsers: 2)
             startSettings()
         }
         
     }
     
     
-    //MARK: -  Одна из кнопок лайка была нажата
+//MARK: -  Одна из кнопок лайка была нажата
     
     @IBAction func buttonPressed(_ sender: UIButton) {
         

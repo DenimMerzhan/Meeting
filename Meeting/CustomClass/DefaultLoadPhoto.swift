@@ -12,6 +12,18 @@ class DefaultLoadPhoto: UIImageView {
     let loadIndicator = UIActivityIndicatorView(frame: .zero)
     
 
+    override var image: UIImage? {
+        didSet {
+            if image != nil {
+                loadIndicator.stopAnimating()
+                self.backgroundColor = .clear
+            }else {
+                loadIndicator.startAnimating()
+                self.backgroundColor = UIColor(named: "GrayColor")
+            }
+        }
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
@@ -31,7 +43,6 @@ class DefaultLoadPhoto: UIImageView {
         loadIndicator.startAnimating()
         loadIndicator.hidesWhenStopped = true
         
-        self.image = UIImage(color: UIColor(named: "GrayColor")!)
         self.addSubview(loadIndicator)
     }
     

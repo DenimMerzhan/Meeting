@@ -114,14 +114,7 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
         cell.userID = pairUser.ID
         pairUser.avatar?.delegate = self
         
-        if pairUser.avatar?.image == nil {
-            cell.avatar.loadIndicator.startAnimating()
-            cell.avatar.image = UIImage(color: UIColor(named: "GrayColor")!)
-        }else {
-            cell.avatar.image = pairUser.avatar?.image
-            cell.avatar.loadIndicator.stopAnimating()
-        }
-        
+        cell.avatar.image = pairUser.avatar?.image
         if chat.numberUnreadMessges(pairID: pairUser.ID) > 0 {
             cell.countUnreadMessageView.isHidden = false
             cell.countUnreadMessageLabel.text = String(chat.numberUnreadMessges(pairID: pairUser.ID))
@@ -196,16 +189,10 @@ extension ChatViewController: UICollectionViewDataSource, UICollectionViewDelega
             cell.chatID = chatID
             user.avatar?.delegate = self
             
-            if user.avatar?.image == nil {
-                cell.avatar.loadIndicator.startAnimating()
-            }else {
-                cell.avatar.loadIndicator.stopAnimating()
-            }
             cell.avatar.image = user.avatar?.image
             cell.name.text = potentialChatArr[indexPath.row].name
         }else {
-            cell.avatar.image = nil
-            cell.avatar.backgroundColor = UIColor(named: "GrayColor")
+            cell.avatar.image = UIImage(color: UIColor(named: "GrayColor")!)
             cell.name.text = ""
         }
         

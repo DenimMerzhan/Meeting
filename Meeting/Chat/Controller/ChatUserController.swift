@@ -99,10 +99,8 @@ extension ChatUserController {
         ]
         textField.attributedPlaceholder = NSAttributedString(string: "Сообщение",attributes: attributes)
         userAvatar.loadIndicator.transform = CGAffineTransform(scaleX: 0.3, y: 0.3)
-        if selectedUser.avatar?.image != nil {
-            userAvatar.image = selectedUser.avatar?.image
-            userAvatar.loadIndicator.stopAnimating()
-        }
+        userAvatar.image = selectedUser.avatar?.image
+        
         nameUser.text = selectedUser.name
         selectedUser.avatar?.delegate = self
         currentAuthUser.avatar?.delegate = self
@@ -146,7 +144,6 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
             cell.statusMessage.isHidden = false
             cell.heartView.isHidden = true
             cell.avatar.image = UIImage()
-            cell.avatar.loadIndicator.stopAnimating()
             cell.messageBubble.backgroundColor = UIColor(named: "CurrentUserMessageColor")
 
             cell.messageLabel.textAlignment = .right
@@ -155,14 +152,7 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
             
         }else {
         
-            
-            if selectedUser.avatar?.image == nil {
-                cell.avatar.loadIndicator.startAnimating()
-                cell.avatar.image = UIImage(color: UIColor(named: "GrayColor")!)
-            }else {
-                cell.avatar.loadIndicator.stopAnimating()
-                cell.avatar.image = selectedUser.avatar?.image
-            }
+            cell.avatar.image = selectedUser.avatar?.image
             
             view.isCurrentUser = false
             view.labelForCalculate.text = cell.messageLabel.text
@@ -192,7 +182,6 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
         
         if  indexPath.row + 1 < chat.structuredMessagesByDates[indexPath.section - 1].messages.count && chat.structuredMessagesByDates[indexPath.section - 1].messages[indexPath.row + 1].sender == sender {
             cell.avatar.image = UIImage()
-            cell.avatar.loadIndicator.stopAnimating()
         }
         
         return cell
@@ -362,7 +351,6 @@ extension ChatUserController: MatchArrHasBennUpdate, LoadPhoto {
     func userPhotoLoaded() {
         tableView.reloadData()
         userAvatar.image = selectedUser.avatar?.image
-        userAvatar.loadIndicator.stopAnimating()
     }
     
     func updateDataWhenUserDelete() { /// Если пользователя удалили из пар моментально отклоняем контроллер и выводим предупреждение

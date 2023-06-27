@@ -85,13 +85,7 @@ extension SettingsPhotoViewController : UICollectionViewDataSource, UICollection
             cell.addButton.isHidden = true
             cell.deleteButton.isHidden = false
             currentAuthUser.imageArr[indexRow].delegate = self
-            if currentAuthUser.imageArr[indexRow].image == nil{
-                cell.photoImage.loadIndicator.startAnimating()
-                cell.photoImage.image = UIImage(color: UIColor(named: "PhotoCollage")!)
-            }else {
-                cell.photoImage.image = currentAuthUser.imageArr[indexRow].image
-                cell.photoImage.loadIndicator.stopAnimating()
-            }
+            cell.photoImage.image = currentAuthUser.imageArr[indexRow].image
             cell.dottedBorder.isHidden = true
             
         }else {
