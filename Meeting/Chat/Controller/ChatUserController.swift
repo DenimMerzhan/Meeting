@@ -283,7 +283,7 @@ extension ChatUserController {
                     
                     self?.tableView.reloadData()
                     let sectionNumber = (self?.tableView.numberOfSections ?? 1) - 1
-                    let row = (self?.chat.structuredMessagesByDates.last?.messages.count ?? 1) - 1
+                    let row = (self?.tableView.numberOfRows(inSection: sectionNumber) ?? 1) - 1
                     let indexPath = IndexPath(row: row, section: sectionNumber)
                     self?.tableView.scrollToRow(at: indexPath, at: .top, animated: false)
                 }

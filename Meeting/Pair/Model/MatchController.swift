@@ -30,14 +30,15 @@ class MatchController: UIViewController {
             card.addGestureRecognizer(tapGesture)
             card.nameUser.isHidden = true
             card.age.isHidden = true
-            changePostionProgressBar(progressBar: card.progressBar, y: 50)
-            
+            if let imageView = card.imageView {
+                changePostionProgressBar(progressBar: imageView.progressBar, y: 50)
+            }
             view.addSubview(card)
             view.sendSubviewToBack(card)
         }
     }
     
-    let cardModel = CardModel(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
+    let cardModel = CardModel()
     
     var card: CardView?
     
@@ -59,8 +60,6 @@ class MatchController: UIViewController {
     @IBAction func backToSwipe(_ sender: UIButton) {
         self.dismiss(animated: true)
     }
-    
-    
     
     @IBAction func sendPressed(_ sender: UIButton) {
         guard let newMatch = self.newMatch else {return}

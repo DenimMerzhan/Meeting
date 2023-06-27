@@ -12,33 +12,54 @@ import AudioToolbox
 
 class CardView: UIView {
     
-    var imageView: UserPhoto?
+    var imageView: CardImageView?
     var imageArr: [UserPhoto]?
     var ID = String()
+    var nameUser = UILabel()
+    var age = UILabel()
     
-        var nameUser = UILabel()
-        var age = UILabel()
-        var progressBar = [UIView]()
     
-    var likImage = UIImageView()
-    var dislikeImage = UIImageView()
-    var superLikeImage = UIImageView()
+    var likImage = UIImageView(frame: CGRect(x: 0.0, y: 8.0, width: 106, height: 79))
+    var dislikeImage = UIImageView(frame: CGRect(x: 234, y: 0.0, width: 127, height: 93))
+    var superLikeImage = UIImageView(frame: CGRect(x: 117, y: 8, width: 130, height: 100))
     
-    init(frame: CGRect, heartLikeImage: UIImageView = UIImageView(), heartDislikeImage: UIImageView = UIImageView(),imageUser: UserPhoto?,imageArr: [UserPhoto]?,superLike: UIImageView,userID: String) {
+    init(imageUser: CardImageView?,imageArr: [UserPhoto]?,userID: String) {
         
-        self.likImage = heartLikeImage
-        self.dislikeImage = heartDislikeImage
         self.imageView = imageUser
         self.imageArr = imageArr
-        self.superLikeImage = superLike
         self.ID = userID
+        super.init(frame: CGRect(x: 16, y: 118, width: UIScreen.main.bounds.width - 32, height: UIScreen.main.bounds.height - 236))
+        startSetup()
+    }
+    
+    func startSetup(){
         
-        super.init(frame: frame)
+        guard let imageArr = self.imageArr else {return}
+        guard let imageView = self.imageView else {return}
+        for imageView in imageArr {
+            imageView.delegate = self
+        }
+        
+        likImage.image = UIImage(named: "LikeHeart")!
+        dislikeImage.image = UIImage(named: "SuperLike")
+        superLikeImage.image = UIImage(named: "DislikeHeart")!
+        likImage.isHidden = true
+        dislikeImage.isHidden = true
+        superLikeImage.isHidden = true
+        
+        self.addSubview(imageView)
+        self.addSubview(likImage)
+        self.addSubview(dislikeImage)
+        self.addSubview(superLikeImage)
+        
+        
+
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
 //MARK: - Обнуление сердец
     
     func resetCard(){
@@ -87,10 +108,10 @@ class CardView: UIView {
         
         if coordinates > 220 && indexCurrentImage < imageArr.count - 1 {
             index += 1
-            self.progressBar[index-1].backgroundColor = .gray
+            self.imageView?.progressBar[index-1].backgroundColor = .gray
         }else if  coordinates < 180 && indexCurrentImage > 0  {
             index -= 1
-            self.progressBar[index+1].backgroundColor = .gray
+            self.imageView?.progressBar[index+1].backgroundColor = .gray
         }else if indexCurrentImage == 0 || indexCurrentImage == imageArr.count - 1 {
             self.backgroundColor = .white
             CardModel().createAnimate(indexImage: index, currentCard: self)
@@ -100,9 +121,14 @@ class CardView: UIView {
         AudioServicesPlayAlertSoundWithCompletion(SystemSoundID(1161)) { /// Cоздаем звук при Тапе
         }
         
-        self.progressBar[index].backgroundColor = .white
-        self.imageView =  imageArr[index]
-        
+        self.imageView?.progressBar[index].backgroundColor = .white
+        if imageArr[index].image == nil {
+            imageView?.startAnimating()
+            imageView?.image = UIImage(color: UIColor(named: "GrayColor")!)
+        }else {
+            imageView?.image = imageArr[index].image
+            imageView?.stopAnimating()
+        }
         return index
 }
     
@@ -112,31 +138,15 @@ class CardView: UIView {
     
 }   
 
+extension CardView: LoadPhoto {
+    func userPhotoLoaded() {
+        
+    }
+    
+}
 
-////MARK: -  Кастомный ImageUserView
-//
-//class ImageUserView: UIImageView {
-//
-//    var nameUser = UILabel()
-//    var age = UILabel()
-//    var progressBar = [UIView]()
-//
-//
-//    init(frame:CGRect, nameUser: UILabel = UILabel(), age: UILabel = UILabel(), progressBar: [UIView] = [UIView]()) {
-//
-//        self.nameUser = nameUser
-//        self.age = age
-//        self.progressBar = progressBar
-//
-//        super.init(frame: frame)
-//    }
-//
-//    required init?(coder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
-//
-//    deinit {
-////        print("Объект imageUserView уничтожен")
-//    }
-//}
+
+
+
+
 

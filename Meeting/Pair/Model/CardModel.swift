@@ -14,129 +14,23 @@ import AudioToolbox
 struct CardModel {
     
     
-    var frame = CGRect(x: 16, y: 118, width: UIScreen.main.bounds.width - 32, height: UIScreen.main.bounds.height - 236)
-    
-    
 //MARK: - Создание новой карты
     
     
     func createCard(newUser: User) -> CardView {
-        
-        let frame =  CGRect(x: frame.origin.x, y: frame.origin.y, width: frame.width, height: frame.height)
-       
-        let nameLabel = UILabel() /// Имя
-        let point = CGPoint(x: 10, y: frame.height - 130)
-        nameLabel.text = newUser.name
-        nameLabel.font = .boldSystemFont(ofSize: 40)
-        nameLabel.frame = CGRect(origin: point, size: nameLabel.sizeThatFits(CGSize(width: CGFloat.infinity, height: 48))) /// Расширяем рамку в зависимости от размера текста
-        nameLabel.textColor = .white
-        
-        
-        let ageLabel = UILabel(frame: CGRect(x: nameLabel.frame.maxX + 10, y: frame.height - 130, width: 100, height: 48.0)) /// Возраст, ставим по позиции x относительно имени
-        ageLabel.text = String(newUser.age)
-        ageLabel.font = .systemFont(ofSize: 40)
-        ageLabel.textColor = .white
-        
-        
-        
-        let likeHeart = UIImageView(frame: CGRect(x: 0.0, y: 8.0, width: 106, height: 79)) /// Картинки сердец
-        let dislikeHeart = UIImageView(frame: CGRect(x: 234, y: 0.0, width: 127, height: 93))
-        let superLike = UIImageView(frame: CGRect(x: 117, y: 8, width: 130, height: 100))
-        
-        likeHeart.image = UIImage(named: "LikeHeart")!
-        superLike.image = UIImage(named: "SuperLike")
-        dislikeHeart.image = UIImage(named: "DislikeHeart")!
-        
-        likeHeart.isHidden = true
-        dislikeHeart.isHidden = true
-        superLike.isHidden = true
-        
-        
-        let imageView = newUser.imageArr[0]
-        
-        let gradient = CAGradientLayer() ///  Градиент
-        gradient.frame = CGRect(x: 0, y: frame.height - 203, width: frame.width, height: 203)
-        gradient.locations = [0.0, 1.0]
-        gradient.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]
-        imageView.layer.insertSublayer(gradient, at: 0)
-        
-        
-        let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,imageUser: imageView,imageArr: newUser.imageArr,superLike: superLike, userID: newUser.ID)
-        
-        
-        card.age = ageLabel
-        card.nameUser = nameLabel
-       
-        card.addSubview(imageView)
-        imageView.addSubview(nameLabel)
-        imageView.addSubview(ageLabel)
-        card.addSubview(likeHeart)
-        card.addSubview(dislikeHeart)
-        card.addSubview(superLike)
-        
-        let progressBar = createProgressBar(countPhoto: newUser.imageArr.count, cardView: card)
-        card.progressBar = progressBar
-        
+
+        let imageView = CardImageView(name: newUser.name, age: String(newUser.age),countPhoto: newUser.imageArr.count)
+        let card = CardView(imageUser: imageView, imageArr: newUser.imageArr, userID: newUser.ID)
         return card
-        
-        
     }
  
- 
-    
-//MARK: - Создание ProgressBar
-    
-    func createProgressBar(countPhoto: Int,cardView: CardView) -> [UIView] { /// Создаем кучу одинаковых View
-        
-        var viewArr = [UIView]()
-        let mostWidth = (cardView.frame.size.width - 5 - CGFloat(countPhoto * 7)) / CGFloat(countPhoto) /// Расчитываем длинну каждой полоски
-        
-        for i in 0...countPhoto - 1 {
-            
-            let newView = UIView()
-            
-            if i == 0 { /// Если первый элемент то задаем начальную позицию
-                newView.frame = CGRect(x: 5, y: 10, width: mostWidth, height: 4)
-                newView.backgroundColor = .white
-            }else {
-                let xCoor = viewArr[i-1].frame.maxX /// Узнаем где кончилась предыдущая полоска
-                newView.frame = CGRect(x: xCoor + 7, y: 10, width: mostWidth, height: 4) /// Добавляем к ней 7 пунктов и создаем новую
-                newView.backgroundColor = .gray
-            }
-            
-            newView.layer.cornerRadius = 2 /// Закругление
-            newView.layer.masksToBounds = true /// Обрезание слоев по границам
-            newView.alpha = 0.6
-            viewArr.append(newView) /// Добавляем в архив полосок
-            cardView.addSubview(newView)
-        }
-        
-        
-        return viewArr
-    }
-    
-    
+
 //MARK: -  Создание карты оповещения что идет загрузка пользователей
     
     func createLoadingUsersCard() -> CardView {
         
-        let frame =  CGRect(x: frame.origin.x, y: frame.origin.y, width: frame.width, height: frame.height)
-        
-        let label = UILabel(frame: CGRect(x: 32, y: 170, width: 300, height: 200.0))
-        label.center = CGPoint(x: frame.width / 2, y: frame.height / 2)
-        label.text = "Идет заугрзка новых пар для тебя..."
-        label.font = .boldSystemFont(ofSize: 30)
-        label.lineBreakMode = .byWordWrapping
-        label.numberOfLines = 4
-        
-        
-        let likeHeart = UIImageView(frame: CGRect(x: 0.0, y: 8.0, width: 106, height: 79))
-        let dislikeHeart = UIImageView(frame: CGRect(x: 234, y: 0.0, width: 127, height: 93))
-        let superLike = UIImageView(frame: CGRect(x: 117, y: 8, width: 150, height: 100))
-        
-        let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,imageUser: nil,imageArr: nil,superLike:superLike, userID: "Loading_Card")
-        
-        card.addSubview(label)
+        let imageView = CardImageView(name: "Идет заугрзка новых пар для тебя...", age: "",countPhoto: 0)
+        let card = CardView(imageUser: imageView, imageArr: nil, userID: "")
         
         return card
         
@@ -148,23 +42,8 @@ struct CardModel {
     
     func createEmptyCard() -> CardView {
         
-        let frame =  CGRect(x: frame.origin.x, y: frame.origin.y, width: frame.width, height: frame.height)
-        
-        let label = UILabel(frame: CGRect(x: 32, y: 170, width: 300, height: 200.0))
-        label.center = CGPoint(x: frame.width / 2, y: frame.height / 2 )
-        label.text = "Пары закончились :("
-        label.font = .boldSystemFont(ofSize: 30)
-        label.lineBreakMode = .byWordWrapping
-        label.numberOfLines = 4
-        
-        
-        let likeHeart = UIImageView(frame: CGRect(x: 0.0, y: 8.0, width: 106, height: 79))
-        let dislikeHeart = UIImageView(frame: CGRect(x: 234, y: 0.0, width: 127, height: 93))
-        let superLike = UIImageView(frame: CGRect(x: 117, y: 8, width: 150, height: 100))
-        
-        let card = CardView(frame: frame,heartLikeImage: likeHeart ,heartDislikeImage: dislikeHeart ,imageUser: nil,imageArr: nil,superLike:superLike, userID: "Stop_Card")
-        
-        card.addSubview(label)
+        let imageView = CardImageView(name: "Пары закончились", age: "",countPhoto: 0)
+        let card = CardView(imageUser: imageView, imageArr: nil, userID: "")
         
         return card
     }
