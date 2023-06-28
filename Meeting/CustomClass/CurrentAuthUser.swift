@@ -54,12 +54,15 @@ class CurrentAuthUser {
     func loadMetadata() async {
         
         let collection  = db.collection("Users").document(ID)
+        let photoCollection = db.collection("Users").document(ID).collection("Photo").order(by: "Position")
         listenMatchUserID()
         
             do {
                 
                 let docSnap = try await collection.getDocument()
-                if let dataDoc = docSnap.data() {
+                let photoSnap = try await photoCollection.getDocuments()
+                
+                if let dataDoc = docSnap.data()  {
                     
                     if let name = dataDoc["Name"] as? String ,let age = dataDoc["Age"] as? Int {
                         
@@ -70,12 +73,11 @@ class CurrentAuthUser {
                         if let disLikeArr = dataDoc["DisLikeArr"] as? [String] {self.disLikeArr = disLikeArr}
                         if let superLikeArr = dataDoc["SuperLikeArr"] as? [String] {self.superLikeArr = superLikeArr} /// Суперлайков может и не быть, поэтому не ставим guard
                         await loadNewPotenialPairs()
-                        for data in dataDoc { /// Загрузка ссылок на фото в Storage
-                            if data.key.contains("photoImage") {
-                                if let urlPhoto = data.value as? String {
-                                    let image = await UserPhoto(frame: .zero, urlPhotoFromServer: urlPhoto, imageID: data.key)
-                                    self.imageArr.append(image)
-                                }
+                        
+                        for data in photoSnap.documents { /// Загрузка ссылок на фото в Storage
+                            if let urlPhoto = data["URL"] as? String {
+                                let image = await UserPhoto(frame: .zero, urlPhotoFromServer: urlPhoto, imageID: data.documentID)
+                                self.imageArr.append(image)
                             }
                         }
                     }else {
@@ -132,41 +134,24 @@ class CurrentAuthUser {
     func uploadImageToStorage(image: UIImage) async -> Bool  {
         
         let imageID = "photoImage" + "".randomString(length:10)
-        
+        let photoColletcion = db.collection("Users").document(ID).collection("Photo").document(imageID)
         let imagesRef = storage.reference().child("UsersPhoto").child(ID).child(imageID) /// Создаем ссылку на файл
+        
         guard let imageData = image.jpegData(compressionQuality: 0.0) else { /// Преобразуем в Jpeg c сжатием
             return false
         }
         
-        
-        let metaData = StorageMetadata()
-        metaData.contentType = "image/jpeg" /// Указываем явный тип данных в FireBase
-        
         do {
             try await imagesRef.putDataAsync(imageData)
             let url = try await imagesRef.downloadURL()
-            let status = await uploadDataToFirestore(url: url, imageID: imageID)
-            if status {
-                await imageArr.append(UserPhoto(frame: .zero, urlPhotoFromServer: url.absoluteString, imageID: imageID))
-                return (status)
-            }
+            
+            photoColletcion.setValue(url, forKey: "URL")
+            photoColletcion.setValue(imageArr.count, forKey: "Position")
+            
+            await imageArr.append(UserPhoto(frame: .zero, urlPhotoFromServer: url.absoluteString, imageID: imageID))
+            return true
         }catch {
             print(error)
-            return false
-        }
-        return false
-    }
-    
-    
-    private func uploadDataToFirestore(url:URL,imageID: String) async -> Bool {
-        
-        let colletcion = db.collection("Users").document(ID) /// Добавляем в FiresStore ссылку на фото\
-        
-        do {
-            try await colletcion.setData([imageID : url.absoluteString], merge: true)
-            return true
-        }catch{
-            print("Ошибка загрузки данных фото на сервер Firebase Firestore \(error)")
             return false
         }
     }
@@ -177,20 +162,38 @@ class CurrentAuthUser {
     func removePhotoFromServer(imageID:String){
         
         let imagesRef = storage.reference().child("UsersPhoto").child(ID).child(imageID)
-        imagesRef.delete { [weak self] error in
+        let imageFirebaseRef = db.collection("Users").document(ID).collection("Photo").document(imageID)
+        imagesRef.delete { error in
             if let err = error {
                 print("Ошибка удаления фото с хранилища Firebase \(err)")
             }else {
-                self?.deletePhotoFromFirebase(imageId: imageID)
+                imageFirebaseRef.delete()
             }
         }
     }
     
-    func deletePhotoFromFirebase(imageId: String){
-        db.collection("Users").document(ID).updateData([imageId : FieldValue.delete()]) { err in
-            if let error = err {print( "Ошибка удаления фото с Firestore \(error)")}
+    func shufflePhotoOnServer(){
+        
+        let photoRef = db.collection("Users").document(ID).collection("Photo").order(by: "Position")
+        let imageArr = self.imageArr
+        
+        photoRef.getDocuments { QuerySnapshot, err in
+            if let error = err {print("Ошибка перетасовки фото - \(error)")}
+            guard let documents = QuerySnapshot?.documents else {return}
+            
+            for i in 0...imageArr.count - 1 {
+                let documentID = documents[i].documentID
+                let refImage = documents[i].reference
+                if imageArr[i].imageID == documentID {
+                    refImage.setData(["Position" : i],merge: true)
+                    self.shufflePhotoOnServer()
+                    return
+                    }
+            }
         }
+        
     }
+    
 }
 
 

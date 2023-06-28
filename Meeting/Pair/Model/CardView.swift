@@ -52,9 +52,9 @@ class CardView: UIView {
         }
         imageView.image = imageArr.first?.image
     
-        likeImage.image = UIImage(named: "LikeHeart")!
+        likeImage.image = UIImage(named: "LikeButton")!
         dislikeImage.image = UIImage(named: "DislikeHeart")
-        superLikeImage.image = UIImage(named: "SuperLike")!
+        superLikeImage.image = UIImage(named: "SuperLikeButton")!
         likeImage.isHidden = true
         dislikeImage.isHidden = true
         superLikeImage.isHidden = true

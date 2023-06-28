@@ -23,7 +23,7 @@ class SettingsPhotoViewController: UIViewController {
     var index = IndexPath()
     
     var currentAuthUser = CurrentAuthUser(ID: "")
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -67,21 +67,21 @@ extension SettingsPhotoViewController : UICollectionViewDataSource, UICollection
         cell.deleteButton.removeTarget(nil, action: nil, for: .allEvents)
         
         let addAction = UIAction { [weak self] action in
-                self?.present(imagePicker, animated: true)
+            self?.present(imagePicker, animated: true)
         }
         cell.addButton.addAction(addAction, for: .touchUpInside)
         
         let deleteAction = UIAction { [weak self] action in
-                guard let imageID = self?.currentAuthUser.imageArr[indexRow].imageID else {return}
-                self?.currentAuthUser.removePhotoFromServer(imageID: imageID)
-                self?.currentAuthUser.imageArr.remove(at: indexRow)
-                self?.collectionPhotoView.reloadData()
+            guard let imageID = self?.currentAuthUser.imageArr[indexRow].imageID else {return}
+            self?.currentAuthUser.imageArr.remove(at: indexRow)
+            self?.currentAuthUser.removePhotoFromServer(imageID: imageID)
+            self?.collectionPhotoView.reloadData()
         }
         cell.deleteButton.addAction(deleteAction, for: .touchUpInside)
         
         
         if indexRow < currentAuthUser.imageArr.count {
-        
+            
             cell.addButton.isHidden = true
             cell.deleteButton.isHidden = false
             currentAuthUser.imageArr[indexRow].delegate = self
@@ -135,7 +135,7 @@ extension SettingsPhotoViewController: UIImagePickerControllerDelegate & UINavig
 //MARK: -  Загрузка фото на сервре
 
 extension SettingsPhotoViewController {
-
+    
     func uploadDataToServer(image: UIImage){
         doneButton.isHidden = true
         let progressView = CreateButton().createProgressBarLoadPhoto(width: view.frame.width - 40)
@@ -169,7 +169,7 @@ extension SettingsPhotoViewController {
             }
         }
     }
-
+    
 }
 
 //MARK: -  Обновляем СollectionView когда фото загрузилось
@@ -181,8 +181,8 @@ extension SettingsPhotoViewController: LoadPhoto {
     }
 }
 
-       
-       
-   
+
+
+
 
 

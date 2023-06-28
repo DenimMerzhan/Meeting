@@ -13,9 +13,6 @@ import AudioToolbox
 
 struct CardModel {
  
-    
-    
-    
 //MARK: - Создание 3D анимации на последней карты
     
     func createAnimate(indexImage:Int,currentCard: CardView){

@@ -7,6 +7,7 @@
 
 import UIKit
 import AudioToolbox
+import Lottie
 
 class PairsViewController: UIViewController {
     
@@ -17,17 +18,17 @@ class PairsViewController: UIViewController {
     
     @IBOutlet weak var stackViewButton: UIStackView!
     
+    @IBOutlet weak var cancelButton: UIButton!
+    @IBOutlet weak var superLikeButton: UIButton!
+    @IBOutlet weak var likeButton: UIButton!
+    
     var stopCard = false
     var center = CGPoint()
-    
     var currentCard =  CardView(imageArr: nil,emptyCard: true)
     var nextCard =  CardView(imageArr: nil,emptyCard: true)
-    
     var currentAuthUser = CurrentAuthUser(ID: "+79817550000")
     
-    var progressViewLoadUsers = CreateButton().createProgressLoadUsersStartForLaunch(width: 0)
-    var timer = Timer()
-    
+    var loadUserAnimation = LottieAnimationView(name: "40377-simple-map-pulse")
     var matchID = String()
     
     var basketUser = [User](){
@@ -40,38 +41,23 @@ class PairsViewController: UIViewController {
     
     var usersArr =  [User]() {
         didSet {
-            
-//            print("usersArr.count - \(usersArr.count)")
-            
             if usersArr.count < 5 && currentAuthUser.potentialPairID.count > 0 && currentAuthUser.newUsersLoading == false {
                 print("Загрузка новых пользователей")
                 Task {
                     await loadNewUsers(numberRequsetedUsers: 10)
                 }
-                
             }
         }
     }
     
-    
-    
     override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        timer = Timer.scheduledTimer(withTimeInterval: 3, repeats: true) { timer in
-            self.fireTimer()
-        }
-        
-        progressViewLoadUsers.backView.center = view.center
-        progressViewLoadUsers.label = CreateButton().createProgressLoadUsersStartForLaunch(width: view.frame.width - 40).label
-        progressViewLoadUsers.label.center = CGPoint(x: view.center.x, y: view.center.y - 70)
-        view.addSubview(progressViewLoadUsers.backView)
-        view.addSubview(progressViewLoadUsers.label)
-        
+       
         
         Task {
             await currentAuthUser.loadMetadata()
-            await loadNewUsers(numberRequsetedUsers: 10)
+            super.viewDidLoad()
+            animationSettings()
+            await loadNewUsers(numberRequsetedUsers: 15)
             startSettings()
         }
         
@@ -235,7 +221,6 @@ extension PairsViewController {
             let newUser = User(ID: currentAuthUser.potentialPairID[0],currentAuthUserID: currentAuthUser.ID)
             await newUser.loadMetaData()
             usersArr.append(newUser)
-            progressViewLoadUsers.progressBar.progress += 0.05
             currentAuthUser.potentialPairID.removeFirst()
         }
         print(usersArr, "UserArr")
@@ -246,21 +231,50 @@ extension PairsViewController {
 
 extension PairsViewController {
     
-    func startSettings(){
+    func animationSettings(){
         
-        timer.invalidate()
-        progressViewLoadUsers.progressBar.setProgress(1, animated: true)
+        loadUserAnimation.frame = CGRect(x: 0, y: 0, width: 300, height: 300)
+        loadUserAnimation.contentMode = .scaleAspectFit
+        loadUserAnimation.loopMode = .loop
+        loadUserAnimation.animationSpeed = 1.8
+        loadUserAnimation.play()
+        loadUserAnimation.backgroundColor = .clear
+        loadUserAnimation.center = self.view.center
+        view.addSubview(loadUserAnimation)
+        
+        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 80, height: 80))
+        let backView = UIView(frame: CGRect(x: 0, y: 0, width: 85, height: 85))
+        imageView.center = self.view.center
+        backView.center = imageView.center
+        backView.layer.cornerRadius = backView.frame.height / 2
+        backView.layer.masksToBounds = true
+        backView.backgroundColor = .white
+        
+        imageView.contentMode = .scaleAspectFill
+        imageView.image = UIImage(named: "KatyaS")
+        imageView.layer.cornerRadius = imageView.frame.height / 2
+        imageView.layer.masksToBounds = true
+       
+        self.view.addSubview(backView)
+        self.view.addSubview(imageView)
+        
+    }
+    
+    func startSettings(){
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             
-            self.progressViewLoadUsers.progressBar.removeFromSuperview()
-            self.progressViewLoadUsers.label.removeFromSuperview()
-            self.progressViewLoadUsers.backView.removeFromSuperview()
-            
-            self.tabBarController?.tabBar.barTintColor = .white
-            self.tabBarController?.tabBar.clipsToBounds = true
-            self.tabBarController?.tabBar.backgroundColor = .white
-            self.tabBarController?.tabBar.isHidden = false
+            self.loadUserAnimation.stop()
+            self.loadUserAnimation.removeFromSuperview()
+            let dislikeImage = UIImage(named: "DisLikeButton")?.withRenderingMode(.alwaysOriginal)
+            let likeImage = UIImage(named: "LikeButton")?.withRenderingMode(.alwaysOriginal)
+            let superLikeImage = UIImage(named: "SuperLikeButton")?.withRenderingMode(.alwaysOriginal)
+            self.cancelButton.setImage(dislikeImage, for: .normal)
+            self.likeButton.setImage(likeImage, for: .normal)
+            self.superLikeButton.setImage(superLikeImage, for: .normal)
+            self.cancelButton.isEnabled = true
+            self.likeButton.isEnabled = true
+            self.superLikeButton.isEnabled = true
             
             if self.usersArr.count > 0 {
                 self.createStartCard()
@@ -276,6 +290,7 @@ extension PairsViewController {
         
         currentCard = CardView(userID: firstUser.ID, name: firstUser.name, age: String(firstUser.age), imageArr: firstUser.imageArr)
         center = currentCard.center
+        print(currentCard.center)
         currentCard.addGestureRecognizer(panGesture)
         currentCard.addGestureRecognizer(tapGesture)
         
@@ -290,17 +305,6 @@ extension PairsViewController {
         view.addSubview(currentCard)
         self.view.bringSubviewToFront(self.stackViewButton)
         stackViewButton.isHidden = false
-    }
-    
-    func fireTimer(){
-        
-        progressViewLoadUsers.progressBar.progress += 0.005
-        let progress = progressViewLoadUsers.progressBar.progress
-        let randomFloat = Float.random(in: 0...0.025)
-        
-        UIView.animate(withDuration: 0.8, delay: 0) { [unowned self] in
-            self.progressViewLoadUsers.progressBar.setProgress(progress + randomFloat, animated: true)
-        }
     }
 }
 
