@@ -117,9 +117,7 @@ class CurrentAuthUser {
             let documents = try await collection.getDocuments()
             for document in documents.documents {
                 if viewedUsers.contains(document.documentID)  {continue}
-                DispatchQueue.main.async {
-                    self.potentialPairID.append(document.documentID)
-                }
+                self.potentialPairID.append(document.documentID)
             }
         }catch{
             

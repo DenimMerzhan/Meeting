@@ -25,15 +25,19 @@ class CardView: UIView {
     var dislikeImage = UIImageView(frame: CGRect(x: 234, y: 0.0, width: 127, height: 93))
     var superLikeImage = UIImageView(frame: CGRect(x: 117, y: 8, width: 130, height: 100))
     
-    init(userID: String, name: String, age: String, imageArr: [UserPhoto]?) {
+    init(userID: String = String(), name: String = String(), age: String = String(), imageArr: [UserPhoto]?, emptyCard: Bool = false) {
         
         self.imageArr = imageArr
         self.ID = userID
         self.name.text = name
         self.age.text = age
         super.init(frame: CGRect(x: 16, y: 118, width: UIScreen.main.bounds.width - 32, height: UIScreen.main.bounds.height - 236))
-        startSetup()
-        createProgressBar()
+        if emptyCard {
+            creatEmptyCard()
+        }else {
+            startSetup()
+            createProgressBar()
+        }
     }
     
     func startSetup(){
@@ -43,12 +47,11 @@ class CardView: UIView {
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 10
         imageView.layer.masksToBounds = true
-        
         for imageView in imageArr {
             imageView.delegate = self
         }
         imageView.image = imageArr.first?.image
-        
+    
         likeImage.image = UIImage(named: "LikeHeart")!
         dislikeImage.image = UIImage(named: "DislikeHeart")
         superLikeImage.image = UIImage(named: "SuperLike")!
@@ -70,7 +73,6 @@ class CardView: UIView {
         gradient.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]
         imageView.layer.insertSublayer(gradient, at: 0)
     
-        
         imageView.addSubview(self.name)
         imageView.addSubview(self.age)
         self.addSubview(imageView)
@@ -78,6 +80,15 @@ class CardView: UIView {
         self.addSubview(dislikeImage)
         self.addSubview(superLikeImage)
         
+    }
+    
+    private func creatEmptyCard(){
+        let label = UILabel(frame: CGRect(x: 0, y: 0, width: frame.width, height: 50))
+        label.text = "Пары закончились :("
+        label.center = CGPoint(x: frame.width / 2, y: frame.height / 2)
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 30)
+        self.addSubview(label)
     }
     
     required init?(coder: NSCoder) {

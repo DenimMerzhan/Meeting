@@ -20,8 +20,8 @@ class PairsViewController: UIViewController {
     var stopCard = false
     var center = CGPoint()
     
-    var currentCard =  CardView(userID: "", name: "", age: "", imageArr: nil)
-    var nextCard =  CardView(userID: "", name: "", age: "", imageArr: nil)
+    var currentCard =  CardView(imageArr: nil,emptyCard: true)
+    var nextCard =  CardView(imageArr: nil,emptyCard: true)
     
     var currentAuthUser = CurrentAuthUser(ID: "+79817550000")
     
@@ -41,12 +41,12 @@ class PairsViewController: UIViewController {
     var usersArr =  [User]() {
         didSet {
             
-            print("usersArr.count - \(usersArr.count)")
+//            print("usersArr.count - \(usersArr.count)")
             
-            if usersArr.count < 5 && currentAuthUser.potentialPairID.count > 0 {
+            if usersArr.count < 5 && currentAuthUser.potentialPairID.count > 0 && currentAuthUser.newUsersLoading == false {
                 print("Загрузка новых пользователей")
                 Task {
-                    await loadNewUsers(numberRequsetedUsers: 15)
+                    await loadNewUsers(numberRequsetedUsers: 10)
                 }
                 
             }
@@ -71,7 +71,7 @@ class PairsViewController: UIViewController {
         
         Task {
             await currentAuthUser.loadMetadata()
-            await loadNewUsers(numberRequsetedUsers: 2)
+            await loadNewUsers(numberRequsetedUsers: 10)
             startSettings()
         }
         
@@ -143,29 +143,27 @@ class PairsViewController: UIViewController {
                     UIView.animate(withDuration: 0.2, delay: 0) {
                         card.center = CGPoint(x: card.center.x + 150 , y: card.center.y + 100 )
                         card.alpha = 0
-                        self.currentAuthUser.likeArr.append(card.ID)
-                        self.checkMatch(ID: card.ID)
-                        self.loadNewPeople(card: card)
-                        
                     }
+                    currentAuthUser.likeArr.append(card.ID)
+                    checkMatch(ID: card.ID)
+                    loadNewPeople(card: card)
                     
                 }else if abs(xFromCenter) > 120 { /// Дизлайк пользователя
                     UIView.animate(withDuration: 0.22, delay: 0) {
                         card.center = CGPoint(x: card.center.x - 150 , y: card.center.y + 100 )
                         card.alpha = 0
-                        self.currentAuthUser.disLikeArr.append(card.ID)
-                        self.loadNewPeople(card: card)
-                        
                     }
+                    currentAuthUser.disLikeArr.append(card.ID)
+                    loadNewPeople(card: card)
                 }else if yFromCenter < -250 { /// Супер Лайк
                     
                     UIView.animate(withDuration: 0.22, delay: 0) {
                         card.center = CGPoint(x: card.center.x , y: card.center.y - 600 )
                         card.alpha = 0
-                        self.currentAuthUser.superLikeArr.append(card.ID)
-                        self.checkMatch(ID: card.ID)
-                        self.loadNewPeople(card: card)
                     }
+                    currentAuthUser.superLikeArr.append(card.ID)
+                    checkMatch(ID: card.ID)
+                    loadNewPeople(card: card)
                 }
                 
                 else { /// Если не ушла то возвращаем в центр
@@ -192,26 +190,23 @@ extension PairsViewController {
         card.removeGestureRecognizer(panGesture)
         card.removeGestureRecognizer(tapGesture)
         
-        if currentCard.ID == "Stop_Card"  {
-            
-            currentCard.removeGestureRecognizer(panGesture)
-            currentCard.removeGestureRecognizer(tapGesture)
-            stackViewButton.isHidden = true
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { /// Чем выше параметр тем выше шанс что карточка не удалиться и останется висеть в памяти надо подумать над этим
-                card.removeFromSuperview()
-            }
-            return
-        }
-        
         currentCard = nextCard
         basketUser.append(usersArr[0])
         usersArr.removeFirst()
         
-        if let user = usersArr.first {
-            nextCard = CardView(userID: user.ID, name: user.name, age: String(user.age), imageArr: user.imageArr)
-        }else if currentAuthUser.potentialPairID.count == 0 {
-            nextCard = CardView(userID: "Stop_Card", name: "Пары закончились :(", age: "", imageArr: nil)
+        if usersArr.count > 1 {
+            let nextUser = usersArr[1]
+            nextCard = CardView(userID: nextUser.ID, name: nextUser.name, age: String(nextUser.age), imageArr: nextUser.imageArr)
+        }else {
+            nextCard = CardView(imageArr: nil,emptyCard: true)
+        }
+        
+        if usersArr.count == 0  {
+            stackViewButton.isHidden = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { /// Чем выше параметр тем выше шанс что карточка не удалиться и останется висеть в памяти надо подумать над этим
+                card.removeFromSuperview()
+            }
+            return
         }
         
         currentCard.addGestureRecognizer(panGesture)
@@ -231,12 +226,11 @@ extension PairsViewController {
 extension PairsViewController {
     
     func loadNewUsers(numberRequsetedUsers: Int) async{
-        print(currentAuthUser.potentialPairID.count)
         currentAuthUser.newUsersLoading = true
         
-        for i in 0...numberRequsetedUsers {
+        for _ in 0...numberRequsetedUsers {
             
-            if i > currentAuthUser.potentialPairID.count - 1 {break}
+            if currentAuthUser.potentialPairID.count == 0 {break}
             
             let newUser = User(ID: currentAuthUser.potentialPairID[0],currentAuthUserID: currentAuthUser.ID)
             await newUser.loadMetaData()
@@ -244,6 +238,7 @@ extension PairsViewController {
             progressViewLoadUsers.progressBar.progress += 0.05
             currentAuthUser.potentialPairID.removeFirst()
         }
+        print(usersArr, "UserArr")
         currentAuthUser.newUsersLoading = false
     }
 }
@@ -267,11 +262,9 @@ extension PairsViewController {
             self.tabBarController?.tabBar.backgroundColor = .white
             self.tabBarController?.tabBar.isHidden = false
             
-            if self.usersArr.count > 1 {
+            if self.usersArr.count > 0 {
                 self.createStartCard()
-            }else if self.usersArr.count > 0{
-                let user = self.usersArr[0]
-                self.currentCard = CardView(userID: user.ID, name: user.name, age: String(user.age), imageArr: user.imageArr)
+            }else {
                 self.view.addSubview(self.currentCard)
             }
         }
@@ -279,14 +272,20 @@ extension PairsViewController {
     
     func createStartCard(){
         
-        let firstUser = self.usersArr[0]
-        let firdUser = self.usersArr[1]
+        let firstUser = usersArr[0]
         
         currentCard = CardView(userID: firstUser.ID, name: firstUser.name, age: String(firstUser.age), imageArr: firstUser.imageArr)
         center = currentCard.center
         currentCard.addGestureRecognizer(panGesture)
         currentCard.addGestureRecognizer(tapGesture)
-        nextCard = CardView(userID: firdUser.ID, name: firdUser.name, age: String(firdUser.age), imageArr: firdUser.imageArr)
+        
+        if usersArr.count > 1 {
+            let secondUser = usersArr[1]
+            nextCard = CardView(userID: secondUser.ID, name: secondUser.name, age: String(secondUser.age), imageArr: secondUser.imageArr)
+        }else {
+            nextCard = CardView(imageArr: nil,emptyCard: true)
+        }
+        
         view.addSubview(nextCard)
         view.addSubview(currentCard)
         self.view.bringSubviewToFront(self.stackViewButton)
