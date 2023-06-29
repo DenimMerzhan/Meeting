@@ -13,9 +13,7 @@ import FirebaseStorage
 
 class CurrentAuthUser {
     
-    
     var ID  = String()
-    
     var name = String()
     var age = Int()
     
@@ -76,8 +74,13 @@ class CurrentAuthUser {
                         
                         for data in photoSnap.documents { /// Загрузка ссылок на фото в Storage
                             if let urlPhoto = data["URL"] as? String {
-                                let image = await UserPhoto(frame: .zero, urlPhotoFromServer: urlPhoto, imageID: data.documentID)
-                                self.imageArr.append(image)
+                                if data == photoSnap.documents.first {
+                                    let image = await UserPhoto(frame: .zero, urlPhotoFromServer: urlPhoto, imageID: data.documentID,isAvatarCurrentUser: true)
+                                    self.imageArr.append(image)
+                                }else {
+                                    let image = await UserPhoto(frame: .zero, urlPhotoFromServer: urlPhoto, imageID: data.documentID)
+                                    self.imageArr.append(image)
+                                }
                             }
                         }
                     }else {
@@ -125,9 +128,6 @@ class CurrentAuthUser {
             
         }
     }
-    
-    
-    
 
     //MARK: -  Загрузка фото на сервер
     
@@ -145,8 +145,8 @@ class CurrentAuthUser {
             try await imagesRef.putDataAsync(imageData)
             let url = try await imagesRef.downloadURL()
             
-            photoColletcion.setValue(url, forKey: "URL")
-            photoColletcion.setValue(imageArr.count, forKey: "Position")
+            try await photoColletcion.setData(["URL" : url.absoluteString],merge: true)
+            try await photoColletcion.setData(["Position" : imageArr.count],merge: true)
             
             await imageArr.append(UserPhoto(frame: .zero, urlPhotoFromServer: url.absoluteString, imageID: imageID))
             return true
@@ -168,6 +168,7 @@ class CurrentAuthUser {
                 print("Ошибка удаления фото с хранилища Firebase \(err)")
             }else {
                 imageFirebaseRef.delete()
+                self.shufflePhotoOnServer()
             }
         }
     }
@@ -176,7 +177,7 @@ class CurrentAuthUser {
         
         let photoRef = db.collection("Users").document(ID).collection("Photo").order(by: "Position")
         let imageArr = self.imageArr
-        
+        print("dwwd")
         photoRef.getDocuments { QuerySnapshot, err in
             if let error = err {print("Ошибка перетасовки фото - \(error)")}
             guard let documents = QuerySnapshot?.documents else {return}
@@ -184,7 +185,9 @@ class CurrentAuthUser {
             for i in 0...imageArr.count - 1 {
                 let documentID = documents[i].documentID
                 let refImage = documents[i].reference
-                if imageArr[i].imageID == documentID {
+                guard let postionPhotoOnServer = documents[i].data()["Position"] as? Int else {return}
+                
+                if imageArr[i].imageID == documentID && i != postionPhotoOnServer {
                     refImage.setData(["Position" : i],merge: true)
                     self.shufflePhotoOnServer()
                     return

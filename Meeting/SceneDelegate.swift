@@ -10,30 +10,18 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-
+    var currentAuthUser: CurrentAuthUser?
+    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let _ = (scene as? UIWindowScene) else { return }
     }
-
+    
     func sceneDidDisconnect(_ scene: UIScene) { /// После закрытия приложения удаляем все фото с директории пользователя
         print("sceneDidDisconnect")
         
-        let fileManager = FileManager.default
-        
-        let userLibary = fileManager.urls(for: .documentDirectory, in: .userDomainMask) /// Стандартная библиотека пользователя
-        let usersFolder = userLibary[0].appendingPathComponent("OtherUsersPhoto") /// Добавляем к ней новую папку
-        
-        let currentUserAuthFolder = userLibary[0].appendingPathComponent("CurrentUserPhoto") /// Добавляем к ней новую папку
-        
-        do {
-            try fileManager.removeItem(at: usersFolder)
-            try fileManager.removeItem(at: currentUserAuthFolder)
-        }catch{
-            print("Ошибка удаления папок при закрытие приложения - \(error)")
-        }
         NotificationCenter.default.post(name: Notification.Name(rawValue: "sceneDidDisconnect"), object: nil)
     }
 

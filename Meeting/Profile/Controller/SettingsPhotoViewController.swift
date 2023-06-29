@@ -23,7 +23,7 @@ class SettingsPhotoViewController: UIViewController {
     var index = IndexPath()
     
     var currentAuthUser = CurrentAuthUser(ID: "")
-    
+   
     override func viewDidLoad() {
         super.viewDidLoad()
         

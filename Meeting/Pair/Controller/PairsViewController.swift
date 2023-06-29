@@ -9,9 +9,8 @@ import UIKit
 import AudioToolbox
 import Lottie
 
+
 class PairsViewController: UIViewController {
-    
-    
     
     @IBOutlet weak var panGesture: UIPanGestureRecognizer!
     @IBOutlet weak var tapGesture: UITapGestureRecognizer!
@@ -27,6 +26,8 @@ class PairsViewController: UIViewController {
     var currentCard =  CardView(imageArr: nil,emptyCard: true)
     var nextCard =  CardView(imageArr: nil,emptyCard: true)
     var currentAuthUser = CurrentAuthUser(ID: "+79817550000")
+    var delegate: PassReferenceCurrentAuthUser?
+    var a = SceneDelegate().currentAuthUser
     
     var loadUserAnimation = LottieAnimationView(name: "40377-simple-map-pulse")
     var matchID = String()
@@ -55,6 +56,7 @@ class PairsViewController: UIViewController {
         
         Task {
             await currentAuthUser.loadMetadata()
+            delegate?.referenceCurrentAuthUser(currentAuthUser: currentAuthUser)
             super.viewDidLoad()
             animationSettings()
             await loadNewUsers(numberRequsetedUsers: 15)
@@ -227,11 +229,14 @@ extension PairsViewController {
         currentAuthUser.newUsersLoading = false
     }
 }
-//MARK: -  Дополнительные расширения
+//MARK: -  Действия при первом запуске
 
 extension PairsViewController {
     
     func animationSettings(){
+        
+        let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("AvatarCurrentUser.jpeg")
+        let avatarUser = UIImage(contentsOfFile: url.path)
         
         loadUserAnimation.frame = CGRect(x: 0, y: 0, width: 300, height: 300)
         loadUserAnimation.contentMode = .scaleAspectFit
@@ -251,7 +256,7 @@ extension PairsViewController {
         backView.backgroundColor = .white
         
         imageView.contentMode = .scaleAspectFill
-        imageView.image = UIImage(named: "KatyaS")
+        imageView.image = avatarUser
         imageView.layer.cornerRadius = imageView.frame.height / 2
         imageView.layer.masksToBounds = true
        
