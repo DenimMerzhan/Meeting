@@ -13,6 +13,8 @@ import FirebaseStorage
 
 class CurrentAuthUser {
     
+    static let shared = CurrentAuthUser()
+    
     var ID  = String()
     var name = String()
     var age = Int()
@@ -43,8 +45,7 @@ class CurrentAuthUser {
     private let storage = Storage.storage()
     private let fileManager = FileManager.default
     
-    init(ID: String) {
-        self.ID = ID
+    private init() {
     }
     
 //MARK: -  Загрузка метаданных о текущем авторизованном пользователе с FireStore

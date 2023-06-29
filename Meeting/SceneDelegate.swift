@@ -22,6 +22,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneDidDisconnect(_ scene: UIScene) { /// После закрытия приложения удаляем все фото с директории пользователя
         print("sceneDidDisconnect")
         
+        if let image = CurrentAuthUser.shared.imageArr.first?.image {
+            guard let imageData = image.jpegData(compressionQuality: 1) else {return}
+            let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            let url = documents.appendingPathComponent("AvatarCurrentUser.jpeg")
+            do {
+                try imageData.write(to: url)
+            }catch {
+                print("Ошибка записи аватара текущего пользователя в каталог \(error)")
+            }
+            
+        }
         NotificationCenter.default.post(name: Notification.Name(rawValue: "sceneDidDisconnect"), object: nil)
     }
 

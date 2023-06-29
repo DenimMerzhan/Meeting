@@ -17,8 +17,6 @@ class ChatUserController: UIViewController {
     @IBOutlet weak var nameUser: UILabel!
     @IBOutlet weak var textField: UITextField!
     
-    var currentAuthUser = CurrentAuthUser(ID: "")
-    
     var isFirstLaunch = true
     
     var selectedUser = User(ID: "",currentAuthUserID: "")
@@ -53,7 +51,7 @@ class ChatUserController: UIViewController {
         guard let body = textField.text else {return}
         if textField.text?.count == 0 {return}
         textField.text = ""
-        currentAuthUser.sendMessageToServer(user: selectedUser, body: body)
+        CurrentAuthUser.shared.sendMessageToServer(user: selectedUser, body: body)
         
     }
     
@@ -103,7 +101,7 @@ extension ChatUserController {
         
         nameUser.text = selectedUser.name
         selectedUser.avatar?.delegate = self
-        currentAuthUser.avatar?.delegate = self
+        CurrentAuthUser.shared.avatar?.delegate = self
         loadMessage()
     }
 }
@@ -131,7 +129,7 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
         cell.selectionStyle = .none
         cell.messageLabel.text = message.body
         
-        if sender == currentAuthUser.ID {
+        if sender == CurrentAuthUser.shared.ID {
             
             view.isCurrentUser = true
             view.labelForCalculate.text = cell.messageLabel.text /// Передаем текст и шрифт для расчета идеальной ширины лейбла
@@ -198,7 +196,7 @@ extension ChatUserController: UITableViewDataSource,UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         guard let lastMessage = chat.messages.last else {return nil}
-        if lastMessage.sender != currentAuthUser.ID {return nil}
+        if lastMessage.sender != CurrentAuthUser.shared.ID {return nil}
         return section == tableView.numberOfSections - 1 ? viewForFooterSection(section: section) : nil
     }
     

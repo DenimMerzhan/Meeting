@@ -25,11 +25,11 @@ class PairsViewController: UIViewController {
     var center = CGPoint()
     var currentCard =  CardView(imageArr: nil,emptyCard: true)
     var nextCard =  CardView(imageArr: nil,emptyCard: true)
-    var currentAuthUser = CurrentAuthUser(ID: "+79817550000")
-    var delegate: PassReferenceCurrentAuthUser?
-    var a = SceneDelegate().currentAuthUser
     
     var loadUserAnimation = LottieAnimationView(name: "40377-simple-map-pulse")
+    var avatarPulse = UIImageView()
+    var backViewAvatarPulse = UIView()
+    
     var matchID = String()
     
     var basketUser = [User](){
@@ -42,7 +42,7 @@ class PairsViewController: UIViewController {
     
     var usersArr =  [User]() {
         didSet {
-            if usersArr.count < 5 && currentAuthUser.potentialPairID.count > 0 && currentAuthUser.newUsersLoading == false {
+            if usersArr.count < 5 && CurrentAuthUser.shared.potentialPairID.count > 0 && CurrentAuthUser.shared.newUsersLoading == false {
                 print("Загрузка новых пользователей")
                 Task {
                     await loadNewUsers(numberRequsetedUsers: 10)
@@ -52,11 +52,10 @@ class PairsViewController: UIViewController {
     }
     
     override func viewDidLoad() {
-       
+        CurrentAuthUser.shared.ID = "+79817550000"
         
         Task {
-            await currentAuthUser.loadMetadata()
-            delegate?.referenceCurrentAuthUser(currentAuthUser: currentAuthUser)
+            await CurrentAuthUser.shared.loadMetadata()
             super.viewDidLoad()
             animationSettings()
             await loadNewUsers(numberRequsetedUsers: 15)
@@ -75,13 +74,13 @@ class PairsViewController: UIViewController {
         
         if sender.restorationIdentifier == "Cancel" {
             differenceX = -200
-            currentAuthUser.disLikeArr.append(currentCard.ID)
+            CurrentAuthUser.shared.disLikeArr.append(currentCard.ID)
         }else if sender.restorationIdentifier == "SuperLike" {
-            currentAuthUser.superLikeArr.append(currentCard.ID)
+            CurrentAuthUser.shared.superLikeArr.append(currentCard.ID)
             checkMatch(ID: currentCard.ID)
             differenceY = -600
         }else if sender.restorationIdentifier == "Like" {
-            currentAuthUser.likeArr.append(currentCard.ID)
+            CurrentAuthUser.shared.likeArr.append(currentCard.ID)
             checkMatch(ID: currentCard.ID)
             differenceX = 200
         }
@@ -92,9 +91,8 @@ class PairsViewController: UIViewController {
             self.currentCard.center = CGPoint(x: self.currentCard.center.x + differenceX , y: self.currentCard.center.y + differenceY )
             self.currentCard.transform = CGAffineTransform(rotationAngle: abs(differenceX) * 0.002)
             self.currentCard.alpha = 0
-            self.loadNewPeople(card: self.currentCard)
-            
         }
+        self.loadNewPeople(card: self.currentCard)
         
     }
     
@@ -132,7 +130,7 @@ class PairsViewController: UIViewController {
                         card.center = CGPoint(x: card.center.x + 150 , y: card.center.y + 100 )
                         card.alpha = 0
                     }
-                    currentAuthUser.likeArr.append(card.ID)
+                    CurrentAuthUser.shared.likeArr.append(card.ID)
                     checkMatch(ID: card.ID)
                     loadNewPeople(card: card)
                     
@@ -141,7 +139,7 @@ class PairsViewController: UIViewController {
                         card.center = CGPoint(x: card.center.x - 150 , y: card.center.y + 100 )
                         card.alpha = 0
                     }
-                    currentAuthUser.disLikeArr.append(card.ID)
+                    CurrentAuthUser.shared.disLikeArr.append(card.ID)
                     loadNewPeople(card: card)
                 }else if yFromCenter < -250 { /// Супер Лайк
                     
@@ -149,7 +147,7 @@ class PairsViewController: UIViewController {
                         card.center = CGPoint(x: card.center.x , y: card.center.y - 600 )
                         card.alpha = 0
                     }
-                    currentAuthUser.superLikeArr.append(card.ID)
+                    CurrentAuthUser.shared.superLikeArr.append(card.ID)
                     checkMatch(ID: card.ID)
                     loadNewPeople(card: card)
                 }
@@ -174,7 +172,7 @@ extension PairsViewController {
     
     func loadNewPeople(card:CardView){
         
-        currentAuthUser.writingPairsInfrormation()
+        CurrentAuthUser.shared.writingPairsInfrormation()
         card.removeGestureRecognizer(panGesture)
         card.removeGestureRecognizer(tapGesture)
         
@@ -214,19 +212,19 @@ extension PairsViewController {
 extension PairsViewController {
     
     func loadNewUsers(numberRequsetedUsers: Int) async{
-        currentAuthUser.newUsersLoading = true
+        CurrentAuthUser.shared.newUsersLoading = true
         
         for _ in 0...numberRequsetedUsers {
             
-            if currentAuthUser.potentialPairID.count == 0 {break}
+            if CurrentAuthUser.shared.potentialPairID.count == 0 {break}
             
-            let newUser = User(ID: currentAuthUser.potentialPairID[0],currentAuthUserID: currentAuthUser.ID)
+            let newUser = User(ID: CurrentAuthUser.shared.potentialPairID[0],currentAuthUserID: CurrentAuthUser.shared.ID)
             await newUser.loadMetaData()
             usersArr.append(newUser)
-            currentAuthUser.potentialPairID.removeFirst()
+            CurrentAuthUser.shared.potentialPairID.removeFirst()
         }
         print(usersArr, "UserArr")
-        currentAuthUser.newUsersLoading = false
+        CurrentAuthUser.shared.newUsersLoading = false
     }
 }
 //MARK: -  Действия при первом запуске
@@ -247,21 +245,21 @@ extension PairsViewController {
         loadUserAnimation.center = self.view.center
         view.addSubview(loadUserAnimation)
         
-        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 80, height: 80))
-        let backView = UIView(frame: CGRect(x: 0, y: 0, width: 85, height: 85))
-        imageView.center = self.view.center
-        backView.center = imageView.center
-        backView.layer.cornerRadius = backView.frame.height / 2
-        backView.layer.masksToBounds = true
-        backView.backgroundColor = .white
+        avatarPulse = UIImageView(frame: CGRect(x: 0, y: 0, width: 80, height: 80))
+        backViewAvatarPulse = UIView(frame: CGRect(x: 0, y: 0, width: 85, height: 85))
+        avatarPulse.center = self.view.center
+        backViewAvatarPulse.center = avatarPulse.center
+        backViewAvatarPulse.layer.cornerRadius = backViewAvatarPulse.frame.height / 2
+        backViewAvatarPulse.layer.masksToBounds = true
+        backViewAvatarPulse.backgroundColor = .white
         
-        imageView.contentMode = .scaleAspectFill
-        imageView.image = avatarUser
-        imageView.layer.cornerRadius = imageView.frame.height / 2
-        imageView.layer.masksToBounds = true
+        avatarPulse.contentMode = .scaleAspectFill
+        avatarPulse.image = avatarUser
+        avatarPulse.layer.cornerRadius = avatarPulse.frame.height / 2
+        avatarPulse.layer.masksToBounds = true
        
-        self.view.addSubview(backView)
-        self.view.addSubview(imageView)
+        self.view.addSubview(backViewAvatarPulse)
+        self.view.addSubview(avatarPulse)
         
     }
     
@@ -271,6 +269,9 @@ extension PairsViewController {
             
             self.loadUserAnimation.stop()
             self.loadUserAnimation.removeFromSuperview()
+            self.avatarPulse.removeFromSuperview()
+            self.backViewAvatarPulse.removeFromSuperview()
+            
             let dislikeImage = UIImage(named: "DisLikeButton")?.withRenderingMode(.alwaysOriginal)
             let likeImage = UIImage(named: "LikeButton")?.withRenderingMode(.alwaysOriginal)
             let superLikeImage = UIImage(named: "SuperLikeButton")?.withRenderingMode(.alwaysOriginal)
@@ -321,7 +322,7 @@ extension PairsViewController  {
     
     func checkMatch(ID: String) {
         Task {
-            let match = await currentAuthUser.checkMatch(potetnialPairID: ID)
+            let match = await CurrentAuthUser.shared.checkMatch(potetnialPairID: ID)
             if match {
                 matchID = ID
                 performSegue(withIdentifier: "goToMatch", sender: self)
@@ -332,7 +333,6 @@ extension PairsViewController  {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let destanationVC = segue.destination as? MatchController else {return}
         guard let newMatch = basketUser.first(where: {$0.ID == matchID }) else {return}
-        destanationVC.currentAuthUser = currentAuthUser
         destanationVC.newMatch = newMatch
         destanationVC.delegate = self
     }
@@ -340,12 +340,12 @@ extension PairsViewController  {
 //MARK: - Переход с MATCH Сontroller с помощью делегата
 
 extension PairsViewController: passDataDelegate {
-    func goToMatchVC( matchController: UIViewController?,matchUser:User,currentAuthUser:CurrentAuthUser) {
+    func goToMatchVC( matchController: UIViewController?,matchUser:User) {
         
         guard let vc = self.tabBarController?.viewControllers![1] as? ChatViewController else {return}
         guard let matchVC = matchController as? MatchController else {return}
         matchVC.delegate = vc
-        matchVC.delegate?.goToMatchVC(matchController: nil, matchUser: matchUser,currentAuthUser: currentAuthUser)
+        matchVC.delegate?.goToMatchVC(matchController: nil, matchUser: matchUser)
         tabBarController?.selectedIndex = 1
     }
 }

@@ -29,14 +29,12 @@ class ChatViewController: UIViewController {
     
     
     var selectedUser: User?
-    var currentAuthUser: CurrentAuthUser?
     var listenersArr =  [ListenerRegistration]()
     
     var shouldPerfomSegue: Bool {
         get {
             if selectedUser == nil {return false}
-            if currentAuthUser == nil {return false}
-            if currentAuthUser?.matchArr.contains(where: {$0.ID == selectedUser?.ID }) == false {return false}
+            if CurrentAuthUser.shared.matchArr.contains(where: {$0.ID == selectedUser?.ID }) == false {return false}
             if selectedUser?.chat == nil {return false}
             return true
         }
@@ -46,9 +44,8 @@ class ChatViewController: UIViewController {
     var potentialChatArr: [User] {
         get {
             var potentialArr = [User]()
-            guard let authUser = currentAuthUser else {return [User]()}
             
-            for user in authUser.matchArr {
+            for user in CurrentAuthUser.shared.matchArr {
                 guard let chat = user.chat else {continue}
                 if  chat.messages.count == 0 {
                     potentialArr.append(user)
@@ -61,9 +58,8 @@ class ChatViewController: UIViewController {
     var chatArr: [Chat] {
         get {
             var chatArr = [Chat]()
-            guard let authUser = currentAuthUser else {return chatArr}
             
-            for user in authUser.matchArr {
+            for user in CurrentAuthUser.shared.matchArr {
                 guard let chat = user.chat else {continue}
                 if chat.messages.count > 0 {
                     chatArr.append(chat)
@@ -79,10 +75,9 @@ class ChatViewController: UIViewController {
     }
     override func viewWillAppear(_ animated: Bool) {
 
-        if let vc = self.tabBarController?.viewControllers![0] as? PairsViewController {
-            currentAuthUser = vc.currentAuthUser
-            currentAuthUser?.delegate = self
-        }
+            
+            CurrentAuthUser.shared.delegate = self
+        
         addListeners()
     }
     
@@ -107,9 +102,8 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChatCell", for: indexPath) as! ChatCell
         
         
-        guard let authUser = currentAuthUser else {return cell}
         let chat = chatArr[indexPath.row]
-        guard let pairUser = authUser.matchArr.first(where: {chat.ID.contains($0.ID)}) else {return cell}
+        guard let pairUser = CurrentAuthUser.shared.matchArr.first(where: {chat.ID.contains($0.ID)}) else {return cell}
        
         cell.userID = pairUser.ID
         pairUser.avatar?.delegate = self
@@ -130,7 +124,7 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         guard let cell = tableView.cellForRow(at: indexPath) as? ChatCell else {return}
-        guard let matchUser = currentAuthUser?.matchArr.first(where: {$0.ID == cell.userID}) else {return}
+        guard let matchUser = CurrentAuthUser.shared.matchArr.first(where: {$0.ID == cell.userID}) else {return}
         
         selectedUser = matchUser
         tableView.deselectRow(at: indexPath, animated: true)
@@ -139,11 +133,10 @@ extension ChatViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         guard let cell = tableView.cellForRow(at: indexPath) as? ChatCell else {return nil}
-        guard let matchUser = currentAuthUser?.matchArr.first(where: {$0.ID == cell.userID}) else {return nil}
-        guard let authUser = currentAuthUser else {return nil}
+        guard let matchUser = CurrentAuthUser.shared.matchArr.first(where: {$0.ID == cell.userID}) else {return nil}
         
         let deleteAction = UIContextualAction(style: .destructive, title: "") { action, view, completion in
-            authUser.deletePair(user: matchUser)
+            CurrentAuthUser.shared.deletePair(user: matchUser)
             completion(true)
         }
 
@@ -205,7 +198,7 @@ extension ChatViewController: UICollectionViewDataSource, UICollectionViewDelega
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let cell = collectionView.cellForItem(at: indexPath) as? PotentialChatCell else {return}
-        guard let matchUser = currentAuthUser?.matchArr.first(where: {cell.chatID.contains($0.ID)}) else {return} /// Ищем пользователя в архиве матчАрр если его нет значит его удалили из пар
+        guard let matchUser = CurrentAuthUser.shared.matchArr.first(where: {cell.chatID.contains($0.ID)}) else {return} /// Ищем пользователя в архиве матчАрр если его нет значит его удалили из пар
         selectedUser = matchUser
         if shouldPerfomSegue {performSegue(withIdentifier: "goToChat", sender: self)}
         
@@ -220,11 +213,9 @@ extension ChatViewController {
         
         guard let destanationVC = segue.destination as? ChatUserController else  {return}
         guard let user = selectedUser else {return}
-        guard let authUser = currentAuthUser else {return}
         guard let chat = user.chat else {return}
         destanationVC.chat = chat
         destanationVC.selectedUser = user
-        destanationVC.currentAuthUser = authUser
     }
 }
 
@@ -244,9 +235,8 @@ extension ChatViewController: passDataDelegate, MatchArrHasBennUpdate, LoadPhoto
         }
     }
     
-    func goToMatchVC( matchController: UIViewController?, matchUser: User, currentAuthUser: CurrentAuthUser) {
+    func goToMatchVC( matchController: UIViewController?, matchUser: User) {
         selectedUser = matchUser
-        self.currentAuthUser = currentAuthUser
         if shouldPerfomSegue {
             performSegue(withIdentifier: "goToChat", sender: self)
         }
@@ -260,16 +250,15 @@ extension ChatViewController {
     
     func addListeners(){
         let db = Firestore.firestore()
-        guard let authUser = currentAuthUser else {return}
         
         removeListeners()
 
-        if authUser.matchArr.count == 0 {
+        if CurrentAuthUser.shared.matchArr.count == 0 {
             tableView.reloadData()
             collectionView.reloadData()
         }
         
-        for user in authUser.matchArr {
+        for user in CurrentAuthUser.shared.matchArr {
             
             let listener = db.collection("Chats").document(user.chatID).collection("Messages").order(by:"Date").addSnapshotListener { querySnapshot, Error in
                 

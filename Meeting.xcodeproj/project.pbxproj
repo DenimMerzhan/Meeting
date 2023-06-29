@@ -240,6 +240,7 @@
 		CFDE37482A48417400709FFB /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				CF65ED7F2A2789AC00820D6B /* MatchController.swift */,
 				CF069DA329EC2D3D005ED378 /* PairsViewController.swift */,
 			);
 			path = Controller;
@@ -253,7 +254,6 @@
 				CFFD03DF29F9003B000732AC /* CardModel.swift */,
 				CF1DC80729F0D46C001E2EAD /* CardView.swift */,
 				CF3420842A4ACAB400A8BC71 /* CardImageView.swift */,
-				CF65ED7F2A2789AC00820D6B /* MatchController.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";

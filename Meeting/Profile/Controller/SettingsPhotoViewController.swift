@@ -21,8 +21,6 @@ class SettingsPhotoViewController: UIViewController {
     
     var defaults = UserDefaults.standard
     var index = IndexPath()
-    
-    var currentAuthUser = CurrentAuthUser(ID: "")
    
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,7 +36,7 @@ class SettingsPhotoViewController: UIViewController {
     
     
     @IBAction func donePressed(_ sender: UIButton) {
-        defaults.set(Float(currentAuthUser.imageArr.count) / 9 , forKey: "ProfileFilingScale") /// Записываем данные о количествах фото текущего пользователя
+//        defaults.set(Float(currentAuthUser.imageArr.count) / 9 , forKey: "ProfileFilingScale") /// Записываем данные о количествах фото текущего пользователя
         self.dismiss(animated: true)
     }
     
@@ -72,20 +70,20 @@ extension SettingsPhotoViewController : UICollectionViewDataSource, UICollection
         cell.addButton.addAction(addAction, for: .touchUpInside)
         
         let deleteAction = UIAction { [weak self] action in
-            guard let imageID = self?.currentAuthUser.imageArr[indexRow].imageID else {return}
-            self?.currentAuthUser.imageArr.remove(at: indexRow)
-            self?.currentAuthUser.removePhotoFromServer(imageID: imageID)
+            guard let imageID = CurrentAuthUser.shared.imageArr[indexRow].imageID else {return}
+            CurrentAuthUser.shared.imageArr.remove(at: indexRow)
+            CurrentAuthUser.shared.removePhotoFromServer(imageID: imageID)
             self?.collectionPhotoView.reloadData()
         }
         cell.deleteButton.addAction(deleteAction, for: .touchUpInside)
         
         
-        if indexRow < currentAuthUser.imageArr.count {
+        if indexRow < CurrentAuthUser.shared.imageArr.count {
             
             cell.addButton.isHidden = true
             cell.deleteButton.isHidden = false
-            currentAuthUser.imageArr[indexRow].delegate = self
-            cell.photoImage.image = currentAuthUser.imageArr[indexRow].image
+            CurrentAuthUser.shared.imageArr[indexRow].delegate = self
+            cell.photoImage.image = CurrentAuthUser.shared.imageArr[indexRow].image
             cell.dottedBorder.isHidden = true
             
         }else {
@@ -147,7 +145,7 @@ extension SettingsPhotoViewController {
         
         Task {  /// Ждем пока поступит ответ, либо успешная загрузка либо нет
             
-            let succes = await currentAuthUser.uploadImageToStorage(image: image)
+            let succes = await CurrentAuthUser.shared.uploadImageToStorage(image: image)
             
             
             if succes {

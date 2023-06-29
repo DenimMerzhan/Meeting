@@ -19,16 +19,15 @@ class ProfileViewController: UIViewController {
     @IBOutlet weak var nameAgeLabel: UILabel!
     
     var circularProgressBar = CircularProgressBarView(frame: .zero)
-    var currentAuthUser =   CurrentAuthUser(ID: "")
     var profileProgress: Float {
         get {
-            return Float(currentAuthUser.imageArr.count) / 9
+            return Float(CurrentAuthUser.shared.imageArr.count) / 9
         }
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        if currentAuthUser.avatar?.image != nil {
-            avatar.image = currentAuthUser.avatar?.image
+        if CurrentAuthUser.shared.avatar?.image != nil {
+            avatar.image = CurrentAuthUser.shared.avatar?.image
         }
         profileUpdate()
     }
@@ -45,7 +44,6 @@ class ProfileViewController: UIViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let destination = segue.destination as? SettingsPhotoViewController else {return}
-        destination.currentAuthUser = currentAuthUser
     }
 }
 
@@ -57,12 +55,10 @@ private extension ProfileViewController {
         
     func startSettings(){
         
-        guard let vc = self.tabBarController?.viewControllers?[0] as? PairsViewController else {return}
-        currentAuthUser = vc.currentAuthUser
-        currentAuthUser.avatar?.delegate = self
-        avatar.image = currentAuthUser.avatar?.image
+        CurrentAuthUser.shared.avatar?.delegate = self
+        avatar.image = CurrentAuthUser.shared.avatar?.image
         
-        nameAgeLabel.text = currentAuthUser.name + " " + String(currentAuthUser.age)
+        nameAgeLabel.text = CurrentAuthUser.shared.name + " " + String(CurrentAuthUser.shared.age)
         nameAgeLabel.lineBreakMode = .byWordWrapping
         nameAgeLabel.numberOfLines = 3
         
@@ -122,6 +118,6 @@ private extension ProfileViewController {
 
 extension ProfileViewController: LoadPhoto {
     func userPhotoLoaded() {
-        avatar.image = currentAuthUser.avatar?.image
+        avatar.image = CurrentAuthUser.shared.avatar?.image
     }
 }
