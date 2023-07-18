@@ -52,17 +52,18 @@ class PairsViewController: UIViewController {
     }
     
     override func viewDidLoad() {
-        CurrentAuthUser.shared.ID = "+79817550000"
+        CurrentAuthUser.shared.ID = "+79187550000"
         
         Task {
             await CurrentAuthUser.shared.loadMetadata()
             super.viewDidLoad()
             animationSettings()
-            await loadNewUsers(numberRequsetedUsers: 15)
+            await loadNewUsers(numberRequsetedUsers: 2)
             startSettings()
         }
         
     }
+
     
     
     //MARK: -  Одна из кнопок лайка была нажата
@@ -100,7 +101,11 @@ class PairsViewController: UIViewController {
     
     
     @IBAction func cardTap(_ sender: UITapGestureRecognizer) {
-        currentCard.refreshPhoto(sender)
+        let y = sender.location(in: currentCard).y
+        if y > currentCard.frame.height * 0.7 {
+            performSegue(withIdentifier: "GoToUserInfo", sender: self)
+        }else {currentCard.refreshPhoto(sender)}
+        
     }
     
     //MARK: -  Карта была нажата пальцем
@@ -223,7 +228,7 @@ extension PairsViewController {
             usersArr.append(newUser)
             CurrentAuthUser.shared.potentialPairID.removeFirst()
         }
-        print(usersArr, "UserArr")
+
         CurrentAuthUser.shared.newUsersLoading = false
     }
 }
@@ -331,6 +336,10 @@ extension PairsViewController  {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let userUinfoVC = segue.destination as? UserInfoController {
+            guard let currentUserInfo = usersArr.first(where: {$0.ID == currentCard.ID}) else {return}
+            userUinfoVC.imageArr = currentUserInfo.imageArr
+        }
         guard let destanationVC = segue.destination as? MatchController else {return}
         guard let newMatch = basketUser.first(where: {$0.ID == matchID }) else {return}
         destanationVC.newMatch = newMatch

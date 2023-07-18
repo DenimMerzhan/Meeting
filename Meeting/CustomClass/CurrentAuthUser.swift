@@ -48,7 +48,7 @@ class CurrentAuthUser {
     private init() {
     }
     
-//MARK: -  Загрузка метаданных о текущем авторизованном пользователе с FireStore
+    //MARK: -  Загрузка метаданных о текущем авторизованном пользователе с FireStore
     
     func loadMetadata() async {
         
@@ -56,40 +56,35 @@ class CurrentAuthUser {
         let photoCollection = db.collection("Users").document(ID).collection("Photo").order(by: "Position")
         listenMatchUserID()
         
-            do {
+        do {
+            
+            let docSnap = try await collection.getDocument()
+            let photoSnap = try await photoCollection.getDocuments()
+            
+            if let dataDoc = docSnap.data()  {
                 
-                let docSnap = try await collection.getDocument()
-                let photoSnap = try await photoCollection.getDocuments()
-                
-                if let dataDoc = docSnap.data()  {
+                if let name = dataDoc["Name"] as? String ,let age = dataDoc["Age"] as? Int {
                     
-                    if let name = dataDoc["Name"] as? String ,let age = dataDoc["Age"] as? Int {
-                        
-                        self.name = name
-                        self.age = age
-                        
-                        if let likeArr = dataDoc["LikeArr"] as? [String] {self.likeArr = likeArr}
-                        if let disLikeArr = dataDoc["DisLikeArr"] as? [String] {self.disLikeArr = disLikeArr}
-                        if let superLikeArr = dataDoc["SuperLikeArr"] as? [String] {self.superLikeArr = superLikeArr} /// Суперлайков может и не быть, поэтому не ставим guard
-                        await loadNewPotenialPairs()
-                        
-                        for data in photoSnap.documents { /// Загрузка ссылок на фото в Storage
-                            if let urlPhoto = data["URL"] as? String {
-                                if data == photoSnap.documents.first {
-                                    let image = await UserPhoto(frame: .zero, urlPhotoFromServer: urlPhoto, imageID: data.documentID,isAvatarCurrentUser: true)
-                                    self.imageArr.append(image)
-                                }else {
-                                    let image = await UserPhoto(frame: .zero, urlPhotoFromServer: urlPhoto, imageID: data.documentID)
-                                    self.imageArr.append(image)
-                                }
-                            }
+                    self.name = name
+                    self.age = age
+                    
+                    if let likeArr = dataDoc["LikeArr"] as? [String] {self.likeArr = likeArr}
+                    if let disLikeArr = dataDoc["DisLikeArr"] as? [String] {self.disLikeArr = disLikeArr}
+                    if let superLikeArr = dataDoc["SuperLikeArr"] as? [String] {self.superLikeArr = superLikeArr} /// Суперлайков может и не быть, поэтому не ставим guard
+                    await loadNewPotenialPairs()
+                    
+                    for data in photoSnap.documents { /// Загрузка ссылок на фото в Storage
+                        if let urlPhoto = data["URL"] as? String {
+                            let image = await UserPhoto(frame: .zero, urlPhotoFromServer: urlPhoto, imageID: data.documentID)
+                            self.imageArr.append(image)
                         }
-                    }else {
-                        print("Ошибка в преобразование данных о текущем пользователе")}
-                }
-                
-            }catch{
-                print("Ошибка получения ссылок на фото с сервера FirebaseFirestore - \(error)")}
+                    }
+                }else {
+                    print("Ошибка в преобразование данных о текущем пользователе")}
+            }
+            
+        }catch{
+            print("Ошибка получения ссылок на фото с сервера FirebaseFirestore - \(error)")}
     }
     
     
@@ -111,7 +106,7 @@ class CurrentAuthUser {
         }
     }
     
-//MARK: -  Загрузка потеницальных пар для текущего пользователя
+    //MARK: -  Загрузка потеницальных пар для текущего пользователя
     
     func loadNewPotenialPairs() async {
         
@@ -129,12 +124,12 @@ class CurrentAuthUser {
             
         }
     }
-
+    
     //MARK: -  Загрузка фото на сервер
     
     func uploadImageToStorage(image: UIImage) async -> Bool  {
         
-        let imageID = "photoImage" + "".randomString(length:10)
+        let imageID = "".randomString(length:15)
         let photoColletcion = db.collection("Users").document(ID).collection("Photo").document(imageID)
         let imagesRef = storage.reference().child("UsersPhoto").child(ID).child(imageID) /// Создаем ссылку на файл
         
@@ -143,11 +138,11 @@ class CurrentAuthUser {
         }
         
         do {
-            try await imagesRef.putDataAsync(imageData)
+            let metaData = try await imagesRef.putDataAsync(imageData)
             let url = try await imagesRef.downloadURL()
             
-            try await photoColletcion.setData(["URL" : url.absoluteString],merge: true)
-            try await photoColletcion.setData(["Position" : imageArr.count],merge: true)
+            try await photoColletcion.setData(["URL" : url.absoluteString,
+                                               "Position" : imageArr.count],merge: true)
             
             await imageArr.append(UserPhoto(frame: .zero, urlPhotoFromServer: url.absoluteString, imageID: imageID))
             return true
@@ -158,7 +153,7 @@ class CurrentAuthUser {
     }
     
     
-//MARK: - Удаление фото с сервера Storage и Firestore
+    //MARK: - Удаление фото с сервера Storage и Firestore
     
     func removePhotoFromServer(imageID:String){
         
@@ -192,7 +187,7 @@ class CurrentAuthUser {
                     refImage.setData(["Position" : i],merge: true)
                     self.shufflePhotoOnServer()
                     return
-                    }
+                }
             }
         }
         
@@ -283,7 +278,7 @@ extension CurrentAuthUser {
 //MARK: -  Удаление пары
 
 extension CurrentAuthUser {
-
+    
     func deletePair(user:User){
         
         let chatID = user.chatID
@@ -305,7 +300,7 @@ extension CurrentAuthUser {
             self.db.collection("Users").document(self.ID).setData(["SuperLikeArr" : self.superLikeArr],merge: true)
             
             user.deleteUserMatchArr(currentAuthUserID: self.ID) /// Удаляем из архива МатчАрр текущего пользователя
-//            user.deleteLikeUser(currentAuthUserID: self.ID) /// Удаляем из архива лайков текущего пользователя
+            //            user.deleteLikeUser(currentAuthUserID: self.ID) /// Удаляем из архива лайков текущего пользователя
             
             self.db.collection("Users").document(self.ID).setData(["MatchArr" : matchArrID],merge: true) /// Удаляем пользователя из матч арр у текущего пользователя
             
@@ -349,7 +344,7 @@ extension CurrentAuthUser {
         listenerMatchArrID = listener
     }
     
-//MARK: -  Проверка удалили ли пользователей
+    //MARK: -  Проверка удалили ли пользователей
     
     func checkIsDeleteUser(matchArrIdOnServer: [String]){ /// Проверка есть удалили ли какого то пользователя с сервера
         

@@ -25,13 +25,13 @@ class CardView: UIView {
     var dislikeImage = UIImageView(frame: CGRect(x: 234, y: 0.0, width: 127, height: 93))
     var superLikeImage = UIImageView(frame: CGRect(x: 117, y: 8, width: 130, height: 100))
     
-    init(userID: String = String(), name: String = String(), age: String = String(), imageArr: [UserPhoto]?, emptyCard: Bool = false) {
+    init(userID: String = String(), name: String = String(), age: String = String(), imageArr: [UserPhoto]?, emptyCard: Bool = false, frame: CGRect = CGRect(x: 16, y: 118, width: UIScreen.main.bounds.width - 32, height: UIScreen.main.bounds.height - 236)) {
         
         self.imageArr = imageArr
         self.ID = userID
         self.name.text = name
         self.age.text = age
-        super.init(frame: CGRect(x: 16, y: 118, width: UIScreen.main.bounds.width - 32, height: UIScreen.main.bounds.height - 236))
+        super.init(frame: frame)
         if emptyCard {
             creatEmptyCard()
         }else {
@@ -91,8 +91,8 @@ class CardView: UIView {
         self.addSubview(label)
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    required init?(coder aDecoder: NSCoder) {
+       super.init(coder: aDecoder)
     }
     
     //MARK: - Обнуление сердец

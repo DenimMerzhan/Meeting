@@ -50,22 +50,21 @@ class User {
     func loadMetaData() async {
         
         let collection  = db.collection("Users").document(ID)
+        let photoCollection  = db.collection("Users").document(ID).collection("Photo").order(by: "Position")
         
         do {
             let docSnap = try await collection.getDocument()
+            let photoSnap = try await photoCollection.getDocuments()
             if let dataDoc = docSnap.data() {
                 
                 if let name = dataDoc["Name"] as? String ,let age = dataDoc["Age"] as? Int {
                     self.name = name
                     self.age = age
                     
-                    for data in dataDoc {
-                        if data.key.contains("photoImage") {
-                            if let urlPhoto = data.value as? String {
-                                let imageView = await UserPhoto(frame: .zero, urlPhotoFromServer: urlPhoto, imageID: data.key)
-                                imageArr.append(imageView)
-                                
-                            }
+                    for data in photoSnap.documents { /// Загрузка ссылок на фото в Storage
+                        if let urlPhoto = data["URL"] as? String {
+                            let image = await UserPhoto(frame: .zero, urlPhotoFromServer: urlPhoto, imageID: data.documentID)
+                            self.imageArr.append(image)
                         }
                     }
                     

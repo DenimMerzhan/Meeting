@@ -77,6 +77,9 @@ extension SettingsPhotoViewController : UICollectionViewDataSource, UICollection
         }
         cell.deleteButton.addAction(deleteAction, for: .touchUpInside)
         
+        if CurrentAuthUser.shared.imageArr.count > 1 {
+            cell.deleteButton.isEnabled = true
+        }else {cell.deleteButton.isEnabled = false}
         
         if indexRow < CurrentAuthUser.shared.imageArr.count {
             

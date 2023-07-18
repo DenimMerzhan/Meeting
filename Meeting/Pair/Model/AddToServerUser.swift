@@ -20,28 +20,31 @@ struct Test {
     //MARK: -  Загрузка фото на сервер
         
     
-    func createUser() -> (nameUser: String,ageUser: Int,imageUserArr: [UIImage]){
+    private func createUser() -> (nameUser: String,ageUser: Int,imageUserArr: [UIImage],ID: String){
         
-        let name = randomString(length: 10)
+        let name = randomString(length: 15)
         let age = Int.random(in: 0...100)
-        let rand = Int.random(in: 1...5)
+        let rand = Int.random(in: 1...8)
+        let ID = randomString(length: 15)
         var imageArr = [UIImage]()
         for _ in 1...rand {
             let image = UIImage(color: colorArr.randomElement()!)!
             imageArr.append(image)
         }
-        return (name,age,imageArr)
+        return (name,age,imageArr,ID)
     }
     
     func uploadImageToStorage() async {
         
         let dataUser = createUser()
-        for image in dataUser.imageUserArr {
+        for i in 0...dataUser.imageUserArr.count - 1 {
             
-            let imageID = "photoImage" + dataUser.nameUser + randomString(length: 5)
+            let image = dataUser.imageUserArr[i]
             
-            let imagesRef = storage.reference().child("UsersPhoto").child(dataUser.nameUser).child(imageID) /// Создаем ссылку на файл
-            guard let imageData = image.jpegData(compressionQuality: 0.0) else { /// Преобразуем в Jpeg c сжатием
+            let imageID = randomString(length: 15)
+            
+            let imagesRef = storage.reference().child("UsersPhoto").child(dataUser.ID).child(imageID) /// Создаем ссылку на файл
+            guard let imageData = image.jpegData(compressionQuality: 0.1) else { /// Преобразуем в Jpeg c сжатием
                 return
             }
             let metaData = StorageMetadata()
@@ -50,7 +53,7 @@ struct Test {
             do {
                 _ = try await imagesRef.putDataAsync(imageData)
                 let url = try await imagesRef.downloadURL()
-                await uploadDataToFirestore(url: url, imageID: imageID,currentUserID: dataUser.nameUser,name: dataUser.nameUser,age: dataUser.ageUser)
+                await uploadDataToFirestore(url: url, imageID: imageID, userID: dataUser.ID, name: dataUser.nameUser, age: dataUser.ageUser, photoPosition: i)
             }catch {
                 print(error)
             }
@@ -58,15 +61,17 @@ struct Test {
 }
         
         
-    private func uploadDataToFirestore(url:URL,imageID: String,currentUserID: String,name: String,age:Int) async {
+    private func uploadDataToFirestore(url:URL,imageID: String,userID: String,name: String,age:Int,photoPosition: Int) async {
         
          
-        let colletcion = db.collection("Users").document(currentUserID) /// Добавляем в FiresStore ссылку на фото\
+        let colletcion = db.collection("Users").document(userID) /// Добавляем в FiresStore ссылку на фото\
+        let photoCollection = db.collection("Users").document(userID).collection("Photo").document(imageID)
         
         do {
             try await colletcion.setData(["Name" : name],merge: true)
             try await colletcion.setData(["Age" : age],merge: true)
-           try await colletcion.setData([imageID : url.absoluteString], merge: true)
+            try await photoCollection.setData(["URL" : url.absoluteString,
+                                     "Position" : photoPosition],merge: true)
         }catch{
             print("Ошибка загрузки данных фото на сервер Firebase Firestore \(error)")
         }

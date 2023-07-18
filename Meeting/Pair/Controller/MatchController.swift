@@ -24,22 +24,22 @@ class MatchController: UIViewController {
     var newMatch: User? {
         didSet {
             guard let user = newMatch else {return}
-            let card = CardView(userID: user.ID, name: user.name, age: String(user.age), imageArr: user.imageArr)
-            card.addGestureRecognizer(tapGesture)
-            card.name.isHidden = true
-            card.age.isHidden = true
-            changePostionProgressBar(progressBar: card.progressBar, y: 50)
-            view.addSubview(card)
-            view.sendSubviewToBack(card)
+            card = CardView(userID: user.ID, name: user.name, age: String(user.age), imageArr: user.imageArr,frame: self.view.bounds)
+            card?.addGestureRecognizer(tapGesture)
+            card?.name.isHidden = true
+            card?.age.isHidden = true
+            changePostionProgressBar(progressBar: card!.progressBar, y: 50)
+            view.addSubview(card!)
+            view.sendSubviewToBack(card!)
         }
     }
     
     let cardModel = CardModel()
-    
     var card: CardView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.view.backgroundColor = .clear
     }
 
     @IBAction func tapCard(_ sender: UITapGestureRecognizer) {

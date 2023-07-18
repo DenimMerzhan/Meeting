@@ -105,7 +105,89 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="-2252.0930232558139" y="-912.23175965665246"/>
+            <point key="canvasLocation" x="-3590" y="-905"/>
+        </scene>
+        <!--UserInfoController-->
+        <scene sceneID="8PB-4F-G5k">
+            <objects>
+                <viewController storyboardIdentifier="UserInfoController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="uXt-cI-vJ9" userLabel="UserInfoController" customClass="UserInfoController" customModule="Meeting" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="KhD-iD-Dmg">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hDd-3e-hZb">
+                                <rect key="frame" x="0.0" y="44" width="414" height="852"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mxl-Kq-P7W" userLabel="ViewScroll">
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="1300"/>
+                                        <subviews>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ofj-7F-fpm" customClass="CardView" customModule="Meeting" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="0.0" width="414" height="500"/>
+                                                <color key="backgroundColor" systemColor="systemBlueColor"/>
+                                                <gestureRecognizers/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="500" id="yGV-Cp-6EQ"/>
+                                                </constraints>
+                                                <connections>
+                                                    <outletCollection property="gestureRecognizers" destination="20a-D0-aZO" appends="YES" id="snZ-X5-N8p"/>
+                                                </connections>
+                                            </view>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="m2A-3w-SyB">
+                                                <rect key="frame" x="347" y="477" width="45" height="45"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="45" id="Lkv-fj-HfJ"/>
+                                                    <constraint firstAttribute="width" constant="45" id="xOU-9N-jrU"/>
+                                                </constraints>
+                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                <state key="normal" title="Button" image="ButtonUserInfroController"/>
+                                                <connections>
+                                                    <action selector="backButtonPressed:" destination="uXt-cI-vJ9" eventType="touchUpInside" id="MKR-Et-ysz"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <constraints>
+                                            <constraint firstAttribute="trailing" secondItem="m2A-3w-SyB" secondAttribute="trailing" constant="22" id="Fgh-Hk-lPo"/>
+                                            <constraint firstItem="Ofj-7F-fpm" firstAttribute="leading" secondItem="mxl-Kq-P7W" secondAttribute="leading" id="HH6-ec-d6Q"/>
+                                            <constraint firstAttribute="trailing" secondItem="Ofj-7F-fpm" secondAttribute="trailing" id="abO-Hj-SjJ"/>
+                                            <constraint firstItem="m2A-3w-SyB" firstAttribute="bottom" secondItem="Ofj-7F-fpm" secondAttribute="bottom" constant="22" id="fe5-ga-lhl"/>
+                                            <constraint firstAttribute="height" constant="1300" id="i6W-yF-7MG"/>
+                                            <constraint firstItem="Ofj-7F-fpm" firstAttribute="top" secondItem="mxl-Kq-P7W" secondAttribute="top" id="xED-lB-Dp7"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="mxl-Kq-P7W" secondAttribute="bottom" id="9qg-3P-ogf"/>
+                                    <constraint firstAttribute="trailing" secondItem="mxl-Kq-P7W" secondAttribute="trailing" id="ROX-pR-t9e"/>
+                                    <constraint firstItem="mxl-Kq-P7W" firstAttribute="top" secondItem="hDd-3e-hZb" secondAttribute="top" id="joY-kS-7oa"/>
+                                    <constraint firstItem="mxl-Kq-P7W" firstAttribute="leading" secondItem="hDd-3e-hZb" secondAttribute="leading" id="ttE-DV-0bQ"/>
+                                </constraints>
+                            </scrollView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="Yam-04-wjJ"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="hDd-3e-hZb" firstAttribute="leading" secondItem="Yam-04-wjJ" secondAttribute="leading" id="41j-Mu-lbb"/>
+                            <constraint firstAttribute="bottom" secondItem="hDd-3e-hZb" secondAttribute="bottom" id="CrQ-R0-7tN"/>
+                            <constraint firstItem="hDd-3e-hZb" firstAttribute="top" secondItem="Yam-04-wjJ" secondAttribute="top" id="V6U-RO-10J"/>
+                            <constraint firstItem="hDd-3e-hZb" firstAttribute="trailing" secondItem="Yam-04-wjJ" secondAttribute="trailing" id="fgk-T5-Gj2"/>
+                            <constraint firstItem="mxl-Kq-P7W" firstAttribute="width" secondItem="KhD-iD-Dmg" secondAttribute="width" id="nC6-Ef-0Ka"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="backButton" destination="m2A-3w-SyB" id="xc3-fb-Jcm"/>
+                        <outlet property="cardView" destination="Ofj-7F-fpm" id="n6j-bp-RNv"/>
+                        <outlet property="scrollView" destination="mxl-Kq-P7W" id="N2b-Wf-T1l"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="nKm-2y-dys" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer id="20a-D0-aZO">
+                    <connections>
+                        <action selector="cardTap:" destination="uXt-cI-vJ9" id="Fkk-PY-pgq"/>
+                    </connections>
+                </tapGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="-2236.231884057971" y="-919.41964285714278"/>
         </scene>
         <!--Pairs View Controller-->
         <scene sceneID="tne-QT-ifu">
@@ -191,6 +273,7 @@
                         <outlet property="tapGesture" destination="2Ma-FL-cJ8" id="sLp-Dn-Prh"/>
                         <segue destination="adh-7Q-Imu" kind="presentation" identifier="goToMatch" modalPresentationStyle="fullScreen" id="I3L-eO-Ae0"/>
                         <segue destination="yHA-e7-o3S" kind="presentation" identifier="swipeToChat" id="YX4-DE-Y59"/>
+                        <segue destination="uXt-cI-vJ9" kind="presentation" identifier="GoToUserInfo" modalPresentationStyle="fullScreen" id="Y2r-xm-Ogu"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -542,7 +625,7 @@
                                                 </constraints>
                                             </imageView>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Деним" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="M7k-t4-R0P">
-                                                <rect key="frame" x="125" y="255" width="164" height="36"/>
+                                                <rect key="frame" x="5" y="255" width="404" height="36"/>
                                                 <fontDescription key="fontDescription" name="ArialMT" family="Arial" pointSize="32"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
@@ -580,10 +663,10 @@
                                             <constraint firstAttribute="height" constant="320" id="Ild-DX-pHk"/>
                                             <constraint firstAttribute="height" constant="500" id="QpA-rX-R4c"/>
                                             <constraint firstItem="lFT-3Z-kJV" firstAttribute="centerY" secondItem="nwR-m1-hIX" secondAttribute="centerY" id="Y7z-Q9-nYO"/>
-                                            <constraint firstItem="M7k-t4-R0P" firstAttribute="leading" secondItem="nwR-m1-hIX" secondAttribute="leading" constant="125" id="e1n-ip-HXg"/>
+                                            <constraint firstItem="M7k-t4-R0P" firstAttribute="leading" secondItem="nwR-m1-hIX" secondAttribute="leading" constant="5" id="e1n-ip-HXg"/>
                                             <constraint firstItem="2FS-Qe-uXV" firstAttribute="bottom" secondItem="lFT-3Z-kJV" secondAttribute="bottom" constant="15" id="eaX-Mc-WcV"/>
                                             <constraint firstItem="2FS-Qe-uXV" firstAttribute="centerX" secondItem="lFT-3Z-kJV" secondAttribute="centerX" id="qAv-7u-osl"/>
-                                            <constraint firstAttribute="trailing" secondItem="M7k-t4-R0P" secondAttribute="trailing" constant="125" id="rdL-lc-myZ"/>
+                                            <constraint firstAttribute="trailing" secondItem="M7k-t4-R0P" secondAttribute="trailing" constant="5" id="rdL-lc-myZ"/>
                                         </constraints>
                                         <variation key="default">
                                             <mask key="constraints">
@@ -746,6 +829,7 @@
     </inferredMetricsTieBreakers>
     <resources>
         <image name="1" width="1718" height="2160"/>
+        <image name="ButtonUserInfroController" width="116.66666412353516" height="116.66666412353516"/>
         <image name="ChangePhotoPencil" width="18.333333969116211" height="18.333333969116211"/>
         <image name="DisLikeButton" width="50" height="46.333332061767578"/>
         <image name="Fire" width="33.333332061767578" height="33.333332061767578"/>
@@ -767,6 +851,9 @@
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemBlueColor">
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGray2Color">
             <color red="0.68235294117647061" green="0.68235294117647061" blue="0.69803921568627447" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
