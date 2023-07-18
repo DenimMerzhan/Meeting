@@ -105,7 +105,6 @@ class PairsViewController: UIViewController {
         if y > currentCard.frame.height * 0.7 {
             performSegue(withIdentifier: "GoToUserInfo", sender: self)
         }else {currentCard.refreshPhoto(sender)}
-        
     }
     
     //MARK: -  Карта была нажата пальцем

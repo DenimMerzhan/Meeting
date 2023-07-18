@@ -34,7 +34,6 @@ class MatchController: UIViewController {
         }
     }
     
-    let cardModel = CardModel()
     var card: CardView?
     
     override func viewDidLoad() {

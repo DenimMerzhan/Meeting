@@ -148,7 +148,7 @@ class CardView: UIView {
             self.progressBar[indexCurrentImage+1].backgroundColor = .gray
         }else if indexCurrentImage == 0 || indexCurrentImage == imageArr.count - 1 {
             self.backgroundColor = .white
-            CardModel().createAnimate(indexImage: indexCurrentImage, currentCard: self)
+            createAnimate()
             
         }
         
@@ -174,11 +174,11 @@ extension CardView   {
             let newView = UIView()
             
             if i == 0 { /// Если первый элемент то задаем начальную позицию
-                newView.frame = CGRect(x: 5, y: 10, width: mostWidth, height: 4)
+                newView.frame = CGRect(x: 5, y: 10, width: mostWidth, height: 3.5)
                 newView.backgroundColor = .white
             }else {
                 let xCoor = progressBar[i-1].frame.maxX /// Узнаем где кончилась предыдущая полоска
-                newView.frame = CGRect(x: xCoor + 7, y: 10, width: mostWidth, height: 4) /// Добавляем к ней 7 пунктов и создаем новую
+                newView.frame = CGRect(x: xCoor + 7, y: 10, width: mostWidth, height: 3.5) /// Добавляем к ней 7 пунктов и создаем новую
                 newView.backgroundColor = .gray
             }
             
@@ -195,6 +195,39 @@ extension CardView: LoadPhoto {
     func userPhotoLoaded() {
         guard let imageArr = self.imageArr else {return}
         imageView.image = imageArr[indexCurrentImage].image
+    }
+    
+}
+
+extension CardView {
+    
+    func createAnimate(){
+        
+        var firstCornerY = CGFloat()
+        var secondCornerY = CGFloat()
+        
+        if indexCurrentImage == 0 { /// Если фото первое то поворачиваем в лево
+            firstCornerY = -1 * 0.2
+            secondCornerY = 1 * 0.2
+        }else {
+            firstCornerY = 1 * 0.2
+            secondCornerY = -1 * 0.2
+        }
+        
+        
+        let layer = imageView.layer /// Создаем ссылку на слой imageUser
+        
+        var rotationAndPerspectiveTransform : CATransform3D = CATransform3DIdentity
+        rotationAndPerspectiveTransform.m34 = 1.0 / -1000
+        rotationAndPerspectiveTransform = CATransform3DRotate(rotationAndPerspectiveTransform, 0.15, 0.0,firstCornerY, 0.0) /// Поворачиваем t на угол в радиантах вокруг осей x y z
+        layer.transform = rotationAndPerspectiveTransform
+        
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.1) { /// Через некоторое время возвращаем изображение в прежнюю форму
+
+            rotationAndPerspectiveTransform = CATransform3DRotate(rotationAndPerspectiveTransform, 0.15, 0.0, secondCornerY, 0.0)
+            layer.transform = rotationAndPerspectiveTransform
+        }
     }
     
 }

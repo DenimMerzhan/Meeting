@@ -20,7 +20,6 @@
 		CF1DC80A29F0DFC3001E2EAD /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1DC80929F0DFC3001E2EAD /* User.swift */; };
 		CF26BA782A36E1AA006F07A4 /* StructMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF26BA772A36E1AA006F07A4 /* StructMessages.swift */; };
 		CF26BA7A2A3705E8006F07A4 /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF26BA792A3705E8006F07A4 /* Chat.swift */; };
-		CF3420852A4ACAB400A8BC71 /* CardImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3420842A4ACAB400A8BC71 /* CardImageView.swift */; };
 		CF51A8F82A1CC57900BC3265 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF51A8F72A1CC57900BC3265 /* Message.swift */; };
 		CF59A22C2A1B53B300954CCE /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF59A22B2A1B53B300954CCE /* ChatViewController.swift */; };
 		CF65ED802A2789AC00820D6B /* MatchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF65ED7F2A2789AC00820D6B /* MatchController.swift */; };
@@ -54,7 +53,6 @@
 		CFEE31C02A666FF5004C1B02 /* HeaderUserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFEE31BF2A666FF5004C1B02 /* HeaderUserInfo.swift */; };
 		CFEE31C22A66705D004C1B02 /* UserInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFEE31C12A66705D004C1B02 /* UserInfoCell.swift */; };
 		CFEE31C62A66719B004C1B02 /* TargetMeetingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFEE31C52A66719B004C1B02 /* TargetMeetingCell.swift */; };
-		CFFD03E029F9003B000732AC /* CardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFD03DF29F9003B000732AC /* CardModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -75,7 +73,6 @@
 		CF1DC80929F0DFC3001E2EAD /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		CF26BA772A36E1AA006F07A4 /* StructMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StructMessages.swift; sourceTree = "<group>"; };
 		CF26BA792A3705E8006F07A4 /* Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
-		CF3420842A4ACAB400A8BC71 /* CardImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardImageView.swift; sourceTree = "<group>"; };
 		CF51A8F72A1CC57900BC3265 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		CF59A22B2A1B53B300954CCE /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		CF65ED7F2A2789AC00820D6B /* MatchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchController.swift; sourceTree = "<group>"; };
@@ -109,7 +106,6 @@
 		CFEE31BF2A666FF5004C1B02 /* HeaderUserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderUserInfo.swift; sourceTree = "<group>"; };
 		CFEE31C12A66705D004C1B02 /* UserInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoCell.swift; sourceTree = "<group>"; };
 		CFEE31C52A66719B004C1B02 /* TargetMeetingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetMeetingCell.swift; sourceTree = "<group>"; };
-		CFFD03DF29F9003B000732AC /* CardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -270,9 +266,7 @@
 			children = (
 				CFCD0F9B2A0A887E00C17AFC /* AddToServerUser.swift */,
 				CF933C2F2A0CD65C0015E99B /* CustomError.swift */,
-				CFFD03DF29F9003B000732AC /* CardModel.swift */,
 				CF1DC80729F0D46C001E2EAD /* CardView.swift */,
-				CF3420842A4ACAB400A8BC71 /* CardImageView.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -501,7 +495,6 @@
 				CFCD0F9C2A0A887E00C17AFC /* AddToServerUser.swift in Sources */,
 				CF18EB6B2A4419A3005DE882 /* MessageBuble.swift in Sources */,
 				CF51A8F82A1CC57900BC3265 /* Message.swift in Sources */,
-				CF3420852A4ACAB400A8BC71 /* CardImageView.swift in Sources */,
 				CFA470E82A24DE6C005E3549 /* CurrentChatCell.swift in Sources */,
 				CF26BA7A2A3705E8006F07A4 /* Chat.swift in Sources */,
 				CFD689222A0E5EB0003EB21A /* CurrentUserImage.swift in Sources */,
@@ -515,7 +508,6 @@
 				CFEE31B62A666DC3004C1B02 /* UserInfo.swift in Sources */,
 				CF8F6C162A2CC85F004E62D0 /* PotentialChatCell.swift in Sources */,
 				CF65ED802A2789AC00820D6B /* MatchController.swift in Sources */,
-				CFFD03E029F9003B000732AC /* CardModel.swift in Sources */,
 				CFC6D2FE29FE403000A712BA /* ProfileViewController.swift in Sources */,
 				CF8C3E162A3B34F500B59026 /* Extension.swift in Sources */,
 				CFEE31B42A666D8D004C1B02 /* UserInfoSection.swift in Sources */,

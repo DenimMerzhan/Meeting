@@ -25,8 +25,9 @@ class UserInfoController: UIViewController, LoadPhoto {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        collectionView = UICollectionView(frame: CGRect(x: 0, y: cardView.frame.height, width: self.view.frame.width, height: 700), collectionViewLayout: createLaoyut())
+        collectionView = UICollectionView(frame: CGRect(x: 0, y: cardView.frame.height, width: self.view.frame.width, height: 900), collectionViewLayout: createLaoyut())
         
+        cardView.frame.size.width = self.view.frame.width
         cardView.imageArr = imageArr
         cardView.imageView = DefaultLoadPhoto(frame: CGRect(x: 0, y: 0, width: cardView.frame.width, height: cardView.frame.height))
         cardView.imageView.contentMode = .scaleAspectFill
