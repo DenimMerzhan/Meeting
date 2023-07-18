@@ -300,7 +300,6 @@ extension PairsViewController {
         
         currentCard = CardView(userID: firstUser.ID, name: firstUser.name, age: String(firstUser.age), imageArr: firstUser.imageArr)
         center = currentCard.center
-        print(currentCard.center)
         currentCard.addGestureRecognizer(panGesture)
         currentCard.addGestureRecognizer(tapGesture)
         

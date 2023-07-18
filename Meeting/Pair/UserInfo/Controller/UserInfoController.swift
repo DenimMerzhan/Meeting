@@ -16,11 +16,15 @@ class UserInfoController: UIViewController, LoadPhoto {
     
     @IBOutlet weak var backButton: UIButton!
     @IBOutlet weak var cardView: CardView!
-    @IBOutlet weak var scrollView: UIView!
+    @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet weak var heightScrollView: NSLayoutConstraint!
+    @IBOutlet weak var contentView: UIView!
     
     var imageArr = [UserPhoto]()
     var collectionView: UICollectionView?
     var sections = CurrentUserDescription.shared.userData
+    
+    let newView = UIView(frame: CGRect(x: 0, y: 50, width: 200, height: 50))
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,8 +42,9 @@ class UserInfoController: UIViewController, LoadPhoto {
         cardView.imageView.image = imageArr.first?.image
         cardView.addSubview(cardView.imageView)
         cardView.createProgressBar()
-        scrollView.addSubview(collectionView!)
-        scrollView.sendSubviewToBack(collectionView!)
+        
+        contentView.addSubview(collectionView!)
+        contentView.sendSubviewToBack(collectionView!)
         
         collectionView?.isScrollEnabled = false
         collectionView?.register(UINib(nibName: "UserInfoCell", bundle: nil), forCellWithReuseIdentifier: "UserInfoCell")
@@ -60,6 +65,9 @@ class UserInfoController: UIViewController, LoadPhoto {
     @IBAction func cardTap(_ sender: UITapGestureRecognizer) {
         cardView.refreshPhoto(sender)
     }
+    
+    
+//MARK: - UICollectionViewCompositionalLayout
     
     private func createLaoyut() -> UICollectionViewCompositionalLayout {
         
@@ -156,6 +164,9 @@ class UserInfoController: UIViewController, LoadPhoto {
     
 }
 
+
+//MARK: - UICollectionViewDelegeate and DataSource
+
 extension UserInfoController: UICollectionViewDelegate, UICollectionViewDataSource {
     
     
@@ -183,13 +194,13 @@ extension UserInfoController: UICollectionViewDelegate, UICollectionViewDataSour
             header.label.text = "Языки которые я знаю"
         case .shareProfile(_):
             header.tapGesture.addTarget(self, action: #selector(shareProfile))
-            header.label.textColor = .gray
-            header.label.text = "Пожаловаться"
+            header.label.textColor = UIColor(named: "UserInfo")
+            header.label.text = "Поделиться профилем"
             header.label.textAlignment = .center
         case .banProfile(_):
             header.tapGesture.addTarget(self, action: #selector(banProfile))
-            header.label.textColor = .gray
-            header.label.text = "Поделиться профилем"
+            header.label.textColor = UIColor(named: "UserInfo")
+            header.label.text = "Пожаловаться"
             header.label.textAlignment = .center
         }
         
@@ -264,11 +275,13 @@ extension UserInfoController: UICollectionViewDelegate, UICollectionViewDataSour
             cell.label.numberOfLines = 1
             
         }
+        heightScrollView.constant = collectionView.collectionViewLayout.collectionViewContentSize.height + cardView.frame.height + 80
         
         return cell
     }
     
 }
+//MARK: -  Поделиться и пожаловаться на пользователя
 
 extension UserInfoController {
     

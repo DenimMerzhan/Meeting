@@ -118,7 +118,7 @@
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hDd-3e-hZb">
                                 <rect key="frame" x="0.0" y="44" width="414" height="852"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mxl-Kq-P7W" userLabel="ViewScroll">
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mxl-Kq-P7W" userLabel="ContentView">
                                         <rect key="frame" x="0.0" y="0.0" width="414" height="1300"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ofj-7F-fpm" customClass="CardView" customModule="Meeting" customModuleProvider="target">
@@ -177,7 +177,9 @@
                     <connections>
                         <outlet property="backButton" destination="m2A-3w-SyB" id="xc3-fb-Jcm"/>
                         <outlet property="cardView" destination="Ofj-7F-fpm" id="n6j-bp-RNv"/>
-                        <outlet property="scrollView" destination="mxl-Kq-P7W" id="N2b-Wf-T1l"/>
+                        <outlet property="contentView" destination="mxl-Kq-P7W" id="lPm-MB-i5x"/>
+                        <outlet property="heightScrollView" destination="i6W-yF-7MG" id="4Ty-Ev-jPQ"/>
+                        <outlet property="scrollView" destination="hDd-3e-hZb" id="bS1-px-Cbq"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nKm-2y-dys" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

@@ -17,8 +17,9 @@ class CardView: UIView {
     var ID = String()
     var indexCurrentImage = 0
     
-    var name = UILabel()
-    var age = UILabel()
+    private var name = String()
+    private var age = String()
+    var dataUser = UILabel()
     var progressBar = [UIView]()
     
     var likeImage = UIImageView(frame: CGRect(x: 0.0, y: 8.0, width: 106, height: 79))
@@ -29,8 +30,9 @@ class CardView: UIView {
         
         self.imageArr = imageArr
         self.ID = userID
-        self.name.text = name
-        self.age.text = age
+        self.name = name
+        self.age = age
+        
         super.init(frame: frame)
         if emptyCard {
             creatEmptyCard()
@@ -39,6 +41,8 @@ class CardView: UIView {
             createProgressBar()
         }
     }
+    
+//MARK: - StartSetup
     
     func startSetup(){
         
@@ -59,13 +63,17 @@ class CardView: UIView {
         dislikeImage.isHidden = true
         superLikeImage.isHidden = true
         
-        name.font = .boldSystemFont(ofSize: 40)
-        name.frame = CGRect(origin: CGPoint(x: 10, y: frame.height - 130), size: name.sizeThatFits(CGSize(width: CGFloat.infinity, height: 48))) /// Расширяем рамку в зависимости от размера текста
-        name.textColor = .white
+        let attrs1 = [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 40), NSAttributedString.Key.foregroundColor : UIColor.white]
+        let attrs2 = [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 40), NSAttributedString.Key.foregroundColor : UIColor.white]
+        let attributedString1 = NSMutableAttributedString(string:name, attributes:attrs1)
+        let attributedString2 = NSMutableAttributedString(string: " " + age, attributes:attrs2)
+        attributedString1.append(attributedString2)
         
-        age.frame = CGRect(x: name.frame.maxX + 10, y: frame.height - 130, width: 100, height: 48.0) /// Возраст, ставим по позиции x относительно имени
-        age.font = .systemFont(ofSize: 40)
-        age.textColor = .white
+        dataUser.attributedText = attributedString1
+        dataUser.frame = CGRect(x: 10, y: frame.height - 130, width: frame.width - 10, height: 48)
+        dataUser.adjustsFontSizeToFitWidth = true
+        dataUser.minimumScaleFactor = 0.1
+        
         
         let gradient = CAGradientLayer() ///  Градиент
         gradient.frame = CGRect(x: 0, y: frame.height - 203, width: frame.width, height: 203)
@@ -73,8 +81,7 @@ class CardView: UIView {
         gradient.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]
         imageView.layer.insertSublayer(gradient, at: 0)
     
-        imageView.addSubview(self.name)
-        imageView.addSubview(self.age)
+        imageView.addSubview(dataUser)
         self.addSubview(imageView)
         self.addSubview(likeImage)
         self.addSubview(dislikeImage)
@@ -159,7 +166,10 @@ class CardView: UIView {
         imageView.image = imageArr[indexCurrentImage].image
     }
     
-}   
+}
+
+
+//MARK: - CreateProgressBar
 
 extension CardView   {
     
@@ -171,22 +181,25 @@ extension CardView   {
         
         for i in 0...countPhoto - 1 {
             
-            let newView = UIView()
+            let progressView = UIView()
             
             if i == 0 { /// Если первый элемент то задаем начальную позицию
-                newView.frame = CGRect(x: 5, y: 10, width: mostWidth, height: 3.5)
-                newView.backgroundColor = .white
+                progressView.frame = CGRect(x: 5, y: 10, width: mostWidth, height: 4)
+                progressView.backgroundColor = .white
             }else {
                 let xCoor = progressBar[i-1].frame.maxX /// Узнаем где кончилась предыдущая полоска
-                newView.frame = CGRect(x: xCoor + 7, y: 10, width: mostWidth, height: 3.5) /// Добавляем к ней 7 пунктов и создаем новую
-                newView.backgroundColor = .gray
+                progressView.frame = CGRect(x: xCoor + 7, y: 10, width: mostWidth, height: 4) /// Добавляем к ней 7 пунктов и создаем новую
+                progressView.backgroundColor = .gray
             }
             
-            newView.layer.cornerRadius = 2 /// Закругление
-            newView.layer.masksToBounds = true /// Обрезание слоев по границам
-            newView.alpha = 0.6
-            progressBar.append(newView) /// Добавляем в архив полосок
-            imageView.addSubview(newView)
+            progressView.layer.cornerRadius = 2 /// Закругление
+            progressView.layer.masksToBounds = true /// Обрезание слоев по границам
+            progressView.alpha = 0.6
+            progressView.layer.borderWidth = 0.5
+            progressView.layer.borderColor = UIColor.white.cgColor
+            
+            progressBar.append(progressView) /// Добавляем в архив полосок
+            imageView.addSubview(progressView)
         }
     }
 }
@@ -198,6 +211,8 @@ extension CardView: LoadPhoto {
     }
     
 }
+
+//MARK: - Animate
 
 extension CardView {
     
