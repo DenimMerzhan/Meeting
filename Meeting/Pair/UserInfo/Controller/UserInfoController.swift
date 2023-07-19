@@ -19,28 +19,52 @@ class UserInfoController: UIViewController, LoadPhoto {
     @IBOutlet weak var contentView: UIView!
     
     lazy var cardView: CardView = {
-        let cardView = CardView(imageArr: imageArr,frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: 500))
+        let cardView = CardView(imageArr: imageArr,frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: 520))
         cardView.imageView.layer.cornerRadius = 0
         cardView.dataUser.isHidden = true
         cardView.gradient.removeFromSuperlayer()
+        
+        for progressView in cardView.progressBar {
+            progressView.frame.origin.y = topSafeArea + 5
+        }
+        
         return cardView
     }()
     
     var dismissButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(UIImage(named: "DismissButton"), for: .normal)
-        button.addTarget(UserInfoController.self, action: #selector(dismissPreesed), for: .touchUpInside)
+        button.addTarget(self, action: #selector(dismissPreesed), for: .touchUpInside)
         return button
     }()
+    
+    var topSafeArea: CGFloat = {
+        
+        let scenes = UIApplication.shared.connectedScenes
+        let windowScene = scenes.first as? UIWindowScene
+        
+        guard let window = windowScene?.windows.first else {return 0}
+        return window.safeAreaInsets.top
+        
+    }()
+    
+    
+    lazy var dislikeButton = createButton(image: UIImage(named: "UserInfoDisLike"), selector: #selector(dislikePressed),size: CGSize(width: 90, height: 80))
+    lazy var likeButton = createButton(image: UIImage(named: "UserInfoLike"), selector: #selector(dislikePressed),size: CGSize(width: 90, height: 80))
+    lazy var superLikeButton = createButton(image: UIImage(named: "UserInfoSuperLike"), selector: #selector(dislikePressed),size: CGSize(width: 90, height: 80))
+    
     
     var imageArr = [UserPhoto]()
     var collectionView: UICollectionView?
     var sections = CurrentUserDescription.shared.userData
+    var tapGesture = UITapGestureRecognizer()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
+        tapGesture.addTarget(self, action: #selector(cardTap(_:)))
+        cardView.addGestureRecognizer(tapGesture)
         collectionView = UICollectionView(frame: CGRect(x: 0, y: cardView.frame.height, width: self.view.frame.width, height: 900), collectionViewLayout: createLaoyut())
         collectionView?.isScrollEnabled = false
         collectionView?.register(UINib(nibName: "UserInfoCell", bundle: nil), forCellWithReuseIdentifier: "UserInfoCell")
@@ -57,42 +81,81 @@ class UserInfoController: UIViewController, LoadPhoto {
         scrollView.addSubview(collectionView!)
         scrollView.addSubview(dismissButton)
         
-    
+        
         dismissButton.translatesAutoresizingMaskIntoConstraints = false
         dismissButton.topAnchor.constraint(equalTo: cardView.bottomAnchor,constant: -25).isActive = true
         dismissButton.trailingAnchor.constraint(equalTo: view.trailingAnchor,constant: -25).isActive = true
         dismissButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
         dismissButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
         setupVisualBlurEffect()
-        
+        setupButton()
     }
     
     
     @objc func dismissPreesed(){
+        self.dismiss(animated: true)
+    }
+    
+    @objc func cardTap(_ sender: UITapGestureRecognizer){
+        cardView.refreshPhoto(sender)
+    }
+    
+    @objc func dislikePressed(){
         
     }
     
-    @IBAction func cardTap(_ sender: UITapGestureRecognizer) {
-        cardView.refreshPhoto(sender)
+
+    
+}
+
+//MARK: - Create BlurEffect and Button
+
+extension UserInfoController {
+
+    
+    private func createButton(image: UIImage?,selector:Selector,size: CGSize) -> UIButton {
+        let button = UIButton(type: .system)
+        button.frame.size = size
+        button.setImage(image?.withRenderingMode(.alwaysOriginal), for: .normal)
+        button.addTarget(self, action: selector, for: .touchUpInside)
+        button.imageView?.contentMode = .scaleAspectFit
+        button.imageView?.clipsToBounds = true
+        return button
+    }
+    
+    private func setupButton(){
+        
+        let stackView = UIStackView(arrangedSubviews: [dislikeButton,superLikeButton,likeButton])
+        stackView.backgroundColor = .orange
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.distribution = .fillProportionally
+        view.addSubview(stackView)
+        stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor,constant: -100).isActive = true
+        stackView.heightAnchor.constraint(equalToConstant: 80).isActive = true
+        stackView.widthAnchor.constraint(equalToConstant: 300).isActive = true
+        
     }
     
     private func setupVisualBlurEffect(){
         
         let blurEffect =  UIBlurEffect(style: .regular)
         let visualEffectView = UIVisualEffectView(effect: blurEffect)
-
-        self.view.addSubview(visualEffectView)
+        view.addSubview(visualEffectView)
         
         visualEffectView.translatesAutoresizingMaskIntoConstraints = false
         visualEffectView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         visualEffectView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        visualEffectView.bottomAnchor.constraint(equalTo: view.topAnchor,constant: 50).isActive = true
+        visualEffectView.bottomAnchor.constraint(equalTo: view.topAnchor,constant: topSafeArea).isActive = true
         visualEffectView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         
     }
     
-    
+}
+
+
 //MARK: - UICollectionViewCompositionalLayout
+
+extension UserInfoController {
     
     private func createLaoyut() -> UICollectionViewCompositionalLayout {
         
@@ -111,7 +174,7 @@ class UserInfoController: UIViewController, LoadPhoto {
                         let item2 = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(widthDimension: .estimated(50), heightDimension: .absolute(70)))
                         item2.contentInsets.top = 20
                         itemArr.append(item2)
-                    break
+                        break
                     }
                     let item1 = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(34)))
                     item1.contentInsets.leading = -10
@@ -135,7 +198,7 @@ class UserInfoController: UIViewController, LoadPhoto {
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(50))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 item.contentInsets.leading = -10
-               
+                
                 let sizeGoup = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(50))
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: sizeGoup, subitems: [item])
                 
@@ -181,11 +244,12 @@ class UserInfoController: UIViewController, LoadPhoto {
                 
                 return section
             }
-                        
+            
         }
         
         return layout
     }
+    
     
 }
 
@@ -300,7 +364,7 @@ extension UserInfoController: UICollectionViewDelegate, UICollectionViewDataSour
             cell.label.numberOfLines = 1
             
         }
-        heightScrollView.constant = collectionView.collectionViewLayout.collectionViewContentSize.height + cardView.frame.height + 80
+        heightScrollView.constant = collectionView.collectionViewLayout.collectionViewContentSize.height + cardView.frame.height + 80 /// Обновляем высоту ScrollView  в зависимости от внутреннего размера CollectionView
         
         return cell
     }
@@ -309,7 +373,7 @@ extension UserInfoController: UICollectionViewDelegate, UICollectionViewDataSour
         
         let changeY = scrollView.contentOffset.y
         if changeY < 0 {
-            cardView.imageView.frame = CGRect(x: changeY, y: changeY, width: view.frame.width + abs(changeY) * 1.5, height: 500 + abs(changeY) * 1.5)
+            cardView.imageView.frame = CGRect(x: changeY, y: changeY, width: view.frame.width + abs(changeY) * 1.5, height: 520 + abs(changeY) * 1.5)
         }
     }
     
