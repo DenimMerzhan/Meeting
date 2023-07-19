@@ -52,7 +52,7 @@ class PairsViewController: UIViewController {
     }
     
     override func viewDidLoad() {
-        CurrentAuthUser.shared.ID = "+79187550000"
+        CurrentAuthUser.shared.ID = "2FoiV3dqXelseEy"
         
         Task {
             await CurrentAuthUser.shared.loadMetadata()

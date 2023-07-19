@@ -18,9 +18,6 @@ class UserInfoController: UIViewController, LoadPhoto {
     @IBOutlet weak var heightScrollView: NSLayoutConstraint!
     @IBOutlet weak var contentView: UIView!
     
-    
-    let visualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .regular))
-    
     lazy var cardView: CardView = {
         let cardView = CardView(imageArr: imageArr,frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: 500))
         cardView.imageView.layer.cornerRadius = 0
@@ -72,7 +69,7 @@ class UserInfoController: UIViewController, LoadPhoto {
     
     
     @objc func dismissPreesed(){
-        view.sendSubviewToBack(visualEffectView)
+        
     }
     
     @IBAction func cardTap(_ sender: UITapGestureRecognizer) {
@@ -81,12 +78,15 @@ class UserInfoController: UIViewController, LoadPhoto {
     
     private func setupVisualBlurEffect(){
         
+        let blurEffect =  UIBlurEffect(style: .regular)
+        let visualEffectView = UIVisualEffectView(effect: blurEffect)
+
         self.view.addSubview(visualEffectView)
         
         visualEffectView.translatesAutoresizingMaskIntoConstraints = false
         visualEffectView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         visualEffectView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        visualEffectView.bottomAnchor.constraint(equalTo: cardView.topAnchor).isActive = true
+        visualEffectView.bottomAnchor.constraint(equalTo: view.topAnchor,constant: 50).isActive = true
         visualEffectView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         
     }
