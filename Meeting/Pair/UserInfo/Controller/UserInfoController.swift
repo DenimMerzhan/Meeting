@@ -14,56 +14,81 @@ class UserInfoController: UIViewController, LoadPhoto {
         cardView.imageView.image = imageArr[cardView.indexCurrentImage].image
     }
     
-    @IBOutlet weak var backButton: UIButton!
-    @IBOutlet weak var cardView: CardView!
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var heightScrollView: NSLayoutConstraint!
     @IBOutlet weak var contentView: UIView!
+    
+    
+    let visualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .regular))
+    
+    lazy var cardView: CardView = {
+        let cardView = CardView(imageArr: imageArr,frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: 500))
+        cardView.imageView.layer.cornerRadius = 0
+        cardView.dataUser.isHidden = true
+        cardView.gradient.removeFromSuperlayer()
+        return cardView
+    }()
+    
+    var dismissButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(named: "DismissButton"), for: .normal)
+        button.addTarget(UserInfoController.self, action: #selector(dismissPreesed), for: .touchUpInside)
+        return button
+    }()
     
     var imageArr = [UserPhoto]()
     var collectionView: UICollectionView?
     var sections = CurrentUserDescription.shared.userData
     
-    let newView = UIView(frame: CGRect(x: 0, y: 50, width: 200, height: 50))
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
         collectionView = UICollectionView(frame: CGRect(x: 0, y: cardView.frame.height, width: self.view.frame.width, height: 900), collectionViewLayout: createLaoyut())
-        
-        cardView.frame.size.width = self.view.frame.width
-        cardView.imageArr = imageArr
-        cardView.imageView = DefaultLoadPhoto(frame: CGRect(x: 0, y: 0, width: cardView.frame.width, height: cardView.frame.height))
-        cardView.imageView.contentMode = .scaleAspectFill
-        cardView.imageView.layer.masksToBounds = true
-        for imageView in imageArr {
-            imageView.delegate = self
-        }
-        cardView.imageView.image = imageArr.first?.image
-        cardView.addSubview(cardView.imageView)
-        cardView.createProgressBar()
-        
-        contentView.addSubview(collectionView!)
-        contentView.sendSubviewToBack(collectionView!)
-        
         collectionView?.isScrollEnabled = false
         collectionView?.register(UINib(nibName: "UserInfoCell", bundle: nil), forCellWithReuseIdentifier: "UserInfoCell")
         collectionView?.register(UINib(nibName: "TargetMeetingCell", bundle: nil), forCellWithReuseIdentifier: "TargetMeetingCell")
         collectionView?.register(Header.self, forSupplementaryViewOfKind: "Dr Stranger", withReuseIdentifier: "Header1")
         
+        scrollView.alwaysBounceVertical = true
+        scrollView.contentInsetAdjustmentBehavior = .never
+        scrollView.delegate = self
         collectionView?.delegate = self
         collectionView?.dataSource = self
+        
+        scrollView.addSubview(cardView)
+        scrollView.addSubview(collectionView!)
+        scrollView.addSubview(dismissButton)
+        
+    
+        dismissButton.translatesAutoresizingMaskIntoConstraints = false
+        dismissButton.topAnchor.constraint(equalTo: cardView.bottomAnchor,constant: -25).isActive = true
+        dismissButton.trailingAnchor.constraint(equalTo: view.trailingAnchor,constant: -25).isActive = true
+        dismissButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        dismissButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        setupVisualBlurEffect()
         
     }
     
     
-    @IBAction func backButtonPressed(_ sender: UIButton) {
-        self.dismiss(animated: true)
+    @objc func dismissPreesed(){
+        view.sendSubviewToBack(visualEffectView)
     }
-    
     
     @IBAction func cardTap(_ sender: UITapGestureRecognizer) {
         cardView.refreshPhoto(sender)
+    }
+    
+    private func setupVisualBlurEffect(){
+        
+        self.view.addSubview(visualEffectView)
+        
+        visualEffectView.translatesAutoresizingMaskIntoConstraints = false
+        visualEffectView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        visualEffectView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        visualEffectView.bottomAnchor.constraint(equalTo: cardView.topAnchor).isActive = true
+        visualEffectView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        
     }
     
     
@@ -167,7 +192,7 @@ class UserInfoController: UIViewController, LoadPhoto {
 
 //MARK: - UICollectionViewDelegeate and DataSource
 
-extension UserInfoController: UICollectionViewDelegate, UICollectionViewDataSource {
+extension UserInfoController: UICollectionViewDelegate, UICollectionViewDataSource, UIScrollViewDelegate {
     
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
@@ -278,6 +303,14 @@ extension UserInfoController: UICollectionViewDelegate, UICollectionViewDataSour
         heightScrollView.constant = collectionView.collectionViewLayout.collectionViewContentSize.height + cardView.frame.height + 80
         
         return cell
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        
+        let changeY = scrollView.contentOffset.y
+        if changeY < 0 {
+            cardView.imageView.frame = CGRect(x: changeY, y: changeY, width: view.frame.width + abs(changeY) * 1.5, height: 500 + abs(changeY) * 1.5)
+        }
     }
     
 }

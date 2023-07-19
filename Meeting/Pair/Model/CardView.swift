@@ -16,6 +16,7 @@ class CardView: UIView {
     var imageArr: [UserPhoto]?
     var ID = String()
     var indexCurrentImage = 0
+    var gradient = CAGradientLayer()
     
     private var name = String()
     private var age = String()
@@ -75,7 +76,6 @@ class CardView: UIView {
         dataUser.minimumScaleFactor = 0.1
         
         
-        let gradient = CAGradientLayer() ///  Градиент
         gradient.frame = CGRect(x: 0, y: frame.height - 203, width: frame.width, height: 203)
         gradient.locations = [0.0, 1.0]
         gradient.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]

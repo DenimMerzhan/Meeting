@@ -120,39 +120,8 @@
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mxl-Kq-P7W" userLabel="ContentView">
                                         <rect key="frame" x="0.0" y="0.0" width="414" height="1300"/>
-                                        <subviews>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ofj-7F-fpm" customClass="CardView" customModule="Meeting" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="414" height="500"/>
-                                                <color key="backgroundColor" systemColor="systemBlueColor"/>
-                                                <gestureRecognizers/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="500" id="yGV-Cp-6EQ"/>
-                                                </constraints>
-                                                <connections>
-                                                    <outletCollection property="gestureRecognizers" destination="20a-D0-aZO" appends="YES" id="snZ-X5-N8p"/>
-                                                </connections>
-                                            </view>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="m2A-3w-SyB">
-                                                <rect key="frame" x="347" y="477" width="45" height="45"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="45" id="Lkv-fj-HfJ"/>
-                                                    <constraint firstAttribute="width" constant="45" id="xOU-9N-jrU"/>
-                                                </constraints>
-                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                                <state key="normal" title="Button" image="ButtonUserInfroController"/>
-                                                <connections>
-                                                    <action selector="backButtonPressed:" destination="uXt-cI-vJ9" eventType="touchUpInside" id="MKR-Et-ysz"/>
-                                                </connections>
-                                            </button>
-                                        </subviews>
-                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <constraints>
-                                            <constraint firstAttribute="trailing" secondItem="m2A-3w-SyB" secondAttribute="trailing" constant="22" id="Fgh-Hk-lPo"/>
-                                            <constraint firstItem="Ofj-7F-fpm" firstAttribute="leading" secondItem="mxl-Kq-P7W" secondAttribute="leading" id="HH6-ec-d6Q"/>
-                                            <constraint firstAttribute="trailing" secondItem="Ofj-7F-fpm" secondAttribute="trailing" id="abO-Hj-SjJ"/>
-                                            <constraint firstItem="m2A-3w-SyB" firstAttribute="bottom" secondItem="Ofj-7F-fpm" secondAttribute="bottom" constant="22" id="fe5-ga-lhl"/>
                                             <constraint firstAttribute="height" constant="1300" id="i6W-yF-7MG"/>
-                                            <constraint firstItem="Ofj-7F-fpm" firstAttribute="top" secondItem="mxl-Kq-P7W" secondAttribute="top" id="xED-lB-Dp7"/>
                                         </constraints>
                                     </view>
                                 </subviews>
@@ -175,8 +144,6 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="backButton" destination="m2A-3w-SyB" id="xc3-fb-Jcm"/>
-                        <outlet property="cardView" destination="Ofj-7F-fpm" id="n6j-bp-RNv"/>
                         <outlet property="contentView" destination="mxl-Kq-P7W" id="lPm-MB-i5x"/>
                         <outlet property="heightScrollView" destination="i6W-yF-7MG" id="4Ty-Ev-jPQ"/>
                         <outlet property="scrollView" destination="hDd-3e-hZb" id="bS1-px-Cbq"/>
@@ -831,7 +798,6 @@
     </inferredMetricsTieBreakers>
     <resources>
         <image name="1" width="1718" height="2160"/>
-        <image name="ButtonUserInfroController" width="116.66666412353516" height="116.66666412353516"/>
         <image name="ChangePhotoPencil" width="18.333333969116211" height="18.333333969116211"/>
         <image name="DisLikeButton" width="50" height="46.333332061767578"/>
         <image name="Fire" width="33.333332061767578" height="33.333332061767578"/>
@@ -853,9 +819,6 @@
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="systemBlueColor">
-            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGray2Color">
             <color red="0.68235294117647061" green="0.68235294117647061" blue="0.69803921568627447" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
