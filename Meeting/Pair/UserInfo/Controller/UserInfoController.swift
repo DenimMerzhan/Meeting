@@ -60,6 +60,7 @@ class UserInfoController: UIViewController, LoadPhoto {
         startSetings()
         setupVisualBlurEffect()
         setupButton()
+        createGradient()
     }
 
     
@@ -115,11 +116,8 @@ class UserInfoController: UIViewController, LoadPhoto {
         dismissButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
         dismissButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
         
-//        let gradient = CAGradientLayer()
-//        gradient.frame =  CGRect(x: 0, y: 700, width: view.frame.width, height: 203)
-//        gradient.locations = [0.0, 1.0]
-//        gradient.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]
-//        self.view.layer.insertSublayer(gradient, at: 0)
+
+        
         
     }
     
@@ -129,6 +127,27 @@ class UserInfoController: UIViewController, LoadPhoto {
 
 extension UserInfoController {
 
+    private func createGradient(){
+        
+
+        let gradientView = UIView()
+        gradientView.backgroundColor = .clear
+        contentView.addSubview(gradientView)
+        
+        gradientView.translatesAutoresizingMaskIntoConstraints = false
+        gradientView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        gradientView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        gradientView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        gradientView.heightAnchor.constraint(equalToConstant: 200).isActive = true
+        
+        let gradient = CAGradientLayer()
+        gradient.frame =  CGRect(x: 0, y: 0, width: view.frame.width, height: 200)
+        gradient.locations = [0.0, 0.8]
+        gradient.colors = [UIColor.white.withAlphaComponent(0).cgColor, UIColor.white.cgColor]
+        gradientView.layer.addSublayer(gradient)
+        
+        
+    }
     
     private func createButton(image: UIImage?,selector:Selector,size: CGSize) -> UIButton {
         let button = UIButton(type: .system)
