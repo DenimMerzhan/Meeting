@@ -53,6 +53,7 @@
 		CFEE31C02A666FF5004C1B02 /* HeaderUserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFEE31BF2A666FF5004C1B02 /* HeaderUserInfo.swift */; };
 		CFEE31C22A66705D004C1B02 /* UserInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFEE31C12A66705D004C1B02 /* UserInfoCell.swift */; };
 		CFEE31C62A66719B004C1B02 /* TargetMeetingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFEE31C52A66719B004C1B02 /* TargetMeetingCell.swift */; };
+		CFF0D9F12A691872004C6A34 /* TapPhotoControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF0D9F02A691872004C6A34 /* TapPhotoControllerViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -106,6 +107,7 @@
 		CFEE31BF2A666FF5004C1B02 /* HeaderUserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderUserInfo.swift; sourceTree = "<group>"; };
 		CFEE31C12A66705D004C1B02 /* UserInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoCell.swift; sourceTree = "<group>"; };
 		CFEE31C52A66719B004C1B02 /* TargetMeetingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetMeetingCell.swift; sourceTree = "<group>"; };
+		CFF0D9F02A691872004C6A34 /* TapPhotoControllerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TapPhotoControllerViewController.swift; path = Meeting/Pair/UserInfo/TapPhotoControllerViewController.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -317,6 +319,7 @@
 			isa = PBXGroup;
 			children = (
 				CFBFB19C2A4EC7600005502A /* UserInfoController.swift */,
+				CFF0D9F02A691872004C6A34 /* TapPhotoControllerViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -493,6 +496,7 @@
 				CFEE31C22A66705D004C1B02 /* UserInfoCell.swift in Sources */,
 				CFEE31C62A66719B004C1B02 /* TargetMeetingCell.swift in Sources */,
 				CFCD0F9C2A0A887E00C17AFC /* AddToServerUser.swift in Sources */,
+				CFF0D9F12A691872004C6A34 /* TapPhotoControllerViewController.swift in Sources */,
 				CF18EB6B2A4419A3005DE882 /* MessageBuble.swift in Sources */,
 				CF51A8F82A1CC57900BC3265 /* Message.swift in Sources */,
 				CFA470E82A24DE6C005E3549 /* CurrentChatCell.swift in Sources */,

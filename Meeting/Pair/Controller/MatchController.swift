@@ -27,7 +27,7 @@ class MatchController: UIViewController {
             card = CardView(userID: user.ID, name: user.name, age: String(user.age), imageArr: user.imageArr,frame: self.view.bounds)
             card?.addGestureRecognizer(tapGesture)
             card?.dataUser.isHidden = true
-            changePostionProgressBar(progressBar: card!.progressBar, y: 50)
+//            changePostionProgressBar(progressBar: card!.progressBar, y: 50)
             view.addSubview(card!)
             view.sendSubviewToBack(card!)
         }

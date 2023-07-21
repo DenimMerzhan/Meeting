@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "imgonline-com-ua-Resize-xmivO91g7rVGGHA.png",
+      "filename" : "DismissButton.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "imgonline-com-ua-Resize-xmivO91g7rVGGHA 1.png",
+      "filename" : "DismissButton 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "imgonline-com-ua-Resize-xmivO91g7rVGGHA 2.png",
+      "filename" : "DismissButton 2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

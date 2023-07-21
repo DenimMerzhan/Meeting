@@ -120,11 +120,13 @@
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mxl-Kq-P7W" userLabel="ContentView">
                                         <rect key="frame" x="0.0" y="0.0" width="414" height="1300"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="1300" id="i6W-yF-7MG"/>
+                                            <constraint firstAttribute="height" constant="1300" id="1kh-gL-Nca"/>
                                         </constraints>
                                     </view>
                                 </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="bottom" secondItem="mxl-Kq-P7W" secondAttribute="bottom" id="9qg-3P-ogf"/>
                                     <constraint firstAttribute="trailing" secondItem="mxl-Kq-P7W" secondAttribute="trailing" id="ROX-pR-t9e"/>
@@ -134,7 +136,6 @@
                             </scrollView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Yam-04-wjJ"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="hDd-3e-hZb" firstAttribute="leading" secondItem="Yam-04-wjJ" secondAttribute="leading" id="41j-Mu-lbb"/>
                             <constraint firstAttribute="bottom" secondItem="hDd-3e-hZb" secondAttribute="bottom" id="CrQ-R0-7tN"/>
@@ -144,8 +145,8 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="contentView" destination="mxl-Kq-P7W" id="lPm-MB-i5x"/>
-                        <outlet property="heightScrollView" destination="i6W-yF-7MG" id="4Ty-Ev-jPQ"/>
+                        <outlet property="contentView" destination="mxl-Kq-P7W" id="LCS-K2-pFJ"/>
+                        <outlet property="heightContentView" destination="1kh-gL-Nca" id="g2E-VN-JaR"/>
                         <outlet property="scrollView" destination="hDd-3e-hZb" id="bS1-px-Cbq"/>
                     </connections>
                 </viewController>
@@ -285,15 +286,15 @@
             <objects>
                 <viewController storyboardIdentifier="ChatUserController" title="ChatUserController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="yHA-e7-o3S" customClass="ChatUserController" customModule="Meeting" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="lfM-Ck-SYL">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="aeX-Zf-T0m">
-                                <rect key="frame" x="0.0" y="134" width="414" height="623"/>
+                                <rect key="frame" x="0.0" y="134" width="414" height="603"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </tableView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="a0I-Om-icB" userLabel="MessageView">
-                                <rect key="frame" x="0.0" y="757" width="414" height="80"/>
+                                <rect key="frame" x="0.0" y="737" width="414" height="80"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yhG-21-Pr1">
                                         <rect key="frame" x="358" y="30" width="51" height="40"/>
@@ -794,7 +795,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="Yh2-2j-Ke2"/>
+        <segue reference="YX4-DE-Y59"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="1" width="1718" height="2160"/>

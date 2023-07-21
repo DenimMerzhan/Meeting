@@ -14,10 +14,10 @@ struct CurrentUserDescription {
     static let shared = CurrentUserDescription()
     
     private var mostDescription: UserInfoSection  = {
-        .mostDescription([UserInfo(title: "17 км от вас", image: UIImage(named: "DistanceToUser")!),UserInfo(title: "Гетеро", image: UIImage(systemName: "target")),UserInfo(title: "Гетеро", image: UIImage(systemName: "target")), UserInfo(title: "Долгосрочный партрнер бля", image: UIImage(named: "Holiday")!)])
+        .mostDescription([UserInfo(title: "17 км от вас", image: UIImage(named: "DistanceToUser")!),UserInfo(title: "Гетеро", image: UIImage(systemName: "target")),UserInfo(title: "Гетеро", image: UIImage(systemName: "target")),UserInfo(title: "Пошел нахуй сучка", image: UIImage(systemName: "target")), UserInfo(title: "Долгосрочный партрнер бля", image: UIImage(named: "Holiday")!)])
     }()
     
-    private var aboutME: UserInfoSection? = {
+    private var aboutME: UserInfoSection = {
         .aboutME("Я просто шалава и такая пришла ушла и привет пока в общем что говорить все бывает /n а потом еще и понеслась ")
     }()
     

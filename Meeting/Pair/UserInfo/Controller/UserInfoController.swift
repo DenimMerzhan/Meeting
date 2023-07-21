@@ -15,19 +15,16 @@ class UserInfoController: UIViewController, LoadPhoto {
     }
     
     @IBOutlet weak var scrollView: UIScrollView!
-    @IBOutlet weak var heightScrollView: NSLayoutConstraint!
     @IBOutlet weak var contentView: UIView!
+    @IBOutlet weak var heightContentView: NSLayoutConstraint!
     
     lazy var cardView: CardView = {
         let cardView = CardView(imageArr: imageArr,frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: 520))
         cardView.imageView.layer.cornerRadius = 0
         cardView.dataUser.isHidden = true
         cardView.gradient.removeFromSuperlayer()
-        
-        for progressView in cardView.progressBar {
-            progressView.frame.origin.y = topSafeArea + 5
-        }
-        
+        cardView.topAnchorProgressBar.constant = heightTopSafeArea + 5
+
         return cardView
     }()
     
@@ -38,16 +35,13 @@ class UserInfoController: UIViewController, LoadPhoto {
         return button
     }()
     
-    var topSafeArea: CGFloat = {
-        
+    var heightTopSafeArea: CGFloat = {
         let scenes = UIApplication.shared.connectedScenes
         let windowScene = scenes.first as? UIWindowScene
-        
         guard let window = windowScene?.windows.first else {return 0}
         return window.safeAreaInsets.top
         
     }()
-    
     
     lazy var dislikeButton = createButton(image: UIImage(named: "UserInfoDisLike"), selector: #selector(dislikePressed),size: CGSize(width: 90, height: 80))
     lazy var likeButton = createButton(image: UIImage(named: "UserInfoLike"), selector: #selector(dislikePressed),size: CGSize(width: 90, height: 80))
@@ -63,34 +57,20 @@ class UserInfoController: UIViewController, LoadPhoto {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tapGesture.addTarget(self, action: #selector(cardTap(_:)))
-        cardView.addGestureRecognizer(tapGesture)
-        collectionView = UICollectionView(frame: CGRect(x: 0, y: cardView.frame.height, width: self.view.frame.width, height: 900), collectionViewLayout: createLaoyut())
-        collectionView?.isScrollEnabled = false
-        collectionView?.register(UINib(nibName: "UserInfoCell", bundle: nil), forCellWithReuseIdentifier: "UserInfoCell")
-        collectionView?.register(UINib(nibName: "TargetMeetingCell", bundle: nil), forCellWithReuseIdentifier: "TargetMeetingCell")
-        collectionView?.register(Header.self, forSupplementaryViewOfKind: "Dr Stranger", withReuseIdentifier: "Header1")
-        
-        scrollView.alwaysBounceVertical = true
-        scrollView.contentInsetAdjustmentBehavior = .never
-        scrollView.delegate = self
-        collectionView?.delegate = self
-        collectionView?.dataSource = self
-        
-        scrollView.addSubview(cardView)
-        scrollView.addSubview(collectionView!)
-        scrollView.addSubview(dismissButton)
-        
-        
-        dismissButton.translatesAutoresizingMaskIntoConstraints = false
-        dismissButton.topAnchor.constraint(equalTo: cardView.bottomAnchor,constant: -25).isActive = true
-        dismissButton.trailingAnchor.constraint(equalTo: view.trailingAnchor,constant: -25).isActive = true
-        dismissButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
-        dismissButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        startSetings()
         setupVisualBlurEffect()
         setupButton()
     }
+
     
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        heightContentView.constant = collectionView!.collectionViewLayout.collectionViewContentSize.height + cardView.frame.height + 180
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        collectionView!.frame.size.height = collectionView!.collectionViewLayout.collectionViewContentSize.height
+    }
     
     @objc func dismissPreesed(){
         self.dismiss(animated: true)
@@ -106,6 +86,43 @@ class UserInfoController: UIViewController, LoadPhoto {
     
 
     
+    func startSetings(){
+        
+
+        tapGesture.addTarget(self, action: #selector(cardTap(_:)))
+        cardView.addGestureRecognizer(tapGesture)
+        
+        
+        collectionView = UICollectionView(frame: CGRect(x: 0, y: 520, width: self.view.frame.width, height: 1300), collectionViewLayout: createLaoyut())
+        collectionView?.isScrollEnabled = false
+        collectionView?.register(UINib(nibName: "UserInfoCell", bundle: nil), forCellWithReuseIdentifier: "UserInfoCell")
+        collectionView?.register(UINib(nibName: "TargetMeetingCell", bundle: nil), forCellWithReuseIdentifier: "TargetMeetingCell")
+        collectionView?.register(Header.self, forSupplementaryViewOfKind: "InfoHeader", withReuseIdentifier: "UserInfoHeader")
+        
+        scrollView.alwaysBounceVertical = true
+        scrollView.contentInsetAdjustmentBehavior = .never
+        scrollView.delegate = self
+        collectionView?.delegate = self
+        collectionView?.dataSource = self
+        
+        contentView.addSubview(cardView)
+        contentView.addSubview(collectionView!)
+        contentView.addSubview(dismissButton)
+        
+        dismissButton.translatesAutoresizingMaskIntoConstraints = false
+        dismissButton.topAnchor.constraint(equalTo: cardView.bottomAnchor,constant: -25).isActive = true
+        dismissButton.trailingAnchor.constraint(equalTo: view.trailingAnchor,constant: -20).isActive = true
+        dismissButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        dismissButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        
+//        let gradient = CAGradientLayer()
+//        gradient.frame =  CGRect(x: 0, y: 700, width: view.frame.width, height: 203)
+//        gradient.locations = [0.0, 1.0]
+//        gradient.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]
+//        self.view.layer.insertSublayer(gradient, at: 0)
+        
+    }
+    
 }
 
 //MARK: - Create BlurEffect and Button
@@ -115,22 +132,25 @@ extension UserInfoController {
     
     private func createButton(image: UIImage?,selector:Selector,size: CGSize) -> UIButton {
         let button = UIButton(type: .system)
-        button.frame.size = size
-        button.setImage(image?.withRenderingMode(.alwaysOriginal), for: .normal)
+        button.setImage(image, for: .normal)
         button.addTarget(self, action: selector, for: .touchUpInside)
-        button.imageView?.contentMode = .scaleAspectFit
-        button.imageView?.clipsToBounds = true
+        button.imageView?.contentMode = .scaleAspectFill
+        
         return button
     }
     
     private func setupButton(){
         
         let stackView = UIStackView(arrangedSubviews: [dislikeButton,superLikeButton,likeButton])
-        stackView.backgroundColor = .orange
+        
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.distribution = .fillProportionally
+        stackView.distribution = .fillEqually
+        stackView.spacing = -70
+        
         view.addSubview(stackView)
-        stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor,constant: -100).isActive = true
+        
+        stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+        stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         stackView.heightAnchor.constraint(equalToConstant: 80).isActive = true
         stackView.widthAnchor.constraint(equalToConstant: 300).isActive = true
         
@@ -145,7 +165,7 @@ extension UserInfoController {
         visualEffectView.translatesAutoresizingMaskIntoConstraints = false
         visualEffectView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         visualEffectView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        visualEffectView.bottomAnchor.constraint(equalTo: view.topAnchor,constant: topSafeArea).isActive = true
+        visualEffectView.bottomAnchor.constraint(equalTo: view.topAnchor,constant: heightTopSafeArea).isActive = true
         visualEffectView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         
     }
@@ -186,10 +206,10 @@ extension UserInfoController {
                 
                 let section = NSCollectionLayoutSection(group: group)
                 section.boundarySupplementaryItems = [
-                    .init(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(50)), elementKind: "Dr Stranger", alignment: .topLeading)]
+                    .init(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(50)), elementKind: "InfoHeader", alignment: .topLeading)]
                 section.contentInsets.leading = 16
                 section.contentInsets.top = -2
-                section.contentInsets.bottom = 17
+                section.contentInsets.bottom = 5
                 
                 return section
                 
@@ -204,7 +224,7 @@ extension UserInfoController {
                 
                 let section = NSCollectionLayoutSection(group: group)
                 section.boundarySupplementaryItems = [
-                    .init(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(50)), elementKind: "Dr Stranger", alignment: .topLeading)]
+                    .init(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(50)), elementKind: "InfoHeader", alignment: .topLeading)]
                 section.contentInsets.leading = 16
                 section.contentInsets.bottom = 17
                 
@@ -221,7 +241,7 @@ extension UserInfoController {
                 
                 let section = NSCollectionLayoutSection(group: group)
                 section.boundarySupplementaryItems = [
-                    .init(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(50)), elementKind: "Dr Stranger", alignment: .topLeading)]
+                    .init(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(50)), elementKind: "InfoHeader", alignment: .topLeading)]
                 section.contentInsets.leading = 16
                 section.contentInsets.bottom = 10
                 
@@ -237,7 +257,7 @@ extension UserInfoController {
                 
                 let section = NSCollectionLayoutSection(group: group)
                 section.boundarySupplementaryItems = [
-                    .init(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(40)), elementKind: "Dr Stranger", alignment: .topLeading)]
+                    .init(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(40)), elementKind: "InfoHeader", alignment: .topLeading)]
                 section.contentInsets.leading = 16
                 section.contentInsets.top = -5
                 section.contentInsets.bottom = 10
@@ -260,7 +280,7 @@ extension UserInfoController: UICollectionViewDelegate, UICollectionViewDataSour
     
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let header = collectionView.dequeueReusableSupplementaryView(ofKind: "Dr Stranger", withReuseIdentifier: "Header1", for: indexPath) as! Header
+        let header = collectionView.dequeueReusableSupplementaryView(ofKind: "InfoHeader", withReuseIdentifier: "UserInfoHeader", for: indexPath) as! Header
         self.collectionView?.addSubview(header.separatorView)
         
         switch sections[indexPath.section] {case .mostDescription(_):
@@ -272,6 +292,7 @@ extension UserInfoController: UICollectionViewDelegate, UICollectionViewDataSour
             header.label.attributedText = attributedString1
             header.separatorView.isHidden = true
         case .aboutME(_):
+            header.separatorView.isHidden = true
             header.label.text = "Обо мне"
         case .moreAboutMe(_):
             header.label.text = "Больше обо мне"
@@ -362,9 +383,7 @@ extension UserInfoController: UICollectionViewDelegate, UICollectionViewDataSour
             cell.label.textColor = UIColor(named: "ColorGray")
             cell.label.lineBreakMode = .byWordWrapping
             cell.label.numberOfLines = 1
-            
         }
-        heightScrollView.constant = collectionView.collectionViewLayout.collectionViewContentSize.height + cardView.frame.height + 80 /// Обновляем высоту ScrollView  в зависимости от внутреннего размера CollectionView
         
         return cell
     }

@@ -21,11 +21,13 @@ class CardView: UIView {
     private var name = String()
     private var age = String()
     var dataUser = UILabel()
-    var progressBar = [UIView]()
+    var progressBar = UIStackView()
     
     var likeImage = UIImageView(frame: CGRect(x: 0.0, y: 8.0, width: 106, height: 79))
     var dislikeImage = UIImageView(frame: CGRect(x: 234, y: 0.0, width: 127, height: 93))
     var superLikeImage = UIImageView(frame: CGRect(x: 117, y: 8, width: 130, height: 100))
+    var topAnchorProgressBar = NSLayoutConstraint()
+    
     
     init(userID: String = String(), name: String = String(), age: String = String(), imageArr: [UserPhoto]?, emptyCard: Bool = false, frame: CGRect = CGRect(x: 16, y: 118, width: UIScreen.main.bounds.width - 32, height: UIScreen.main.bounds.height - 236)) {
         
@@ -39,7 +41,7 @@ class CardView: UIView {
             creatEmptyCard()
         }else {
             startSetup()
-            createProgressBar()
+            setupProgressBar()
         }
     }
     
@@ -75,17 +77,19 @@ class CardView: UIView {
         dataUser.adjustsFontSizeToFitWidth = true
         dataUser.minimumScaleFactor = 0.1
         
-        
         gradient.frame = CGRect(x: 0, y: frame.height - 203, width: frame.width, height: 203)
         gradient.locations = [0.0, 1.0]
         gradient.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]
         imageView.layer.insertSublayer(gradient, at: 0)
-    
         imageView.addSubview(dataUser)
+        imageView.addSubview(progressBar)
+        
+        self.backgroundColor = .white
         self.addSubview(imageView)
         self.addSubview(likeImage)
         self.addSubview(dislikeImage)
         self.addSubview(superLikeImage)
+        
         
     }
     
@@ -149,58 +153,63 @@ class CardView: UIView {
         
         if coordinates > 220 && indexCurrentImage < imageArr.count - 1 {
             indexCurrentImage += 1
-            self.progressBar[indexCurrentImage-1].backgroundColor = .gray
+            progressBar.arrangedSubviews[indexCurrentImage-1].backgroundColor = .gray
+            progressBar.arrangedSubviews[indexCurrentImage-1].alpha = 0.6
         }else if  coordinates < 180 && indexCurrentImage > 0  {
             indexCurrentImage -= 1
-            self.progressBar[indexCurrentImage+1].backgroundColor = .gray
+            progressBar.arrangedSubviews[indexCurrentImage+1].backgroundColor = .gray
+            progressBar.arrangedSubviews[indexCurrentImage+1].alpha = 0.6
         }else if indexCurrentImage == 0 || indexCurrentImage == imageArr.count - 1 {
-            self.backgroundColor = .white
             createAnimate()
-            
         }
         
         AudioServicesPlayAlertSoundWithCompletion(SystemSoundID(1161)) { /// Cоздаем звук при Тапе
         }
-        
-        self.progressBar[indexCurrentImage].backgroundColor = .white
+       
+        progressBar.arrangedSubviews[indexCurrentImage].backgroundColor = .white
+        progressBar.arrangedSubviews[indexCurrentImage].alpha = 1
         imageView.image = imageArr[indexCurrentImage].image
     }
     
 }
 
 
-//MARK: - CreateProgressBar
+//MARK: - SetupProgessBar
 
 extension CardView   {
     
-    func createProgressBar() { /// Создаем кучу одинаковых View
+    func setupProgressBar() {
         
-        guard let countPhoto = imageArr?.count else {return}
+        guard imageArr != nil else {return}
         
-        let mostWidth = (self.frame.size.width - 5 - CGFloat(countPhoto * 7)) / CGFloat(countPhoto) /// Расчитываем длинну каждой полоски
+        progressBar.distribution = .fillEqually
+        progressBar.spacing = 5
+        progressBar.translatesAutoresizingMaskIntoConstraints = false
+        topAnchorProgressBar = progressBar.topAnchor.constraint(equalTo: imageView.topAnchor,constant: 8)
+        topAnchorProgressBar.isActive = true
+        progressBar.leadingAnchor.constraint(equalTo: imageView.leadingAnchor,constant: 5).isActive = true
+        progressBar.trailingAnchor.constraint(equalTo: imageView.trailingAnchor,constant: -5).isActive = true
+        progressBar.heightAnchor.constraint(equalToConstant: 4).isActive = true
         
-        for i in 0...countPhoto - 1 {
+        
+        imageArr?.forEach({ userPhoto in
             
             let progressView = UIView()
             
-            if i == 0 { /// Если первый элемент то задаем начальную позицию
-                progressView.frame = CGRect(x: 5, y: 10, width: mostWidth, height: 4)
+            progressBar.addArrangedSubview(progressView)
+            if userPhoto == imageArr!.first! {
                 progressView.backgroundColor = .white
+                
             }else {
-                let xCoor = progressBar[i-1].frame.maxX /// Узнаем где кончилась предыдущая полоска
-                progressView.frame = CGRect(x: xCoor + 7, y: 10, width: mostWidth, height: 4) /// Добавляем к ней 7 пунктов и создаем новую
                 progressView.backgroundColor = .gray
+                progressView.alpha = 0.6
             }
-            
-            progressView.layer.cornerRadius = 2 /// Закругление
-            progressView.layer.masksToBounds = true /// Обрезание слоев по границам
-            progressView.alpha = 0.6
+            progressView.layer.cornerRadius = 2
+            progressView.layer.masksToBounds = true
             progressView.layer.borderWidth = 0.5
             progressView.layer.borderColor = UIColor.white.cgColor
-            
-            progressBar.append(progressView) /// Добавляем в архив полосок
-            imageView.addSubview(progressView)
-        }
+        })
+        
     }
 }
 
