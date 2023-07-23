@@ -1,0 +1,26 @@
+{
+  "images" : [
+    {
+      "filename" : "imgonline-com-ua-Resize-Anx2yHRHNRp.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "imgonline-com-ua-Resize-Anx2yHRHNRp 1.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "imgonline-com-ua-Resize-Anx2yHRHNRp 2.png",
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "template-rendering-intent" : "original"
+  }
+}
