@@ -29,7 +29,7 @@ struct CurrentUserDescription {
         .lifeStyle([UserInfo(title: "Люблю кошек", image: UIImage()),UserInfo(title: "Курю", image: UIImage())])
     }()
     
-    private var myHobbie: UserInfoSection?
+    private var myInterests: UserInfoSection?
     
     private var languages: UserInfoSection? = {
         .languages([UserInfo(title: "Английский"),UserInfo(title: "Немецкий")])

@@ -167,6 +167,12 @@ class PairsViewController: UIViewController {
             }
         }
     }
+    
+    func cardReleased(){
+        
+        
+        
+    }
 }
 
 //MARK: - Загрузка нового пользователя
@@ -337,6 +343,7 @@ extension PairsViewController  {
         if let userUinfoVC = segue.destination as? UserInfoController {
             guard let currentUserInfo = usersArr.first(where: {$0.ID == currentCard.ID}) else {return}
             userUinfoVC.imageArr = currentUserInfo.imageArr
+            userUinfoVC.delegate = self
         }
         guard let destanationVC = segue.destination as? MatchController else {return}
         guard let newMatch = basketUser.first(where: {$0.ID == matchID }) else {return}
@@ -356,3 +363,41 @@ extension PairsViewController: passDataDelegate {
         tabBarController?.selectedIndex = 1
     }
 }
+
+//MARK:  - Когда пользователь нажал одну из кнопок лайка в UserInfoController
+
+extension PairsViewController: UserInfoControllerDelegate {
+    func likeButtonsPressed(buttonID: String) {
+        let card = currentCard
+        if buttonID == "Like" {
+            card.changeHeart(xFromCenter: 30, yFromCenter: 0)
+            UIView.animate(withDuration: 0.6, delay: 0) {
+                card.transform = CGAffineTransform(rotationAngle: abs(100) * 0.002)
+                card.center = CGPoint(x: self.currentCard.center.x + 150 , y: self.currentCard.center.y - 150 )
+                card.alpha = 0
+            }
+            CurrentAuthUser.shared.likeArr.append(currentCard.ID)}
+        else if buttonID == "DisLike" {
+            card.changeHeart(xFromCenter: -30, yFromCenter: 0)
+            UIView.animate(withDuration: 0.6, delay: 0) {
+                card.transform = CGAffineTransform(rotationAngle: abs(100) * 0.002)
+                card.center = CGPoint(x: card.center.x - 150 , y: card.center.y + 100 )
+                card.alpha = 0
+            }
+            CurrentAuthUser.shared.disLikeArr.append(currentCard.ID)}
+        else {
+            card.changeHeart(xFromCenter: 0, yFromCenter: 100)
+            UIView.animate(withDuration: 0.6, delay: 0) {
+                card.center = CGPoint(x: card.center.x , y: card.center.y - 600 )
+                card.alpha = 0
+            }
+            CurrentAuthUser.shared.superLikeArr.append(currentCard.ID)}
+
+        checkMatch(ID: currentCard.ID)
+        loadNewPeople(card: currentCard)
+        
+    }
+    
+}
+
+

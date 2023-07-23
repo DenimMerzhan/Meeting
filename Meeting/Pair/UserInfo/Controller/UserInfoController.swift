@@ -8,6 +8,10 @@
 import Foundation
 import UIKit
 
+protocol UserInfoControllerDelegate {
+    func likeButtonsPressed(buttonID:String)
+}
+
 class UserInfoController: UIViewController, LoadPhoto {
     
     func userPhotoLoaded() {
@@ -31,7 +35,7 @@ class UserInfoController: UIViewController, LoadPhoto {
     var dismissButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(UIImage(named: "DismissButton"), for: .normal)
-        button.addTarget(self, action: #selector(dismissPreesed), for: .touchUpInside)
+        button.addTarget(self, action: #selector(buttonPressed), for: .touchUpInside)
         return button
     }()
     
@@ -43,11 +47,11 @@ class UserInfoController: UIViewController, LoadPhoto {
         
     }()
     
-    lazy var dislikeButton = createButton(image: UIImage(named: "UserInfoDisLike"), selector: #selector(dislikePressed),size: CGSize(width: 90, height: 80))
-    lazy var likeButton = createButton(image: UIImage(named: "UserInfoLike"), selector: #selector(dislikePressed),size: CGSize(width: 90, height: 80))
-    lazy var superLikeButton = createButton(image: UIImage(named: "UserInfoSuperLike"), selector: #selector(dislikePressed),size: CGSize(width: 90, height: 80))
+    lazy var dislikeButton = createButton(image: UIImage(named: "UserInfoDisLike"), selector: #selector(buttonPressed(_:)),size: CGSize(width: 90, height: 80),buttonID: "DisLike")
+    lazy var likeButton = createButton(image: UIImage(named: "UserInfoLike"), selector: #selector(buttonPressed(_:)),size: CGSize(width: 90, height: 80),buttonID: "Like")
+    lazy var superLikeButton = createButton(image: UIImage(named: "UserInfoSuperLike"), selector: #selector(buttonPressed(_:)),size: CGSize(width: 90, height: 80),buttonID: "SuperLike")
     
-    
+    var delegate: UserInfoControllerDelegate?
     var imageArr = [UserPhoto]()
     var collectionView: UICollectionView?
     var sections = CurrentUserDescription.shared.userData
@@ -61,6 +65,9 @@ class UserInfoController: UIViewController, LoadPhoto {
         setupVisualBlurEffect()
         setupButton()
         createGradient()
+//        dislikeButton.backgroundColor = .black
+//        superLikeButton.backgroundColor = .yellow
+//        likeButton.backgroundColor = .gray
     }
 
     
@@ -73,8 +80,13 @@ class UserInfoController: UIViewController, LoadPhoto {
         collectionView!.frame.size.height = collectionView!.collectionViewLayout.collectionViewContentSize.height
     }
     
-    @objc func dismissPreesed(){
+    @objc func buttonPressed(_ sender:UIButton){
+        guard sender.restorationIdentifier != nil else {return}
         self.dismiss(animated: true)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            self?.delegate?.likeButtonsPressed(buttonID: sender.restorationIdentifier!)
+        }
+        
     }
     
     @objc func cardTap(_ sender: UITapGestureRecognizer){
@@ -89,10 +101,9 @@ class UserInfoController: UIViewController, LoadPhoto {
     
     func startSetings(){
         
-
+        
         tapGesture.addTarget(self, action: #selector(cardTap(_:)))
         cardView.addGestureRecognizer(tapGesture)
-        
         
         collectionView = UICollectionView(frame: CGRect(x: 0, y: 520, width: self.view.frame.width, height: 1300), collectionViewLayout: createLaoyut())
         collectionView?.isScrollEnabled = false
@@ -115,10 +126,7 @@ class UserInfoController: UIViewController, LoadPhoto {
         dismissButton.trailingAnchor.constraint(equalTo: view.trailingAnchor,constant: -20).isActive = true
         dismissButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
         dismissButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        
-
-        
-        
+    
     }
     
 }
@@ -149,11 +157,19 @@ extension UserInfoController {
         
     }
     
-    private func createButton(image: UIImage?,selector:Selector,size: CGSize) -> UIButton {
+    private func createButton(image: UIImage?,selector:Selector,size: CGSize,buttonID: String) -> UIButton {
+        
         let button = UIButton(type: .system)
         button.setImage(image, for: .normal)
         button.addTarget(self, action: selector, for: .touchUpInside)
-        button.imageView?.contentMode = .scaleAspectFill
+        button.restorationIdentifier = buttonID
+        
+        button.imageView?.contentMode = .scaleAspectFit
+        button.imageView?.layer.masksToBounds = false
+        button.imageView?.layer.shadowColor = UIColor.gray.cgColor
+        button.imageView?.layer.shadowOpacity = 0.5
+        button.imageView?.layer.shadowOffset = .zero
+        button.imageView?.layer.shadowRadius = 1
         
         return button
     }
@@ -164,14 +180,13 @@ extension UserInfoController {
         
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.distribution = .fillEqually
-        stackView.spacing = -70
         
         view.addSubview(stackView)
         
         stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
         stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         stackView.heightAnchor.constraint(equalToConstant: 80).isActive = true
-        stackView.widthAnchor.constraint(equalToConstant: 300).isActive = true
+        stackView.widthAnchor.constraint(equalToConstant: 230).isActive = true
         
     }
     
