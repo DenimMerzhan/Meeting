@@ -15,7 +15,7 @@ protocol UserInfoControllerDelegate {
 class UserInfoController: UIViewController, LoadPhoto {
     
     func userPhotoLoaded() {
-        cardView.imageView.image = imageArr[cardView.indexCurrentImage].image
+        cardView.imageView.image = selectedUser?.imageArr[cardView.indexCurrentImage].image
     }
     
     @IBOutlet weak var scrollView: UIScrollView!
@@ -23,19 +23,24 @@ class UserInfoController: UIViewController, LoadPhoto {
     @IBOutlet weak var heightContentView: NSLayoutConstraint!
     
     lazy var cardView: CardView = {
-        let cardView = CardView(imageArr: imageArr,frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: 520))
+        let cardView = CardView(user: selectedUser,frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: 520))
         cardView.imageView.layer.cornerRadius = 0
         cardView.dataUser.isHidden = true
         cardView.gradient.removeFromSuperlayer()
         cardView.topAnchorProgressBar.constant = heightTopSafeArea + 5
 
+        
+        selectedUser?.imageArr.forEach({ image in
+            image.delegate = self
+        })
+        
         return cardView
     }()
     
     var dismissButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(UIImage(named: "DismissButton"), for: .normal)
-        button.addTarget(self, action: #selector(buttonPressed), for: .touchUpInside)
+        button.addTarget(self, action: #selector(dismissPressed), for: .touchUpInside)
         return button
     }()
     
@@ -47,12 +52,12 @@ class UserInfoController: UIViewController, LoadPhoto {
         
     }()
     
-    lazy var disLikeButton = createButton(image: UIImage(named: "Test11"),size: CGSize(width: 90, height: 80),buttonID: "DisLike")
-    lazy var likeButton = createButton(image: UIImage(named: "Test33"),size: CGSize(width: 90, height: 80),buttonID: "Like")
-    lazy var superLikeButton = createButton(image: UIImage(named: "Test22"),size: CGSize(width: 90, height: 80),buttonID: "SuperLike")
+    lazy var disLikeButton = createButton(image: UIImage(named: "UserInfoDisLike"),size: CGSize(width: 90, height: 80),buttonID: "DisLike")
+    lazy var likeButton = createButton(image: UIImage(named: "UserInfoLike"),size: CGSize(width: 90, height: 80),buttonID: "Like")
+    lazy var superLikeButton = createButton(image: UIImage(named: "UserInfoSuperLike"),size: CGSize(width: 90, height: 80),buttonID: "SuperLike")
     
     var delegate: UserInfoControllerDelegate?
-    var imageArr = [UserPhoto]()
+    var selectedUser: User?
     var collectionView: UICollectionView?
     var sections = CurrentUserDescription.shared.userData
     var tapGesture = UITapGestureRecognizer()
@@ -77,6 +82,10 @@ class UserInfoController: UIViewController, LoadPhoto {
         collectionView!.frame.size.height = collectionView!.collectionViewLayout.collectionViewContentSize.height
     }
     
+    
+    @objc func dismissPressed() {
+        self.dismiss(animated: true)
+    }
     @objc func buttonPressed(_ sender:UIButton){
         guard sender.restorationIdentifier != nil else {return}
         self.dismiss(animated: true)
@@ -89,15 +98,8 @@ class UserInfoController: UIViewController, LoadPhoto {
     @objc func cardTap(_ sender: UITapGestureRecognizer){
         cardView.refreshPhoto(sender)
     }
-    
-    @objc func dislikePressed(){
-        
-    }
-    
 
-    
     func startSetings(){
-        
         
         tapGesture.addTarget(self, action: #selector(cardTap(_:)))
         cardView.addGestureRecognizer(tapGesture)

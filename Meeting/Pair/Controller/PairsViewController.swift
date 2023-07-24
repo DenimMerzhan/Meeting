@@ -25,8 +25,8 @@ class PairsViewController: UIViewController {
     
     var stopCard = false
     var center = CGPoint()
-    var currentCard =  CardView(imageArr: nil,emptyCard: true)
-    var nextCard =  CardView(imageArr: nil,emptyCard: true)
+    var currentCard =  CardView(user: nil)
+    var nextCard =  CardView(user: nil)
     
     var loadUserAnimation = LottieAnimationView(name: "40377-simple-map-pulse")
     var avatarPulse = UIImageView()
@@ -76,28 +76,36 @@ class PairsViewController: UIViewController {
         var differenceX = CGFloat()
         var differenceY = CGFloat(-150)
         
-        if sender.restorationIdentifier == "Cancel" {
-            differenceX = -200
-            CurrentAuthUser.shared.disLikeArr.append(currentCard.ID)
-        }else if sender.restorationIdentifier == "SuperLike" {
-            CurrentAuthUser.shared.superLikeArr.append(currentCard.ID)
-            checkMatch(ID: currentCard.ID)
-            differenceY = -600
-        }else if sender.restorationIdentifier == "Like" {
-            CurrentAuthUser.shared.likeArr.append(currentCard.ID)
-            checkMatch(ID: currentCard.ID)
-            differenceX = 200
-        }
         
-        currentCard.changeHeart(xFromCenter: differenceX, yFromCenter: differenceY)
-        UIView.animate(withDuration: 0.4, delay: 0) {
+        if sender.restorationIdentifier == "ReturnUser" {
+            returnUser()
+        }else if sender.restorationIdentifier == "Boost" {
             
-            self.currentCard.center = CGPoint(x: self.currentCard.center.x + differenceX , y: self.currentCard.center.y + differenceY )
-            self.currentCard.transform = CGAffineTransform(rotationAngle: abs(differenceX) * 0.002)
-            self.currentCard.alpha = 0
+        }else {
+            
+            let card = currentCard
+            if sender.restorationIdentifier == "DisLike" {
+                differenceX = -200
+                CurrentAuthUser.shared.disLikeArr.append(currentCard.ID)
+            }else if sender.restorationIdentifier == "SuperLike" {
+                CurrentAuthUser.shared.superLikeArr.append(currentCard.ID)
+                checkMatch(ID: currentCard.ID)
+                differenceY = -600
+            }else {
+                CurrentAuthUser.shared.likeArr.append(currentCard.ID)
+                checkMatch(ID: currentCard.ID)
+                differenceX = 200
+            }
+            
+            currentCard.changeHeart(xFromCenter: differenceX, yFromCenter: differenceY)
+            UIView.animate(withDuration: 0.4, delay: 0) {
+                
+                card.center = CGPoint(x: card.center.x + differenceX , y: card.center.y + differenceY )
+                card.transform = CGAffineTransform(rotationAngle: abs(differenceX) * 0.002)
+                card.alpha = 0
+            }
+            loadNewPeople(card: self.currentCard)
         }
-        self.loadNewPeople(card: self.currentCard)
-        
     }
     
     //MARK: - Пользователь тапнул по фото
@@ -183,7 +191,7 @@ class PairsViewController: UIViewController {
 
 extension PairsViewController {
     
-    func loadNewPeople(card:CardView){
+    private func loadNewPeople(card:CardView){
         
         CurrentAuthUser.shared.writingPairsInfrormation()
         card.removeGestureRecognizer(panGesture)
@@ -195,9 +203,9 @@ extension PairsViewController {
         
         if usersArr.count > 1 {
             let nextUser = usersArr[1]
-            nextCard = CardView(userID: nextUser.ID, name: nextUser.name, age: String(nextUser.age), imageArr: nextUser.imageArr)
+            nextCard = CardView(user: nextUser)
         }else {
-            nextCard = CardView(imageArr: nil,emptyCard: true)
+            nextCard = CardView(user: nil)
         }
         
         if usersArr.count == 0  {
@@ -216,6 +224,34 @@ extension PairsViewController {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { /// Чем выше параметр тем выше шанс что карточка не удалиться и останется висеть в памяти надо подумать над этим
             card.removeFromSuperview()
         }
+    }
+    
+    private func returnUser(){
+        
+        guard let returnUser = basketUser.last else {return}
+        basketUser.removeLast()
+        usersArr.insert(returnUser, at: 0)
+        
+        let returnCard = CardView(user: returnUser)
+        returnCard.center.x = view.frame.origin.x - returnCard.frame.width / 2
+        returnCard.center.y = view.center.y + 200
+        returnCard.transform = CGAffineTransform(rotationAngle: 0.8)
+        
+        self.view.addSubview(returnCard)
+        self.view.bringSubviewToFront(stackViewButton)
+        
+        UIView.animate(withDuration: 0.4, delay: 0) {
+            returnCard.center.x = self.view.center.x
+            returnCard.center.y = self.view.center.y
+            returnCard.transform = CGAffineTransform(rotationAngle: 0)
+        }
+        
+        nextCard.removeFromSuperview()
+        nextCard = currentCard
+        currentCard = returnCard
+        currentCard.addGestureRecognizer(panGesture)
+        currentCard.addGestureRecognizer(tapGesture)
+        
     }
     
 }
@@ -295,18 +331,16 @@ extension PairsViewController {
     
     private func createStartCard(){
         
-        let firstUser = usersArr[0]
-        
-        currentCard = CardView(userID: firstUser.ID, name: firstUser.name, age: String(firstUser.age), imageArr: firstUser.imageArr)
+        currentCard = CardView(user: usersArr[0])
         center = currentCard.center
         currentCard.addGestureRecognizer(panGesture)
         currentCard.addGestureRecognizer(tapGesture)
         
         if usersArr.count > 1 {
             let secondUser = usersArr[1]
-            nextCard = CardView(userID: secondUser.ID, name: secondUser.name, age: String(secondUser.age), imageArr: secondUser.imageArr)
+            nextCard = CardView(user: usersArr[1])
         }else {
-            nextCard = CardView(imageArr: nil,emptyCard: true)
+            nextCard = CardView(user: nil)
         }
         
         view.addSubview(nextCard)
@@ -357,10 +391,10 @@ extension PairsViewController  {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let userUinfoVC = segue.destination as? UserInfoController {
-            guard let currentUserInfo = usersArr.first(where: {$0.ID == currentCard.ID}) else {return}
-            userUinfoVC.imageArr = currentUserInfo.imageArr
-            userUinfoVC.delegate = self
+        if let userUnfoVC = segue.destination as? UserInfoController {
+            guard let selectedUser = usersArr.first(where: {$0.ID == currentCard.ID}) else {return}
+            userUnfoVC.selectedUser = selectedUser
+            userUnfoVC.delegate = self
         }
         guard let destanationVC = segue.destination as? MatchController else {return}
         guard let newMatch = basketUser.first(where: {$0.ID == matchID }) else {return}
@@ -387,7 +421,7 @@ extension PairsViewController: UserInfoControllerDelegate {
     func likeButtonsPressed(buttonID: String) {
         let card = currentCard
         if buttonID == "Like" {
-            card.changeHeart(xFromCenter: 30, yFromCenter: 0)
+            card.changeHeart(xFromCenter: 300, yFromCenter: 0)
             UIView.animate(withDuration: 0.6, delay: 0) {
                 card.transform = CGAffineTransform(rotationAngle: abs(100) * 0.002)
                 card.center = CGPoint(x: self.currentCard.center.x + 150 , y: self.currentCard.center.y - 150 )
@@ -395,7 +429,7 @@ extension PairsViewController: UserInfoControllerDelegate {
             }
             CurrentAuthUser.shared.likeArr.append(currentCard.ID)}
         else if buttonID == "DisLike" {
-            card.changeHeart(xFromCenter: -30, yFromCenter: 0)
+            card.changeHeart(xFromCenter: -300, yFromCenter: 0)
             UIView.animate(withDuration: 0.6, delay: 0) {
                 card.transform = CGAffineTransform(rotationAngle: abs(100) * 0.002)
                 card.center = CGPoint(x: card.center.x - 150 , y: card.center.y + 100 )
@@ -403,7 +437,7 @@ extension PairsViewController: UserInfoControllerDelegate {
             }
             CurrentAuthUser.shared.disLikeArr.append(currentCard.ID)}
         else {
-            card.changeHeart(xFromCenter: 0, yFromCenter: 100)
+            card.changeHeart(xFromCenter: 0, yFromCenter: -500)
             UIView.animate(withDuration: 0.6, delay: 0) {
                 card.center = CGPoint(x: card.center.x , y: card.center.y - 600 )
                 card.alpha = 0

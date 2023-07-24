@@ -49,19 +49,19 @@ class CardView: UIView {
     var topAnchorProgressBar = NSLayoutConstraint()
     
     
-    init(userID: String = String(), name: String = String(), age: String = String(), imageArr: [UserPhoto]?, emptyCard: Bool = false, frame: CGRect = CGRect(x: 16, y: 118, width: UIScreen.main.bounds.width - 32, height: UIScreen.main.bounds.height - 236)) {
-        
-        self.imageArr = imageArr
-        self.ID = userID
-        self.name = name
-        self.age = age
+    init(user: User?,frame: CGRect = CGRect(x: 16, y: 118, width: UIScreen.main.bounds.width - 32, height: UIScreen.main.bounds.height - 236)) {
         
         super.init(frame: frame)
-        if emptyCard {
-            creatEmptyCard()
-        }else {
+        
+        if let newUser = user {
+            self.ID = newUser.ID
+            self.name = newUser.name
+            self.age = String(newUser.age)
+            self.imageArr = newUser.imageArr
             startSetup()
             setupProgressBar()
+        }else {
+            creatEmptyCard()
         }
     }
     
