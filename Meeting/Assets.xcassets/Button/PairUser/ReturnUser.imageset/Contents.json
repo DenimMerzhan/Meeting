@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Test22.png",
+      "filename" : "ReturnUser.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Test22 1.png",
+      "filename" : "ReturnUser 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Test22 2.png",
+      "filename" : "ReturnUser 2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

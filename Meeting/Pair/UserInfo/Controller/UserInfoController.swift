@@ -47,9 +47,9 @@ class UserInfoController: UIViewController, LoadPhoto {
         
     }()
     
-    lazy var dislikeButton = createButton(image: UIImage(named: "UserInfoDisLike"), selector: #selector(buttonPressed(_:)),size: CGSize(width: 90, height: 80),buttonID: "DisLike")
-    lazy var likeButton = createButton(image: UIImage(named: "UserInfoLike"), selector: #selector(buttonPressed(_:)),size: CGSize(width: 90, height: 80),buttonID: "Like")
-    lazy var superLikeButton = createButton(image: UIImage(named: "UserInfoSuperLike"), selector: #selector(buttonPressed(_:)),size: CGSize(width: 90, height: 80),buttonID: "SuperLike")
+    lazy var disLikeButton = createButton(image: UIImage(named: "Test11"),size: CGSize(width: 90, height: 80),buttonID: "DisLike")
+    lazy var likeButton = createButton(image: UIImage(named: "Test33"),size: CGSize(width: 90, height: 80),buttonID: "Like")
+    lazy var superLikeButton = createButton(image: UIImage(named: "Test22"),size: CGSize(width: 90, height: 80),buttonID: "SuperLike")
     
     var delegate: UserInfoControllerDelegate?
     var imageArr = [UserPhoto]()
@@ -65,9 +65,6 @@ class UserInfoController: UIViewController, LoadPhoto {
         setupVisualBlurEffect()
         setupButton()
         createGradient()
-//        dislikeButton.backgroundColor = .black
-//        superLikeButton.backgroundColor = .yellow
-//        likeButton.backgroundColor = .gray
     }
 
     
@@ -157,26 +154,26 @@ extension UserInfoController {
         
     }
     
-    private func createButton(image: UIImage?,selector:Selector,size: CGSize,buttonID: String) -> UIButton {
+    private func createButton(image: UIImage?,size: CGSize,buttonID: String) -> UIButton {
         
         let button = UIButton(type: .system)
-        button.setImage(image, for: .normal)
-        button.addTarget(self, action: selector, for: .touchUpInside)
+        button.setImage(image?.withRenderingMode(.alwaysOriginal), for: .normal)
+        button.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         button.restorationIdentifier = buttonID
         
         button.imageView?.contentMode = .scaleAspectFit
         button.imageView?.layer.masksToBounds = false
         button.imageView?.layer.shadowColor = UIColor.gray.cgColor
-        button.imageView?.layer.shadowOpacity = 0.5
+        button.imageView?.layer.shadowOpacity = 0.3
         button.imageView?.layer.shadowOffset = .zero
-        button.imageView?.layer.shadowRadius = 1
+        button.imageView?.layer.shadowRadius = 5
         
         return button
     }
     
     private func setupButton(){
         
-        let stackView = UIStackView(arrangedSubviews: [dislikeButton,superLikeButton,likeButton])
+        let stackView = UIStackView(arrangedSubviews: [disLikeButton,superLikeButton,likeButton])
         
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.distribution = .fillEqually
@@ -186,7 +183,7 @@ extension UserInfoController {
         stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
         stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         stackView.heightAnchor.constraint(equalToConstant: 80).isActive = true
-        stackView.widthAnchor.constraint(equalToConstant: 230).isActive = true
+        stackView.widthAnchor.constraint(equalToConstant: 210).isActive = true
         
     }
     

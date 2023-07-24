@@ -23,9 +23,29 @@ class CardView: UIView {
     var dataUser = UILabel()
     var progressBar = UIStackView()
     
-    var likeImage = UIImageView(frame: CGRect(x: 0.0, y: 8.0, width: 106, height: 79))
-    var dislikeImage = UIImageView(frame: CGRect(x: 234, y: 0.0, width: 127, height: 93))
-    var superLikeImage = UIImageView(frame: CGRect(x: 117, y: 8, width: 130, height: 100))
+    lazy var likeImage: UIImageView = {
+        let like = UIImageView(frame: CGRect(x: 25, y: 20.0, width: 150, height: 90))
+        like.image = UIImage(named: "LikeImage")?.withRenderingMode(.alwaysOriginal)
+        like.contentMode = .scaleAspectFill
+        like.isHidden = true
+        return like
+    }()
+    lazy var nopeImage: UIImageView = {
+        let nope = UIImageView(frame: CGRect(x: frame.width - 175, y: 20.0, width: 150, height: 90))
+        nope.image = UIImage(named: "Nope")?.withRenderingMode(.alwaysOriginal)
+        nope.contentMode = .scaleAspectFill
+        nope.isHidden = true
+        return nope
+    }()
+    lazy var superLikeImage: UIImageView = {
+        let superLike = UIImageView(frame: CGRect(x: 0, y: frame.height - 300, width: 180, height:120))
+        superLike.center.x = self.center.x
+        superLike.image = UIImage(named: "SuperLike")?.withRenderingMode(.alwaysOriginal)
+        superLike.contentMode = .scaleAspectFill
+        superLike.isHidden = true
+        return superLike
+    }()
+    
     var topAnchorProgressBar = NSLayoutConstraint()
     
     
@@ -59,12 +79,7 @@ class CardView: UIView {
         }
         imageView.image = imageArr.first?.image
     
-        likeImage.image = UIImage(named: "LikeButton")!
-        dislikeImage.image = UIImage(named: "DislikeHeart")
-        superLikeImage.image = UIImage(named: "SuperLikeButton")!
-        likeImage.isHidden = true
-        dislikeImage.isHidden = true
-        superLikeImage.isHidden = true
+
         
         let attrs1 = [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 40), NSAttributedString.Key.foregroundColor : UIColor.white]
         let attrs2 = [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 40), NSAttributedString.Key.foregroundColor : UIColor.white]
@@ -84,14 +99,15 @@ class CardView: UIView {
         imageView.addSubview(dataUser)
         imageView.addSubview(progressBar)
         
-        self.backgroundColor = .white
         self.addSubview(imageView)
         self.addSubview(likeImage)
-        self.addSubview(dislikeImage)
+        self.addSubview(nopeImage)
         self.addSubview(superLikeImage)
         
         
     }
+    
+
     
     private func creatEmptyCard(){
         let label = UILabel(frame: CGRect(x: 0, y: 0, width: frame.width, height: 50))
@@ -110,7 +126,7 @@ class CardView: UIView {
     
     func resetCard(){
         likeImage.isHidden = true
-        dislikeImage.isHidden = true
+        nopeImage.isHidden = true
         superLikeImage.isHidden = true
     }
     
@@ -122,15 +138,15 @@ class CardView: UIView {
         
         if xFromCenter > 25 { /// Если пользователь перетаскивает вправо то появляется зеленое сердечко
             
-            likeImage.tintColor = UIColor.green.withAlphaComponent(xFromCenter * 0.005)
+            likeImage.alpha = xFromCenter * 0.01
             likeImage.isHidden = false
-            dislikeImage.isHidden = true
+            nopeImage.isHidden = true
             superLikeImage.isHidden = true
             
         }else if xFromCenter < -25 { /// Если влево красное
             
-            dislikeImage.tintColor = UIColor.red.withAlphaComponent(abs(xFromCenter) * 0.005)
-            dislikeImage.isHidden = false
+            nopeImage.alpha = abs(xFromCenter) * 0.01
+            nopeImage.isHidden = false
             likeImage.isHidden = true
             superLikeImage.isHidden = true
             
@@ -138,7 +154,7 @@ class CardView: UIView {
             
             superLikeImage.alpha = abs(yFromCenter) * 0.005
             superLikeImage.isHidden = false
-            dislikeImage.isHidden = true
+            nopeImage.isHidden = true
             likeImage.isHidden = true
             
         }
@@ -230,6 +246,8 @@ extension CardView {
         var firstCornerY = CGFloat()
         var secondCornerY = CGFloat()
         
+        self.backgroundColor = .white
+        
         if indexCurrentImage == 0 { /// Если фото первое то поворачиваем в лево
             firstCornerY = -1 * 0.2
             secondCornerY = 1 * 0.2
@@ -251,6 +269,7 @@ extension CardView {
 
             rotationAndPerspectiveTransform = CATransform3DRotate(rotationAndPerspectiveTransform, 0.15, 0.0, secondCornerY, 0.0)
             layer.transform = rotationAndPerspectiveTransform
+            self.backgroundColor = .clear
         }
     }
     

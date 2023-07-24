@@ -173,41 +173,6 @@
                                 <color key="textColor" name="MainAppColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="A8p-e0-Aue">
-                                <rect key="frame" x="16" y="709" width="383" height="69"/>
-                                <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" restorationIdentifier="Cancel" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="R2N-aK-Ogj">
-                                        <rect key="frame" x="0.0" y="0.0" width="127.66666666666667" height="69"/>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <color key="tintColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="plain" image="DisLikeButton"/>
-                                        <connections>
-                                            <action selector="buttonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Nyx-B9-pSY"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" restorationIdentifier="SuperLike" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YRD-bh-foZ">
-                                        <rect key="frame" x="127.66666666666666" y="0.0" width="127.66666666666666" height="69"/>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="plain" image="SuperLikeButton"/>
-                                        <connections>
-                                            <action selector="buttonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="bbg-qe-EUN"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" restorationIdentifier="Like" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Lgm-Zm-2zf">
-                                        <rect key="frame" x="255.33333333333329" y="0.0" width="127.66666666666666" height="69"/>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="plain" image="LikeButton"/>
-                                        <connections>
-                                            <action selector="buttonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="tm0-dL-64O"/>
-                                        </connections>
-                                    </button>
-                                </subviews>
-                            </stackView>
                             <imageView autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="gearshape" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="GOx-AG-Kgc">
                                 <rect key="frame" x="364" y="54.333333333333329" width="34" height="30"/>
                                 <color key="tintColor" name="MainAppColor"/>
@@ -222,9 +187,6 @@
                         <constraints>
                             <constraint firstItem="PNn-X2-sUj" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="10" id="0xE-Yh-lFs"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="GOx-AG-Kgc" secondAttribute="trailing" constant="16" id="5PC-lG-8ao"/>
-                            <constraint firstAttribute="trailing" secondItem="A8p-e0-Aue" secondAttribute="trailing" constant="15" id="GjI-95-dqz"/>
-                            <constraint firstItem="A8p-e0-Aue" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="16" id="ktj-nv-bUa"/>
-                            <constraint firstAttribute="bottom" secondItem="A8p-e0-Aue" secondAttribute="bottom" constant="118" id="mzQ-kX-Lfd"/>
                             <constraint firstItem="GOx-AG-Kgc" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="10" id="q9v-G8-J2q"/>
                             <constraint firstItem="PNn-X2-sUj" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="tb7-UB-dRZ"/>
                         </constraints>
@@ -235,11 +197,7 @@
                         <imageReference key="selectedImage" image="Fire" symbolScale="large"/>
                     </tabBarItem>
                     <connections>
-                        <outlet property="cancelButton" destination="R2N-aK-Ogj" id="6l8-Vb-9nm"/>
-                        <outlet property="likeButton" destination="Lgm-Zm-2zf" id="PSg-1g-Rg1"/>
                         <outlet property="panGesture" destination="nVL-eb-bzh" id="SsJ-2u-0UF"/>
-                        <outlet property="stackViewButton" destination="A8p-e0-Aue" id="LEh-By-IJS"/>
-                        <outlet property="superLikeButton" destination="YRD-bh-foZ" id="cjZ-In-7Eq"/>
                         <outlet property="tapGesture" destination="2Ma-FL-cJ8" id="sLp-Dn-Prh"/>
                         <segue destination="adh-7Q-Imu" kind="presentation" identifier="goToMatch" modalPresentationStyle="fullScreen" id="I3L-eO-Ae0"/>
                         <segue destination="yHA-e7-o3S" kind="presentation" identifier="swipeToChat" id="YX4-DE-Y59"/>
@@ -800,12 +758,9 @@
     <resources>
         <image name="1" width="1718" height="2160"/>
         <image name="ChangePhotoPencil" width="18.333333969116211" height="18.333333969116211"/>
-        <image name="DisLikeButton" width="50" height="46.333332061767578"/>
         <image name="Fire" width="33.333332061767578" height="33.333332061767578"/>
-        <image name="LikeButton" width="55" height="55"/>
         <image name="Message" width="32.333332061767578" height="33.333332061767578"/>
         <image name="Preferences" width="50" height="28.333333969116211"/>
-        <image name="SuperLikeButton" width="50" height="47.666667938232422"/>
         <image name="chevron.backward" catalog="system" width="97" height="128"/>
         <image name="gearshape" catalog="system" width="128" height="123"/>
         <image name="paperplane.fill" catalog="system" width="128" height="119"/>

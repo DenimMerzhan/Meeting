@@ -15,11 +15,13 @@ class PairsViewController: UIViewController {
     @IBOutlet weak var panGesture: UIPanGestureRecognizer!
     @IBOutlet weak var tapGesture: UITapGestureRecognizer!
     
-    @IBOutlet weak var stackViewButton: UIStackView!
     
-    @IBOutlet weak var cancelButton: UIButton!
-    @IBOutlet weak var superLikeButton: UIButton!
-    @IBOutlet weak var likeButton: UIButton!
+    lazy var stackViewButton = UIStackView()
+    lazy var returnUserButton = createButton(image: UIImage(named: "ReturnUser"), buttonID: "ReturnUser")
+    lazy var disLikeButton = createButton(image: UIImage(named: "DisLikeButton"), buttonID: "DisLike")
+    lazy var superLikeButton = createButton(image: UIImage(named: "SuperLikeButton"), buttonID: "SuperLike")
+    lazy var likeButton = createButton(image: UIImage(named: "LikeButton"), buttonID: "Like")
+    lazy var boostButton = createButton(image: UIImage(named: "BoostButton"), buttonID: "Boost")
     
     var stopCard = false
     var center = CGPoint()
@@ -60,6 +62,7 @@ class PairsViewController: UIViewController {
             animationSettings()
             await loadNewUsers(numberRequsetedUsers: 2)
             startSettings()
+            setupStackView()
         }
         
     }
@@ -68,7 +71,7 @@ class PairsViewController: UIViewController {
     
     //MARK: -  Одна из кнопок лайка была нажата
     
-    @IBAction func buttonPressed(_ sender: UIButton) {
+    @objc func buttonPressed(_ sender: UIButton) {
         
         var differenceX = CGFloat()
         var differenceY = CGFloat(-150)
@@ -273,34 +276,24 @@ extension PairsViewController {
         
     }
     
-    func startSettings(){
+    func startSettings() {
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+        
             
             self.loadUserAnimation.stop()
             self.loadUserAnimation.removeFromSuperview()
             self.avatarPulse.removeFromSuperview()
             self.backViewAvatarPulse.removeFromSuperview()
             
-            let dislikeImage = UIImage(named: "DisLikeButton")?.withRenderingMode(.alwaysOriginal)
-            let likeImage = UIImage(named: "LikeButton")?.withRenderingMode(.alwaysOriginal)
-            let superLikeImage = UIImage(named: "SuperLikeButton")?.withRenderingMode(.alwaysOriginal)
-            self.cancelButton.setImage(dislikeImage, for: .normal)
-            self.likeButton.setImage(likeImage, for: .normal)
-            self.superLikeButton.setImage(superLikeImage, for: .normal)
-            self.cancelButton.isEnabled = true
-            self.likeButton.isEnabled = true
-            self.superLikeButton.isEnabled = true
-            
             if self.usersArr.count > 0 {
                 self.createStartCard()
             }else {
                 self.view.addSubview(self.currentCard)
             }
-        }
+        
     }
     
-    func createStartCard(){
+    private func createStartCard(){
         
         let firstUser = usersArr[0]
         
@@ -318,8 +311,32 @@ extension PairsViewController {
         
         view.addSubview(nextCard)
         view.addSubview(currentCard)
-        self.view.bringSubviewToFront(self.stackViewButton)
         stackViewButton.isHidden = false
+    }
+    
+    private func createButton(image: UIImage?,buttonID:String) -> UIButton {
+        
+        let button = UIButton(type: .system)
+        button.setImage(image?.withRenderingMode(.alwaysOriginal), for: .normal)
+        button.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
+        button.restorationIdentifier = buttonID
+        return button
+    }
+    
+    private func setupStackView(){
+        
+        stackViewButton =  UIStackView(arrangedSubviews: [returnUserButton, disLikeButton,superLikeButton,likeButton,boostButton])
+        stackViewButton.translatesAutoresizingMaskIntoConstraints = false
+        stackViewButton.distribution = .fillEqually
+        
+        view.addSubview(stackViewButton)
+        
+        stackViewButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,constant: -118).isActive = true
+        stackViewButton.leadingAnchor.constraint(equalTo: view.leadingAnchor,constant: 16).isActive = true
+        stackViewButton.trailingAnchor.constraint(equalTo: view.trailingAnchor,constant: -16).isActive = true
+        stackViewButton.heightAnchor.constraint(equalToConstant: 80).isActive = true
+        
+        
     }
 }
 
