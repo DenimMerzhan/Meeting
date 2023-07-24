@@ -10,6 +10,11 @@ import UIKit
 import AudioToolbox
 
 
+protocol CardViewDelegate {
+    
+    func swipeEndend(card:CardView)
+}
+
 class CardView: UIView {
     
     var imageView =  DefaultLoadPhoto(frame: .zero)
@@ -17,12 +22,16 @@ class CardView: UIView {
     var userID = String()
     var indexCurrentImage = 0
     var gradient = CAGradientLayer()
+    var delegate: CardViewDelegate?
     
+    private var startCenterCard = CGPoint()
     private var name = String()
     private var age = String()
+    
     var dataUser = UILabel()
     var progressBar = UIStackView()
     
+    lazy var panGesture = UIPanGestureRecognizer(target: self, action: #selector(cardsDrags(_:)))
     lazy var likeImage: UIImageView = {
         let like = UIImageView(frame: CGRect(x: 25, y: 20.0, width: 150, height: 90))
         like.image = UIImage(named: "LikeImage")?.withRenderingMode(.alwaysOriginal)
@@ -54,6 +63,7 @@ class CardView: UIView {
         super.init(frame: frame)
         
         if let newUser = user {
+            self.startCenterCard = self.center
             self.userID = newUser.ID
             self.name = newUser.name
             self.age = String(newUser.age)
@@ -103,11 +113,10 @@ class CardView: UIView {
         self.addSubview(likeImage)
         self.addSubview(nopeImage)
         self.addSubview(superLikeImage)
+        self.addGestureRecognizer(panGesture)
         
         
     }
-    
-
     
     private func creatEmptyCard(){
         let label = UILabel(frame: CGRect(x: 0, y: 0, width: frame.width, height: 50))
@@ -134,7 +143,6 @@ class CardView: UIView {
     //MARK: - Логика сердец когда пользователь перетаскивает карту
     
     func changeHeart(xFromCenter:CGFloat, yFromCenter:CGFloat){ /// Функция обработки сердец
-        
         
         if xFromCenter > 25 { /// Если пользователь перетаскивает вправо то появляется зеленое сердечко
             
@@ -185,6 +193,68 @@ class CardView: UIView {
         progressBar.arrangedSubviews[indexCurrentImage].backgroundColor = .white
         progressBar.arrangedSubviews[indexCurrentImage].alpha = 1
         imageView.image = imageArr[indexCurrentImage].image
+    }
+    
+}
+
+
+//MARK: -  Когда пользователь начал перетаскивать карту
+
+extension CardView {
+    
+    @objc func cardsDrags(_ sender: UIPanGestureRecognizer) {
+            
+            let point = sender.translation(in: self) /// Отклонение от начального положения по x и y  в зависимости от того куда перетащил палец пользователь
+            let xFromCenter = self.center.x - startCenterCard.x
+            let yFromCenter = self.center.y - startCenterCard.y
+            changeHeart(xFromCenter: xFromCenter, yFromCenter: yFromCenter)
+            self.center = CGPoint(x: startCenterCard.x + point.x , y: startCenterCard.y + point.y ) /// Перемящем View взависимости от движения пальца
+            self.transform = CGAffineTransform(rotationAngle: abs(xFromCenter) * 0.002) /// Поворачиваем View, внутри  rotationAngle радианты а не градусы
+            
+            if sender.state == UIGestureRecognizer.State.ended { ///  Когда пользователь отпустил палец
+                handleEnded(xFromCenter: xFromCenter,yFromCenter: yFromCenter)
+            }
+    }
+    
+    func handleEnded(xFromCenter: CGFloat,yFromCenter:CGFloat){
+        
+        let card = self
+        
+        if xFromCenter > 120 { /// Если карта ушла за пределы 215 пунктов то лайкаем пользователя
+            
+            UIView.animate(withDuration: 0.32, delay: 0) {
+                card.center = CGPoint(x: card.center.x + 150 , y: card.center.y + 100 )
+                card.alpha = 0
+            }
+            CurrentAuthUser.shared.likeArr.append(card.userID)
+            delegate?.swipeEndend(card: self)
+            
+        }else if abs(xFromCenter) > 120 { /// Дизлайк пользователя
+            UIView.animate(withDuration: 0.32, delay: 0) {
+                card.center = CGPoint(x: card.center.x - 150 , y: card.center.y + 100 )
+                card.alpha = 0
+            }
+            CurrentAuthUser.shared.disLikeArr.append(card.userID)
+            delegate?.swipeEndend(card: self)
+            
+        }else if yFromCenter < -250 { /// Супер Лайк
+            
+            UIView.animate(withDuration: 0.32, delay: 0) {
+                card.center = CGPoint(x: card.center.x , y: card.center.y - 600 )
+                card.alpha = 0
+            }
+            CurrentAuthUser.shared.superLikeArr.append(card.userID)
+            delegate?.swipeEndend(card: self)
+        }
+        
+        else { /// Если не ушла то возвращаем в центр
+            
+            UIView.animate(withDuration: 0.2, delay: 0) { /// Вызывает анимацию длительностью 0.3 секунды после анимации мы выставляем card view  на первоначальную позицию
+                card.center = card.startCenterCard
+                card.transform = CGAffineTransform(rotationAngle: 0)
+                card.resetCard()
+            }
+        }
     }
     
 }

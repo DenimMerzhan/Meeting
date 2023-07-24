@@ -28,7 +28,7 @@ class UserInfoController: UIViewController, LoadPhoto {
         cardView.dataUser.isHidden = true
         cardView.gradient.removeFromSuperlayer()
         cardView.topAnchorProgressBar.constant = heightTopSafeArea + 5
-
+        cardView.panGesture.isEnabled = false
         
         selectedUser?.imageArr.forEach({ image in
             image.delegate = self

@@ -25,6 +25,7 @@ class MatchController: UIViewController {
         didSet {
             guard let user = newMatch else {return}
             card = CardView(user: user)
+            card?.panGesture.isEnabled = false
             card?.addGestureRecognizer(tapGesture)
             card?.dataUser.isHidden = true
 //            changePostionProgressBar(progressBar: card!.progressBar, y: 50)

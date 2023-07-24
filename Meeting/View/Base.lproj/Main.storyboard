@@ -197,7 +197,6 @@
                         <imageReference key="selectedImage" image="Fire" symbolScale="large"/>
                     </tabBarItem>
                     <connections>
-                        <outlet property="panGesture" destination="nVL-eb-bzh" id="SsJ-2u-0UF"/>
                         <outlet property="tapGesture" destination="2Ma-FL-cJ8" id="sLp-Dn-Prh"/>
                         <segue destination="adh-7Q-Imu" kind="presentation" identifier="goToMatch" modalPresentationStyle="fullScreen" id="I3L-eO-Ae0"/>
                         <segue destination="yHA-e7-o3S" kind="presentation" identifier="swipeToChat" id="YX4-DE-Y59"/>
@@ -205,11 +204,6 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
-                <panGestureRecognizer minimumNumberOfTouches="1" id="nVL-eb-bzh">
-                    <connections>
-                        <action selector="cardsDrags:" destination="BYZ-38-t0r" id="u5O-es-nho"/>
-                    </connections>
-                </panGestureRecognizer>
                 <tapGestureRecognizer id="2Ma-FL-cJ8">
                     <connections>
                         <action selector="cardTap:" destination="BYZ-38-t0r" id="04E-qf-an3"/>

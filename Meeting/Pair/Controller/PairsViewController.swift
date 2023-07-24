@@ -12,10 +12,8 @@ import Lottie
 
 class PairsViewController: UIViewController {
     
-    @IBOutlet weak var panGesture: UIPanGestureRecognizer!
     @IBOutlet weak var tapGesture: UITapGestureRecognizer!
-    
-    
+
     lazy var stackViewButton = UIStackView()
     lazy var returnUserButton = createButton(image: UIImage(named: "ReturnUser"), buttonID: "ReturnUser")
     lazy var disLikeButton = createButton(image: UIImage(named: "DisLikeButton"), buttonID: "DisLike")
@@ -31,7 +29,6 @@ class PairsViewController: UIViewController {
     var loadUserAnimation = LottieAnimationView(name: "40377-simple-map-pulse")
     var avatarPulse = UIImageView()
     var backViewAvatarPulse = UIView()
-    
     var matchID = String()
     
     var basketUser = [User](){
@@ -66,8 +63,6 @@ class PairsViewController: UIViewController {
         }
         
     }
-
-    
     
     //MARK: -  Одна из кнопок лайка была нажата
     
@@ -75,7 +70,6 @@ class PairsViewController: UIViewController {
         
         var differenceX = CGFloat()
         var differenceY = CGFloat(-150)
-        
         
         if sender.restorationIdentifier == "ReturnUser" {
             returnUser()
@@ -109,79 +103,11 @@ class PairsViewController: UIViewController {
     
     //MARK: - Пользователь тапнул по фото
     
-    
     @IBAction func cardTap(_ sender: UITapGestureRecognizer) {
         let y = sender.location(in: currentCard).y
         if y > currentCard.frame.height * 0.7 {
             performSegue(withIdentifier: "GoToUserInfo", sender: self)
         }else {currentCard.refreshPhoto(sender)}
-    }
-    
-    //MARK: -  Карта была нажата пальцем
-    
-    @IBAction func cardsDrags(_ sender: UIPanGestureRecognizer) {
-        
-        
-        if let card = sender.view  as? CardView { /// Представление, к которому привязан распознаватель жестов.
-            
-            let point = sender.translation(in: card) /// Отклонение от начального положения по x и y  в зависимости от того куда перетащил палец пользователь
-            
-            let xFromCenter = card.center.x - view.center.x
-            let yFromCenter = card.center.y - view.center.y
-            
-            card.changeHeart(xFromCenter: xFromCenter, yFromCenter: yFromCenter)
-            card.center = CGPoint(x: view.center.x + point.x , y: view.center.y + point.y ) /// Перемящем View взависимости от движения пальца
-            card.transform = CGAffineTransform(rotationAngle: abs(xFromCenter) * 0.002) /// Поворачиваем View, внутри  rotationAngle радианты а не градусы
-            
-            
-            //MARK: -   Когда пользователь отпустил палец
-            
-            if sender.state == UIGestureRecognizer.State.ended { ///  Когда пользователь отпустил палец
-                
-                if xFromCenter > 120 { /// Если карта ушла за пределы 215 пунктов то лайкаем пользователя
-                    
-                    UIView.animate(withDuration: 0.6, delay: 0) {
-                        card.center = CGPoint(x: card.center.x + 150 , y: card.center.y + 100 )
-                        card.alpha = 0
-                    }
-                    CurrentAuthUser.shared.likeArr.append(card.userID)
-                    checkMatch(ID: card.userID)
-                    loadNewPeople(card: card)
-                    
-                }else if abs(xFromCenter) > 120 { /// Дизлайк пользователя
-                    UIView.animate(withDuration: 0.6, delay: 0) {
-                        card.center = CGPoint(x: card.center.x - 150 , y: card.center.y + 100 )
-                        card.alpha = 0
-                    }
-                    CurrentAuthUser.shared.disLikeArr.append(card.userID)
-                    loadNewPeople(card: card)
-                }else if yFromCenter < -250 { /// Супер Лайк
-                    
-                    UIView.animate(withDuration: 0.6, delay: 0) {
-                        card.center = CGPoint(x: card.center.x , y: card.center.y - 600 )
-                        card.alpha = 0
-                    }
-                    CurrentAuthUser.shared.superLikeArr.append(card.userID)
-                    checkMatch(ID: card.userID)
-                    loadNewPeople(card: card)
-                }
-                
-                else { /// Если не ушла то возвращаем в центр
-                    
-                    UIView.animate(withDuration: 0.2, delay: 0) { /// Вызывает анимацию длительностью 0.3 секунды после анимации мы выставляем card view  на первоначальную позицию
-                        card.center = self.center
-                        card.transform = CGAffineTransform(rotationAngle: 0)
-                        card.resetCard()
-                    }
-                }
-            }
-        }
-    }
-    
-    func cardReleased(){
-        
-        
-        
     }
 }
 
@@ -193,10 +119,10 @@ extension PairsViewController {
     private func loadNewPeople(card:CardView){
         
         CurrentAuthUser.shared.refreshPairInfroOnServer()
-        card.removeGestureRecognizer(panGesture)
         card.removeGestureRecognizer(tapGesture)
         
         currentCard = nextCard
+        currentCard.delegate = self
         basketUser.append(usersArr[0])
         usersArr.removeFirst()
         
@@ -215,7 +141,6 @@ extension PairsViewController {
             return
         }
         
-        currentCard.addGestureRecognizer(panGesture)
         currentCard.addGestureRecognizer(tapGesture)
         view.addSubview(nextCard)
         view.sendSubviewToBack(nextCard)
@@ -235,7 +160,7 @@ extension PairsViewController {
         
         let returnCard = CardView(user: returnUser)
         returnCard.alpha = 0
-        
+        returnCard.delegate = self
         if let index = CurrentAuthUser.shared.likeArr.firstIndex(where: {$0 == returnUser.ID }) {
             returnCard.center.x = view.frame.maxX + returnCard.frame.width / 2
             returnCard.center.y = view.center.y - 200
@@ -267,7 +192,6 @@ extension PairsViewController {
         nextCard.removeFromSuperview()
         nextCard = currentCard
         currentCard = returnCard
-        currentCard.addGestureRecognizer(panGesture)
         currentCard.addGestureRecognizer(tapGesture)
         
     }
@@ -332,8 +256,6 @@ extension PairsViewController {
     
     func startSettings() {
         
-        
-            
             self.loadUserAnimation.stop()
             self.loadUserAnimation.removeFromSuperview()
             self.avatarPulse.removeFromSuperview()
@@ -344,15 +266,14 @@ extension PairsViewController {
             }else {
                 self.view.addSubview(self.currentCard)
             }
-        
     }
     
     private func createStartCard(){
         
         currentCard = CardView(user: usersArr[0])
         center = currentCard.center
-        currentCard.addGestureRecognizer(panGesture)
         currentCard.addGestureRecognizer(tapGesture)
+        currentCard.delegate = self
         
         if usersArr.count > 1 {
             let secondUser = usersArr[1]
@@ -365,6 +286,8 @@ extension PairsViewController {
         view.addSubview(currentCard)
         stackViewButton.isHidden = false
     }
+    
+    //MARK: - Настройка кнопок
     
     private func createButton(image: UIImage?,buttonID:String) -> UIButton {
         
@@ -391,8 +314,6 @@ extension PairsViewController {
         
     }
 }
-
-
 
 //MARK:  - Когда случилось
 
@@ -467,6 +388,15 @@ extension PairsViewController: UserInfoControllerDelegate {
         
     }
     
+}
+
+//MARK: -  Когда пользователь закончил перетаскивание
+
+extension PairsViewController: CardViewDelegate {
+    func swipeEndend(card: CardView) {
+        checkMatch(ID: card.userID)
+        loadNewPeople(card: card)
+    }
 }
 
 
