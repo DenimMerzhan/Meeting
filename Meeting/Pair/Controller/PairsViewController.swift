@@ -82,23 +82,22 @@ class PairsViewController: UIViewController {
         }else if sender.restorationIdentifier == "Boost" {
             
         }else {
-            
             let card = currentCard
             if sender.restorationIdentifier == "DisLike" {
                 differenceX = -200
-                CurrentAuthUser.shared.disLikeArr.append(currentCard.ID)
+                CurrentAuthUser.shared.disLikeArr.append(currentCard.userID)
             }else if sender.restorationIdentifier == "SuperLike" {
-                CurrentAuthUser.shared.superLikeArr.append(currentCard.ID)
-                checkMatch(ID: currentCard.ID)
+                CurrentAuthUser.shared.superLikeArr.append(currentCard.userID)
+                checkMatch(ID: currentCard.userID)
                 differenceY = -600
             }else {
-                CurrentAuthUser.shared.likeArr.append(currentCard.ID)
-                checkMatch(ID: currentCard.ID)
+                CurrentAuthUser.shared.likeArr.append(currentCard.userID)
+                checkMatch(ID: currentCard.userID)
                 differenceX = 200
             }
             
             currentCard.changeHeart(xFromCenter: differenceX, yFromCenter: differenceY)
-            UIView.animate(withDuration: 0.4, delay: 0) {
+            UIView.animate(withDuration: 0.6, delay: 0) {
                 
                 card.center = CGPoint(x: card.center.x + differenceX , y: card.center.y + differenceY )
                 card.transform = CGAffineTransform(rotationAngle: abs(differenceX) * 0.002)
@@ -141,29 +140,29 @@ class PairsViewController: UIViewController {
                 
                 if xFromCenter > 120 { /// Если карта ушла за пределы 215 пунктов то лайкаем пользователя
                     
-                    UIView.animate(withDuration: 0.2, delay: 0) {
+                    UIView.animate(withDuration: 0.6, delay: 0) {
                         card.center = CGPoint(x: card.center.x + 150 , y: card.center.y + 100 )
                         card.alpha = 0
                     }
-                    CurrentAuthUser.shared.likeArr.append(card.ID)
-                    checkMatch(ID: card.ID)
+                    CurrentAuthUser.shared.likeArr.append(card.userID)
+                    checkMatch(ID: card.userID)
                     loadNewPeople(card: card)
                     
                 }else if abs(xFromCenter) > 120 { /// Дизлайк пользователя
-                    UIView.animate(withDuration: 0.22, delay: 0) {
+                    UIView.animate(withDuration: 0.6, delay: 0) {
                         card.center = CGPoint(x: card.center.x - 150 , y: card.center.y + 100 )
                         card.alpha = 0
                     }
-                    CurrentAuthUser.shared.disLikeArr.append(card.ID)
+                    CurrentAuthUser.shared.disLikeArr.append(card.userID)
                     loadNewPeople(card: card)
                 }else if yFromCenter < -250 { /// Супер Лайк
                     
-                    UIView.animate(withDuration: 0.22, delay: 0) {
+                    UIView.animate(withDuration: 0.6, delay: 0) {
                         card.center = CGPoint(x: card.center.x , y: card.center.y - 600 )
                         card.alpha = 0
                     }
-                    CurrentAuthUser.shared.superLikeArr.append(card.ID)
-                    checkMatch(ID: card.ID)
+                    CurrentAuthUser.shared.superLikeArr.append(card.userID)
+                    checkMatch(ID: card.userID)
                     loadNewPeople(card: card)
                 }
                 
@@ -193,7 +192,7 @@ extension PairsViewController {
     
     private func loadNewPeople(card:CardView){
         
-        CurrentAuthUser.shared.writingPairsInfrormation()
+        CurrentAuthUser.shared.refreshPairInfroOnServer()
         card.removeGestureRecognizer(panGesture)
         card.removeGestureRecognizer(tapGesture)
         
@@ -226,6 +225,8 @@ extension PairsViewController {
         }
     }
     
+    //MARK: - Возврат пользователя при выборе лайка и т.д
+    
     private func returnUser(){
         
         guard let returnUser = basketUser.last else {return}
@@ -233,17 +234,34 @@ extension PairsViewController {
         usersArr.insert(returnUser, at: 0)
         
         let returnCard = CardView(user: returnUser)
-        returnCard.center.x = view.frame.origin.x - returnCard.frame.width / 2
-        returnCard.center.y = view.center.y + 200
-        returnCard.transform = CGAffineTransform(rotationAngle: 0.8)
+        returnCard.alpha = 0
         
+        if let index = CurrentAuthUser.shared.likeArr.firstIndex(where: {$0 == returnUser.ID }) {
+            returnCard.center.x = view.frame.maxX + returnCard.frame.width / 2
+            returnCard.center.y = view.center.y - 200
+            returnCard.transform = CGAffineTransform(rotationAngle: 0.8)
+            CurrentAuthUser.shared.likeArr.remove(at: index)
+        }else if let index = CurrentAuthUser.shared.disLikeArr.firstIndex(where: {$0 == returnUser.ID }) {
+            returnCard.center.x = view.frame.origin.x - returnCard.frame.width / 2
+            returnCard.center.y = view.center.y - 200
+            returnCard.transform = CGAffineTransform(rotationAngle: -0.8)
+            CurrentAuthUser.shared.disLikeArr.remove(at: index)
+        }else {
+            returnCard.center.x = view.center.x
+            returnCard.center.y = view.frame.origin.y - returnCard.frame.height / 2
+            CurrentAuthUser.shared.superLikeArr.removeAll(where: {$0 == returnUser.ID })
+        }
+        
+        CurrentAuthUser.shared.refreshPairInfroOnServer()
+    
         self.view.addSubview(returnCard)
         self.view.bringSubviewToFront(stackViewButton)
         
-        UIView.animate(withDuration: 0.4, delay: 0) {
+        UIView.animate(withDuration: 0.6, delay: 0) {
             returnCard.center.x = self.view.center.x
             returnCard.center.y = self.view.center.y
             returnCard.transform = CGAffineTransform(rotationAngle: 0)
+            returnCard.alpha = 1
         }
         
         nextCard.removeFromSuperview()
@@ -256,7 +274,7 @@ extension PairsViewController {
     
 }
 
-//MARK: -  Загрузка новых пользователей
+//MARK: -  Загрузка новых пользователей с сервера
 
 extension PairsViewController {
     
@@ -392,7 +410,7 @@ extension PairsViewController  {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let userUnfoVC = segue.destination as? UserInfoController {
-            guard let selectedUser = usersArr.first(where: {$0.ID == currentCard.ID}) else {return}
+            guard let selectedUser = usersArr.first(where: {$0.ID == currentCard.userID}) else {return}
             userUnfoVC.selectedUser = selectedUser
             userUnfoVC.delegate = self
         }
@@ -427,7 +445,7 @@ extension PairsViewController: UserInfoControllerDelegate {
                 card.center = CGPoint(x: self.currentCard.center.x + 150 , y: self.currentCard.center.y - 150 )
                 card.alpha = 0
             }
-            CurrentAuthUser.shared.likeArr.append(currentCard.ID)}
+            CurrentAuthUser.shared.likeArr.append(currentCard.userID)}
         else if buttonID == "DisLike" {
             card.changeHeart(xFromCenter: -300, yFromCenter: 0)
             UIView.animate(withDuration: 0.6, delay: 0) {
@@ -435,16 +453,16 @@ extension PairsViewController: UserInfoControllerDelegate {
                 card.center = CGPoint(x: card.center.x - 150 , y: card.center.y + 100 )
                 card.alpha = 0
             }
-            CurrentAuthUser.shared.disLikeArr.append(currentCard.ID)}
+            CurrentAuthUser.shared.disLikeArr.append(currentCard.userID)}
         else {
             card.changeHeart(xFromCenter: 0, yFromCenter: -500)
             UIView.animate(withDuration: 0.6, delay: 0) {
                 card.center = CGPoint(x: card.center.x , y: card.center.y - 600 )
                 card.alpha = 0
             }
-            CurrentAuthUser.shared.superLikeArr.append(currentCard.ID)}
+            CurrentAuthUser.shared.superLikeArr.append(currentCard.userID)}
 
-        checkMatch(ID: currentCard.ID)
+        checkMatch(ID: currentCard.userID)
         loadNewPeople(card: currentCard)
         
     }

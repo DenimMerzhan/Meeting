@@ -91,7 +91,7 @@ class CurrentAuthUser {
     
     //MARK:  - Записиь информации о парах
     
-    func writingPairsInfrormation(){
+    func refreshPairInfroOnServer(){
         
         let documenRef = db.collection("Users").document(ID)
         

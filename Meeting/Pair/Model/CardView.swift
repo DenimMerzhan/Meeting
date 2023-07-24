@@ -14,7 +14,7 @@ class CardView: UIView {
     
     var imageView =  DefaultLoadPhoto(frame: .zero)
     var imageArr: [UserPhoto]?
-    var ID = String()
+    var userID = String()
     var indexCurrentImage = 0
     var gradient = CAGradientLayer()
     
@@ -54,7 +54,7 @@ class CardView: UIView {
         super.init(frame: frame)
         
         if let newUser = user {
-            self.ID = newUser.ID
+            self.userID = newUser.ID
             self.name = newUser.name
             self.age = String(newUser.age)
             self.imageArr = newUser.imageArr
@@ -88,7 +88,7 @@ class CardView: UIView {
         attributedString1.append(attributedString2)
         
         dataUser.attributedText = attributedString1
-        dataUser.frame = CGRect(x: 10, y: frame.height - 130, width: frame.width - 10, height: 48)
+        dataUser.frame = CGRect(x: 10, y: frame.height - 150, width: frame.width - 100, height: 48)
         dataUser.adjustsFontSizeToFitWidth = true
         dataUser.minimumScaleFactor = 0.1
         
