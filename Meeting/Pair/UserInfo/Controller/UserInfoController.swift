@@ -57,9 +57,9 @@ class UserInfoController: UIViewController, LoadPhoto {
     lazy var superLikeButton = createButton(image: UIImage(named: "UserInfoSuperLike"),size: CGSize(width: 90, height: 80),buttonID: "SuperLike")
     
     var delegate: UserInfoControllerDelegate?
-    var selectedUser: User?
+    var selectedUser: User!
     var collectionView: UICollectionView?
-    var sections = CurrentUserDescription.shared.userData
+    lazy var sections = selectedUser.userDescription.userData
     var tapGesture = UITapGestureRecognizer()
     
     

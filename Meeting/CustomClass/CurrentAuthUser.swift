@@ -18,7 +18,7 @@ class CurrentAuthUser {
     var ID  = String()
     var name = String()
     var age = Int()
-    
+    var lastGeopostition: CGFloat?
     var delegate: MatchArrHasBennUpdate?
     
     var avatar: UserPhoto? {
@@ -55,7 +55,7 @@ class CurrentAuthUser {
         let collection  = db.collection("Users").document(ID)
         let photoCollection = db.collection("Users").document(ID).collection("Photo").order(by: "Position")
         listenMatchUserID()
-        
+        lastGeopostition = 3
         do {
             
             let docSnap = try await collection.getDocument()
@@ -138,7 +138,7 @@ class CurrentAuthUser {
         }
         
         do {
-            let metaData = try await imagesRef.putDataAsync(imageData)
+            _ = try await imagesRef.putDataAsync(imageData)
             let url = try await imagesRef.downloadURL()
             
             try await photoColletcion.setData(["URL" : url.absoluteString,
@@ -203,6 +203,7 @@ extension CurrentAuthUser {
     func checkMatch(potetnialPairID:String) async -> Bool {
         
         let documenRef = db.collection("Users").document(potetnialPairID)
+        if likeArr.contains(potetnialPairID) == false && superLikeArr.contains(potetnialPairID) == false {return false}
         
         do {
             

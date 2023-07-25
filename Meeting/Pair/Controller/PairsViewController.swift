@@ -276,7 +276,6 @@ extension PairsViewController {
         currentCard.delegate = self
         
         if usersArr.count > 1 {
-            let secondUser = usersArr[1]
             nextCard = CardView(user: usersArr[1])
         }else {
             nextCard = CardView(user: nil)
@@ -294,6 +293,8 @@ extension PairsViewController {
         let button = UIButton(type: .system)
         button.setImage(image?.withRenderingMode(.alwaysOriginal), for: .normal)
         button.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
+        button.imageView?.contentMode = .scaleAspectFit
+        button.imageView?.clipsToBounds = true
         button.restorationIdentifier = buttonID
         return button
     }
@@ -303,6 +304,7 @@ extension PairsViewController {
         stackViewButton =  UIStackView(arrangedSubviews: [returnUserButton, disLikeButton,superLikeButton,likeButton,boostButton])
         stackViewButton.translatesAutoresizingMaskIntoConstraints = false
         stackViewButton.distribution = .fillEqually
+        stackViewButton.spacing = 10
         
         view.addSubview(stackViewButton)
         
@@ -310,7 +312,6 @@ extension PairsViewController {
         stackViewButton.leadingAnchor.constraint(equalTo: view.leadingAnchor,constant: 16).isActive = true
         stackViewButton.trailingAnchor.constraint(equalTo: view.trailingAnchor,constant: -16).isActive = true
         stackViewButton.heightAnchor.constraint(equalToConstant: 80).isActive = true
-        
         
     }
 }

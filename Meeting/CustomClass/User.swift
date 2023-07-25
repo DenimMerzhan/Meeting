@@ -27,6 +27,7 @@ class User {
     
     var name = String()
     var age = Int()
+    var lastGeopostition: CGFloat?
     
     var avatar: UserPhoto? {
         get {
@@ -34,6 +35,7 @@ class User {
         }
     }
     
+    var userDescription = UserDescription()
     var imageArr = [UserPhoto]()
     
     private let db = Firestore.firestore()
@@ -41,8 +43,9 @@ class User {
     init(ID:String,currentAuthUserID: String) {
         self.ID = ID
         self.currentAuthUserID = currentAuthUserID
-        
+        lastGeopostition = 10
         loadChat()
+        setupUserDescrtiption()
     }
     
 //MARK: - Загрузка метаданных о пользователе с сервера
@@ -111,6 +114,18 @@ class User {
             }
             
         }
+    }
+    
+    //MARK: -  Настройка описания пользователя
+    
+    private func setupUserDescrtiption(){
+        
+        userDescription.mostDescription = .mostDescription([UserInfo(title: "17 км от вас", image: UIImage(named: "DistanceToUser")!),UserInfo(title: "Гетеро", image: UIImage(systemName: "target")),UserInfo(title: "Гетеро", image: UIImage(systemName: "target")),UserInfo(title: "Пошел нахуй сучка", image: UIImage(systemName: "target")), UserInfo(title: "Долгосрочный партрнер бля", image: UIImage(named: "Holiday")!)])
+        userDescription.aboutME = .aboutME("Я просто шалава и такая пришла ушла и привет пока в общем что говорить все бывает /n а потом еще и понеслась ")
+        userDescription.moreAboutMe = .moreAboutMe([UserInfo(title: "Водолей", image: UIImage(systemName: "shareplay")),UserInfo(title: "Я не хочу детей", image: UIImage()),UserInfo(title: "Нет прививки", image: UIImage()),UserInfo(title: "Гоняю быстро"), UserInfo(title: "Разведена")])
+        userDescription.lifeStyle =  .lifeStyle([UserInfo(title: "Люблю кошек", image: UIImage()),UserInfo(title: "Курю", image: UIImage())])
+        userDescription.languages =  .languages([UserInfo(title: "Английский"),UserInfo(title: "Немецкий")])
+        
     }
     
 //MARK: -  Удаление пользователя из MatchArr, likeArr и SuperLikeArr

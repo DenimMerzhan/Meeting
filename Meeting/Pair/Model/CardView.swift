@@ -20,9 +20,9 @@ class CardView: UIView {
     var imageView =  DefaultLoadPhoto(frame: .zero)
     var imageArr: [UserPhoto]?
     var userID = String()
-    var indexCurrentImage = 0
     var gradient = CAGradientLayer()
     var delegate: CardViewDelegate?
+    var distanceToUser: UIView?
     
     private var startCenterCard = CGPoint()
     private var name = String()
@@ -30,6 +30,11 @@ class CardView: UIView {
     
     var dataUser = UILabel()
     var progressBar = UIStackView()
+    var indexCurrentImage = 0 {
+        didSet {
+            
+        }
+    }
     
     lazy var panGesture = UIPanGestureRecognizer(target: self, action: #selector(cardsDrags(_:)))
     lazy var likeImage: UIImageView = {
@@ -68,14 +73,20 @@ class CardView: UIView {
             self.name = newUser.name
             self.age = String(newUser.age)
             self.imageArr = newUser.imageArr
+            
             startSetup()
             setupProgressBar()
+            
+            if let lastGeoCurrent = CurrentAuthUser.shared.lastGeopostition, let lastGeoNewUser = newUser.lastGeopostition {
+                setupDistanceToUser(lastGeoCurrent: lastGeoCurrent, lastGeoNewUser:lastGeoNewUser)
+            }
+            
         }else {
             creatEmptyCard()
         }
     }
     
-//MARK: - StartSetup
+    //MARK: - StartSetup
     
     func startSetup(){
         
@@ -88,19 +99,17 @@ class CardView: UIView {
             imageView.delegate = self
         }
         imageView.image = imageArr.first?.image
-    
-
-        
+       
         let attrs1 = [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 40), NSAttributedString.Key.foregroundColor : UIColor.white]
         let attrs2 = [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 40), NSAttributedString.Key.foregroundColor : UIColor.white]
         let attributedString1 = NSMutableAttributedString(string:name, attributes:attrs1)
         let attributedString2 = NSMutableAttributedString(string: " " + age, attributes:attrs2)
         attributedString1.append(attributedString2)
-        
         dataUser.attributedText = attributedString1
-        dataUser.frame = CGRect(x: 10, y: frame.height - 150, width: frame.width - 100, height: 48)
         dataUser.adjustsFontSizeToFitWidth = true
         dataUser.minimumScaleFactor = 0.1
+        dataUser.frame = CGRect(x: 10, y: frame.height - 130, width: frame.width - 100, height: 50)
+        imageView.addSubview(dataUser)
         
         gradient.frame = CGRect(x: 0, y: frame.height - 203, width: frame.width, height: 203)
         gradient.locations = [0.0, 1.0]
@@ -116,6 +125,8 @@ class CardView: UIView {
         self.addGestureRecognizer(panGesture)
         
         
+        
+        
     }
     
     private func creatEmptyCard(){
@@ -128,7 +139,7 @@ class CardView: UIView {
     }
     
     required init?(coder aDecoder: NSCoder) {
-       super.init(coder: aDecoder)
+        super.init(coder: aDecoder)
     }
     
     //MARK: - Обнуление сердец
@@ -168,7 +179,7 @@ class CardView: UIView {
         }
     }
     
-//MARK: - Когда пользователь тапнул по фото обновляет фото и строку прогресса
+    //MARK: - Когда пользователь тапнул по фото обновляет фото и строку прогресса
     
     func refreshPhoto(_ sender: UITapGestureRecognizer){
         
@@ -189,7 +200,7 @@ class CardView: UIView {
         
         AudioServicesPlayAlertSoundWithCompletion(SystemSoundID(1161)) { /// Cоздаем звук при Тапе
         }
-       
+        
         progressBar.arrangedSubviews[indexCurrentImage].backgroundColor = .white
         progressBar.arrangedSubviews[indexCurrentImage].alpha = 1
         imageView.image = imageArr[indexCurrentImage].image
@@ -203,17 +214,17 @@ class CardView: UIView {
 extension CardView {
     
     @objc func cardsDrags(_ sender: UIPanGestureRecognizer) {
-            
-            let point = sender.translation(in: self) /// Отклонение от начального положения по x и y  в зависимости от того куда перетащил палец пользователь
-            let xFromCenter = self.center.x - startCenterCard.x
-            let yFromCenter = self.center.y - startCenterCard.y
-            changeHeart(xFromCenter: xFromCenter, yFromCenter: yFromCenter)
-            self.center = CGPoint(x: startCenterCard.x + point.x , y: startCenterCard.y + point.y ) /// Перемящем View взависимости от движения пальца
-            self.transform = CGAffineTransform(rotationAngle: abs(xFromCenter) * 0.002) /// Поворачиваем View, внутри  rotationAngle радианты а не градусы
-            
-            if sender.state == UIGestureRecognizer.State.ended { ///  Когда пользователь отпустил палец
-                handleEnded(xFromCenter: xFromCenter,yFromCenter: yFromCenter)
-            }
+        
+        let point = sender.translation(in: self) /// Отклонение от начального положения по x и y  в зависимости от того куда перетащил палец пользователь
+        let xFromCenter = self.center.x - startCenterCard.x
+        let yFromCenter = self.center.y - startCenterCard.y
+        changeHeart(xFromCenter: xFromCenter, yFromCenter: yFromCenter)
+        self.center = CGPoint(x: startCenterCard.x + point.x , y: startCenterCard.y + point.y ) /// Перемящем View взависимости от движения пальца
+        self.transform = CGAffineTransform(rotationAngle: abs(xFromCenter) * 0.002) /// Поворачиваем View, внутри  rotationAngle радианты а не градусы
+        
+        if sender.state == UIGestureRecognizer.State.ended { ///  Когда пользователь отпустил палец
+            handleEnded(xFromCenter: xFromCenter,yFromCenter: yFromCenter)
+        }
     }
     
     func handleEnded(xFromCenter: CGFloat,yFromCenter:CGFloat){
@@ -281,21 +292,16 @@ extension CardView   {
         imageArr?.forEach({ userPhoto in
             
             let progressView = UIView()
-            
-            progressBar.addArrangedSubview(progressView)
-            if userPhoto == imageArr!.first! {
-                progressView.backgroundColor = .white
-                
-            }else {
-                progressView.backgroundColor = .gray
-                progressView.alpha = 0.6
-            }
+        
+            progressView.backgroundColor = .gray
+            progressView.alpha = 0.6
             progressView.layer.cornerRadius = 2
             progressView.layer.masksToBounds = true
             progressView.layer.borderWidth = 0.5
             progressView.layer.borderColor = UIColor.white.cgColor
+            progressBar.addArrangedSubview(progressView)
         })
-        
+        progressBar.arrangedSubviews.first?.backgroundColor = .white
     }
 }
 
@@ -336,7 +342,7 @@ extension CardView {
         
         
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.1) { /// Через некоторое время возвращаем изображение в прежнюю форму
-
+            
             rotationAndPerspectiveTransform = CATransform3DRotate(rotationAndPerspectiveTransform, 0.15, 0.0, secondCornerY, 0.0)
             layer.transform = rotationAndPerspectiveTransform
             self.backgroundColor = .clear
@@ -346,7 +352,31 @@ extension CardView {
 }
 
 
+//MARK: -  SetuoDistanceView
 
-
-
+extension CardView {
+    
+    func setupDistanceToUser(lastGeoCurrent:CGFloat,lastGeoNewUser:CGFloat){
+        
+        distanceToUser = UIView(frame: CGRect(x: 10, y: frame.height - 120, width: frame.width - 20, height: 40))
+        imageView.addSubview(distanceToUser!)
+        
+        let label = UILabel(frame: CGRect(x: 25, y: 0, width: distanceToUser!.frame.width - 20, height: distanceToUser!.frame.height))
+        label.textColor = .white
+        label.text = String(format: "%0.f" , abs(lastGeoCurrent - lastGeoNewUser)) + " км от тебя"
+        
+        let image = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+        image.center.y = label.center.y
+        image.image = UIImage(named: "DistanceToUser")?.withTintColor(.white)
+        
+        dataUser.translatesAutoresizingMaskIntoConstraints = false
+        dataUser.trailingAnchor.constraint(equalTo: self.trailingAnchor,constant: -100).isActive = true
+        dataUser.leadingAnchor.constraint(equalTo: self.leadingAnchor,constant: 10).isActive = true
+        dataUser.bottomAnchor.constraint(equalTo: distanceToUser!.topAnchor).isActive = true
+        
+        distanceToUser?.addSubview(label)
+        distanceToUser?.addSubview(image)
+    }
+    
+}
 

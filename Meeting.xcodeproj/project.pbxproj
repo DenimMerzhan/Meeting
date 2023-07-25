@@ -45,7 +45,7 @@
 		CFD689222A0E5EB0003EB21A /* CurrentUserImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD689212A0E5EB0003EB21A /* CurrentUserImage.swift */; };
 		CFDE37432A48405D00709FFB /* CurrentChatCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFDE37422A48405D00709FFB /* CurrentChatCell.xib */; };
 		CFDE374D2A4842F800709FFB /* DefaultLoadPhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDE374C2A4842F800709FFB /* DefaultLoadPhoto.swift */; };
-		CFEE31B22A666D54004C1B02 /* CurrentUserDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFEE31B12A666D54004C1B02 /* CurrentUserDescription.swift */; };
+		CFEE31B22A666D54004C1B02 /* UserDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFEE31B12A666D54004C1B02 /* UserDescription.swift */; };
 		CFEE31B42A666D8D004C1B02 /* UserInfoSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFEE31B32A666D8D004C1B02 /* UserInfoSection.swift */; };
 		CFEE31B62A666DC3004C1B02 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFEE31B52A666DC3004C1B02 /* UserInfo.swift */; };
 		CFEE31B82A666DED004C1B02 /* TargetMeetingCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFEE31B72A666DED004C1B02 /* TargetMeetingCell.xib */; };
@@ -99,7 +99,7 @@
 		CFD689212A0E5EB0003EB21A /* CurrentUserImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserImage.swift; sourceTree = "<group>"; };
 		CFDE37422A48405D00709FFB /* CurrentChatCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = CurrentChatCell.xib; path = Meeting/Chat/View/CurrentChatCell.xib; sourceTree = SOURCE_ROOT; };
 		CFDE374C2A4842F800709FFB /* DefaultLoadPhoto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultLoadPhoto.swift; sourceTree = "<group>"; };
-		CFEE31B12A666D54004C1B02 /* CurrentUserDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserDescription.swift; sourceTree = "<group>"; };
+		CFEE31B12A666D54004C1B02 /* UserDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDescription.swift; sourceTree = "<group>"; };
 		CFEE31B32A666D8D004C1B02 /* UserInfoSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoSection.swift; sourceTree = "<group>"; };
 		CFEE31B52A666DC3004C1B02 /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
 		CFEE31B72A666DED004C1B02 /* TargetMeetingCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TargetMeetingCell.xib; sourceTree = "<group>"; };
@@ -309,7 +309,7 @@
 				CFEE31C72A6671DA004C1B02 /* Cell */,
 				CFEE31B52A666DC3004C1B02 /* UserInfo.swift */,
 				CFEE31B32A666D8D004C1B02 /* UserInfoSection.swift */,
-				CFEE31B12A666D54004C1B02 /* CurrentUserDescription.swift */,
+				CFEE31B12A666D54004C1B02 /* UserDescription.swift */,
 				CFEE31BF2A666FF5004C1B02 /* HeaderUserInfo.swift */,
 			);
 			path = Model;
@@ -517,7 +517,7 @@
 				CFEE31B42A666D8D004C1B02 /* UserInfoSection.swift in Sources */,
 				CFCD028E2A4580890092DCC0 /* UserPhoto.swift in Sources */,
 				CFD1CAE729FEABB6009AE9A7 /* SettingsPhotoViewController.swift in Sources */,
-				CFEE31B22A666D54004C1B02 /* CurrentUserDescription.swift in Sources */,
+				CFEE31B22A666D54004C1B02 /* UserDescription.swift in Sources */,
 				CF59A22C2A1B53B300954CCE /* ChatViewController.swift in Sources */,
 				CFEE31C02A666FF5004C1B02 /* HeaderUserInfo.swift in Sources */,
 				CF11F8FB2A49DC800032B7AE /* ReachabilityInternet.swift in Sources */,
