@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 import FirebaseFirestore
 import FirebaseStorage
+import CoreLocation
 
 class User {
     
@@ -27,7 +28,7 @@ class User {
     
     var name = String()
     var age = Int()
-    var lastGeopostition: CGFloat?
+    var lastGeopostition: CLLocation?
     
     var avatar: UserPhoto? {
         get {
@@ -43,7 +44,6 @@ class User {
     init(ID:String,currentAuthUserID: String) {
         self.ID = ID
         self.currentAuthUserID = currentAuthUserID
-        lastGeopostition = 10
         loadChat()
         setupUserDescrtiption()
     }
@@ -63,6 +63,11 @@ class User {
                 if let name = dataDoc["Name"] as? String ,let age = dataDoc["Age"] as? Int {
                     self.name = name
                     self.age = age
+                    
+                    if let longitude = dataDoc["longitude"] as? Double,  let latiude = dataDoc["latiude"] as? Double {
+                        lastGeopostition = CLLocation(latitude: latiude, longitude: longitude)
+                        
+                    }
                     
                     for data in photoSnap.documents { /// Загрузка ссылок на фото в Storage
                         if let urlPhoto = data["URL"] as? String {

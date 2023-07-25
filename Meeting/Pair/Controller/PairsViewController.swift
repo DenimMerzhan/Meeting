@@ -8,6 +8,7 @@
 import UIKit
 import AudioToolbox
 import Lottie
+import CoreLocation
 
 
 class PairsViewController: UIViewController {
@@ -51,7 +52,8 @@ class PairsViewController: UIViewController {
     }
     
     override func viewDidLoad() {
-        CurrentAuthUser.shared.ID = "2FoiV3dqXelseEy"
+        CurrentAuthUser.shared.ID = "+79187550000"
+        getGeoposition()
         
         Task {
             await CurrentAuthUser.shared.loadMetadata()
@@ -398,6 +400,33 @@ extension PairsViewController: CardViewDelegate {
         checkMatch(ID: card.userID)
         loadNewPeople(card: card)
     }
+}
+
+//MARK: -  Получение геопозиции пользователя
+
+extension PairsViewController: CLLocationManagerDelegate {
+    
+    func getGeoposition(){
+        
+        let locationManager = CLLocationManager()
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.requestLocation()
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = locations.first {
+            let latiude = location.coordinate.latitude
+            let longitude = location.coordinate.longitude
+            CurrentAuthUser.shared.writeGeopositionOnServer(latiude: latiude, longitude: longitude)
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("Ошибка получения геолокации - \(error)")
+    }
+    
+    
 }
 
 

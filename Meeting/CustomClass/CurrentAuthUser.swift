@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 import FirebaseFirestore
 import FirebaseStorage
+import CoreLocation
 
 
 class CurrentAuthUser {
@@ -18,7 +19,7 @@ class CurrentAuthUser {
     var ID  = String()
     var name = String()
     var age = Int()
-    var lastGeopostition: CGFloat?
+    var lastGeopostition: CLLocation?
     var delegate: MatchArrHasBennUpdate?
     
     var avatar: UserPhoto? {
@@ -41,6 +42,7 @@ class CurrentAuthUser {
     
     var newUsersLoading = Bool()
     
+    private lazy var currentUserRef = db.collection("Users").document(ID)
     private let db = Firestore.firestore()
     private let storage = Storage.storage()
     private let fileManager = FileManager.default
@@ -52,13 +54,12 @@ class CurrentAuthUser {
     
     func loadMetadata() async {
         
-        let collection  = db.collection("Users").document(ID)
         let photoCollection = db.collection("Users").document(ID).collection("Photo").order(by: "Position")
         listenMatchUserID()
-        lastGeopostition = 3
+        
         do {
             
-            let docSnap = try await collection.getDocument()
+            let docSnap = try await currentUserRef.getDocument()
             let photoSnap = try await photoCollection.getDocuments()
             
             if let dataDoc = docSnap.data()  {
@@ -71,6 +72,10 @@ class CurrentAuthUser {
                     if let likeArr = dataDoc["LikeArr"] as? [String] {self.likeArr = likeArr}
                     if let disLikeArr = dataDoc["DisLikeArr"] as? [String] {self.disLikeArr = disLikeArr}
                     if let superLikeArr = dataDoc["SuperLikeArr"] as? [String] {self.superLikeArr = superLikeArr} /// Суперлайков может и не быть, поэтому не ставим guard
+                    if let longitude = dataDoc["longitude"] as? Double,  let latiude = dataDoc["latiude"] as? Double {
+                        lastGeopostition = CLLocation(latitude: latiude, longitude: longitude)
+                        
+                    }
                     await loadNewPotenialPairs()
                     
                     for data in photoSnap.documents { /// Загрузка ссылок на фото в Storage
@@ -93,9 +98,7 @@ class CurrentAuthUser {
     
     func refreshPairInfroOnServer(){
         
-        let documenRef = db.collection("Users").document(ID)
-        
-        documenRef.setData([
+        currentUserRef.setData([
             "LikeArr" : self.likeArr,
             "DisLikeArr" : self.disLikeArr,
             "SuperLikeArr": self.superLikeArr
@@ -231,7 +234,6 @@ extension CurrentAuthUser {
         
         Task {
             var matchArrPairUser = [String]()
-            let currentUserRef = db.collection("Users").document(ID)
             let matchUserRef = db.collection("Users").document(potetnialPairID)
             
             var matchArrID = [String]() /// Cоздаем новый МатчАрр что бы в последтвии записать его на сервер
@@ -297,13 +299,13 @@ extension CurrentAuthUser {
             self.likeArr.removeAll(where: {$0 == user.ID})
             self.superLikeArr.removeAll(where: {$0 == user.ID})
             
-            self.db.collection("Users").document(self.ID).setData(["LikeArr" : self.likeArr],merge: true)
-            self.db.collection("Users").document(self.ID).setData(["SuperLikeArr" : self.superLikeArr],merge: true)
+            self.currentUserRef.setData(["LikeArr" : self.likeArr],merge: true)
+            self.currentUserRef.setData(["SuperLikeArr" : self.superLikeArr],merge: true)
             
             user.deleteUserMatchArr(currentAuthUserID: self.ID) /// Удаляем из архива МатчАрр текущего пользователя
             //            user.deleteLikeUser(currentAuthUserID: self.ID) /// Удаляем из архива лайков текущего пользователя
             
-            self.db.collection("Users").document(self.ID).setData(["MatchArr" : matchArrID],merge: true) /// Удаляем пользователя из матч арр у текущего пользователя
+            self.currentUserRef.setData(["MatchArr" : matchArrID],merge: true) /// Удаляем пользователя из матч арр у текущего пользователя
             
             guard let documents = querySnapshot?.documents else {return}
             
@@ -394,6 +396,22 @@ extension CurrentAuthUser {
             }
         }
     }
+}
+
+//MARK: -  Запись геопозиции на сервер
+
+extension CurrentAuthUser {
+    
+    func writeGeopositionOnServer(latiude:CLLocationDegrees,longitude:CLLocationDegrees){
+        lastGeopostition = CLLocation(latitude: latiude, longitude: longitude)
+        print(latiude)
+        print(longitude)
+        currentUserRef.setData(["latiude" : latiude,
+                                "longitude" : longitude],merge: true) { err in
+            if let error = err {print("Ошибка записи местоположения на сервер - \(error)")}
+        }
+    }
+    
 }
 
 

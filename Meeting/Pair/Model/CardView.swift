@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import AudioToolbox
+import CoreLocation
 
 
 protocol CardViewDelegate {
@@ -356,14 +357,16 @@ extension CardView {
 
 extension CardView {
     
-    func setupDistanceToUser(lastGeoCurrent:CGFloat,lastGeoNewUser:CGFloat){
+    func setupDistanceToUser(lastGeoCurrent:CLLocation,lastGeoNewUser:CLLocation){
         
+        let distance = CGFloat(lastGeoCurrent.distance(from: lastGeoNewUser) / 1000 )
         distanceToUser = UIView(frame: CGRect(x: 10, y: frame.height - 120, width: frame.width - 20, height: 40))
         imageView.addSubview(distanceToUser!)
         
         let label = UILabel(frame: CGRect(x: 25, y: 0, width: distanceToUser!.frame.width - 20, height: distanceToUser!.frame.height))
         label.textColor = .white
-        label.text = String(format: "%0.f" , abs(lastGeoCurrent - lastGeoNewUser)) + " км от тебя"
+        label.text = String(format: "%0.f" , distance ) + " км от тебя"
+        if distance < 1 {label.text = "< 1 км от тебя"}
         
         let image = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
         image.center.y = label.center.y
