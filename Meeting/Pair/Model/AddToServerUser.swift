@@ -10,7 +10,7 @@ import FirebaseStorage
 import FirebaseFirestore
 
 
-struct Test {
+struct AddUserToServer {
     
     let db = Firestore.firestore()
     let storage = Storage.storage()
@@ -71,7 +71,7 @@ struct Test {
             try await colletcion.setData(["Name" : name],merge: true)
             try await colletcion.setData(["Age" : age],merge: true)
             try await photoCollection.setData(["URL" : url.absoluteString,
-                                     "Position" : photoPosition],merge: true)
+                                               "Date" : Date().timeIntervalSince1970],merge: true)
         }catch{
             print("Ошибка загрузки данных фото на сервер Firebase Firestore \(error)")
         }
@@ -80,7 +80,7 @@ struct Test {
 }
 
 
-private extension Test {
+private extension AddUserToServer {
     
     func randomString(length: Int) -> String {
       let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"

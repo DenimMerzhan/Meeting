@@ -211,7 +211,6 @@
 				CF7D03082A0B80330028E7EB /* CurrentAuthUser.swift */,
 				CF1DC80929F0DFC3001E2EAD /* User.swift */,
 				CFCD028D2A4580890092DCC0 /* UserPhoto.swift */,
-				CF11F8FA2A49DC800032B7AE /* ReachabilityInternet.swift */,
 			);
 			path = CustomClass;
 			sourceTree = "<group>";
@@ -336,6 +335,7 @@
 		CFFD03E229F90FB4000732AC /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				CF11F8FA2A49DC800032B7AE /* ReachabilityInternet.swift */,
 				CFC72D502A014543008CDB14 /* CreateButton.swift */,
 			);
 			path = Model;
@@ -676,7 +676,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -706,7 +706,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

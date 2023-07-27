@@ -35,7 +35,7 @@ struct Chat {
     func numberUnreadMessges(pairID: String) -> Int {
         var count = 0
         for message in messages {
-            if message.messageRead == false && message.sender == pairID {
+            if message.messageRead == false && message.sender != CurrentAuthUser.shared.ID {
                 count += 1
             }
         }

@@ -45,7 +45,6 @@ class User {
         self.ID = ID
         self.currentAuthUserID = currentAuthUserID
         loadChat()
-        setupUserDescrtiption()
     }
     
 //MARK: - Загрузка метаданных о пользователе с сервера
@@ -53,7 +52,7 @@ class User {
     func loadMetaData() async {
         
         let collection  = db.collection("Users").document(ID)
-        let photoCollection  = db.collection("Users").document(ID).collection("Photo").order(by: "Position")
+        let photoCollection  = db.collection("Users").document(ID).collection("Photo").order(by: "Date")
         
         do {
             let docSnap = try await collection.getDocument()
@@ -81,6 +80,7 @@ class User {
                     
                 }
             }
+            setupUserDescrtiption()
         }catch{
             print("Ошибка получения ссылок на фото с сервера FirebaseFirestore - \(error)")
         }       
@@ -125,11 +125,23 @@ class User {
     
     private func setupUserDescrtiption(){
         
-        userDescription.mostDescription = .mostDescription([UserInfo(title: "17 км от вас", image: UIImage(named: "DistanceToUser")!),UserInfo(title: "Гетеро", image: UIImage(systemName: "target")),UserInfo(title: "Гетеро", image: UIImage(systemName: "target")),UserInfo(title: "Пошел нахуй сучка", image: UIImage(systemName: "target")), UserInfo(title: "Долгосрочный партрнер бля", image: UIImage(named: "Holiday")!)])
-        userDescription.aboutME = .aboutME("Я просто шалава и такая пришла ушла и привет пока в общем что говорить все бывает /n а потом еще и понеслась ")
-        userDescription.moreAboutMe = .moreAboutMe([UserInfo(title: "Водолей", image: UIImage(systemName: "shareplay")),UserInfo(title: "Я не хочу детей", image: UIImage()),UserInfo(title: "Нет прививки", image: UIImage()),UserInfo(title: "Гоняю быстро"), UserInfo(title: "Разведена")])
-        userDescription.lifeStyle =  .lifeStyle([UserInfo(title: "Люблю кошек", image: UIImage()),UserInfo(title: "Курю", image: UIImage())])
-        userDescription.languages =  .languages([UserInfo(title: "Английский"),UserInfo(title: "Немецкий")])
+        var mostDescription = [UserInfo]()
+        
+        if let lastGeoCurrentAuthUser = CurrentAuthUser.shared.lastGeopostition, let lastGeoCurrentUser = lastGeopostition {
+            let distance = CGFloat(lastGeoCurrentAuthUser.distance(from: lastGeoCurrentUser) / 1000 )
+            var text = String(format: "%0.f" , distance ) + " км от тебя"
+            if distance < 1 {text = "< 1 км от тебя"}
+            mostDescription.append(UserInfo(title: text,image: UIImage(named: "DistanceToUser")))
+        }
+        
+        mostDescription.append(UserInfo(title: "Гетеро",image: UIImage(systemName: "target")))
+        mostDescription.append(UserInfo(title: "Долгосрочный партнер по бизнесу", image: UIImage(named: "Holiday")!))
+        
+        userDescription.mostDescription = .mostDescription(mostDescription)
+        userDescription.aboutME = .aboutME("Живу в Кемерово, ровная баба. За шмот не поясняю!")
+        userDescription.moreAboutMe = .moreAboutMe([UserInfo(title: "Водолей", image: UIImage(systemName: "shareplay")),UserInfo(title: "Я не хочу детей", image: UIImage(named: "DontWannacChild")),UserInfo(title: "Нет прививки", image: UIImage(named: "syringe")),UserInfo(title: "Гоняю быстро",image: UIImage(named: "UserInfoCar")), UserInfo(title: "Разведена",image: UIImage(named: "UserInfoDivorce"))])
+        userDescription.lifeStyle =  .lifeStyle([UserInfo(title: "Люблю кошек", image: UIImage(named: "UserInfoCat")),UserInfo(title: "Курю", image: UIImage(named: "UserInfoSmoke"))])
+        userDescription.languages =  .languages([UserInfo(title: "Английский"),UserInfo(title: "Немецкий"),UserInfo(title: "Датский"),UserInfo(title: "Арабский"),UserInfo(title: "Итальянский")])
         
     }
     

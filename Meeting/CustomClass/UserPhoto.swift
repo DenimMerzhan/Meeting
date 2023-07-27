@@ -15,7 +15,7 @@ protocol LoadPhoto {
 
 class UserPhoto: UIImageView {
     
-    var urlPhotoFromServer: String?
+    var urlPhotoFromServerFirestore: String?
     var imageID: String?
     var delegate: LoadPhoto?
     
@@ -23,7 +23,7 @@ class UserPhoto: UIImageView {
     
     init(frame: CGRect, urlPhotoFromServer: String?,imageID: String?) {
         
-        self.urlPhotoFromServer = urlPhotoFromServer
+        self.urlPhotoFromServerFirestore = urlPhotoFromServer
         self.imageID = imageID
         super.init(frame: frame)        
         loadPhotoFromServer()
@@ -36,7 +36,7 @@ class UserPhoto: UIImageView {
     
     func loadPhotoFromServer(){
     
-        guard let urlPhoto  = urlPhotoFromServer else {return}
+        guard let urlPhoto  = urlPhotoFromServerFirestore else {return}
         
         let photoRef = storage.reference(forURL: urlPhoto)
         let maxSize = Int64(1 * 4096 * 4096)

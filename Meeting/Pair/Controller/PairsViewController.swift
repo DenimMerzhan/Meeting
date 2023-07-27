@@ -52,7 +52,8 @@ class PairsViewController: UIViewController {
     }
     
     override func viewDidLoad() {
-        CurrentAuthUser.shared.ID = "+79187550000"
+        
+        CurrentAuthUser.shared.ID = "1JOOcK6ooej8Rup"
         getGeoposition()
         
         Task {
@@ -152,7 +153,7 @@ extension PairsViewController {
         }
     }
     
-    //MARK: - Возврат пользователя при выборе лайка и т.д
+    //MARK: - Отмена действия лайка, дизлайка и суперлайка
     
     private func returnUser(){
         

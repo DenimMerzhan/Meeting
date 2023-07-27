@@ -54,7 +54,7 @@ class CurrentAuthUser {
     
     func loadMetadata() async {
         
-        let photoCollection = db.collection("Users").document(ID).collection("Photo").order(by: "Position")
+        let photoCollection = db.collection("Users").document(ID).collection("Photo").order(by: "Date")
         listenMatchUserID()
         
         do {
@@ -74,7 +74,6 @@ class CurrentAuthUser {
                     if let superLikeArr = dataDoc["SuperLikeArr"] as? [String] {self.superLikeArr = superLikeArr} /// Суперлайков может и не быть, поэтому не ставим guard
                     if let longitude = dataDoc["longitude"] as? Double,  let latiude = dataDoc["latiude"] as? Double {
                         lastGeopostition = CLLocation(latitude: latiude, longitude: longitude)
-                        
                     }
                     await loadNewPotenialPairs()
                     
@@ -145,9 +144,10 @@ class CurrentAuthUser {
             let url = try await imagesRef.downloadURL()
             
             try await photoColletcion.setData(["URL" : url.absoluteString,
-                                               "Position" : imageArr.count],merge: true)
+                                               "Date" : Date().timeIntervalSince1970],merge: true)
             
             await imageArr.append(UserPhoto(frame: .zero, urlPhotoFromServer: url.absoluteString, imageID: imageID))
+            
             return true
         }catch {
             print(error)
@@ -167,33 +167,8 @@ class CurrentAuthUser {
                 print("Ошибка удаления фото с хранилища Firebase \(err)")
             }else {
                 imageFirebaseRef.delete()
-                self.shufflePhotoOnServer()
             }
         }
-    }
-    
-    func shufflePhotoOnServer(){
-        
-        let photoRef = db.collection("Users").document(ID).collection("Photo").order(by: "Position")
-        let imageArr = self.imageArr
-        print("dwwd")
-        photoRef.getDocuments { QuerySnapshot, err in
-            if let error = err {print("Ошибка перетасовки фото - \(error)")}
-            guard let documents = QuerySnapshot?.documents else {return}
-            
-            for i in 0...imageArr.count - 1 {
-                let documentID = documents[i].documentID
-                let refImage = documents[i].reference
-                guard let postionPhotoOnServer = documents[i].data()["Position"] as? Int else {return}
-                
-                if imageArr[i].imageID == documentID && i != postionPhotoOnServer {
-                    refImage.setData(["Position" : i],merge: true)
-                    self.shufflePhotoOnServer()
-                    return
-                }
-            }
-        }
-        
     }
     
 }
@@ -404,8 +379,6 @@ extension CurrentAuthUser {
     
     func writeGeopositionOnServer(latiude:CLLocationDegrees,longitude:CLLocationDegrees){
         lastGeopostition = CLLocation(latitude: latiude, longitude: longitude)
-        print(latiude)
-        print(longitude)
         currentUserRef.setData(["latiude" : latiude,
                                 "longitude" : longitude],merge: true) { err in
             if let error = err {print("Ошибка записи местоположения на сервер - \(error)")}

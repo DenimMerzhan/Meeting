@@ -97,38 +97,38 @@ extension CreateButton {
     
 //MARK: - Прогресс Бар для Загрузки пользователей
     
-    func createProgressLoadUsersStartForLaunch(width:CGFloat) -> (backView: UIView,progressBar: UIProgressView,label: UILabel){
-        
-        let backView = UIView(frame: CGRect(x: 20, y: 50, width: 350, height: 50))
-        backView.backgroundColor = UIColor(named: "LoadPhotoColor")
-        backView.layer.cornerRadius = 10
-        
-        let progressBar = UIProgressView(frame: CGRect(x: 25, y: 25, width: 300, height: 10))
-        backView.addSubview(progressBar)
-        progressBar.progressViewStyle = .bar
-        progressBar.progressTintColor = UIColor(named: "MainAppColor")
-        progressBar.trackTintColor = .gray
-        progressBar.setProgress(0.0, animated: false)
-        
-        backView.addSubview(progressBar)
-        
-        let label = createLabelUsersLaunch(width: width)
-        
-        return (backView,progressBar,label)
-    }
+//    func createProgressLoadUsersStartForLaunch(width:CGFloat) -> (backView: UIView,progressBar: UIProgressView,label: UILabel){
+//        
+//        let backView = UIView(frame: CGRect(x: 20, y: 50, width: 350, height: 50))
+//        backView.backgroundColor = UIColor(named: "LoadPhotoColor")
+//        backView.layer.cornerRadius = 10
+//        
+//        let progressBar = UIProgressView(frame: CGRect(x: 25, y: 25, width: 300, height: 10))
+//        backView.addSubview(progressBar)
+//        progressBar.progressViewStyle = .bar
+//        progressBar.progressTintColor = UIColor(named: "MainAppColor")
+//        progressBar.trackTintColor = .gray
+//        progressBar.setProgress(0.0, animated: false)
+//        
+//        backView.addSubview(progressBar)
+//        
+//        let label = createLabelUsersLaunch(width: width)
+//        
+//        return (backView,progressBar,label)
+//    }
     
-    func createLabelUsersLaunch(width:CGFloat) -> UILabel {
-        
-        let label = UILabel(frame: CGRect(x: 0, y: 0, width: width, height: 40))
-        label.text = "Идет загрузка пользователей..."
-        label.adjustsFontSizeToFitWidth = true /// Подстраиваем шрифт под размер рамки
-        label.minimumScaleFactor = 0.1 /// Наимаеньший множитель для текущего шрифта т.е 35 * 0.1 
-        label.textAlignment = .center
-        label.font = .boldSystemFont(ofSize: 50)
-        label.textColor = .black
-        
-        
-        return label
-    }
+//    func createLabelUsersLaunch(width:CGFloat) -> UILabel {
+//
+//        let label = UILabel(frame: CGRect(x: 0, y: 0, width: width, height: 40))
+//        label.text = "Идет загрузка пользователей..."
+//        label.adjustsFontSizeToFitWidth = true /// Подстраиваем шрифт под размер рамки
+//        label.minimumScaleFactor = 0.1 /// Наимаеньший множитель для текущего шрифта т.е 35 * 0.1
+//        label.textAlignment = .center
+//        label.font = .boldSystemFont(ofSize: 50)
+//        label.textColor = .black
+//
+//
+//        return label
+//    }
     
 }

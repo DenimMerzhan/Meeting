@@ -58,7 +58,7 @@ extension SettingsPhotoViewController : UICollectionViewDataSource, UICollection
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SettingsPhotoCell.identifier, for: indexPath) as! SettingsPhotoCell
-        let indexRow = indexPath.row
+        let row = indexPath.row
         let imagePicker = self.imagePicker
         
         cell.addButton.removeTarget(nil, action: nil, for: .allEvents)
@@ -70,8 +70,8 @@ extension SettingsPhotoViewController : UICollectionViewDataSource, UICollection
         cell.addButton.addAction(addAction, for: .touchUpInside)
         
         let deleteAction = UIAction { [weak self] action in
-            guard let imageID = CurrentAuthUser.shared.imageArr[indexRow].imageID else {return}
-            CurrentAuthUser.shared.imageArr.remove(at: indexRow)
+            guard let imageID = CurrentAuthUser.shared.imageArr[row].imageID else {return}
+            CurrentAuthUser.shared.imageArr.remove(at: row)
             CurrentAuthUser.shared.removePhotoFromServer(imageID: imageID)
             self?.collectionPhotoView.reloadData()
         }
@@ -81,12 +81,12 @@ extension SettingsPhotoViewController : UICollectionViewDataSource, UICollection
             cell.deleteButton.isEnabled = true
         }else {cell.deleteButton.isEnabled = false}
         
-        if indexRow < CurrentAuthUser.shared.imageArr.count {
+        if row < CurrentAuthUser.shared.imageArr.count {
             
             cell.addButton.isHidden = true
             cell.deleteButton.isHidden = false
-            CurrentAuthUser.shared.imageArr[indexRow].delegate = self
-            cell.photoImage.image = CurrentAuthUser.shared.imageArr[indexRow].image
+            CurrentAuthUser.shared.imageArr[row].delegate = self
+            cell.photoImage.image = CurrentAuthUser.shared.imageArr[row].image
             cell.dottedBorder.isHidden = true
             
         }else {

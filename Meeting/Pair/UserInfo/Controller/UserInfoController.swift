@@ -320,8 +320,8 @@ extension UserInfoController: UICollectionViewDelegate, UICollectionViewDataSour
         switch sections[indexPath.section] {case .mostDescription(_):
             let attrs1 = [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 35), NSAttributedString.Key.foregroundColor : UIColor.black]
             let attrs2 = [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 35), NSAttributedString.Key.foregroundColor : UIColor.black]
-            let attributedString1 = NSMutableAttributedString(string:"Сашенька", attributes:attrs1)
-            let attributedString2 = NSMutableAttributedString(string:" 24", attributes:attrs2)
+            let attributedString1 = NSMutableAttributedString(string:selectedUser.name, attributes:attrs1)
+            let attributedString2 = NSMutableAttributedString(string:" " + String(selectedUser.age), attributes:attrs2)
             attributedString1.append(attributedString2)
             header.label.attributedText = attributedString1
             header.separatorView.isHidden = true
@@ -392,7 +392,9 @@ extension UserInfoController: UICollectionViewDelegate, UICollectionViewDataSour
             cell.label.numberOfLines = 0
         case .moreAboutMe(let item),.lifeStyle(let item), .myHobbie(let item),.languages(let item):
             
-            cell.image.isHidden = false
+            if item[indexPath.row].image == nil {cell.image.isHidden = true}
+            else {cell.image.isHidden = false}
+            
             cell.image.image = item[indexPath.row].image
             cell.layer.cornerRadius = 13
             cell.layer.masksToBounds = true

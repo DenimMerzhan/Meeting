@@ -16,6 +16,9 @@ class UserInfoCell: UICollectionViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         image.isHidden = true
+        image.contentMode = .scaleAspectFit
+        image.clipsToBounds = true
+        
     }
     
     override func prepareForReuse() {

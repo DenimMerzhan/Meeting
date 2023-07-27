@@ -280,7 +280,7 @@ extension ChatViewController {
                     }
                     
                 }
-                                
+                  
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
                     self.collectionView.reloadData()
